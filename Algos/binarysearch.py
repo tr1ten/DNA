@@ -9,5 +9,5 @@ def binarysearch(arr,target):
             end = mid - 1
         else:
             start = mid + 1
-    return -1
+    return arr[mid+1] if arr[mid]<target else arr[mid]
 print(binarysearch([1,3,5,7,8,10],2))
