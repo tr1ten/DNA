@@ -1,0 +1,37 @@
+class Solution
+{
+public:
+    vector<int> getRow(int indexRow)
+    {
+        int n = indexRow + 1;
+        std::vector<std::vector<int>> Rows;
+        std::vector<int> arr1 = {1};
+        Rows.push_back(arr1);
+        if (n == 1)
+        {
+            return Rows[indexRow];
+        }
+        std::vector<int> arr2 = {1, 1};
+        Rows.push_back(arr2);
+        if (n == 2)
+        {
+            return Rows[indexRow];
+        }
+        for (int i = 2; i < n; i++)
+        {
+            std::vector<int> row;
+            row.push_back(1);
+            int j = 0;
+            int z = 1;
+            while (z < Rows[i - 1].size())
+            {
+                row.push_back(Rows[i - 1][j] + Rows[i - 1][z]);
+                j++;
+                z++;
+            }
+            row.push_back(1);
+            Rows.push_back(row);
+        }
+        return Rows[indexRow];
+    }
+};
