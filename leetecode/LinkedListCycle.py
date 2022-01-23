@@ -1,4 +1,5 @@
 class Solution(object):
+    """Floyd algo"""
     def hasCycle(self, head):
         """
         :type head: ListNode

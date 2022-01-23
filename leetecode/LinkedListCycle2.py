@@ -3,7 +3,7 @@
 #     def __init__(self, x):
 #         self.val = x
 #         self.next = None
-# simple time distance relation on Tortoise and Hare's method
+# simple time distance relation (2*slow = fast ) on Tortoise and Hare's method ie distance of start of the cycle is equal from both head and stopped fast pointer 
 class Solution(object):
     def detectCycle(self, head):
         """
