@@ -2,7 +2,6 @@
     "files.associations": {
         "*.ejs": "html",
         "*.js": "javascript",
-        "iostream": "cpp",
-        "vector": "cpp"
+        "random": "cpp"
     }
 }
