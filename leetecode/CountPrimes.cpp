@@ -4,14 +4,10 @@
 using namespace std;
 // bad implementation of sieves
 int countPrimes(int n) {
-    vector<int> arr;
+    vector<int> arr(n+1,1);
     if(n<3)
     {
         return 0;
-    }
-    for (int i = 0; i < n; i++)
-    {
-        arr.push_back(i);
     }
     for (int i = 2; i < n; i++)
     {
@@ -38,5 +34,5 @@ int countPrimes(int n) {
 }
 int main()
 {
-    cout << countPrimes(3) << endl;
+    cout << countPrimes(10) << endl;
 }
