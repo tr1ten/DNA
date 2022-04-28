@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 )
+
+// think inversly move non zero to starting
 func moveZeroes(nums []int)  {
 	nZeros := 0;
 	n := len(nums);
