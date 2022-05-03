@@ -177,8 +177,8 @@ void testAddPoly()
 }
 //
 template class LinkedList<int>;
-int main()
-{
-    testAddPoly();
-    return 0;
-}
+// int main()
+// {
+//     testAddPoly();
+//     return 0;
+// }
