@@ -46,20 +46,16 @@ void nextNumber(int n)
     {
         if((zeroIn[zi]+1) < nextHigher.size() && nextHigher[zeroIn[zi]+1])
         {
-            swap(nextHigher[zeroIn[zi]+1],nextHigher[zeroIn[zi]]);
+            swap(nextHigher[zeroIn[zi]+1],nextHigher[zeroIn[zi]])
             break;
         }
-        zi--;
     }
     
-    cout << bin2decimal(nextLower) << " " << bin2decimal(nextHigher);
+    cout << bin2decimal(nextLower);
     
 }
 int main()
 {
-    nextNumber(5);
-    nextNumber(11);
-
-
+    nextNumber(44);
     return 0;
 }
