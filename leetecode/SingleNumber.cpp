@@ -5,30 +5,37 @@
 using namespace std;
 int singleNumber(vector<int> &nums)
 {
-    int N = nums.size();
-    unordered_map<int, int> a;
-    for (int i : nums)
-    {
-        if (a.count(i))
-        {
-            a[i] = 2;
-        }
-        else
-        {
-            a[i] = 1;
-        }
-    }
-    for (auto x : a)
-    {
-        if (x.second == 1)
-        {
-            return x.first;
-        }
-    }
+    int ans = 0;
+    for (auto x : nums)
+        ans ^= x;
+    return ans;
 }
+// int singleNumber(vector<int> &nums)
+// {
+//     int N = nums.size();
+//     unordered_map<int, int> a;
+//     for (int i : nums)
+//     {
+//         if (a.count(i))
+//         {
+//             a[i] = 2;
+//         }
+//         else
+//         {
+//             a[i] = 1;
+//         }
+//     }
+//     for (auto x : a)
+//     {
+//         if (x.second == 1)
+//         {
+//             return x.first;
+//         }
+//     }
+// }
 int main()
 {
-    vector<int> arr = {-1, -1, -2};
+    vector<int> arr = {1,2,2};
     cout << singleNumber(arr) << endl;
     return 0;
 }

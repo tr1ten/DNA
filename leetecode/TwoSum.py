@@ -11,3 +11,4 @@ class Solution:
                 return [index, setted[compliment]]
             else:
                 setted[value] = index
+
