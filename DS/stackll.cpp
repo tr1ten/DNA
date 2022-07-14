@@ -1,4 +1,4 @@
-#include <structures.h>
+#include "./structures.h"
 struct Stack
 {
     LinkedList<int> stack;
@@ -24,7 +24,7 @@ void Stack::push(int val)
     top++;
 }
 void Stack::pop()
-{
+{   
     stack.deleteNode(top);
 }
 

@@ -22,6 +22,94 @@ Node *appendNode(Node *head, int data)
     temp->next = newNode;
     return head;
 }
+Node *findNode(Node *head, int data)
+{
+    Node *temp = head;
+    while (temp)
+    {
+        if (temp->data == data)
+        {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+Node *deleteNode(Node *head, int data)
+{
+    if (head == NULL)
+    {
+        return NULL;
+    }
+    if (head->data == data)
+    {
+        Node *temp = head->next;
+        free(head);
+        return temp;
+    }
+    Node *temp = head;
+    while (temp->next)
+    {
+        if (temp->next->data == data)
+        {
+            Node *temp2 = temp->next;
+            temp->next = temp->next->next;
+            free(temp2);
+            return head;
+        }
+        temp = temp->next;
+    }
+    return head;
+}
+Node *copyLinkedList(Node *head){
+    Node *temp = head;
+    Node *newHead = NULL;
+    while (temp)
+    {
+        newHead = appendNode(newHead, temp->data);
+        temp = temp->next;
+    }
+    return newHead;
+}
+void clearLinkedList(Node *head)
+{
+    Node *temp = head;
+    while (temp)
+    {
+        Node *temp2 = temp;
+        temp = temp->next;
+        free(temp2);
+    }
+}
+void printLL(Node *head)
+{
+    Node *temp = head;
+    printf("\n");
+
+    while (temp)
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main()
+{
+    Node *head = 0;
+    head = appendNode(head, 1);
+    head = appendNode(head, 2);
+    head = appendNode(head, 3);
+    head = deleteNode(head, 2);
+    Node *temp = findNode(head, 1);
+    printf("found element-:%d\n", temp->data);
+    printLL(head);
+    clearLinkedList(head);
+    printf("cleared linked list\n");
+    return 0;
+}
+
 Node *mergeLL(Node *head1, Node *head2)
 {
     Node *p1 = head1;
@@ -53,31 +141,15 @@ Node *mergeLL(Node *head1, Node *head2)
             temp = newNode;
         }
     }
-    while (p1)
+    if(p1)
     {
         temp->next = p1;
-        temp = temp->next;
-        p1 = p1->next;
     }
-    while (p2)
+    else
     {
         temp->next = p2;
-        temp = temp->next;
-        p2 = p2->next;
     }
     return newHead;
-}
-void printLL(Node *head)
-{
-    Node *temp = head;
-    printf("\n");
-
-    while (temp)
-    {
-        printf("%d", temp->data);
-        temp = temp->next;
-    }
-    printf("\n");
 }
 Node *findIntersaction(Node *head1, Node *head2)
 {
@@ -111,22 +183,4 @@ Node *findIntersaction(Node *head1, Node *head2)
     return other;
     
 
-}
-int main()
-{
-    Node *head = 0;
-    head = appendNode(head, 1);
-    head = appendNode(head, 2);
-    Node *head2 = NULL;
-    head2 = appendNode(head2, 3);
-    head2 = appendNode(head2, 4);
-    head2 = appendNode(head2, 7);
-    head2 = appendNode(head2, 10);
-
-    printLL(head);
-    printLL(head2);
-    Node *newH = mergeLL(head, head2);
-    printLL(newH);
-
-    return 0;
 }

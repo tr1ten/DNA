@@ -46,6 +46,6 @@ int evalRPN(vector<string> tokens)
 }
 int main()
 {
-    cout << evalRPN({"10","6","9","3","+","-11","*","/","*","17","+","5","+"});
+    cout << evalRPN({"10","6","9","3","+","-11","*","/","*","17","+","5","+"}) << endl;
     return 0;
 }

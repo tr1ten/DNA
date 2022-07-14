@@ -60,40 +60,6 @@ void LinkedList<T>::reversed()
 }
 
 template <typename T>
-void swap(Node<T> *temp, Node<T> *temp2, LinkedList<T> *ll)
-{
-    Node<T> *prev1 = temp->prev;
-    Node<T> *prev2 = temp2->prev;
-    if (prev1)
-    {
-        prev1->next = temp2;
-        temp2->prev = prev1;
-    }
-    else
-    {
-        ll->head = temp2;
-    }
-    Node<T> *tmp = temp2->next;
-    if (temp2 == temp->next)
-    {
-        temp2->next = temp;
-    }
-    else
-    {
-        temp2->next = temp->next;
-    }
-
-    temp->next->prev = temp2;
-
-    prev2->next = temp;
-    temp->prev = prev2;
-    temp->next = tmp;
-    if (tmp)
-    {
-        tmp->prev = temp;
-    }
-}
-template <typename T>
 void LinkedList<T>::sort()
 {
     Node<T> *temp = this->head;
@@ -126,7 +92,6 @@ void LinkedList<T>::sort()
                 }
                 temp2->prev = nextTemp;
 
-                // swap(temp2, temp2->next, this);
             }
             else
             {
@@ -143,7 +108,7 @@ void LinkedList<T>::printLL() const
     cout << "linked list: ";
     while (temp)
     {
-        cout << temp->val << (temp->next ? " + " :" ");
+        cout << temp->val << (temp->next ? " + " : " ");
         temp = temp->next;
     }
     cout << endl;
@@ -152,13 +117,11 @@ void LinkedList<T>::printLL() const
 template <typename T>
 LinkedList<T>::~LinkedList()
 {
-    // cout << "deleting ll" << endl;
-    // this->printLL();
     Node<T> *temp = head;
     while (temp)
     {
         Node<T> *ntemp = temp->next;
-            delete temp;
+        delete temp;
         temp = ntemp;
     }
 }
@@ -289,15 +252,15 @@ LinkedList<Poly> *addPoly(const LinkedList<Poly> &p1, const LinkedList<Poly> &p2
 
     return summedLL;
 }
-LinkedList<Poly> *multiplyPoly(const LinkedList<Poly> &p1, const LinkedList<Poly> &p2)
+LinkedList<Poly> *multiplyPoly(LinkedList<Poly> &p1, LinkedList<Poly> &p2)
 {
-    auto sortedLL = p1;
-    auto sortedLL2 = p2;
+    auto &sortedLL = p1;
+    auto &sortedLL2 = p2;
     sortedLL.sort();
     sortedLL2.sort();
     auto t1 = sortedLL.head;
     auto t2 = sortedLL2.head;
-    LinkedList<Poly> *summedLL=nullptr;
+    LinkedList<Poly> *summedLL = nullptr;
     while (t1)
     {
         LinkedList<Poly> *newLL = new LinkedList<Poly>();
@@ -319,31 +282,55 @@ LinkedList<Poly> *multiplyPoly(const LinkedList<Poly> &p1, const LinkedList<Poly
         }
         t1 = t1->next;
     }
-    summedLL->printLL();
     return summedLL;
 }
-void testAddPoly()
+
+bool areTwoPolyEqual(const LinkedList<Poly> &p1, const LinkedList<Poly> &p2)
+{
+    Node<Poly> *t1 = p1.head;
+    Node<Poly> *t2 = p2.head;
+    while (t1 && t2)
+    {
+        if (t1->val.c != t2->val.c || t1->val.degree != t2->val.degree)
+        {
+            return false;
+        }
+        t1 = t1->next;
+        t2 = t2->next;
+    }
+    return !t1 && !t2;
+}
+
+void testTwoPolyEqual()
+{
+    LinkedList<Poly> p1;
+    p1.insertNode(Poly(1, 0));
+    p1.insertNode(Poly(2, 1));
+    p1.insertNode(Poly(3, 2));
+    LinkedList<Poly> p2;
+    p2.insertNode(Poly(1, 0));
+    p2.insertNode(Poly(2, 1));
+    p2.insertNode(Poly(3, 2));
+    cout << areTwoPolyEqual(p1, p2) << endl;
+}
+
+void testMulPoly()
 {
     LinkedList<Poly> p1;
     LinkedList<Poly> p2;
     p1.insertNode({1, 1});
     p1.insertNode({2, 2});
-    // p1.insertNode({2, 1});
-
-    // p1.sort();
-    // p1.printLL();
-    // p1.insertNode({2, 0});
+    p1.insertNode({2, 3});
     p2.insertNode({1, 1});
-    // p2.insertNode({-5, 3});
-    multiplyPoly(p1, p2);
-    // cout << "product is  ->" << endl;
-    // p3->printLL();
-    // p3->~LinkedList();
+    p2.insertNode({-5, 3});
+    auto *p3 = multiplyPoly(p1, p2);
+    p3->printLL();
+    p3->~LinkedList();
 }
 
 template class LinkedList<int>;
 int main()
 {
-    testAddPoly();
+    testTwoPolyEqual();
     return 0;
 }
