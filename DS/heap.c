@@ -10,6 +10,15 @@ void printArr(int *arr, int n)
     }
     printf("]\n ");
 }
+
+void swap(int *arr,int i,int j)
+{
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+}
+
+// swap ith element with last element, now check whether its child is larger, swap with it.
 void deleteHeap(int *heap,int n,int i)
 {
     heap[i] = heap[n-1];
@@ -23,9 +32,8 @@ void deleteHeap(int *heap,int n,int i)
         int larger = heap[left] > heap[right] ? left : right;
         if(heap[j]<heap[larger])
         {
-            int temp = heap[larger];
-            heap[larger] = heap[j];
-            heap[j] = temp;
+            swap(heap,j,larger);
+            j = larger;
         }
         else{
             return;
@@ -34,6 +42,7 @@ void deleteHeap(int *heap,int n,int i)
     }
     
 }
+// insert into correct position by checking parent, swapping if needeed
 void insertHeap(int value,int *heap, int n)
 {
     heap[n] = value;
@@ -42,9 +51,7 @@ void insertHeap(int value,int *heap, int n)
     {
         if (value>heap[i/2])
         {
-            int temp = heap[i/2];
-            heap[i/2] = value;
-            heap[i] = temp; 
+            swap(heap,i,i/2); 
         }
         else{
             break;
@@ -81,12 +88,6 @@ int buildHeap(int* heap,int n)
         heapify(heap,n,i);
     }
     
-}
-void swap(int *arr,int i,int j)
-{
-    int temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
 }
 int heapSort(int *arr,int n)
 {

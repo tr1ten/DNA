@@ -77,7 +77,7 @@ string infix2Postfix(string exp)
             }
             else
             {
-                while (!st.empty() && ops[st.top()] > ops[c])
+                while (!st.empty() && ops[st.top()] >= ops[c])
                 {
                     postfixExp.push_back(st.top());
                     st.pop();
@@ -101,6 +101,6 @@ string infix2Postfix(string exp)
 
 int main()
 {
-    cout << infix2Postfix("A+(B+C*(D+E))") << endl;
+    cout << infix2Postfix("A-B/C*D+E") << endl;
     return 0;
 }

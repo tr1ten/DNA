@@ -1,31 +1,26 @@
-#include "./structures.h"
+#include <list>
+using namespace std;
 struct Stack
 {
-    LinkedList<int> stack;
+    list<int> stack;
     int top;
-    Stack();
+    Stack(){};
     Stack(int);
     void push(int);
     void pop();
 };
-Stack::Stack()
-{
-    LinkedList<int> stack;
-    top=-1;
-}
 Stack::Stack(int val)
 {
-    LinkedList<int> stack(val);
-    top = 0;
+    stack.push_front(val);
 }
 void Stack::push(int val)
 {
-    stack.insertNode(val,-1);
-    top++;
+        stack.push_front(val);
+
 }
 void Stack::pop()
 {   
-    stack.deleteNode(top);
+   stack.pop_front();
 }
 
 void testStack()
@@ -34,7 +29,7 @@ void testStack()
     stack.push(1);
     stack.push(2);
     stack.pop();
-    stack.stack.printLL();
+    
 }
 int main()
 {
