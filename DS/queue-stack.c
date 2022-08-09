@@ -45,6 +45,7 @@ int dequeue(QueueStack *queueStack)
         push(&queueStack->otherStack, pop(&queueStack->mainStack));
     }
     int val = pop(&queueStack->otherStack);
+    queueStack->front = peek(&queueStack->otherStack);
     while (!isEmpty(&queueStack->otherStack))
     {
         push(&queueStack->mainStack, pop(&queueStack->otherStack));
