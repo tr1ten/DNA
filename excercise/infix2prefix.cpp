@@ -83,7 +83,7 @@ string infix2Prefix(string exp, bool isReverse)
             }
             else
             {
-                while (!st.empty() && ops[st.top()] > ops[c])
+                while (!st.empty() && ops[st.top()] >= ops[c])
                 {
                     prefixExp.push_back(st.top());
                     st.pop();
