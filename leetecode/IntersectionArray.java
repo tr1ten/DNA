@@ -1,4 +1,3 @@
-package leetecode;
 import java.util.HashSet;;
 public class IntersectionArray {
     public int[] intersection(int[] nums1, int[] nums2) {

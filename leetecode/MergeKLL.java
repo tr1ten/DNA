@@ -1,7 +1,4 @@
-package leetecode;
 
-import java.util.List;
-import java.util.PriorityQueue;
 
 class ListNode {
     int val;
@@ -19,12 +16,11 @@ class ListNode {
         this.next = next;
     }
 }
-
+// or use priority queue with complexity NlogN, N-nodes
 public class MergeKLL {
     public ListNode mergeKLists(ListNode[] lists) {
         ListNode dummyhead = new ListNode();
         var temp = dummyhead;
-        PriorityQueue<ListNode> pq = new PriorityQueue<>((a,b)->a.val - b.val);
         while (true){
             int min = Integer.MAX_VALUE;
             int minInd = -1;

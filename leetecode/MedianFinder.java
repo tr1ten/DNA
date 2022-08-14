@@ -1,4 +1,3 @@
-package leetecode;
 
 import java.util.PriorityQueue;
 

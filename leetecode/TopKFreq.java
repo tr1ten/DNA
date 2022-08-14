@@ -1,10 +1,8 @@
-package leetecode;
 
 import java.util.*;
 
 public class TopKFreq {
     public int[] topKFrequent(int[] nums, int k) {
-        ArrayList<Integer> sols = new ArrayList<>();
         ArrayList<Integer> sortedList = new ArrayList<>();
         HashMap<Integer,Integer> hm = new HashMap<>();
         for (int i : nums) {

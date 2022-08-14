@@ -1,6 +1,4 @@
-package leetecode;
 
-import java.util.List;
 
 // List Node
 class ListNode {
