@@ -4,6 +4,53 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 
+class U{
+	static int minI(int[] a) {
+		int min = Integer.MAX_VALUE;
+		int minI = -1;
+		for(int i = 0; i < a.length; i++) {
+			if(a[i] < min) {
+				min = a[i];
+				minI = i;
+			}
+		}
+		return minI;
+	}
+	static int min(int[] a){
+		int min = Integer.MAX_VALUE;
+		for(int i=0;i<a.length;i++){
+			if(a[i]<min)
+				min = a[i];
+		}
+		return min;
+	} 
+	static int max(int[] a){
+		int max = Integer.MIN_VALUE;
+		for(int i=0;i<a.length;i++){
+			if(a[i]>max)
+				max = a[i];
+		}
+		return max;
+	}
+	// approx binary searh
+	static int bs(int[] a, int x){
+		int l = 0;
+		int r = a.length-1;
+		int mid = (l+r)/2;
+		while(l<=r){
+			if(a[mid]==x)
+				return mid;
+			else if(a[mid]>x)
+				r = mid-1;
+			else
+				l = mid+1;
+			mid = (l+r)/2;
+		}
+		// return approx index
+		return mid;
+	}
+}
+
 /* Name of the class has to be "Main" only if the class is public. */
 class Codechef
 {
@@ -56,34 +103,35 @@ static class FastReader {
 			return str;
 		}
 	}
-
+	public static int binlog( int bits ) // returns 0 for bits=0
+{
+    int log = 0;
+    if( ( bits & 0xffff0000 ) != 0 ) { bits >>>= 16; log = 16; }
+    if( bits >= 256 ) { bits >>>= 8; log += 8; }
+    if( bits >= 16  ) { bits >>>= 4; log += 4; }
+    if( bits >= 4   ) { bits >>>= 2; log += 2; }
+    return log + ( bits >>> 1 );
+}
 	public static void main(String[] args)
 	{
 		FastReader s = new FastReader();
 		int n = s.nextInt();
 		while (n-- > 0) {
-            int N = s.nextInt();
-            int[] arr = new int[N];
-            for (int i = 0; i < N; i++) {
-                arr[i] = s.nextInt();
-            }
-            int sa= 0;
-            int o =0;
-            for (int i = 0; i < arr.length-1; i++) {
-                if(arr[i]!=arr[i+1]){
-                    o++;
-                }
-                else{
-                    sa++;
-                }
-            }
-            if(arr[0]!=arr[arr.length-1]){
-                o++;
-            }
-            if(o-sa==1) System.out.println("Bob");
-            else System.out.println("Alice");
-            
+			int N = s.nextInt();
+			int K = s.nextInt();
+			int[] a = new int[K];
+			for(int i=0;i<K;i++){
+				a[i] = s.nextInt();
+			}
+			int o = 0;
+			for(int i=0;i<K;i++){
+				int x = arr[i];
+				int k = binlog(x);
+				if(1>>k==1) o++;
+			}
+			System.out.println(1<<(binlog(N)-K) + o);
 
+			
 		}
 	}
 }

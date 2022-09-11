@@ -1,0 +1,7 @@
+.vscode
+*.class
+*.log
+*.pyc
+*.exe
+cron.*
+.idea

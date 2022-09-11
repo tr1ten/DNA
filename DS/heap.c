@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-void printArr(int *arr, int n)
+void printArr(int *arr, int start,int n)
 {
     // printf("%d",arr[0]);
     printf("\n[ ");
-    for (int i = 0; i < n; i++)
+    for (int i = start; i < n; i++)
     {
         printf(" %d ", arr[i]);
     }
@@ -74,9 +74,7 @@ int heapify(int *heap, int n, int i)
     }
     if(heap[largest]>heap[i])
     {
-        int temp = heap[i];
-        heap[i] = heap[largest];
-        heap[largest] = temp;
+        swap(heap,largest,i);
         heapify(heap,n,largest);
     }
 
@@ -91,7 +89,7 @@ int buildHeap(int* heap,int n)
 }
 int heapSort(int *arr,int n)
 {
-    printArr(arr,n);
+    printArr(arr,0,n);
     int heap[n+1];
     heap[0]=0;
     for (int i = 0; i < n; i++)
@@ -106,21 +104,10 @@ int heapSort(int *arr,int n)
         heapify(heap,i,1);
 
     }
-    printArr(heap,n+1);
+    printArr(heap,1,n+1);
 }
 int main()
 {
-    // int heap[9] = {0, 50, 30, 40, 10, 5, 20, 30};
-    // printf("%d",heap[0]);
-    // printArr(heap, 8);
-    // insertHeap(60,heap,8);
-    // printArr(heap,9);
-    // deleteHeap(heap,9,2);
-    // printArr(heap,9);
-    // int nheap[] = {0,2,3};
-    // printArr(nheap,3);
-    // buildHeap(nheap,3);
-    // printArr(nheap,7);
     int arr[] = {5,3,2,6,33};
     heapSort(arr,5);
     return 0;
