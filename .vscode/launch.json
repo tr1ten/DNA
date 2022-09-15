@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch BST",
+            "request": "launch",
+            "mainClass": "DS.BST",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
             "name": "Launch Codechef",
             "request": "launch",
             "mainClass": "Codechef",
