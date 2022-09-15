@@ -62,7 +62,7 @@ void insertHeap(int value,int *heap, int n)
 int heapify(int *heap, int n, int i)
 {
     int largest = i;
-    int left = 2*i;
+    int left = 2*i-1;
     int right = left+1;
     if(left<n&&heap[left]>heap[largest])
     {
@@ -81,7 +81,7 @@ int heapify(int *heap, int n, int i)
 }
 int buildHeap(int* heap,int n)
 {
-    for (int i = n/2; i >0; i--)
+    for (int i = n/2-1; i >=0; i--)
     {
         heapify(heap,n,i);
     }
@@ -91,20 +91,20 @@ int heapSort(int *arr,int n)
 {
     printArr(arr,0,n);
     int heap[n+1];
-    heap[0]=0;
-    for (int i = 0; i < n; i++)
-    {
-        heap[i+1] = arr[i];
-    }
-    buildHeap(heap,n+1);
+    // heap[0]=0;
+    // for (int i = 0; i < n; i++)
+    // {
+    //     heap[i+1] = arr[i];
+    // }
+    buildHeap(heap,n);
 
-    for (int i = n; i >0; i--)
+    for (int i = n-1; i >=0; i--)
     {
         swap(heap,1,i);
         heapify(heap,i,1);
 
     }
-    printArr(heap,1,n+1);
+    printArr(heap,1,n);
 }
 int main()
 {
