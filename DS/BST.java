@@ -15,6 +15,12 @@ class TreeNode {
 }
 public class BST {
     TreeNode root;
+    TreeNode search(TreeNode root,int val){
+        if(root==null) return null;
+        if(root.val==val) return root;
+        if(root.val<val) return search(root.right, val);
+        return search(root.left, val)
+    }
     TreeNode _insert(TreeNode root,int val){
         if(root==null) return new TreeNode(val);
         if(root.val<val) root.right = _insert(root.right, val);
@@ -60,6 +66,14 @@ public class BST {
         inorder(root.left);
         System.out.print(root.val + " ,");
         inorder(root.right);
+    }
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==p || root==q) return root;
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+        if(left==null && right!=null) return right;
+        if(left!=null && right==null) return left;
+        return root;
     }
     void print() {
         System.out.println("\nTree ->");

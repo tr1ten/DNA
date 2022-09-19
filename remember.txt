@@ -1,0 +1,2 @@
+Vscode java command look into old package classes, which mean you can't have class with same name and think it will work
+whereas coderunner only look into single file

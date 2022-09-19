@@ -3,6 +3,48 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Node",
+            "request": "launch",
+            "mainClass": "Node",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch SubstringAllWords",
+            "request": "launch",
+            "mainClass": "SubstringAllWords",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch Trie",
+            "request": "launch",
+            "mainClass": "DS.Trie",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch MinArrowBurst",
+            "request": "launch",
+            "mainClass": "MinArrowBurst",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch Solution",
+            "request": "launch",
+            "mainClass": "Solution",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch PQ",
+            "request": "launch",
+            "mainClass": "Complexity.PQ",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
             "name": "Launch BST",
             "request": "launch",
             "mainClass": "DS.BST",
