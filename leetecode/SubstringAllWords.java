@@ -12,49 +12,28 @@ class SubstringAllWords {
             st.put(string, st.getOrDefault(string, 0)+1);
         } 
         int ws = words[0].length();
-        int p1 = 0;
-        int p2 = 0;
+        int mx_size = ws*words.length;
         List<Integer> ans = new ArrayList<>();
-        HashMap<String,Integer> past = new HashMap<>();
-        HashMap<String,Integer> last = new HashMap<>();
-        int cnt = 0;
-        while (p2+ws<=s.length()) {
-            String ss = s.substring(p2,p2+ws);
-            if(!st.containsKey(ss)) {
-                p1 = p2;
-                p2 +=ws;
-                cnt=0;
-                past.clear();
-                last.clear();
-                continue;
-
-            }
-            cnt++;
-            if(past.getOrDefault(ss,0)>=st.getOrDefault(ss, 0)) {
-                p1= last.get(ss);
-                past.clear();
-                last.clear();
-                cnt=1;
-                continue;
-            }
-            p2 +=ws;
-            past.put(ss,past.getOrDefault(ss, 0)+1);
-            if(past.get(ss)==st.get(ss)) last.put(ss, p2-ws);
-            if(cnt==words.length){
-                ans.add(p1);
-                String s2 = s.substring(p1,p1+ws);
-                past.put(s2, past.getOrDefault(s2, 0)-1);
-                last.remove(s2);
-                cnt--;
-                p1 +=ws;
-            }
+        for (int i = 0; i < s.length()-mx_size; i++) {
+            String ss = s.substring(i,i+mx_size);
+            HashMap<String,Integer> seen = new HashMap<>();
+            boolean fl= true;
+            for (int j = 0; j < mx_size; j +=ws) {
+                    String sub = ss.substring(j,j+ws);
+                    seen.put(sub, seen.getOrDefault(sub, 0)+1);
+                    if(seen.get(sub)>st.getOrDefault(sub, 0)) {
+                        fl = false;
+                        break;
+                    }
+                } 
+                if(fl) ans.add(i);            
         }
         return ans;
     }
     public static void main(String[] args) {
         SubstringAllWords s = new SubstringAllWords();
-        String[] words = {"good","best","good","word"};
-        String str = "wordgoodgoodgoodbestword";
+        String[] words = { "aa", "aa" };
+        String str = "aaaaaaaa";
         System.out.println(s.findSubstring(str, words));
     }
     

@@ -3,6 +3,41 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TopKFrequent",
+            "request": "launch",
+            "mainClass": "TopKFrequent",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch Codechef",
+            "request": "launch",
+            "mainClass": "contests.Codechef",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch OverlappingSubstring",
+            "request": "launch",
+            "mainClass": "OverlappingSubstring",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch MatchSticks",
+            "request": "launch",
+            "mainClass": "MatchSticks",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch Sorting",
+            "request": "launch",
+            "mainClass": "Algos.Sorting",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
             "name": "Launch Node",
             "request": "launch",
             "mainClass": "Node",
