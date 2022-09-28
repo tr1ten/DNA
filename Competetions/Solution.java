@@ -22,103 +22,106 @@ class TreeNode {
 
 }
 class Solution {
-    public int[] sumPrefixScores(String[] words) {
-        HashMap<String,Integer> hm = new HashMap<>();
-        // sort words first by alphabetical order
-        Arrays.sort(words); 
-        int[] arr = new int[words.length];
-        int p2=0;
-        for (int i = 0; i < arr.length; i++) {
-            String word = words[i];
-            int j=i+1;
-            int s = word.length();
-            while(j<words.length )
-        }
-        
-
-        return arr;
-    }
-    public int[] sumPrefixScores2(String[] words) {
-        HashMap<String,Integer> hm = new HashMap<>();
-        for (String word : words) {
-            String sb = "";
-            // optimize
-            for (int i = 0; i < word.length(); i++) {
-                sb +=  word.charAt(i);
-                hm.put(sb, hm.getOrDefault(sb, 0) + 1);
-            }
-        }
-        int[] arr = new int[words.length];
-        int i =0;
-        for (String word : words) {
-            // optimize this
-            int sum = 0;
-            String sb = "";
-            for (int j = 0; j < word.length(); j++) {
-                sb += word.charAt(j);
-                sum += hm.get(sb);
-            }
-            arr[i++] = sum;
-        }
-        return arr;
-    }
-    // write above function in more efficient way
-    
-}
-
-class Solution2 {
-    public int[] sumPrefixScores(String[] words) {
-        
-        Trie root = new Trie();
-        for (String s : words) {
-            root.add(s);
-        }
-        
-        int[] ans = new int[words.length];
-        for (int i = 0; i < ans.length; i++) {
-            ans[i] = root.sum(words[i], 0);
-        }
-
-        return ans;
-    }
-
-    private class Trie {
-        private Trie[] next;
-        private boolean isWord;
-        private int cnt;
-
-        private Trie() {
-            next = new Trie[26];
-            isWord = false;
-        }
-
-        private void add(String s) {
-            add(s, 0);
-        }
-
-        private void add(String s, int k) {
-            cnt++;
-            if (k == s.length()) {
-                isWord = true;
-            } else {
-                char c = s.charAt(k);
-                if (next[c - 'a'] == null) {
-                    next[c - 'a'] = new Trie();
+    public List<Integer> goodIndices(int[] nums, int k) {
+        int n = nums.length;
+        List<Integer> res = new ArrayList<>();
+        int i = 0;
+        int j = 1;
+        while (j<n) {
+            if(j-i>=k){
+                int start = j+1;
+                int end = start+1;
+                while (end<n && (nums[end]>=nums[end-1] || k==1)) {
+                    if(end-start>=k){
+                        if(nums[start-2]<=nums[start-1] || k==1) start++;
+                        else break;
+                    }
+                    end++;
                 }
-                next[c - 'a'].add(s, k + 1);
+                if(end-start>=k){
+                    for (int l = j; l < start; l++) {
+                        res.add(l);
+                    }
+                }
+                else{
+                    i++;
+                    j++;
+                    continue;
+                }
+                i = end;
+                j = end+1;
+                continue;
             }
-        }
-        private int sum(String s, int k) {
-            if (k == s.length()) {
-                return cnt;
-            } 
-            char c = s.charAt(k);
-            if (k == 0) {
-                return next[c - 'a'].sum(s, k + 1);
+            if(nums[j]<=nums[j-1]) j++;
+            else {
+                i = j;
+                j++;
             }
-            return cnt + next[c - 'a'].sum(s, k + 1);
             
         }
-
+        return res;   
     }
 }
+//[253747,459932,263592,354832,60715,408350,959296]
+// 2
+// [478184,863008,716977,921182,182844,350527,541165,881224]
+// 1
+// [693570,409751,33944,16682,26296,545257,827687,885741,970671]
+// 3
+
+// class Solution2 {
+//     public int[] sumPrefixScores(String[] words) {
+        
+//         Trie root = new Trie();
+//         for (String s : words) {
+//             root.add(s);
+//         }
+        
+//         int[] ans = new int[words.length];
+//         for (int i = 0; i < ans.length; i++) {
+//             ans[i] = root.sum(words[i], 0);
+//         }
+
+//         return ans;
+//     }
+
+//     private class Trie {
+//         private Trie[] next;
+//         private boolean isWord;
+//         private int cnt;
+
+//         private Trie() {
+//             next = new Trie[26];
+//             isWord = false;
+//         }
+
+//         private void add(String s) {
+//             add(s, 0);
+//         }
+
+//         private void add(String s, int k) {
+//             cnt++;
+//             if (k == s.length()) {
+//                 isWord = true;
+//             } else {
+//                 char c = s.charAt(k);
+//                 if (next[c - 'a'] == null) {
+//                     next[c - 'a'] = new Trie();
+//                 }
+//                 next[c - 'a'].add(s, k + 1);
+//             }
+//         }
+//         private int sum(String s, int k) {
+//             if (k == s.length()) {
+//                 return cnt;
+//             } 
+//             char c = s.charAt(k);
+//             if (k == 0) {
+//                 return next[c - 'a'].sum(s, k + 1);
+//             }
+//             return cnt + next[c - 'a'].sum(s, k + 1);
+            
+//         }
+
+//     }
+// }

@@ -3,6 +3,62 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch GuessNumber",
+            "request": "launch",
+            "mainClass": "Algos.Puzzles.GuessNumber",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch MinPathSum",
+            "request": "launch",
+            "mainClass": "MinPathSum",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch CoinChange",
+            "request": "launch",
+            "mainClass": "CoinChange",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch Partition",
+            "request": "launch",
+            "mainClass": "Partition",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch LongestIncreasingSubsequence",
+            "request": "launch",
+            "mainClass": "LongestIncreasingSubsequence",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch CompareVersions",
+            "request": "launch",
+            "mainClass": "CompareVersions",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch MinSSS",
+            "request": "launch",
+            "mainClass": "DS.MinSSS",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch KMP",
+            "request": "launch",
+            "mainClass": "Algos.KMP",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
             "name": "Launch TopKFrequent",
             "request": "launch",
             "mainClass": "TopKFrequent",
