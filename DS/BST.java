@@ -1,10 +1,10 @@
 package DS;
 
 
-class TreeNode {
-    TreeNode right;
-    TreeNode left;
-    int val;
+public class TreeNode {
+    public TreeNode right;
+    public TreeNode left;
+    public int val;
     TreeNode(int val) {this.val = val;}
     TreeNode(int val,TreeNode r,TreeNode l) {
         this.val = val;

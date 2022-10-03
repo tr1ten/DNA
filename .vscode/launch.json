@@ -3,6 +3,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TestGraph",
+            "request": "launch",
+            "mainClass": "DS.TestGraph",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
+            "name": "Launch SorroundRegion",
+            "request": "launch",
+            "mainClass": "SorroundRegion",
+            "projectName": "DNA_7c6fcdbb"
+        },
+        {
+            "type": "java",
             "name": "Launch GuessNumber",
             "request": "launch",
             "mainClass": "Algos.Puzzles.GuessNumber",

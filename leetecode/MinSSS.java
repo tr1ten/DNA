@@ -1,4 +1,4 @@
-package DS;
+
 
 class MinSSS {
     public int minSubArrayLen(int target, int[] nums) {

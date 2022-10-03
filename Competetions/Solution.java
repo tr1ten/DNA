@@ -1,13 +1,19 @@
 
 import java.lang.reflect.Array;
+import java.security.KeyStore.Entry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 import java.util.TreeMap;
 class TreeNode {
     TreeNode right;
@@ -22,106 +28,101 @@ class TreeNode {
 
 }
 class Solution {
-    public List<Integer> goodIndices(int[] nums, int k) {
-        int n = nums.length;
-        List<Integer> res = new ArrayList<>();
-        int i = 0;
-        int j = 1;
-        while (j<n) {
-            if(j-i>=k){
-                int start = j+1;
-                int end = start+1;
-                while (end<n && (nums[end]>=nums[end-1] || k==1)) {
-                    if(end-start>=k){
-                        if(nums[start-2]<=nums[start-1] || k==1) start++;
-                        else break;
-                    }
-                    end++;
-                }
-                if(end-start>=k){
-                    for (int l = j; l < start; l++) {
-                        res.add(l);
-                    }
-                }
-                else{
-                    i++;
-                    j++;
-                    continue;
-                }
-                i = end;
-                j = end+1;
-                continue;
-            }
-            if(nums[j]<=nums[j-1]) j++;
-            else {
-                i = j;
-                j++;
-            }
-            
+    public int commonFactors(int a,int b){
+        int cnt = 1;
+        HashSet<Integer> hs = new HashSet<>();
+        int min;
+        int max;
+        if(a<b){
+             min=a;
+             max=b;}
+        else {
+            min = b;
+            max = a;
         }
-        return res;   
+        for (int i = 2; i <=min; i++) {
+            if(min%i==0 && max%i==0) cnt++;
+        }
+        return cnt;
     }
+    public int maxSum(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+        int mx = Integer.MIN_VALUE;
+        for (int i = 1; i < n-1; i++) {
+            for (int j = 1; j < m-1; j++) {
+                int sum= grid[i-1][j-1] + grid[i-1][j+1] + grid[i-1][j] + grid[i][j] + grid[i+1][j-1] + grid[i+1][j+1] + grid[i+1][j];
+                mx = Math.max(mx, sum);
+            }
+        }
+        return mx;    
+    }
+    HashSet<Integer> setB(int a){
+        int i=0;
+        HashSet<Integer> hs = new HashSet<>();
+        while (a!=0) {
+            if((a&1)==1) hs.add(i);
+            a = a>>1;
+            i++;
+        }
+        return hs;
+    }
+    public int minimizeXor(int num1, int num2) {
+        HashSet<Integer> ca = setB(num1);
+        HashSet<Integer> cb = setB(num2);
+        if(ca.size()==cb.size()) return num1;
+        else if(cb.size()>ca.size()){
+            int x=num1;
+
+            int i=0;
+            int d = cb.size()-ca.size();
+            while (d>0) {
+                if(!ca.contains(i)){
+                    x = x | 1 << i;
+                    d--;
+                }
+                i++;
+            }
+            return x;
+        }
+        else{
+            List<Integer> ls = new ArrayList<>(ca);
+            Collections.sort(ls,Comparator.reverseOrder());
+            int d = cb.size();
+            int i=0;
+            int x=0;
+            while (d-->0) {
+                x = x | 1 << ls.get(i++);
+            }
+            return x;
+        }
+    }
+        HashMap<String,Integer> hm = new HashMap<>();
+        public int deleteString(String s) {
+            if(s.length()==0) return 0;
+            if(hm.containsKey(s)) return hm.get(s);
+            if((s.length() - s.replace(s.charAt(0)+"", "").length())==s.length()) return s.length();
+            int pa1 = 0;
+            int pa2=0;
+            int pb1= 1;
+            int pb2=1;
+            int sz = s.length();
+            int mx = Integer.MIN_VALUE;
+            while (pb1<sz && pb2<sz) {
+                if(s.substring(pa1,pa2+1).equals(s.substring(pb1,pb2+1))){
+                    mx = Math.max(mx, deleteString(s.substring(pa2+1,s.length())));
+                }
+                pa2++;
+                pb1 = pa2+1;
+                pb2 = pb1 + (pa2-pa1);
+            }
+            if(mx==Integer.MIN_VALUE) {
+                hm.put(s,1);
+                return 1;
+            }
+            else{
+                hm.put(s, mx+1);
+                return hm.get(s);
+            }
+        }
 }
-//[253747,459932,263592,354832,60715,408350,959296]
-// 2
-// [478184,863008,716977,921182,182844,350527,541165,881224]
-// 1
-// [693570,409751,33944,16682,26296,545257,827687,885741,970671]
-// 3
-
-// class Solution2 {
-//     public int[] sumPrefixScores(String[] words) {
-        
-//         Trie root = new Trie();
-//         for (String s : words) {
-//             root.add(s);
-//         }
-        
-//         int[] ans = new int[words.length];
-//         for (int i = 0; i < ans.length; i++) {
-//             ans[i] = root.sum(words[i], 0);
-//         }
-
-//         return ans;
-//     }
-
-//     private class Trie {
-//         private Trie[] next;
-//         private boolean isWord;
-//         private int cnt;
-
-//         private Trie() {
-//             next = new Trie[26];
-//             isWord = false;
-//         }
-
-//         private void add(String s) {
-//             add(s, 0);
-//         }
-
-//         private void add(String s, int k) {
-//             cnt++;
-//             if (k == s.length()) {
-//                 isWord = true;
-//             } else {
-//                 char c = s.charAt(k);
-//                 if (next[c - 'a'] == null) {
-//                     next[c - 'a'] = new Trie();
-//                 }
-//                 next[c - 'a'].add(s, k + 1);
-//             }
-//         }
-//         private int sum(String s, int k) {
-//             if (k == s.length()) {
-//                 return cnt;
-//             } 
-//             char c = s.charAt(k);
-//             if (k == 0) {
-//                 return next[c - 'a'].sum(s, k + 1);
-//             }
-//             return cnt + next[c - 'a'].sum(s, k + 1);
-            
-//         }
-
-//     }
-// }
