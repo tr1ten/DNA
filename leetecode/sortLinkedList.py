@@ -1,4 +1,7 @@
 # Definition for singly-linked list.
+from ast import main
+
+
 class ListNode(object):
     def __init__(self, val=0, next=None):
         self.val = val
@@ -41,4 +44,15 @@ class Solution(object):
             slow = slow.next
             fast = fast.next.next
         return slow
-    
+
+def main():
+    head = ListNode(4)
+    head.next = ListNode(2)
+    head.next.next = ListNode(1)
+    head.next.next.next = ListNode(3)
+    head = Solution().sortList(head)
+    while head:
+        print(head.val)
+        head = head.next
+        
+main()

@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "*.ejs": "html",
-        "*.js": "javascript",
-        "*.css": "css",
-        "queue": "cpp"
-    }
-}
