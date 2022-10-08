@@ -29,14 +29,14 @@ public class Dijkstra {
         distTo = new double[V];
         edgeTo = new int[V];
         pq = new IndexMinPQ<>(V);
-        for (int i = 0; i < edgeTo.length; i++) {
+        for (int i = 0; i < V; i++) {
             distTo[i] = Double.MAX_VALUE;
         }
         distTo[s] = 0;
         pq.insert(s, 0.0);
         while (!pq.isEmpty()) {
             int v = pq.delMin();
-            for (Edge e:G.adj(V)) {
+            for (Edge e:G.adj(v)) {
                 relax(e);
             }
         }

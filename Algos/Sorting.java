@@ -11,31 +11,34 @@ import java.util.Collections;
  */
 public class Sorting {
 
-    static void merge(int[] A,int p,int q,int r){
+    @FunctionalInterface
+    interface Indexer{
+        double getVal(int i);
+    }
+    static void merge(int[] A,int p,int q,int r,Indexer ind){
+        // merge A[p..q] and A[q+1..r]
         int n1 = q-p+1;
         int n2 = r-q;
+        int[] temp = new int[n1+n2];
         int i=0;
         int j=0;
-        int[] left = new int[n1+1];
-        int[] right = new int[n2+1];
-        while (i<n1) left[i] =A[p+i++];
-        while (j<n2) right[j] =A[q+1+j++];
-        left[n1] = Integer.MAX_VALUE;
-        right[n2] = Integer.MAX_VALUE;
-        i=0;
-        j=0;
-        for (int k = p; k <=r; k++) {
-            if(left[i]<right[j]) A[k] = left[i++];
-            else A[k] = right[j++];
+        int k=0;
+        while(i<n1 && j<n2){
+            if(ind.getVal(p+i)<ind.getVal(q+1+j)) temp[k++] = A[p+i++];
+            else temp[k++] = A[q+1+j++];
         }
-        
+        while(i<n1) temp[k++] = A[p+i++];
+        while(j<n2) temp[k++] = A[q+1+j++];
+        for (int l = 0; l < temp.length; l++) {
+            A[p+l] = temp[l];
+        }
     }
-    static void mergeSort(int[] A,int p,int r){
+    static void mergeSort(int[] A,int p,int r,Indexer ind){
         if(r<=p) return;
         int mid = (p+r)/2;
-        mergeSort(A, p, mid);
-        mergeSort(A, mid+1, r);
-        merge(A,p,mid,r);
+        mergeSort(A, p, mid,ind);
+        mergeSort(A, mid+1, r,ind);
+        merge(A,p,mid,r,ind);
     }
     static int max(int[] a){
         int max = Integer.MIN_VALUE;
