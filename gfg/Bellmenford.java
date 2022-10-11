@@ -17,7 +17,6 @@ class Solution
         }
         distTo[S] = 0;
         // make adjancy list
-        ArrayList<Integer>[] 
         for (int i = 0; i < V; i++) {
             for (int v = 0; v < V; v++) {
                 for ( e: adj.get(v)) {

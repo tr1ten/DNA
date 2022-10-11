@@ -37,7 +37,7 @@ class Solution {
         return solve(maxChoosableInteger, desiredTotal,0);
     }
     public static void main(String[] args) {
-        Solution s = new Solution();
+        RandomWC s = new RandomWC();
         System.out.println(s.canIWin(10,40));
     }
 }

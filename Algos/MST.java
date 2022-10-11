@@ -4,17 +4,20 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import DS.LinkUnionFind;
 import DS.WtGraph;
 import DS.WtGraph.Edge;
-
+interface MST{
+    Iterable<Edge> mst();
+}
 /**
- * MST -Prims similar to kruskal
+ * PrimMST -Prims similar to kruskal 
  */
-public class MST {
+class PrimsMST implements MST {
     boolean[] marked;
     PriorityQueue<Edge> pq;
     Queue<Edge> q;
-    MST(WtGraph g){
+    PrimsMST(WtGraph g){
         marked = new boolean[g.V];
         pq = new PriorityQueue<>((a,b)->Double.compare(a.wt(), b.wt()));
         q = new LinkedBlockingDeque<>();
@@ -36,11 +39,35 @@ public class MST {
             if(!marked[e.other(v)]) pq.add(e);
         }
     }
-    Iterable<Edge> mst(WtGraph g){
+    public Iterable<Edge> mst(){
         return q;
     }
 }
-
+/*
+ * Kruskal - Sort the edges, add to mst if doesn't create cycle until V-1
+ */
+class KruskalMST implements MST{
+    PriorityQueue<Edge> pq;
+    Queue<Edge> q;
+    KruskalMST(WtGraph g){
+        pq = new PriorityQueue<>((a,b)->Double.compare(a.wt(), b.wt()));
+        pq.addAll(g.edges());
+        q = new LinkedBlockingDeque<>();
+        LinkUnionFind uf = new LinkUnionFind(g.V);
+        while (q.size()<g.V-1) {
+            Edge e = pq.poll();
+            int v = e.either();
+            int u = e.other(v);
+            if(uf.find(u)!=uf.find(v)) {
+                q.add(e);
+                uf.union(u, v);
+            }
+        }
+    }
+    public Iterable<Edge> mst(){
+        return q;
+    }
+}
 // test mst
 
 class TestMST {
@@ -58,9 +85,12 @@ class TestMST {
         g.addEdge(4, 7, 0.37);
         g.addEdge(5, 7, 0.28);
         g.addEdge(6, 7, 0.19);
-        MST mst = new MST(g);
-        for (Edge e : mst.mst(g)) {
+        MST mst = new KruskalMST(g);
+        double sum = 0;
+        for (Edge e : mst.mst()) {
             System.out.println(e.either()+" "+e.other(e.either())+" "+e.wt());
+            sum+=e.wt();
         }
+        System.out.printf("Total weight: %.2f",sum);
     }
 }

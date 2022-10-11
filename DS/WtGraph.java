@@ -1,12 +1,15 @@
 package DS;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WtGraph {
     public int V;
     ArrayList<Edge>[] adjList;
+    ArrayList<Edge> edges;
     public WtGraph(int V){
         this.V = V;
+        edges = new ArrayList<>();
         adjList = (ArrayList<Edge>[])new ArrayList[V];
         for (int i = 0; i < adjList.length; i++) {
             adjList[i] = new ArrayList<>();
@@ -16,6 +19,7 @@ public class WtGraph {
         Edge e = new Edge(u, v, wt);
         adjList[u].add(e);
         adjList[v].add(e);
+        edges.add(e);
 
     }
     public ArrayList<Edge> adj(int u){
@@ -41,4 +45,8 @@ public class WtGraph {
             else return u;
         }
     }
+    public List<Edge> edges(){
+        return edges;
+    }
+
 }

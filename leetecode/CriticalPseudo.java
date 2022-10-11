@@ -16,7 +16,8 @@ class CriticalPseudo {
             sz++;
         }
         while (sz<V-1) {
-            if(exclude!=null && pqi==exclude) continue;
+            if(exclude!=null && pqi==exclude) pqi++;
+            if(include!=null && pqi==include) pqi++;
             int[] e = pqi>=edges.length ? null : edges[pqi++];
             // if it disconnects the graph
             if(e==null) return Integer.MAX_VALUE;
@@ -33,14 +34,19 @@ class CriticalPseudo {
     public List<List<Integer>> findCriticalAndPseudoCriticalEdges(int n, int[][] edges) {
         List<Integer> p = new ArrayList<>();
         List<Integer> c = new ArrayList<>();
+        Integer[] idx = new Integer[edges.length];
+        for (int i = 0; i < idx.length; i++) {
+            idx[i]=i;
+        }
+        Arrays.sort(idx,(a,b)->edges[a][2]-edges[b][2]);
         Arrays.sort(edges,(a,b)->Integer.compare(a[2], b[2]));
         int minC = mst(n, edges, null, null);
         for (int i = 0; i < edges.length; i++) {
             int mc = mst(n, edges, null, i);
-            if(mc>minC) p.add(i);
+            if(mc>minC) p.add(idx[i]);
             else {
                 int mc2 = mst(n, edges, i, null);
-                if(mc2==minC) c.add(i);
+                if(mc2==minC) c.add(idx[i]);
             }
         }
         List<List<Integer>> res = new ArrayList<>();
@@ -50,8 +56,10 @@ class CriticalPseudo {
     }
     public static void main(String[] args) {
         CriticalPseudo s = new CriticalPseudo();
-        int[][] edges = {{0,1,1},{1,2,1},{2,3,2},{0,3,2},{0,4,3},{3,4,3},{1,4,6}};
-        System.out.println(s.findCriticalAndPseudoCriticalEdges(5, edges));
+        // 6
+        // [[0,1,1],[1,2,1],[0,2,1],[2,3,4],[3,4,2],[3,5,2],[4,5,2]]
+        int[][] edges = {{0,1,1},{1,2,1},{0,2,1},{2,3,4},{3,4,2},{3,5,2},{4,5,2}};
+        System.out.println(s.findCriticalAndPseudoCriticalEdges(6, edges));
     }
 }
 class QuickUnionWt {

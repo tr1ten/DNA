@@ -27,7 +27,7 @@ class TreeNode {
     }
 
 }
-class Solution {
+class RandomWC {
     public int commonFactors(int a,int b){
         int cnt = 1;
         HashSet<Integer> hs = new HashSet<>();
