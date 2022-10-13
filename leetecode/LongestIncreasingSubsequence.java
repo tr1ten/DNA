@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 class LongestIncreasingSubsequence {
     int lower(List<Integer> dp,int val){
@@ -47,5 +48,20 @@ class LongestIncreasingSubsequence {
         int res = sol.lengthOfLIS(nums);
         System.out.println("res: " + res);
 
+    }
+}
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        TreeSet<Integer> ts = new TreeSet<>();
+        for (int i : nums) {
+            Integer c = ts.ceiling(i);
+            if(c==null) {
+                ts.add(i);
+                continue;
+            }
+            ts.remove(c);
+            ts.add(i);
+        }
+        return ts.size();       
     }
 }

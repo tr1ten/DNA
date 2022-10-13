@@ -1,6 +1,7 @@
 /* package codechef; // don't place package name! */
 
 import java.util.*;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.lang.*;
 import java.io.*;
 
@@ -117,32 +118,69 @@ static class FastReader {
 		FastReader s = new FastReader();
 		int n = s.nextInt();
 		while (n-- > 0) {
-			int A = s.nextInt();
-			int B = s.nextInt();
-			// take nth roots of A untill >=2 and store in array
-			HashSet<Double> hm = new HashSet<>();
-			int i = 1;
-			while (Math.pow(A*1.0, 1.0 / i) >= 2) {
-				hm.add(Math.pow(A, 1.0 / i));
-				i++;
+			int N = s.nextInt();
+			TreeMap<Integer, Integer> map = new TreeMap<>(Collections.reverseOrder());
+			for(int i = 0; i < N; i++) {
+				int x = s.nextInt();
+				if(map.containsKey(x)) {
+					map.put(x, map.get(x)+1);
+				}
+				else {
+					map.put(x, 1);
+				}
 			}
-			// take nth roots of B untill >=2 and store in array
-			i = 1;
-			boolean flag = false;
-			while (Math.pow(B*1.0, 1.0 / i) >= 2) {
-				if(hm.contains(Math.pow(B*1.0, 1.0 / i))){
-					System.out.println("YES");
-					flag = true;
-					break;
+			int i=0;
+			List<int[]> l = new ArrayList<int[]>();
+			while (map.firstKey()!=0 && i<3) {
+				// find triplet with min xor
+				int minXor = Integer.MAX_VALUE;
+				Integer[] arr = new Integer[N];
+				int p=0;
+				for(int key:map.keySet()){
+					int o=map.get(key);
+					for(int j=0;j<o;j++){
+						arr[p++]=key;
+					}
+				}
+				System.out.println(Arrays.toString(arr));
+				// find triplet with min xor
+				int a=0,b=0,c=0;
+				for (int j = 0; j < N-2; j++) {
+					int xor = arr[j] ^ arr[j+1] ^ arr[j+2];
+					if(xor < minXor) {
+						minXor = xor;
+						a = arr[j];
+						b = arr[j+1];
+						c = arr[j+2];
+					}
+				}
+				int[] t = {a,b,c};
+				l.add(t);
+				// decrease the value or delete it if zero
+				for (int f:t) {
+					if(map.get(f) == 1) {
+						map.remove(f);
+					}
+					else {
+						map.put(f, map.get(f)-1);
+					}
+				}
+				int[] xort = {a^b,a^c,b^c};
+				for (int f:xort) {
+					if(map.containsKey(f)) {
+						map.put(f, map.get(f)+1);
+					}
+					else {
+						map.put(f, 1);
+					}
 				}
 				i++;
 			}
-			if(A==1 && B==1){
-				System.out.println("YES");
-			}
-			else if(!flag){
-				System.out.println("NO");
+			System.out.println(l.size());
+			for (int[] is : l) {
+				System.out.println(is[0]+" "+is[1]+" "+is[2]);
 			}
 	}
 }
 }
+
