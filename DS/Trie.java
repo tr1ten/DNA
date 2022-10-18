@@ -1,3 +1,5 @@
+package DS;
+
 public class Trie {
     class Node{
         // child nodes 26
@@ -29,6 +31,15 @@ public class Trie {
         }
         child.isEnd = true;
     }
+    boolean _searchRec(Node node,int i,String word){
+        if(i>=word.length()) return node.isEnd;
+        int ind = word.charAt(i)-'a';
+        if(node.next[ind]==null) return false;
+        return _searchRec(node.next[ind], i+1, word);
+    }
+    boolean recSearch(String word){
+        return _searchRec(root, 0, word);
+    }
     boolean search(String word){
         Node child = this.root;
         for (int i = 0; i < word.length(); i++) {
@@ -46,15 +57,15 @@ public class Trie {
         t.insert("hello");
         t.insert("hell");
         t.insert("world");
-        assert t.search("hello");
-        assert t.search("hell");
-        assert t.search("world");
-        assert !t.search("helo");
-        assert !t.search("h");
-        assert !t.search("helloo");
-        assert !t.search("helloo");
-        assert !t.search("helloo");
-        assert !t.search("helloo");
+        assert t.recSearch("hello");
+        assert t.recSearch("hell");
+        assert t.recSearch("world");
+        assert !t.recSearch("helo");
+        assert !t.recSearch("h");
+        assert !t.recSearch("helloo");
+        assert !t.recSearch("helloo");
+        assert !t.recSearch("helloo");
+        assert !t.recSearch("helloo");
     }
 
 }
