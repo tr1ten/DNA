@@ -4,29 +4,29 @@ import java.util.TreeSet;
 
 // class Solution {
 //     Integer[] dp;
-//     int lower_bound(int array[], int key)
-//     {
+    // int lower_bound(int array[], int key)
+    // {
  
-//         int index = Arrays.binarySearch(array, key);
+    //     int index = Arrays.binarySearch(array, key);
  
-//         if (index < 0) {
+    //     if (index < 0) {
  
-//             return Math.abs(index) - 1;
-//         }
+    //         return Math.abs(index) - 1;
+    //     }
  
-//         else {
-//             while (index > 0) {
+    //     else {
+    //         while (index > 0) {
  
-//                 if (array[index - 1] == key)
-//                     index--;
+    //             if (array[index - 1] == key)
+    //                 index--;
  
-//                 else
-//                     return index;
-//             }
+    //             else
+    //                 return index;
+    //         }
  
-//             return index;
-//         }
-//     }
+    //         return index;
+    //     }
+    // }
 //     int solve(int ind,int[] days,int[] cost){
 //         if(ind>=days.length) return 0;
 //         if(dp[ind]!=null) return dp[ind];

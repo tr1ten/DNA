@@ -48,7 +48,7 @@ public class Sorting {
         }
         return max;
     }
-    static int min(int[] a){
+    static int min(int... a){
         int min = Integer.MAX_VALUE;
         for(int i=0;i<a.length;i++){
             if(a[i]<min)

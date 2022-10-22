@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import DS.TreeNode;
+
 class Solution {
     public boolean isCousins(TreeNode root, int x, int y) {
         Queue<TreeNode> q = new LinkedBlockingQueue<>();
