@@ -94,3 +94,4 @@ class TestMST {
         System.out.printf("Total weight: %.2f",sum);
     }
 }
+

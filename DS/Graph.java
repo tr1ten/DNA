@@ -21,6 +21,6 @@ public class Graph{
     public ArrayList<Integer> adj(int u){
         return adjList[u];
     }
-
+    public int V(){ return V;}
 
 }

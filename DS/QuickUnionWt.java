@@ -1,7 +1,5 @@
 package DS;
 
-import java.util.HashMap;
-
 public class QuickUnionWt {
     private int[] parent;   // parent[i] = parent of i
     private int[] size;     // size[i] = number of elements in subtree rooted at i
