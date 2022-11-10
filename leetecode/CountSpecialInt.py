@@ -1,12 +1,14 @@
 class Solution:
     def countSpecialNumbers(self, n: int) -> int:
         s = str(n)
+        # 10*d ~ log10(n)
         def mxd(d):
             if(d==0): return 0
             p = 1
             for i in range(0,d):
                 p *= (10-i-(1 if i==0 else 0))
             return p + mxd(d-1)
+        # log10(n)
         def solve(idx,visited):
             if(idx>=len(s)): return 1
             sb = int(s[idx])
