@@ -1,15 +1,7 @@
 package DS;
-
-import java.util.Arrays;
-import java.util.Queue;
-import java.util.Stack;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.*;
 
-enum Color{
-    WHITE,
-    GRAY,
-    BLACK   
-}
 class TestGraph {
     public static void main(String[] args) {
         // graph shown in clrs
@@ -37,6 +29,11 @@ class TestGraph {
         System.out.println(Arrays.toString(gt.colorOf));
 
     }
+}
+enum Color{
+    WHITE,
+    GRAY,
+    BLACK   
 }
 public class GraphTraversal {
     Color[] colorOf;
@@ -117,4 +114,3 @@ public class GraphTraversal {
     }
 
 }
-

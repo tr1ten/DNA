@@ -8,7 +8,6 @@ class CoinChange {
             for(int j=1;j<=amount;j++){
                 if(j<coins[i-1]) dp[i][j]=dp[i-1][j];
                 else{
-                    dp[i][j] = (int)Long.min(dp[i-1][j], (long)dp[i][j-coins[i-1]]+1);
                     if(dp[i-1][j]==Integer.MAX_VALUE && dp[i][j-coins[i-1]]==Integer.MAX_VALUE) dp[i][j]=Integer.MAX_VALUE;
                     else if(dp[i-1][j]==Integer.MAX_VALUE) dp[i][j]=dp[i][j-coins[i-1]]+1;
                     else if(dp[i][j-coins[i-1]]==Integer.MAX_VALUE) dp[i][j]=dp[i-1][j];
