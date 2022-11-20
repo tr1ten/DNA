@@ -3,10 +3,55 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <string>
 #include <stack>
+#include <algorithm>
 using namespace std;
-int findCloseParanthesis(const string exp,int start)
+// To-Do : Fix Bug in this code
+class Solution {
+public:
+    int evalRPN(vector<string> tokens)
 {
+    unordered_set<char> hm = {'+', '-', '/', '*'};
+    stack<int> q;
+    for (auto token : tokens)
+    {
+        if (token.size()==1 && hm.count(token.at(0)))
+        {
+            int second = q.top();
+            q.pop();
+            int first = q.top();
+            q.pop();
+            int result;
+            switch (token.at(0))
+            {
+            case '+':
+                result = first + second;
+                break;
+            case '-':
+                result = first - second;
+                break;
+            case '*':
+                result = first * second;
+                break;
+            case '/':
+                result = first / second;
+                break;
+
+            default:
+                break;
+            }
+            q.push(result);
+        }
+        else
+        {
+            q.push(atoi(token.c_str()));
+        }
+    }
+    return q.top();
+    }
+    int findCloseParanthesis(const string exp,int start)
+    {
     stack<char> st;
     st.push('(');
     for (int i = start; i < exp.size(); i++)
@@ -25,6 +70,7 @@ int findCloseParanthesis(const string exp,int start)
             }
         }
     }
+    return 0;
 }
 string infix2Postfix(string exp)
 {
@@ -99,8 +145,17 @@ string infix2Postfix(string exp)
     return postfixExp;
 }
 
-int main()
-{
-    cout << infix2Postfix("(1+1)*C") << endl;
-    return 0;
-}
+    int calculate(string s) {
+        s.erase(remove(s.begin(), s.end(), ' '), s.end());
+        string ps = infix2Postfix(s);
+        ps.erase(remove(ps.begin(), ps.end(), ' '), ps.end());
+        vector<string> v;
+        // push string character to vector
+        for (int i = 0; i < ps.size(); i++)
+        {
+            string s(1, ps[i]);
+            v.push_back(s);
+        }
+        return evalRPN(v);
+    }
+};

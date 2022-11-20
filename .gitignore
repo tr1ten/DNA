@@ -6,4 +6,4 @@
 cron.*
 .idea
 temp.*
-tempCodeRunnerFile.*
+temp*
