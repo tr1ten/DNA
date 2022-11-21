@@ -34,7 +34,7 @@ public class Trie {
     boolean _searchRec(Node node,int i,String word){
         if(i>=word.length()) return node.isEnd;
         int ind = word.charAt(i)-'a';
-        if(node.next[ind]==null) return false;
+        if(node.next[ind]==null) return  false;
         return _searchRec(node.next[ind], i+1, word);
     }
     boolean recSearch(String word){
