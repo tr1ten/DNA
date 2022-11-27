@@ -53,18 +53,17 @@ public class FunctionalDep {
             }
         }
         for (HashSet<Integer> skey : superKeySet) {
-            // After removing a single attribute from a super key, if the remaining attributes are not a super key, then the removed attribute is a candidate key.
-            for (int i = 0; i < n; i++) {
-                if(skey.contains(i)){
-                    HashSet<Integer> temp = new HashSet<>(skey);
-                    temp.remove(i);
-                    if(!superKeySet.contains(temp)){
-                        candidaSet.add(skey);
-
-                    }
+            // if it candidate key then removing any of its attribute will make it non super key.
+            boolean flag = true;
+            for(int k:skey){
+                HashSet<Integer> temp = (HashSet<Integer>)skey.clone();
+                temp.remove(k);
+                if(superKeySet.contains(temp)){
+                    flag = false;
                     break;
-                }
+                }    
             }
+            if(flag) candidaSet.add(skey);
         }
     }
 

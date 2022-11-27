@@ -1,7 +1,6 @@
 /* package codechef; // don't place package name! */
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.lang.*;
 import java.io.*;
 
@@ -113,74 +112,32 @@ static class FastReader {
 			return str;
 		}
 	}
+	static int gcd(int a, int b)
+    {
+        return (a % b == 0) ?
+                Math.abs(b) : gcd(b,a%b);
+    }
+     
+    // This function checks if integral
+    // solutions are possible
+    static boolean isPossible(int a,
+                            int b, int c)
+    {
+        return (c % gcd(a, b) == 0);
+    }
 	public static void main(String[] args)
 	{
 		FastReader s = new FastReader();
 		int n = s.nextInt();
 		while (n-- > 0) {
 			int N = s.nextInt();
-			TreeMap<Integer, Integer> map = new TreeMap<>(Collections.reverseOrder());
-			for(int i = 0; i < N; i++) {
-				int x = s.nextInt();
-				if(map.containsKey(x)) {
-					map.put(x, map.get(x)+1);
-				}
-				else {
-					map.put(x, 1);
-				}
-			}
-			int i=0;
-			List<int[]> l = new ArrayList<int[]>();
-			while (map.firstKey()!=0 && i<3) {
-				// find triplet with min xor
-				int minXor = Integer.MAX_VALUE;
-				Integer[] arr = new Integer[N];
-				int p=0;
-				for(int key:map.keySet()){
-					int o=map.get(key);
-					for(int j=0;j<o;j++){
-						arr[p++]=key;
-					}
-				}
-				System.out.println(Arrays.toString(arr));
-				// find triplet with min xor
-				int a=0,b=0,c=0;
-				for (int j = 0; j < N-2; j++) {
-					int xor = arr[j] ^ arr[j+1] ^ arr[j+2];
-					if(xor < minXor) {
-						minXor = xor;
-						a = arr[j];
-						b = arr[j+1];
-						c = arr[j+2];
-					}
-				}
-				int[] t = {a,b,c};
-				l.add(t);
-				// decrease the value or delete it if zero
-				for (int f:t) {
-					if(map.get(f) == 1) {
-						map.remove(f);
-					}
-					else {
-						map.put(f, map.get(f)-1);
-					}
-				}
-				int[] xort = {a^b,a^c,b^c};
-				for (int f:xort) {
-					if(map.containsKey(f)) {
-						map.put(f, map.get(f)+1);
-					}
-					else {
-						map.put(f, 1);
-					}
-				}
-				i++;
-			}
-			System.out.println(l.size());
-			for (int[] is : l) {
-				System.out.println(is[0]+" "+is[1]+" "+is[2]);
-			}
+			int M = s.nextInt();
+			int K = s.nextInt();
+			if(isPossible(N,M,K))
+				System.out.println("Yes");
+			else
+				System.out.println("No");
+			
 	}
 }
 }
-

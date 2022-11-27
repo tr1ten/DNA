@@ -7,3 +7,5 @@ cron.*
 .idea
 temp.*
 temp*
+tempCodeRunnerFile.*
+leetecode/tempCodeRunnerFile.py
