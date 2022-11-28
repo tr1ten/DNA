@@ -14,19 +14,6 @@ public class PrintingLCS {
         }
         int i = text1.length();
         int j = text2.length();
-        // print dp with text1 chars
-        System.out.print("  ");
-        for (int k = 0; k < text2.length(); k++) {
-            System.out.print(text2.charAt(k)+" ");
-        }
-        System.out.println();
-        for (int k = 1; k < dp.length; k++) {
-            if(k!=0) System.out.print(text1.charAt(k-1)+" ");
-            for (int l = 1; l < dp[0].length; l++) {
-                System.out.print(dp[k][l]+" ");
-            }
-            System.out.println();
-        }
         StringBuilder sb = new StringBuilder();
         while (i>0 && j>0) {
             if(text1.charAt(i-1)==text2.charAt(j-1)){
