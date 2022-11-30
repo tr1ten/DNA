@@ -1,3 +1,4 @@
+package Algos;
 
 class Solution
 {

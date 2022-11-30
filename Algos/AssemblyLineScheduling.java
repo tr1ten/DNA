@@ -1,3 +1,4 @@
+package Algos;
 class Solution {
     public static int carAssembly(int n, int[][] a, int[][] T, int[] e, int[] x) {
             int N=2; // number of stations

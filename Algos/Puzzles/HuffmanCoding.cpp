@@ -137,7 +137,7 @@ public:
         {
             return a->prob > b->prob;
         };
-        vector<TreeNode *> sps;
+        vector<TreeNode *> sps; // should use priority queue but stupid old me!
         for (auto iter : symbolProbs)
         {
             sps.push_back(new TreeNode(iter.second, iter.first));

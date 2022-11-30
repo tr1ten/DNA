@@ -1,3 +1,4 @@
+package Algos;
 class Solution{
     static String print(int[][] bt,int i,int j){
         if(j-i<=1) return Character.toString((char)('A'+j-1));

@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import Algos.Solution;
+
 class Solution {
     List<TreeNode>[] dp = new List[20];
     public List<TreeNode> allPossibleFBT(int n) {
