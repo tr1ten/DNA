@@ -26,7 +26,7 @@ class PrimsMST implements MST {
             Edge e = pq.poll();
             int v = e.either();
             int u = e.other(v);
-            if(marked[v] && marked[u]) continue;
+            if(marked[v] && marked[u]) continue; // since we don't have decrease key in pq, we have to check if other vertex is marked
             q.add(e);
             if(!marked[u]) visit(g, u);
             if(!marked[v]) visit(g, v);

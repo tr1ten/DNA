@@ -3,7 +3,7 @@ import java.util.Stack;
 
 import TreeNode;
 
-class TreeNode {
+public class TreeNode {
          int val;
          TreeNode left;
          TreeNode right;
