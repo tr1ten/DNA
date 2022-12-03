@@ -17,14 +17,14 @@ class TestGraph {
         g.addEdge(6, 7);
         GraphTraversal gt = new GraphTraversal(8);
         gt.bfs(g,1);
-        System.out.println(Arrays.toString(gt.distTo));
+        System.out.println(Arrays.toString(gt.startTime));
         System.out.println(Arrays.toString(gt.parentTo));
         System.out.println(Arrays.toString(gt.colorOf));
         gt = new GraphTraversal(8);
         gt.dfs(g);
         
         System.out.println("-- DFS --");
-        System.out.println(Arrays.toString(gt.distTo));
+        System.out.println(Arrays.toString(gt.startTime));
         System.out.println(Arrays.toString(gt.parentTo));
         System.out.println(Arrays.toString(gt.colorOf));
 
@@ -38,22 +38,22 @@ enum Color{
 public class GraphTraversal {
     Color[] colorOf;
     int[] parentTo;
-    public int[] distTo;
+    public int[] startTime;
     int V;
     GraphTraversal(int V){
         this.V = V;
         colorOf = new Color[V];
         parentTo = new int[V];
-        distTo = new int[V];
-        finalDistTo = new int[V];
+        startTime = new int[V];
+        endTime = new int[V];
         for (int i = 0; i < V; i++) {
             colorOf[i] = Color.WHITE;
-            distTo[i] = Integer.MAX_VALUE;
+            startTime[i] = Integer.MAX_VALUE;
         }
     }
     public void bfs(Graph g,int s){
         colorOf[s] = Color.GRAY;
-        distTo[s] = 0;
+        startTime[s] = 0;
         Queue<Integer> q = new LinkedBlockingQueue<>();
         q.add(s);
         while (!q.isEmpty()) {
@@ -61,7 +61,7 @@ public class GraphTraversal {
             for (Integer v:g.adj(u)) {
                 if(colorOf[v]==Color.WHITE){
                     colorOf[v] = Color.GRAY;
-                    distTo[v] = distTo[u] + 1;
+                    startTime[v] = startTime[u] + 1;
                     parentTo[v] = u;
                     q.add(v);
                 }
@@ -70,10 +70,10 @@ public class GraphTraversal {
         }
     }
     int time = 0;
-    int[] finalDistTo;
+    int[] endTime;
     private void _viist(Graph g,int u){
         time +=1;
-        distTo[u] = time;
+        startTime[u] = time;
         colorOf[u] = Color.GRAY;
         for (int v:g.adj(u)) {
             if(colorOf[v]==Color.WHITE) {
@@ -82,7 +82,7 @@ public class GraphTraversal {
             }
         }
         colorOf[u] = Color.BLACK;
-        finalDistTo[u] = ++time;
+        endTime[u] = ++time;
     }
     public void dfs(Graph g){
         time = 0;
@@ -101,7 +101,7 @@ public class GraphTraversal {
             int u = st.pop();
             if(colorOf[u]!=Color.WHITE) continue;
             colorOf[u] = Color.GRAY;
-            distTo[u] = ++time;
+            startTime[u] = ++time;
             for (int v:g.adj(u)) {
                 if(colorOf[v]==Color.WHITE) {
                     parentTo[v] = u;
@@ -109,7 +109,7 @@ public class GraphTraversal {
                 }
             }
             colorOf[u] = Color.BLACK;
-            finalDistTo[u] = ++time;
+            endTime[u] = ++time;
         }
     }
 

@@ -1,17 +1,19 @@
-package Algos;
-
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
+import DS.IndexMinPQ;
 import DS.LinkUnionFind;
 import DS.WtGraph;
-import DS.WtGraph.Edge;
+import DS.WtGraph.Edge;;
 interface MST{
     Iterable<Edge> mst();
 }
 /**
  * PrimMST -Prims similar to kruskal 
+ * Good for Dense Graph
+ * TC - O(ElogV)
  */
 class PrimsMST implements MST {
     boolean[] marked;
@@ -45,6 +47,8 @@ class PrimsMST implements MST {
 }
 /*
  * Kruskal - Sort the edges, add to mst if doesn't create cycle until V-1
+ * Good for Sparse graph
+ * TC - O(ElogE)
  */
 class KruskalMST implements MST{
     PriorityQueue<Edge> pq;
@@ -68,6 +72,36 @@ class KruskalMST implements MST{
         return q;
     }
 }
+class PrimsMSTIPQ implements MST{
+    IndexMinPQ<Edge> ipq;
+    Queue<Edge> mst;
+    PrimsMSTIPQ(WtGraph g){
+        ipq =  new IndexMinPQ<>(g.V);
+        mst = new LinkedBlockingQueue<>();
+        for(int i=1;i<g.V;i++){
+            ipq.insert(i,g.new Edge(i, i, Double.POSITIVE_INFINITY));
+        }
+        visit(0, g);
+        while(mst.size()<g.V-1) {
+            int u = ipq.minIndex();
+            Edge ed = ipq.keyOf(u);
+            ipq.delMin();
+            visit(u, g);
+            mst.add(ed);
+        }
+    }
+    void visit(int u,WtGraph g){
+        for(Edge ed:g.adj(u)){
+            int v = ed.other(u);
+            if(!ipq.contains(v)) continue;
+            else if(ipq.keyOf(v).wt()>ed.wt()) ipq.decreaseKey(v,ed);
+        }
+    }
+    @Override
+    public Iterable<Edge> mst() {
+        return mst;
+    }
+}
 // test mst
 
 class TestMST {
@@ -85,12 +119,13 @@ class TestMST {
         g.addEdge(4, 7, 0.37);
         g.addEdge(5, 7, 0.28);
         g.addEdge(6, 7, 0.19);
-        MST mst = new KruskalMST(g);
+        MST mst = new PrimsMSTIPQ(g);
         double sum = 0;
         for (Edge e : mst.mst()) {
             System.out.println(e.either()+" "+e.other(e.either())+" "+e.wt());
             sum+=e.wt();
         }
+        // 1.73
         System.out.printf("Total weight: %.2f",sum);
     }
 }

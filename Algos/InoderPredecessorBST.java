@@ -1,9 +1,6 @@
-package Algos;
 import java.util.Stack;
 
-import TreeNode;
-
-public class TreeNode {
+class TreeNode {
          int val;
          TreeNode left;
          TreeNode right;

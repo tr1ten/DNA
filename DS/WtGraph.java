@@ -25,10 +25,10 @@ public class WtGraph {
     public ArrayList<Edge> adj(int u){
         return adjList[u];
     }
-    public class Edge{
+    public class Edge implements Comparable<Edge>{
         int u,v;
         double wt;
-        Edge(int u,int v,double wt){
+        public Edge(int u,int v,double wt){
             this.u = u;
             this.v = v;
             this.wt = wt;
@@ -43,6 +43,10 @@ public class WtGraph {
         public int other(int x){
             if(x==u) return v;
             else return u;
+        }
+        @Override
+        public int compareTo(Edge v) {
+            return Double.compare(this.wt(), v.wt());
         }
     }
     public List<Edge> edges(){
