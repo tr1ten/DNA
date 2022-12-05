@@ -14,7 +14,7 @@ class Solution {
             // if outdated value 
             if(distTo[u]<d) continue;
             for (int[] ed:graph[u]) {
-                int v = (int) ed[0];
+                int v = ed[0];
                 int dis = ed[1];
                 if(distTo[v]>dis + distTo[u]) {
                     distTo[v] = (dis+distTo[u]);

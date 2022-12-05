@@ -80,7 +80,7 @@ int *heapSort(int *arr, int n)
 int main(int argc, char const *argv[])
 {
     // test heap sort with random array
-    int n = 199;
+    int n = 20;
     int arr[n];
     for (int i = 0; i < n; i++)
     {

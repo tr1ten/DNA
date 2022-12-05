@@ -1,53 +1,58 @@
 package DS;
 
-class Solution {
-    int bfs(int u,List<Integer>[] adj){
-        Queue<Integer> q = new LinkedList<>();
-        q.add(u);
-        int l=0;
-        boolean[] vis = new boolean[adj.length];
-        vis[u] = true;
-        while(!q.isEmpty()){
-            int sz = q.size();
-            boolean[] temp = new boolean[adj.length];
-            while(sz-->0){
-                int v = q.poll();
-                temp[v] = true;
-                for(int x:adj[v]){
-                    if(temp[x]) return -1;
-                    if(!vis[x]){
-                        vis[x] = true;
-                        q.add(x);
-                    }
-                }
-            }
-            l++;
-        }
-        return l;
-    }
-    public int magnificentSets(int n, int[][] edges) {
-        List<Integer>[] adj = new ArrayList[n];
-        for (int i = 0; i < n; i++) {
-            adj[i] = new ArrayList<>();
-        }
-        QuickUnionWt q = new QuickUnionWt(n);
-        for (int[] e : edges) {
+public class QuickUnionWt {
+    private int[] parent;   // parent[i] = parent of i
+    private int[] size;     // size[i] = number of elements in subtree rooted at i
+    private int count;      // number of components
 
-            adj[e[0]-1].add(e[1]-1);
-            adj[e[1]-1].add(e[0]-1);
-            q.union(e[0]-1, e[1]-1);
-        }
-        HashMap<Integer, Integer> map = new HashMap<>();
+    public QuickUnionWt(int n) {
+        count = n;
+        parent = new int[n];
+        size = new int[n];
         for (int i = 0; i < n; i++) {
-            int p = q.find(i);
-            int k = bfs(i,adj);
-            if(k<0) return -1;
-            map.put(p, Math.max(map.getOrDefault(p, 0),k));
+            parent[i] = i;
+            size[i] = 1;
         }
-        return map.values().stream().mapToInt(x->x).sum();
-        
-
     }
+    public int count() {
+        return count;
+    }
+
+    public int find(int p) {
+        validate(p);
+        while (p != parent[p])
+            p = parent[p];
+        return p;
+    }
+    public boolean connected(int p, int q) {
+        return find(p) == find(q);
+    }
+
+    // validate that p is a valid index
+    private void validate(int p) {
+        int n = parent.length;
+        if (p < 0 || p >= n) {
+            throw new IllegalArgumentException("index " + p + " is not between 0 and " + (n-1));  
+        }
+    }
+
+    public void union(int p, int q) {
+        int rootP = find(p);
+        int rootQ = find(q);
+        if (rootP == rootQ) return;
+
+        // make smaller root point to larger one
+        if (size[rootP] < size[rootQ]) {
+            parent[rootP] = rootQ;
+            size[rootQ] += size[rootP];
+        }
+        else {
+            parent[rootQ] = rootP;
+            size[rootP] += size[rootQ];
+        }
+        count--;
+    }
+
 }
 
 // Generic Implementation
