@@ -1,5 +1,7 @@
 package Algos;
 
+import java.util.PriorityQueue;
+
 class Solution
 {
     //Function to get the maximum total value in the knapsack.
