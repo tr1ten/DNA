@@ -182,3 +182,10 @@ def next_greater(sc, value):
     if i >= len(sc):
         return None
     return sc[i]
+
+
+import math
+def euclidean_distance(p1, p2):
+    return math.sqrt(sum([(a - b) ** 2 for a, b in zip(p1, p2)]))
+
+euclidean_distance([1,2], [4,5]) # 4.242640687119285
