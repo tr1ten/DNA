@@ -47,7 +47,7 @@ int partition(vector<int> &arr,int l,int r)
         }
 
     }
-    // i is the last element smaller than pivot
+    // j is the last element smaller than pivot
     swap(arr,j+1,r);
     return j+1;
     
