@@ -21,7 +21,7 @@ counter.get(10,0)
 import heapq
 grades = [110, 25, 38, 49, 20, 95, 33, 87, 80, 90]
 heapq.heapify(grades)
-heapq.heappush()
+heapq.heappush(grades,10)
 print(heapq.nlargest(3, grades)) # [110, 95, 90]
 print(heapq.nsmallest(4, grades)) # [20, 25, 33, 38]
 
@@ -40,7 +40,7 @@ next(iter(st)) # return 3 without removal
 st.pop() # returns 3
 s = set('abc') # {'c', 'a', 'b'}
 s |= set('cdf') # {'f', 'a', 'b', 'd', 'c'} union
-s &= set('bd') # {'d', 'b'} intersection
+s &= set('bd') # {'d', 'b'}
 s -= set('b') # {'d'} elements in s but not in set('b'), difference
 s ^= set('abd') # {'a', 'b'} elements from s or new but not both, (A^B)-(AvB) symmetric difference
 
@@ -51,10 +51,9 @@ q = deque()
 q.append(1) # Add to q (Queue)
 q.popleft() # Remove from q (Queue)
 q[0] # Peek from q (Queue)
-q.appendleft(3) # Add to q in front (Stack)
+q.appendleft(3) # Add to q in front
 q.pop() # Remove from q in back (Stack)
 q[-1] # Peek from q in back (Stack)
-
 
 # Hashmap in python
 
