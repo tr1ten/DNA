@@ -1,11 +1,4 @@
-package Algos;
-
-import java.util.Arrays;
-
-/**
- * LPS - O(N)
- */
-public class Manchers {
+class Solution {
     static int[] manchersOdd(String s){
         int n = s.length();
         s = "$" + s + "&"; // no need to check for edge case now
@@ -34,22 +27,26 @@ public class Manchers {
         int[] d = manchersOdd(sb.toString());
         return d;        
     }
-    static public String longestPalindrome(String s) {
-        int len = 0;
-        int center = -1;
+    public String shortestPalindrome(String s) {
+        if(s.length()==0) return "";
         int[] p = manchers(s);
+        int center = -1;
+        int len = 0;
         for (int i = 0; i < p.length; i++) {
-            if(p[i]>len){
+            if(p[i]>len && i-p[i]<0){
                 center = i;
                 len = p[i];
             }
         }
-        return s.substring((center+1-len)>>1,(center+len)>>1);
-    }
-    
-    public static void main(String[] args) {
-        String s = "ababa";
-        System.out.println(longestPalindrome(s));
-    }
+        // System.out.println(Arrays.toString(p)+ " " +center +" " + len);
+        StringBuilder sb = new StringBuilder(s).reverse();
+        int left = s.length()-((center+len+1)/2);
+        while (left>=0) {
+            sb.append(sb.charAt(left));
+            left--;
+        }
+        return sb.toString();
+        
 
+    }
 }
