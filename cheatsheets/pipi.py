@@ -188,3 +188,7 @@ def euclidean_distance(p1, p2):
     return math.sqrt(sum([(a - b) ** 2 for a, b in zip(p1, p2)]))
 
 euclidean_distance([1,2], [4,5]) # 4.242640687119285
+
+from itertools import accumulate
+acc = accumulate([1,2,3,4,5]) # 1, 3, 6, 10, 15
+print(list(acc)) # [1, 3, 6, 10, 15]
