@@ -192,3 +192,12 @@ euclidean_distance([1,2], [4,5]) # 4.242640687119285
 from itertools import accumulate
 acc = accumulate([1,2,3,4,5]) # 1, 3, 6, 10, 15
 print(list(acc)) # [1, 3, 6, 10, 15]
+
+from functools import cmp_to_key
+
+def cmp(a, b):
+    return b-a
+
+arr = [1,2,3,4,5]
+arr.sort(key=cmp_to_key(cmp)) # [5, 4, 3, 2, 1]
+
