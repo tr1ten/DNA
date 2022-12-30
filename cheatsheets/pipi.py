@@ -200,4 +200,5 @@ def cmp(a, b):
 
 arr = [1,2,3,4,5]
 arr.sort(key=cmp_to_key(cmp)) # [5, 4, 3, 2, 1]
+arr
 

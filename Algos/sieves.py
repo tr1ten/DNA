@@ -39,6 +39,3 @@ p = getFactorization(x)
 
 for i in range(len(p)):
 	print(p[i], end = " ")
-
-# This code is contributed
-# by Mohit kumar 29

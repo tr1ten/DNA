@@ -1,0 +1,13 @@
+class Solution:
+    def magicalString(self, n: int) -> int:
+        def invert(x):
+            return 1 if x==2 else 2
+        last = 2
+        s = [1,2,2]
+        p = 2
+        while(len(s)<n):
+            last = invert(last)
+            s.extend([last]*(s[p]))
+            p +=1
+        if(len(s)>n): s.pop()
+        return s.count(1)
