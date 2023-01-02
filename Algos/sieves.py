@@ -30,7 +30,7 @@ def getFactorization(x):
 
 # precalculating Smallest Prime Factor
 sieve()
-x = 12246
+x = 11
 print("prime factorization for", x, ": ",
 								end = "")
 

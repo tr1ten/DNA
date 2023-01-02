@@ -202,3 +202,9 @@ arr = [1,2,3,4,5]
 arr.sort(key=cmp_to_key(cmp)) # [5, 4, 3, 2, 1]
 arr
 
+# reduce 
+import functools
+s = "AbC"
+functools.reduce(lambda acc,x:acc+1 if(x.isupper()) else acc,s,0)
+
+
