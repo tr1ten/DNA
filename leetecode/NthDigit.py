@@ -3,7 +3,7 @@ class Solution:
         base = 1
         i = 1
         while(True):
-            temp = base+9*(10**(i-1))*(i)
+            temp = base+9*(10**(i-1))*(i)   
             if(temp>n):
                 break
             base = temp
