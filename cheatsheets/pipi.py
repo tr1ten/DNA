@@ -48,6 +48,7 @@ s ^= set('abd') # {'a', 'b'} elements from s or new but not both, (A^B)-(AvB) sy
 # Queue & Stack in python
 from collections import deque
 q = deque()
+q.si
 q.append(1) # Add to q (Queue)
 q.popleft() # Remove from q (Queue)
 q[0] # Peek from q (Queue)
@@ -104,7 +105,7 @@ import bisect
 ls = [1,2,2,5,6,10,10]
 bisect.bisect_left(ls, 2)  # 1
 bisect.bisect_left(ls, 7)  # 5
-bisect.bisect_right(ls, 7) # 5
+bisect.bisect_right(ls, 7,) # 5
 
 # pow(a,b,m) - returns a^b mod m
 d = pow(2, 3, 5) # 3
@@ -208,3 +209,9 @@ s = "AbC"
 functools.reduce(lambda acc,x:acc+1 if(x.isupper()) else acc,s,0)
 
 
+# reverse array from i to j
+def reverse(arr, i, j):
+    while i < j:
+        arr[i], arr[j] = arr[j], arr[i]
+        i += 1
+        j -= 1
