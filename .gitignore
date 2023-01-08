@@ -1,4 +1,10 @@
+# broader first
+*
+!/**/
+!*.*
+# then more specific
 .vscode
+.metals
 *.class
 *.log
 *.pyc
@@ -8,3 +14,4 @@ cron.*
 temp.*
 *temp*
 tempCodeRunnerFile.*
+# everything except .py files

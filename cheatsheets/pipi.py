@@ -44,7 +44,8 @@ s &= set('bd') # {'d', 'b'}
 s -= set('b') # {'d'} elements in s but not in set('b'), difference
 s ^= set('abd') # {'a', 'b'} elements from s or new but not both, (A^B)-(AvB) symmetric difference
 
-
+import string
+string.ascii_lowercase
 # Queue & Stack in python
 from collections import deque
 q = deque()
