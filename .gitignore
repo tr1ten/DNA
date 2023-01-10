@@ -14,4 +14,4 @@ cron.*
 temp.*
 *temp*
 tempCodeRunnerFile.*
-# everything except .py files
+input.txt
