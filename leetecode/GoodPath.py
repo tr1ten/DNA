@@ -17,7 +17,7 @@ class Solution:
             cnt = defaultdict(int)
             for u in sd[v]:
                 cnt[uf.find(u)] +=1
-            for k,v in cnt.items:
+            for k,v in cnt.items():
                 res += v*(v-1)//2;
         return res;
             
