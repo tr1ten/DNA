@@ -9,7 +9,6 @@
 *.log
 *.pyc
 *.exe
-cron.*
 .idea
 temp.*
 *temp*

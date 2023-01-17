@@ -20,8 +20,15 @@ class FenwickTree:
         return self._rangeSum(j) - self._rangeSum(i-1)
 
 if __name__ == '__main__':
-    nums = [1,2,3,4,5,6,7,8,9,10]
+    m, n = map(int, input().split())
+    nums = list(map(int, input().split()))
     ft = FenwickTree(nums)
-    for i in range(len(nums)):
-        ft.update(i, nums[i])
-    print(ft.rangeSum(2,2))
+    for x in range(m):
+        ft.update(x, nums[x])
+    for i in range(n):
+        a, b, c = map(int, input().split())
+        if a == 1:
+            ft.update(b-1, c-nums[b-1])
+            nums[b-1] = c
+        else:
+            print(ft.rangeSum(b-1, c-1))
