@@ -18,7 +18,7 @@ class Solution:
             return A
         for r1,c1,r2,c2 in queries:
            for r in range(r1,r2+1):
-               update(df[r],c1,c2,1)
+               update(df[r],c1,c2,1     )
         return [printArray([0]*n,df[i])  for i in range(n)]
         
         
