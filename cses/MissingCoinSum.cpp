@@ -26,16 +26,16 @@ const LL MOD = 1e9+7;
 const int INF = 1e8+5;
 
 // actual solutions 
-size_t solve(size_t n,VI &coins){
+LL solve(LL n,VI &coins){
     sort_vec(coins);
     LL sm = 0;
-    LL tar = 1;
+    LL tar = 1; // the next target for answer
     trav(x,coins){
         sm += x;
-        if(x==tar || sm==tar) tar = sm+1;
+        if(x<=tar) tar = sm+1;
         else return tar;
     }
-    return n;
+    return tar;
 }
 
 // driver code
