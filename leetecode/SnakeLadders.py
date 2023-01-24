@@ -1,3 +1,4 @@
+import collections
 from queue import Queue
 class Solution:
     def snakesAndLadders(self, board: List[List[int]]) -> int:
@@ -9,12 +10,12 @@ class Solution:
                 x = n-x-1
             return (x,n-y-1);
 
-        q = Queue(n*n)
-        q.put((0,0))
+        q = collections.deque() # queue doesn't work for some reason
+        q.append((0,0))
         visited = [False]*(n*n)
         visited[0] = True
         while(q):
-            curr,step = q.get()
+            curr,step = q.popleft()
             x,y = posToXY(curr)
             if(board[y][x]!=-1):
                 curr = board[y][x]-1
@@ -23,7 +24,7 @@ class Solution:
             for nxt in range(curr + 1, min(curr + 6, n*n-1)+1):
                 if(visited[nxt]): continue
                 visited[nxt] = True
-                q.put((nxt,step+1))
+                q.append((nxt,step+1))
         return -1
 
                 

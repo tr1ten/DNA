@@ -190,7 +190,7 @@ class Graph(object):
 graph = Graph()
 
 # You do not need to change anything below this line.
-# You only need to implement Graph.dfs_helper and Graph.bfs
+# You only need to implement Graph.dfs_helper and Graph.
 
 graph.set_node_names(('Mountain View',   # 0
                       'San Francisco',   # 1
