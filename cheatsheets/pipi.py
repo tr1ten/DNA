@@ -127,6 +127,10 @@ random.randrange(0,2) # 0,1
 
 
 # Common operations -----------------------------------------------------------
+s = "1"
+s.isdigit()
+s.isalnum()
+s.isnumeric
 # ternary operator
 print("yes") if True else print("no") # yes
 
