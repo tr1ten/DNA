@@ -106,7 +106,7 @@ import bisect
 ls = [1,2,2,5,6,10,10]
 bisect.bisect_left(ls, 2)  # 1
 bisect.bisect_left(ls, 7)  # 5
-bisect.bisect_right(ls, 7,) # 5
+bisect.bisect_right(ls, 2,) # 3 
 
 # pow(a,b,m) - returns a^b mod m
 d = pow(2, 3, 5) # 3
