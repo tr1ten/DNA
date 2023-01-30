@@ -9,7 +9,6 @@ void printTurnaroundTime(vector<vector<int>> &process, int n, vector<int> &compl
 {
     vector<int> turnaround(n,0);
     vector<int> waiting(n,0);
-
     // calculate turnaround and waiting time
     for(int i=0;i<n;i++){
         turnaround[i] = completion[i] - process[i][0];
