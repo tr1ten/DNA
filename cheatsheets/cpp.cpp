@@ -26,7 +26,6 @@ template<class K,class V> using ht = gp_hash_table<
 int main() {
 	ht<int,null_type> g; g.resize(5);
     g.insert(1);
-    g[1] = 2;
 	cout << g.get_actual_size() << "\n"; // 8
 	cout << g.size() << "\n"; // 0
 }
