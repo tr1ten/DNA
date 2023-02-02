@@ -7,7 +7,7 @@ using namespace std;
 typedef long long LL;
 typedef vector<LL> VI;
 typedef vector<VI> VII;
-typedef pair<int, int> PI;
+typedef pair<LL, LL> PI;
 #define PB push_back
 #define MP make_pair
 #define F first
@@ -24,7 +24,7 @@ typedef pair<int, int> PI;
 #define take_vec(vec, sz) FOR(i, 0, sz) cin >> vec[i]
 #define sort_vec(vec) sort(vec.begin(), vec.end())
 const LL MOD = 1e9 + 7;
-const int INF = 1e8 + 5;
+const LL INF = 1e10 + 5;
 
 // actual solutions
 void solve(int n, vector<PI> vec)
@@ -46,19 +46,17 @@ void solve(int n, vector<PI> vec)
     {
         stack<LL> st;
         LL end = (vec[sorted[i]].second); // push current end
-        while (i < n and vec[sorted[i]].second <= end)
-        {
-            if (st.empty()) {st.push(i++); continue;}
-            if(vec[sorted[i]].second<=vec[sorted[st.top()]].second) containsOther[sorted[st.top()]]=true;
-            else st.pop();
-            insideOther[sorted[i]] = true;
+        while (i < n and vec[sorted[i]].first <= end) {
+            end = max(end,vec[sorted[i]].second);
             st.push(i++);
         }
-        // while (st.size()>1) {
-        //     insideOther[sorted[st.top()]]=true;
-        //     st.pop();
-        //     if(!st.empty()) containsOther[sorted[st.top()]]=true;
-        // }
+        LL e=INF;
+        while (st.size()>1) {
+            if(vec[sorted[st.top()]].second<=end) insideOther[sorted[st.top()]]=true;
+            e = min(vec[sorted[st.top()]].second,e);
+            st.pop();
+            if(!st.empty() and vec[sorted[st.top()]].second>=e) containsOther[sorted[st.top()]]=true;
+        }
         
     }
     FOR(i,0,n){cout << containsOther[i] << " ";}
