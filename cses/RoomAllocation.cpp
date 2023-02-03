@@ -26,49 +26,6 @@ typedef pair<LL, LL> PI;
 const LL MOD = 1e9 + 7;
 const LL INF = 1e10 + 5;
 
-class FenwickTree
-{
-public:
-    FenwickTree(vector<long long> nums)
-    {
-        tree = vector<long long>(nums.size() + 1);
-    }
-    FenwickTree(int N)
-    {
-        tree = vector<long long>(N + 1);
-    }
-    void clear(){
-        fill(tree.begin(),tree.end(),0);
-    }
-    void update(int i, int diff)
-    {
-        i += 1;
-        while (i < tree.size())
-        {
-            tree[i] += diff;
-            i += i & (-i);
-        }
-    }
-
-    long long _rangeSum(int i)
-    {
-        i += 1;
-        long long sum = 0;
-        while (i > 0)
-        {
-            sum += tree[i];
-            i -= i & (-i);
-        }
-        return sum;
-    }
-
-    long long rangeSum(int i, int j)
-    {
-        return _rangeSum(j) - _rangeSum(i - 1);
-    }
-
-    vector<long long> tree;
-};
 struct Interval{
     int start, end, index;
     bool operator<(const Interval &other) const
@@ -83,49 +40,37 @@ struct Interval{
 void solve(int n, vector<Interval> &vec)
 {
 
-    vector<LL> containsOther(n);
-    vector<LL> insideOther(n);
-    sort_vec(vec);
+    vector<LL> allocatedRooms(n);
     vector<PI> starts; // 
     vector<PI> ends; // 
     FOR(i, 0, n)
     {
         starts.push_back({vec[i].start , i});
-        ends.push_back({vec[i].end, -i});
+        ends.push_back({vec[i].end, i});
     }
     sort_vec(starts);
     sort_vec(ends);
-    unordered_map<int, int> startIndex;
-    FenwickTree tree(n);
     int i=0,j=0;
-    while (i<n || j<n) {
-        if(i<n && starts[i].first<ends[j].first ){
-            tree.update(i,1);
+    int id=1;
+    stack<int> availableRooms;
+    while(i<n || j<n){
+        if(i<n && starts[i].first<=ends[j].first){
+            if(availableRooms.empty()){
+                availableRooms.push(id++);
+            }
+            allocatedRooms[starts[i].second] = availableRooms.top();
+            availableRooms.pop();
             i++;
         }
         else{
-            int si = -ends[j].second;
-            tree.update(si,-1);
-            insideOther[vec[si].index]= tree.rangeSum(0,si);        
+            availableRooms.push(allocatedRooms[ends[j].second]);
             j++;
         }
     }
-    i=0,j=0;
-    tree.clear();
-    while (i<n || j<n) {
-        if(i<n && starts[i].first<ends[j].first ){
-            i++;
-        }
-        else{
-            int si = -ends[j].second;
-            tree.update(si,1);
-            containsOther[vec[si].index]= tree.rangeSum(si+1,n-1);        
-            j++;
-        }
+    cout << availableRooms.size() << endl;
+    trav(r,allocatedRooms){
+        cout << r << " ";
     }
-    FOR(i, 0, n) { cout << containsOther[i] << " "; }
-    cout << endl;
-    FOR(i, 0, n) { cout << insideOther[i] << " "; }
     cout << endl;
 }
 
