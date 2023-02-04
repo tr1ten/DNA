@@ -10,6 +10,7 @@ class RangeQuery :
         return i//2;
     def _childs(self,i:int) -> List[int]:
         return [2*i,2*i+1];
+    
     def update(self,index:int,diff:int) -> None:
         i = index+self.n # node in the tree
         self.tree[i] +=diff
@@ -40,14 +41,31 @@ class RangeQuery :
         return max(self._query_max(ns,mid,start,min(mid,end),left),self._query_max(mid+1,ne,max(start,mid+1),end,right))
     def query_max(self,left,right):
         return self._query_max(0,self.n-1,left,right,1);
-            
+    def _lower_max(self, ns: int, ne: int, k: int, node: int):
+        if (self.max_tree[node] < k):
+            return float('inf')  # not found in this range
+        if (ns == ne):
+            return ns # found;
+        mid = (ns+ne)//2
+        l, r = self._childs(node)
+        if (self.max_tree[l] >= k):
+            return self.lower_max(ns, mid, k, l)
+        return self.lower_max(mid+1, ne, k, r)
+    
+    """
+    Find the index of the first element that is greater than or equal to k.
+    @param k: the max value to search for
+    @return: the index of the first element that is greater than or equal to k.
+    
+    """
+    def lower_max(self, k:int):
+        return self._lower_max(0, self.n-1, k, 1)    
 def main():
-    n = 5
+    n = 5                                       
     arr = [1,2,3,4,5]
-    rq = RangeQuery(n)
+    rq = RangeQuery(1000000)
     for i in range(n):
         rq.update(i,arr[i])
-    print(rq.tree,rq.max_tree)
     print(rq.query_sum(0,4))
     rq.update(0,10)
     print(rq.query_max(0,2))

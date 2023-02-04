@@ -30,6 +30,39 @@ int main() {
 	cout << g.size() << "\n"; // 0
 }
 
+// helper functions
+inline void print_vec(VI &vec){
+    trav(x,vec) cout << x << " ";
+    cout << endl;
+}
+
+inline void print_mat(VII &mat){
+    trav(x,mat){
+        trav(y,x) cout << y << " ";
+        cout << endl;
+    }
+}
+inline void print_set(set<LL> &s){
+    trav(x,s) cout << x << " ";
+    cout << endl;
+}
+inline void print_map(MII &m){
+    trav(x,m) cout << x.first << " " << x.second << endl;
+}
+inline int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
+inline int lcm(int a, int b) { return a * (b / gcd(a, b)); }
+inline int mod(int a, int b) { return (b + (a % b)) % b; }
+inline int modpow(int a, int b, int m) {
+    int ans = 1;
+    while (b) {
+        if (b & 1) ans = (ans * a) % m;
+        a = (a * a) % m;
+        b >>= 1;
+    }
+    return ans;
+}
+inline int modinv(int a, int m) { return modpow(a, m - 2, m); }
+inline int moddiv(int a, int b, int m) { return (a * modinv(b, m)) % m; }
 // int main(int argc, char const *argv[])
 // {
 //     // lower_bound - first element eq or greator than x
