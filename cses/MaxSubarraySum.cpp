@@ -1,4 +1,4 @@
-#pragma GCC optimize(2,3,"Ofast","unroll-loops","-funroll-loops")
+// #pragma GCC optimize(2,3,"Ofast","unroll-loops","-funroll-loops")
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -29,17 +29,19 @@ typedef unordered_map<LL,LL> MII;
 #define all(x) x.begin(), x.end()
 #define less(a,b) a<b
 const LL MOD = 1e9+7;
-const LL INF = 1e10+5;
+const LL INF = 1e18+5;
 
 // actual solutions 
 LL solve(int n,int a,int b,VI &vec){
-    int i=0;
-    LL sm =0;
     LL res = -INF;
-    FOR(j,0,n){
-        sm +=vec[j];
-        while((j-i+1>a && vec[i]<0) || (j-i+1>b)) sm -= vec[i++];
-        if(j-i+1>=a && j-i+1<=b) res = max(sm,res);
+    // maximize pref[j]-pref[i] where i in range [j-b,j]
+    VI pref(n+1,0);
+    FOR(i,1,n+1) pref[i] = pref[i-1] + vec[i-1];
+    multiset<LL> ms;
+    FOR(j,a,n+1){
+        if(j>b) ms.erase(ms.find(pref[j-b-1]));
+        ms.insert(pref[j-a]);
+        res = max(res,pref[j]-*ms.begin());
     }
     return res;
 }
