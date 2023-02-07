@@ -1,16 +1,25 @@
 class Solution:
+    """
+        Intuition: Why not directly DP? Because it would be inefficient here.
+        Since we already know possible answers, we just need to check each one efficiently and choose min ans that satisfies the condition.
+    
+    """
     def minCapability(self, nums: List[int], K: int) -> int:
-        @cache
-        def f(idx,take,k,mx):
-            if(k==0): return mx
-            if(idx==len(nums)): return float('inf')
-            res = float('inf')
-            if(k==0): return mx
-            if(len(nums)-idx-1-2*k<0): return f(idx+1,False,k-1,max(nums[idx],mx))
-            if(take): res = min(res,f(idx+1,False,k-1,max(nums[idx],mx)))
-            return min(f(idx+1,True,k,mx),res)
-        return f(0,True,K,0)
-            
-        
-        
-        
+        def ok(x): # generic okay function for exhaustive binary search
+            p=0
+            pp = 0
+            for k in nums:
+                if(k<=x):
+                    pp,p = p,max(pp+1,p)
+                else:
+                    pp = p
+            return p>=K
+        lo = 0
+        hi = len(nums)-1
+        temp = nums[:] # copy and sort
+        temp.sort()
+        while(lo<hi):
+            mid = (lo+hi)//2
+            if(ok(temp[mid])): hi = mid
+            else: lo = mid+1
+        return temp[lo]

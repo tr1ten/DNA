@@ -1,7 +1,7 @@
 #pragma GCC optimize(2,3,"Ofast","unroll-loops","-funroll-loops")
 #include <cstdio>
 #include <bits/stdc++.h>
-#include <algorithm>
+
 using namespace std;
 
 // useful defs
@@ -30,30 +30,32 @@ typedef unordered_map<LL,LL> MII;
 #define less(a,b) a<b
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
-LL dp[501][501] = {-1};
-// actual solutions 
 
+// actual solutions 
+PI f(int left,int right,VI &vec,vector<vector<PI>> &dp){
+    if(left==right) return {vec[left],0}; // first sum, second sum
+    if(dp[left][right].first!=-INF) return dp[left][right];
+    auto l = f(left+1,right,vec,dp);
+    auto r = f(left,right-1,vec,dp);
+    if(vec[left]+l.second-l.first>vec[right]+r.second-r.first) {
+        return dp[left][right]={vec[left]+l.second,l.first};
+    }
+    return dp[left][right]={vec[right]+r.second,r.first};
+}
+LL solve(int n,VI &vec){
+    vector<vector<PI>> dp(n,vector<PI>(n,{-INF,-INF}));
+    return f(0,n-1,vec,dp).first;
+}
 
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    fill((int*)dp,(int*)dp+sizeof(dp)/sizeof(int),0);
-    FOR(a,1,501){
-        FOR(b,1,501){
-            if(a==b) continue;
-            dp[a][b]=INF;
-            FOR(i,1,a){
-                dp[a][b] = min(dp[a][b],dp[a-i][b]+dp[i][b]+1);
-            }
-            FOR(i,1,b){
-                dp[a][b] = min(dp[a][b],dp[a][b-i]+dp[a][i]+1);
-            }
-        }
-    }
-    int A,B;
-    cin>>A>>B;
-    cout << dp[A][B] << endl;
+    int N;
+    cin>>N;
+    mk_vec(vec,N,0);
+    take_vec(vec,N);
+    cout << solve(N,vec) << endl;
     return 0;
 }

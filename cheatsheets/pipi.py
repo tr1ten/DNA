@@ -220,3 +220,7 @@ def reverse(arr, i, j):
         arr[i], arr[j] = arr[j], arr[i]
         i += 1
         j -= 1
+        
+def is_subseq(x, y):
+    it = iter(y)
+    return all(c in it for c in x)
