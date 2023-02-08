@@ -21,7 +21,7 @@ void printMatrix(int *matrix, int rows, int cols)
     {
         for (int j = 0; j < cols; j++)
         {
-            printf("%d ", matrix[get2DIndex(i,j,cols)]);
+            printf("%d ", [get2DIndex(i,j,cols)]);
         }
         printf("\n");
     }
