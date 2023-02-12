@@ -13,6 +13,6 @@ class LCS {
     }
     public static void main(String[] args) {
         LCS s = new LCS();
-        System.out.println(s.longestCommonSubsequence("abcde", "ace"));
+        System.out.println(s.longestCommonSubsequence("afgcfbcde", "abcde"));
     }
 }

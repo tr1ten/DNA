@@ -45,7 +45,7 @@ public class PrintingLCS {
         //         if(dp[i-1][j]>dp[i][j-1]) i--;
         //         else j--;
         //     }
-        // }
+        // }    
         int k=0;
         for(String x:new HashSet<>(getLCS(text1,text2,dp,text1.length(),text2.length()))){
             System.out.println((new StringBuilder(x)).reverse().toString());
@@ -56,6 +56,6 @@ public class PrintingLCS {
     }
     public static void main(String[] args) {
         PrintingLCS s = new PrintingLCS();
-        System.out.println(s.longestCommonSubsequence("10010101", "010110110"));
+        System.out.println(s.longestCommonSubsequence("afgcfbce", "abcde"));
     }
 }
