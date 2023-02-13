@@ -8,9 +8,9 @@ class Solution:
         n = len(nums)
         res = 0
         while(j<n-1):
-            ci = j # index to jump from
-            while(i<=j):
-                if(i+nums[i]>ci+nums[ci]): ci = i
+            ci = j # default index to jump from 
+            while(i<=j): # check all possible indices from i to j
+                if(i+nums[i]>ci+nums[ci]): ci = i # best index to jump from
                 i +=1
             j = ci + nums[ci]
             res +=1
