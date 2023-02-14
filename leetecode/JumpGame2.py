@@ -4,7 +4,7 @@ class Solution:
             Greedy: Choose that index from given range that can take us farthest ie max possible value of j 
         """
         i = 0
-        j = 0
+        j = 0 # 
         n = len(nums)
         res = 0
         while(j<n-1):
