@@ -20,6 +20,6 @@ int playSticks(int n_sticks,int t_sticks)
 }
 int main()
 {
-    playSticks(4,22);
+    playSticks(4,21);
     return 0;
 }
