@@ -1,4 +1,3 @@
-#pragma GCC optimize(2, 3, "Ofast", "unroll-loops", "-funroll-loops")
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -29,53 +28,13 @@ typedef unordered_map<LL, LL> MII;
 #define all(x) x.begin(), x.end()
 #define less(a, b) a < b
 const LL MOD = 1e9 + 7;
-const LL INF = 1e10 + 5;
+const int INF = 1e6 + 5;
 
-class DSU
+// actual solutions
+LL solve(int n, VI &vec)
 {
-public:
-    int *par;
-    int *sz;
-    int cnt;
-    DSU(int n)
-    {
-        this->par = new int[n];
-        this->sz = new int[n];
-        for (int i = 0; i < n; i++)
-        {
-            this->par[i] = i;
-            this->sz[i] = 1;
-        }
-        this->cnt = n;
-    }
-    int find(int x)
-    {
-        int p = x;
-        while (p != this->par[p])
-        {
-            p = par[p];
-        }
-        return p;
-    }
-    void unionn(int u, int v)
-    {
-        int rootu = find(u);
-        int rootv = find(v);
-        if (rootu == rootv)
-            return;
-        if (sz[rootu] < sz[rootv])
-        {
-            par[rootu] = rootv;
-            sz[rootv] += sz[rootu];
-        }
-        else
-        {
-            par[rootv] = rootu;
-            sz[rootu] += sz[rootv];
-        }
-        this->cnt--;
-    }
-};
+    return n;
+}
 
 // driver code
 int main()
@@ -84,20 +43,57 @@ int main()
     cin.tie(nullptr);
     int N, M;
     cin >> N >> M;
-    DSU dsu(N);
+    VII adj(N);
     FOR(i, 0, M)
     {
         int a, b;
         cin >> a >> b;
-        dsu.unionn(a-1, b-1);
+        adj[a - 1].push_back(b - 1);
+        adj[b - 1].push_back(a - 1);
     }
-    cout << dsu.cnt - 1 << endl;
-    FOR(i, 0, N)
+    queue<int> q;
+    int dist[N];
+    int par[N];
+    memset(dist, INF, sizeof(dist));
+    memset(par, -1, sizeof(par));
+
+    dist[0] = 1;
+    par[0] = 0;
+    q.push(0);
+    while (!q.empty())
     {
-        if(dsu.find(i)!=dsu.find(0)) {
-            dsu.unionn(i,0);
-            cout << 1<< " " << (i+1) << endl;
+        int u = q.front();
+        q.pop();
+        if (u == N - 1)
+            break;
+        trav(v, adj[u])
+        {
+            if (dist[v] > dist[u] + 1)
+            {
+                dist[v] = dist[u] + 1;
+                par[v] = u;
+                q.push(v);
+            }
         }
     }
+    if (dist[N - 1] <= N)
+    {
+        cout << dist[N - 1] << endl;
+        int i = N-1;
+        stack<int> st;
+        while (par[i]!=i)
+        {
+            st.push(i+1);
+            i  = par[i];
+        }
+        st.push(1);
+        while (!st.empty()) {
+            cout << st.top() << " ";
+            st.pop();
+        }
+        cout << endl;
+    }
+    else
+        cout << "IMPOSSIBLE" << endl;
     return 0;
 }
