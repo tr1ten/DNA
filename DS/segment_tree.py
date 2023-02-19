@@ -6,6 +6,7 @@ class RangeQuery :
         self.n =  2**(n-1).bit_length()
         self.tree = [0] * (2 * self.n + 1) # 1 based indexing 
         self.max_tree = [0]*(2 * self.n + 1)
+        
     def _parent(self,i:int) -> int:
         return i//2;
     def _childs(self,i:int) -> List[int]:

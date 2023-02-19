@@ -1,28 +1,11 @@
 from typing import List
 
-class Solution:
-    def handleQuery(self, nums1: List[int], nums2: List[int], queries: List[List[int]]) -> List[int]:
-        rq = RangeQuery(len(nums1))
-        for i in range(nums1): rq.update(i,nums1[i])
-        s1 = sum(nums1)
-        s2 = sum(nums2)
-        res = []
-        for t,q,r in queries:
-            if(t==1):
-                s1 += (r-q+1 - 2*rq.query_sum(q,r))
-                rq.range_update(q,r,1)
-            elif(t==2):
-                s2 += q*s1
-            else: res.append(s2)
-        return res
-                
-
 class RangeQuery :
     def __init__(self,n:int) :
         # approx power of 2
         self.n =  2**(n-1).bit_length()
         self.tree = [0] * (2 * self.n + 1) # 1 based indexing 
-        self.lazy = [False]*(2*self.n + 1) # for keeping info about updated values
+        self.lazy = [0]*(2*self.n + 1) # for keeping info about updated values
         
     def _parent(self,i:int) -> int:
         return i//2;
@@ -30,15 +13,14 @@ class RangeQuery :
         return [2*i,2*i+1];
     def _isleaf(self,i:int)->bool:
         return i>=self.n;
-    # flip operation
     def lazy_update(self,hi:int,lo:int,node:int):
-        if(self.lazy[node]):
-            self.tree[node] = (hi-lo+1 - self.tree[node]);
+        if(self.lazy[node]!=0):
+            self.tree[node] += (hi-lo+1)*self.lazy[node];
             if(not self._isleaf(node)):
                 lc,rc = self._childs(node)
-                self.lazy[lc] = not self.lazy[lc];
-                self.lazy[rc] = not self.lazy[rc];
-            self.lazy[node] = False
+                self.lazy[lc] = self.lazy[node];
+                self.lazy[rc] = self.lazy[node];
+            self.lazy[node] = 0
     def update(self,index:int,diff:int) -> None:
         i = index+self.n # node in the tree
         self.tree[i] +=diff
@@ -53,11 +35,11 @@ class RangeQuery :
         self.lazy_update(high,low,node);
         if(high<l or r<low): return;
         if(low>=l and high<=r):
-            self.tree[node] = (high-low+1 - self.tree[node]);
+            self.tree[node] +=(high-low+1)*diff;
             if(not self._isleaf(node)):
                 lc,rc = self._childs(node)
-                self.lazy[lc] = not self.lazy[lc]
-                self.lazy[rc] = self.lazy[rc]
+                self.lazy[lc] += diff
+                self.lazy[rc] += diff
             return;
         mid = (low+high) >> 1;
         lc,rc = self._childs(node)
@@ -78,4 +60,18 @@ class RangeQuery :
         return self._query_sum(ns,mid,start,end,left) + self._query_sum(mid+1,ne,start,end,right)
     def query_sum(self,left:int,right:int):
         return self._query_sum(0,self.n-1,left,right,1);
+
+def main():
+    n = 5                                       
+    arr = [1,2,3]
+    rq = RangeQuery(3)
+    for i in range(3):
+        rq.update(i,arr[i])
+    print(rq.query_sum(0,2))
+    rq.range_update(0,1,2);
+    print(rq.query_sum(0,2))
+    
+    
+if __name__ == "__main__":
+    main()
     
