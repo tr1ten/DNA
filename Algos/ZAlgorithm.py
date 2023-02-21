@@ -3,10 +3,10 @@ def zfunc(s:str):
     l,r = 0,0
     z = [0]*len(s)
     for i in range(1,len(s)):
-        if(i<=r): z[i] = min(r-l+1,z[i-l]) # jump start by using past knowledge
-        while(s[z[i]]==s[i+z[i]]): 
+        if(i<=r): z[i] = min(r-i+1,z[i-l]) # jump start by using past knowledge
+        while(i+z[i]<len(s) and s[z[i]]==s[i+z[i]]): 
             z[i] +=1 # try bigger length
-        if(i+z[i]-1>=r): # increase the range 
+        if(i+z[i]-1>r): # increase the range 
             l = i
             r = l+z[i]-1
     return z
