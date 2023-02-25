@@ -1,5 +1,14 @@
 from typing import List
-
+class Solution:
+    def longestRepeating(self, s: str, qc: str, qis: List[int]) -> List[int]:
+        rq = RangeQuery(len(s))
+        for i in range(len(s)):
+            rq.update(i,s[i])
+        res = []
+        for i,ind in enumerate(qis):
+            rq.update(ind,qc[i])
+            res.append(rq.mxsz())
+        return res
 
 class Segment:
     def __init__(self) -> None:
@@ -14,7 +23,7 @@ class RangeQuery :
     def __init__(self,n:int) :
         # approx power of 2
         self.n =  2**(n-1).bit_length()
-        self.tree:List[Segment] = [Segment() for i in range((2 * self.n + 1))]   # 1 based indexing 
+        self.tree:List[Segment] = [Segment() for i in range((2 * self.n + 1))]  # 1 based indexing 
         
     def _parent(self,i:int) -> int:
         return i//2;
@@ -22,7 +31,6 @@ class RangeQuery :
         return [2*i,2*i+1];
     def mxsz(self):
         return self.tree[1].best
-    
     def update(self,index:int,nc:str) -> None:
         i = index+self.n # node in the tree
         self.tree[i].bestc = self.tree[i].prefc = self.tree[i].suffc = nc
@@ -52,24 +60,3 @@ class RangeQuery :
                     par.best = rs.best
                     par.bestc = rs.bestc
             i = self._parent(i)
-        
-            
-
-def longestRepeating(s: str, qc: str, qis: List[int]) -> List[int]:
-    rq = RangeQuery(len(s))
-    for i in range(len(s)):
-        rq.update(i,s[i])
-    res = []
-    for i,ind in enumerate(qis):
-        rq.update(ind,qc[i])
-        res.append(rq.mxsz())
-    return res
-
-
-def main():
-    # "babacc", queryCharacters = "bcb", queryIndices = [1,3,3]
-    s = "babacc"
-    qc = "bcb"
-    qis = [1,3,3]
-    print(longestRepeating(s,qc,qis))
-main()
