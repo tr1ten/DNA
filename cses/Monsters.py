@@ -87,3 +87,21 @@ for _ in range(t):
         
     
     
+    from collections import deque
+class Solution:
+    def minimumTime(self, grid: List[List[int]]) -> int:
+        dq = deque()
+        dq.append((0,0,0)) # src,time
+        visited = set()
+        while(dq):
+            y,x,t = dq.popleft()
+            if(y==len(grid)-1 and x==len(grid[0])-1): return t
+            for dx,dy in [(1,0),(-1,0),(0,1),(0,-1)]:
+                i,j = dy+y,dx+x
+                if( i>=len(grid) or i<0 or j<0 or j>=len(grid[0]) or (i,j) in visited or grid[i][j]>t+1): continue
+                visited.add((i,j))
+                dq.append((i,j,t+1))
+                
+        return -1
+        
+        
