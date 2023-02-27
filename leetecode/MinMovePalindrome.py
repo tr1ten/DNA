@@ -25,7 +25,7 @@ class Solution:
                 j -=1
                 res +=1
             cnt[ls[i]] -= 1
-        # place remaining element
+        # place remaining elementf
         for i in range((len(s)+1)//2,len(s)):
             x = ls[len(s)-1-i]
             j=i

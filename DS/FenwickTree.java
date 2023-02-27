@@ -10,7 +10,7 @@ public class FenwickTree {
         i++; // need position rather than index
         while (i<tree.length) {
             tree[i] +=diff;
-            i += (i&(-i)); // get next position to update by removing last 1 bit
+            i += (i&(-i)); // get next position to update by removing last 1 bit 110 -> 10 or 11010100 -> 100
         }
     }
     int rangeSum(int i){
