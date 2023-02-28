@@ -1,13 +1,11 @@
 class FenwickTree:
-    def __init__(self, nums):
-        self.tree = [0]*(len(nums)+1)
-
+    def __init__(self, n):
+        self.tree = [0]*(n+1)
     def update(self, i, diff):
         i += 1
         while i < len(self.tree):
             self.tree[i] += diff
             i += i & (-i)
-
     def _rangeSum(self, i):
         i += 1
         sum = 0
@@ -15,7 +13,6 @@ class FenwickTree:
             sum += self.tree[i]
             i -= i & (-i)
         return sum
-
     def rangeSum(self, i, j):
         return self._rangeSum(j) - self._rangeSum(i-1)
 
