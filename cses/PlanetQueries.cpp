@@ -53,7 +53,6 @@ int query(int u,int K){
         }
     }
     return ans;
-    
 }
 // similar to binary lifiting
 int main()

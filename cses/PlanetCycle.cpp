@@ -30,8 +30,33 @@ typedef unordered_map<LL,LL> MII;
 #define less(a,b) a<b
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
-// similar to binary lifiting
 // number of planets and queries
+
+const int MAXN = 2e5+5;
+const int LOG = 30; // ceil(log2(10^9))
+
+// number of planets and queries
+int n, q;
+// parent matrix where [i][j] corresponds to i's (2^j)th parent
+int dp[MAXN][LOG+1];
+
+void preprocess(int n){
+    FOR(j,1,LOG+1){
+        FOR(i,0,n){
+            dp[i][j] = dp[dp[i][j-1]][j-1];
+        }
+    }
+}
+int query(int u,int K){
+    int ans = u;
+    FOR(i,0,LOG+1){
+        if(K&(1<<i)){
+            ans = dp[ans][i];
+        }
+    }
+    return ans;
+}
+// similar to binary lifiting
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -46,7 +71,10 @@ int main()
         cin >> a ;
         next[i] = a-1;
         prev[next[i]].push_back(i);
+        dp[i][0] = a-1;
+
     }
+    preprocess(N);
     // cid > 0 cycle
     // == -1 part of tree
     // == -2 not processed yet
@@ -86,7 +114,8 @@ int main()
         
     }
     FOR(u,0,N){
-        cout << dist[u] + (cycle_id[u]>=0 ? cycle_len[cycle_id[u]] : 0 )<< " ";
+        int cyc = cycle_id[dp[u][LOG]];
+        cout << dist[u] + cycle_len[cyc]<< " ";
     }
     cout << endl;
     return 0;
