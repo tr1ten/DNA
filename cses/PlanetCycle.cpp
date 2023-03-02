@@ -90,11 +90,13 @@ int main()
             path.push_back(cur);
         }
         bool isCycle = false;
+        unordered_map<int,int> cycle;
         trav(v,path){
             isCycle |= v==next[cur];
+            if(isCycle) cycle[v] = cycle.size();
             cycle_id[v] = isCycle ?  cycle_len.size() : -1;
         }
-        if(isCycle) cycle_len[cycle_id[u]] = path.size()-1; 
+        if(isCycle) cycle_len[cycle_len.size()] = cycle.size();
     }
     VI dist(N,0); // node distance from root (or cycle)
     FOR(u,0,N){
