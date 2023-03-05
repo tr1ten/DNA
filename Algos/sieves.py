@@ -2,10 +2,10 @@ import math as mt
 
 MAXN = 100001
 
-spf = [0 for i in range(MAXN)]
+spf = [i for i in range(MAXN)]
 
 def sieve():
-	spf[1] = [i for i in range(MAXN)]
+	spf[1] = 1
 
 	for i in range(4, MAXN, 2):
 		spf[i] = 2
@@ -30,7 +30,7 @@ def getFactorization(x):
 
 # precalculating Smallest Prime Factor
 sieve()
-x = 11
+x = 12
 print("prime factorization for", x, ": ",
 								end = "")
 

@@ -32,16 +32,11 @@ const LL MOD = 1e9 + 7;
 const LL INF = 1e10 + 5;
 
 // actual solutions
-void dfs(int u, VII &adj, vector<bool> &vis, VI &st)
+LL solve(int n, VI &vec)
 {
-    vis[u] = true;
-    trav(v, adj[u])
-    {
-        if (!vis[v])
-            dfs(v, adj, vis, st);
-    }
-    st.push_back(u);
+    return n;
 }
+
 // driver code
 int main()
 {
@@ -50,35 +45,46 @@ int main()
     int N, M;
     cin >> N >> M;
     VII adj(N);
-    VII radj(N);
+    vector<bool> vis(N,false);
+    VI deg(N);
+    VI res;
     FOR(i, 0, M)
     {
         int a, b;
         cin >> a >> b;
         adj[a - 1].push_back(b - 1);
-        radj[b - 1].push_back(a - 1);
+        adj[b- 1].push_back(a- 1);
+        deg[a - 1]++;
+        deg[b - 1]++;
     }
-    vector<bool> vis(N, false);
-    VI st;
-    dfs(0, adj, vis, st);
-    auto iter = find(vis.begin(), vis.end(), false);
-    if (iter != vis.end())
+    FOR(i, 0, N)
     {
-        cout << "NO" << endl;
-        cout << "1"
-             << " " << (distance(vis.begin(),iter)+1) << endl;
+        if (deg[i] % 2 != 0)
+        {
+            cout << "IMPOSSIBLE" << endl;
+            return 0;
+        }
+    }
+    function<void(int)> dfs = [&](int u)
+    {
+        while (!adj[u].empty())
+        {
+            int v = *adj[u].rbegin();
+            adj[v].erase(find(all(adj[v]),u));
+            adj[u].pop_back();
+            M--;
+            dfs(v);
+            res.push_back(v);
+        }
+    };
+    dfs(0);
+    if(M!=0) {
+        cout << "IMPOSSIBLE" << endl;
         return 0;
     }
-    fill(vis.begin(), vis.end(), false);
-    int u = *st.rbegin();
-    st.clear();
-    dfs(u, radj, vis, st);
-    iter = find(vis.begin(), vis.end(), false);
-    if (iter != vis.end())
-    {
-        cout << "NO" << endl;
-        cout << (distance(vis.begin(),iter)+1) << " " << (u + 1)  << endl;
-    }
-    else cout << "YES" << endl;
+    res.push_back(0);
+    reverse(res.begin(),res.end());
+    trav(x,res) cout << (x+1) << " ";
+    cout << endl;
     return 0;
 }

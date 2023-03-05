@@ -32,7 +32,7 @@ const LL MOD = 1e9 + 7;
 const LL INF = 1e10 + 5;
 
 // actual solutions
-void dfs(int u, VII &adj, vector<bool> &vis, VI &st)
+void dfs(int u, VII &adj, vector<bool> &vis, stack<int> &st)
 {
     vis[u] = true;
     trav(v, adj[u])
@@ -40,7 +40,16 @@ void dfs(int u, VII &adj, vector<bool> &vis, VI &st)
         if (!vis[v])
             dfs(v, adj, vis, st);
     }
-    st.push_back(u);
+    st.push(u);
+}
+void dfs2(int u, VII &adj, VI &vis, int n)
+{
+    vis[u] = n;
+    trav(v, adj[u])
+    {
+        if (vis[v]==0)
+            dfs2(v, adj, vis, n);
+    }
 }
 // driver code
 int main()
@@ -59,26 +68,19 @@ int main()
         radj[b - 1].push_back(a - 1);
     }
     vector<bool> vis(N, false);
-    VI st;
-    dfs(0, adj, vis, st);
-    auto iter = find(vis.begin(), vis.end(), false);
-    if (iter != vis.end())
-    {
-        cout << "NO" << endl;
-        cout << "1"
-             << " " << (distance(vis.begin(),iter)+1) << endl;
-        return 0;
+    stack<int> stk;
+    FOR(i,0,N){
+        if(!vis[i]) dfs(i,adj,vis,stk);
     }
-    fill(vis.begin(), vis.end(), false);
-    int u = *st.rbegin();
-    st.clear();
-    dfs(u, radj, vis, st);
-    iter = find(vis.begin(), vis.end(), false);
-    if (iter != vis.end())
-    {
-        cout << "NO" << endl;
-        cout << (distance(vis.begin(),iter)+1) << " " << (u + 1)  << endl;
+    int k = 1;
+    VI res(N,0);
+    while(!stk.empty()){
+        int u = stk.top();
+        stk.pop();
+        if(res[u]==0) dfs2(u,radj,res,k++);
     }
-    else cout << "YES" << endl;
+    cout <<( k-1) << endl;
+    trav(x,res) cout << x << " ";
+    cout << endl;
     return 0;
 }

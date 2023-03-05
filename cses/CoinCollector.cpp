@@ -32,7 +32,7 @@ const LL MOD = 1e9 + 7;
 const LL INF = 1e10 + 5;
 
 // actual solutions
-void dfs(int u, VII &adj, vector<bool> &vis, VI &st)
+void dfs(int u, VII &adj, vector<bool> &vis, stack<int> &st)
 {
     vis[u] = true;
     trav(v, adj[u])
@@ -40,7 +40,16 @@ void dfs(int u, VII &adj, vector<bool> &vis, VI &st)
         if (!vis[v])
             dfs(v, adj, vis, st);
     }
-    st.push_back(u);
+    st.push(u);
+}
+void dfs2(int u, VII &adj, VI &vis, int n)
+{
+    vis[u] = n;
+    trav(v, adj[u])
+    {
+        if (vis[v]==0)
+            dfs2(v, adj, vis, n);
+    }
 }
 // driver code
 int main()
@@ -50,7 +59,9 @@ int main()
     int N, M;
     cin >> N >> M;
     VII adj(N);
+    VI coins (N,0);
     VII radj(N);
+    FOR(i, 0, N) cin >> coins[i];
     FOR(i, 0, M)
     {
         int a, b;
@@ -59,26 +70,56 @@ int main()
         radj[b - 1].push_back(a - 1);
     }
     vector<bool> vis(N, false);
-    VI st;
-    dfs(0, adj, vis, st);
-    auto iter = find(vis.begin(), vis.end(), false);
-    if (iter != vis.end())
-    {
-        cout << "NO" << endl;
-        cout << "1"
-             << " " << (distance(vis.begin(),iter)+1) << endl;
-        return 0;
+    stack<int> stk;
+    FOR(i,0,N){
+        if(!vis[i]) dfs(i,adj,vis,stk);
     }
-    fill(vis.begin(), vis.end(), false);
-    int u = *st.rbegin();
-    st.clear();
-    dfs(u, radj, vis, st);
-    iter = find(vis.begin(), vis.end(), false);
-    if (iter != vis.end())
-    {
-        cout << "NO" << endl;
-        cout << (distance(vis.begin(),iter)+1) << " " << (u + 1)  << endl;
+    int k = 1;
+    VI res(N,0);
+    while(!stk.empty()){
+        int u = stk.top();
+        stk.pop();
+        if(res[u]==0) dfs2(u,radj,res,k++);
     }
-    else cout << "YES" << endl;
+    k--;
+    // find component value
+    VII cadj(k);
+    VI cptval(k);
+    FOR(i,0,N){
+        cptval[res[i]-1] += coins[i];
+        cadj[res[i]-1].push_back(i);
+    }
+    queue<int> q;
+    VI indeg(k,0);
+    FOR(i,0,k){
+        trav(u,cadj[i]){
+            trav(v,adj[u]){
+                if(res[v]==i+1) continue;
+                indeg[res[v]-1]++;
+            }
+        }
+    }
+    VI dp(k,-1);
+    FOR(i,0,k){
+        if(indeg[i]==0) {
+            dp[i] = cptval[i];
+            q.push(i);
+        }
+    }
+    while (!q.empty())
+    {
+        int i = q.front();
+        q.pop();
+        trav(u,cadj[i]){
+            trav(v,adj[u]){
+                if(res[v]==i+1) continue;
+                indeg[res[v]-1]--;
+                dp[res[v]-1] = max(dp[res[v]-1],dp[i]+cptval[res[v]-1]);
+                if(indeg[res[v]-1]==0) q.push(res[v]-1);
+            }
+        }
+
+    }
+    cout << (*max_element(dp.begin(),dp.end())) << endl;
     return 0;
 }
