@@ -1,4 +1,4 @@
-#pragma GCC optimize(2, 3, "Ofast", "unroll-loops", "-funroll-loops")
+// #pragma GCC optimize(2, 3, "Ofast", "unroll-loops", "-funroll-loops")
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -31,12 +31,7 @@ typedef unordered_map<LL, LL> MII;
 const LL MOD = 1e9 + 7;
 const LL INF = 1e10 + 5;
 
-// actual solutions
-LL solve(int n, VI &vec)
-{
-    return n;
-}
-
+// euler path
 // driver code
 int main()
 {
@@ -45,21 +40,35 @@ int main()
     int N, M;
     cin >> N >> M;
     VII adj(N);
-    VI deg(N);
+    VI indeg(N);
+    VI outdeg(N);
     VI res;
     FOR(i, 0, M)
     {
         int a, b;
         cin >> a >> b;
         adj[a - 1].push_back(b - 1);
-        adj[b- 1].push_back(a- 1);
-        deg[a - 1]++;
-        deg[b - 1]++;
+        indeg[b - 1]++;
+        outdeg[a - 1]++;
     }
+    int start = -1;
+    int end = -1;
     FOR(i, 0, N)
     {
-        if (deg[i] % 2 != 0)
-        {
+        if(indeg[i] == outdeg[i]) continue;
+        if(indeg[i]+1 == outdeg[i]) {
+            if(start != -1 || i!=0) {
+                cout << "IMPOSSIBLE" << endl;
+                return 0;
+            }
+            start = i;
+        } else if(indeg[i]== outdeg[i]+1) {
+            if(end != -1 || i!=N-1) {
+                cout << "IMPOSSIBLE" << endl;
+                return 0;
+            }
+            end = i;
+        } else {
             cout << "IMPOSSIBLE" << endl;
             return 0;
         }
@@ -69,13 +78,17 @@ int main()
         while (!adj[u].empty())
         {
             int v = *adj[u].rbegin();
-            adj[v].erase(find(all(adj[v]),u));
             adj[u].pop_back();
             M--;
             dfs(v);
             res.push_back(v);
         }
     };
+    if(end==-1 ||start==-1) {
+        cout << "IMPOSSIBLE" << endl;
+        return 0;
+    
+    }
     dfs(0);
     if(M!=0) {
         cout << "IMPOSSIBLE" << endl;
