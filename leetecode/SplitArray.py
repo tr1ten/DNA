@@ -1,10 +1,12 @@
 
 def factors(x):
     ret = set()
-    for i in range(2,int(math.sqrt(x))):
-        if(x%i==0):
+    if(x==1): return ret
+    for i in range(2,1001):
+        if((x%i)==0):
             ret.add(i)
             while(x%i==0): x //=i
+    if(x>1): ret.add(x)
     return ret
 class Solution:
     def findValidSplit(self, nums: List[int]) -> int:

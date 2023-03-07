@@ -1,9 +1,7 @@
 import math as mt
-
-MAXN = 100001
+MAXN = 10**5 + 5
 
 spf = [i for i in range(MAXN)]
-
 def sieve():
 	spf[1] = 1
 
@@ -17,25 +15,27 @@ def sieve():
 				
 				if (spf[j] == j):
 					spf[j] = i
-
-def getFactorization(x):
-	ret = list()
+def factors(x):
+	ret = set()
 	while (x != 1):
-		ret.append(spf[x])
+		ret.add(spf[x])
 		x = x // spf[x]
 
 	return ret
-
-# Driver code
-
-# precalculating Smallest Prime Factor
 sieve()
 x = 12
 print("prime factorization for", x, ": ",
 								end = "")
 
+def factors2(x):
+    ret = set()
+    if(x==1): return ret
+    for i in range(2,int(math.sqrt(x))+1):
+        if((x%i)==0):
+            ret.add(i)
+            while(x%i==0): x //=i
+    if(x>1): ret.add(x)
+    return ret
 # calling getFactorization function
-p = getFactorization(x)
-
-for i in range(len(p)):
-	print(p[i], end = " ")
+p = factors2(x)
+print(p)
