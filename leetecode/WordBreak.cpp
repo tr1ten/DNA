@@ -50,13 +50,18 @@ typedef unordered_map<LL,LL> MII;
 #define put2(x,y) cout<<x<<" "<<y<<endl;
 #define put3(x,y,z) cout<<x<<" "<<y<<" "<<z<<endl;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
+
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+
 struct Node
 {
-    Node* childs[26];
+    Node* childs[26]={nullptr};
     bool end;
+    LL id;
+    LL val;
+    Node() {id=nxt++;}
 };
 Node *root=nullptr;
 void insert(string &word){
@@ -66,34 +71,25 @@ void insert(string &word){
         if(!child->childs[ind]) child->childs[ind] = new Node();
         child = child->childs[ind];
     }
+    child->val++;
     child->end = true;
 }
-
+const LL MAXN = 300 + 5;
+LL mem[MAXN];
 LL search(string &s,int idx,Node *node){
     if(idx==s.length()) return node->end;
-    LL res = 0;
-    if(node->end) res = search(s,idx,root); // start again at this index
+    // if(mem[idx]!=-1) return mem[idx];
+    if(node->end && search(s,idx,root)) return true; // start again at this index
     int ind = s[idx]-'a';
-    if(!node->childs[ind]) return res;
-    res = (res+search(s,idx+1,node->childs[ind]))%MOD;
-    return res;
+    if(!node->childs[ind]) return  false;
+    return search(s,idx+1,node->childs[ind]);
 }
-
-// driver code
-int main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    root = new Node();
-    string s;
-    cin >> s;
-    int N;
-    cin>>N;
-    FOR(i,0,N){
-        string p;
-        cin >> p;
-        insert(p);
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        fill(begin(mem),end(mem),-1);
+        root = new Node();
+        trav(s,wordDict) insert(s);
+        return search(s,0,root);
     }
-    put(search(s,0,root));
-    return 0;
-}
+};
