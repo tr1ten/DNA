@@ -9,9 +9,7 @@ public class KMP {
         int[] lps = new int[m];
         while (i<m) {
             if(needle.charAt(i)==needle.charAt(len)){
-                lps[i] = len+1;
-                len++;
-                i++;
+                lps[i++] = ++len;
             }
             else if(len==0) lps[i++] = 0;
             else len = lps[len-1];
