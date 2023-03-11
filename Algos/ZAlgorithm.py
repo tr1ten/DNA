@@ -18,6 +18,6 @@ def match(s,pat):
             print(i-z[i]-1)
             break
 
-match("abcd","bc")
-        
+# match("aaaaaaa","bc")
+print(zfunc("abcabca"))
 
