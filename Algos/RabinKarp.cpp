@@ -53,8 +53,8 @@ int rabinkarpSearch(const string &s, const string &pat)
 }
 int main()
 {
-    string s = "abccddaefg";
-    string pat = "cdd";
+    string s = "dlojuxgftvpqpsknfgkejydsxgcgyroavsefjrejytcgflrnnxxsxowqbteycujnrbaokjibq";
+    string pat = "fjrejytcgflrnnxxsxowqbteycujnr";
     cout << rabinkarpSearch(s, pat);
     return 0;
 }
