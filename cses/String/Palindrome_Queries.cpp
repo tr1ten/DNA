@@ -1,8 +1,8 @@
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("no-stack-protector")
-#pragma GCC optimize("unroll-loops")
-#pragma GCC target("sse,sse2,sse3,ssse3,popcnt,abm,mmx,tune=native")
-#pragma GCC optimize("fast-math")
+// #pragma GCC optimize("Ofast")
+// #pragma GCC optimize("no-stack-protector")
+// #pragma GCC optimize("unroll-loops")
+// #pragma GCC target("sse,sse2,sse3,ssse3,popcnt,abm,mmx,tune=native")
+// #pragma GCC optimize("fast-math")
 
 #include <cstdio>
 #include <bits/stdc++.h>
@@ -62,21 +62,47 @@ typedef unordered_map<LL, LL> MII;
 
 const LL MOD = 1e9 + 7;
 const LL INF = 1e10 + 5;
+const LL MAXN=2*1e5 + 1;
+const int MXK = 26;
+const int P = 31;
+LL pp[MAXN];
 
-// actual solutions
-void solve(int n,string &s)
+class FenwickTree
 {
-    int m = n-s.size();
-    LL res = 0;
-    LL p=26;
-    FOR(i,1,m+1){
-        res += ((m+1)*p)%MOD;
-        res %=MOD;
-        p =(p*(26-i))%MOD;        
+public:
+    FenwickTree(string &s)
+    {
+        int n = s.size();
+        tree = vector<long long>(n + 1);
+        FOR(i,0,n) update(i,((s[i]-'a'+1)*pp[i])%MOD);
     }
-    put(res);
-}
+    void update(int i, int diff)
+    {
+        i += 1;
+        while (i < tree.size())
+        {
+            tree[i] = (tree[i]+diff)%MOD;
+            i += i & (-i);
+        }
+    }
+    long long _rangeSum(int i)
+    {
+        i += 1;
+        long long sum = 0;
+        while (i > 0)
+        {
+            sum = (sum+tree[i])%MOD;
+            i -= i & (-i);
+        }
+        return sum;
+    }
+    long long rangeSum(int i, int j)
+    {
+        return (_rangeSum(j) - _rangeSum(i - 1) + MOD)%MOD;
+    }
 
+    vector<long long> tree;
+};
 // driver code
 int main()
 {
@@ -86,11 +112,33 @@ int main()
     // cin >> T;
     while (T--)
     {
-        int n;
-        cin >> n;
+        int n,q;
+        pp[0] = 1;
+        cin>>n>>q;
+        FOR(i,1,n) pp[i] = (pp[i - 1] * P) % MOD;
         string s;
         cin >> s;
-        solve(n,s);
+        FenwickTree ft(s);
+        reverse(all(s));
+        FenwickTree rft(s);
+        
+        int t,j;
+        FOR(i,0,q){
+            cin >> t >> j;
+            if(t==1){
+                char k;
+                cin >> k;
+                ft.update(j-1,(-ft.rangeSum(j-1,j-1) + MOD+((k-'a'+1)*pp[j-1])%MOD)%MOD);
+                rft.update(n-j,(-rft.rangeSum(n-j,n-j) + MOD+((k-'a'+1)*pp[n-j])%MOD)%MOD);
+            }
+            else{
+                int k;
+                cin >> k;
+                LL h1 = ft.rangeSum(j-1,k-1);
+                LL h2 = rft.rangeSum(n-k,n-j);
+                cout <<(((h1*pp[n-k])%MOD==(h2*pp[j-1])%MOD) ? "YES" : "NO") << endl;
+            }
+        }
     }
 
     return 0;
