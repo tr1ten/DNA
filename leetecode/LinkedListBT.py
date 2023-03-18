@@ -19,7 +19,6 @@ class Solution:
                 i +=1
             else: l = dp[l-1] 
         
-        @cache
         def f(node,t):
             if(t==len(arr)): return True
             if(not node): return False
