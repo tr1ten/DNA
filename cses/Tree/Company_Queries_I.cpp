@@ -54,10 +54,26 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
-// actual solutions 
-LL solve(int n,VI &vec){
-    ordered_multiset<int> s;
-    return n;
+
+const int MAXN = 2*1e5 + 5;
+const int LOG = 20;
+int dp[MAXN][LOG+1];
+
+void pre(int n){
+    FOR(j,1,LOG+1){
+        FOR(i,1,n+1){
+            dp[i][j] = dp[dp[i][j-1]][j-1];
+        }
+    }
+}
+int query(int u,int K){
+    int ans = u;
+    FOR(i,0,LOG+1){
+        if(K&(1<<i)){
+            ans = dp[ans][i];
+        }
+    }
+    return ans;
 }
 
 // driver code
@@ -65,10 +81,23 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin>>T;
+    int T=1;
     while(T--){
-          
+        int n,q ;
+        cin >> n >> q;
+        dp[1][0] = 0;
+        FOR(i,2,n+1){
+            cin >> dp[i][0];
+        }
+        pre(n);
+        FOR(i,0,q){
+            int u,k;
+            cin >> u >> k;
+            int res = query(u,k);
+            if(res==0) cout << -1 << endl;
+            else cout << res << endl;
+        }
+
     
     }
 
