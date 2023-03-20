@@ -119,13 +119,12 @@ void dfs(int u,VII &adj,DSU &dsu,VII &queries,UPO &ans){
     }
 }
 
-void dfs2(int u,VII &adj){
-    int d =0;
+void dfs2(int u,VII &adj,int d){
+    depth[u] =  d;
+    mark[u] = true;
     trav(v,adj[u]){
-        dfs2(v,adj);
-        d = max(d,depth[v]);
+        if(!mark[v]) dfs2(v,adj,d+1);
     }
-    depth[u] =  d+1;
 }
 
 // driver code
@@ -140,10 +139,12 @@ int main()
         cin >> n >> q;
         VII adj(n);
         FOR(i,1,n){
-            int v;
-            cin >> v;
-            v--;
-            adj[v].push_back(i);
+            int u,v;
+            cin >> u>> v;
+            v--;u--;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+
         }
         VII queries(n);
         VPI qu;
@@ -156,13 +157,14 @@ int main()
             qu.push_back({u,v});
         }
         fill(begin(mark),end(mark),false);
-        DSU dsu(n);
+        DSU dsu(n); 
         UPO ans;
         dfs(0,adj,dsu,queries,ans);
-        dfs2(0,adj);
+        fill(begin(mark),end(mark),false);
+        dfs2(0,adj,0);
         trav(p,qu){
             int lca = ans[p.first][p.second];
-            put(depth[p.first]+depth[p.second]-depth[lca])
+            put(depth[p.first]+depth[p.second]-2*depth[lca])
         }
     }
 
