@@ -17,3 +17,17 @@ def gcd(a,b):
     if b == 0:
         return a
     return gcd(b, a % b)
+
+    
+def rabin(s):
+    MOD = (10**9) + 9
+    P = 31
+    n = len(s);
+    pp = [1]*n
+    pinv = [1]
+    for i in range(1,n): 
+        pp[i] = (pp[i-1]*P)%MOD
+        pinv.append(fast_pow(pp[i],MOD-2,MOD));
+    hash = [0]*(n+1) # 1 index hash
+    for i in range(n): hash[i+1] = (hash[i] + ((ord(s[i])-ord('a')+1)*pp[i])%MOD )%MOD
+    return hash,pp,pinv
