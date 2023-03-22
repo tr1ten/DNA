@@ -19,9 +19,11 @@ def gcd(a,b):
     return gcd(b, a % b)
 
     
+
+
+MOD = (10**9) + 9
+P = 31
 def rabin(s):
-    MOD = (10**9) + 9
-    P = 31
     n = len(s);
     pp = [1]*n
     pinv = [1]
@@ -31,3 +33,6 @@ def rabin(s):
     hash = [0]*(n+1) # 1 index hash
     for i in range(n): hash[i+1] = (hash[i] + ((ord(s[i])-ord('a')+1)*pp[i])%MOD )%MOD
     return hash,pp,pinv
+
+def sub_hash(i,j,hash,pinv):
+    return ((hash[j+1]-hash[i])*pinv[i])%MOD
