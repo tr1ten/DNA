@@ -45,29 +45,16 @@ typedef unordered_map<LL,LL> MII;
 #define vec_sum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vec_max(vec) *max_element(vec.begin(), vec.end());
 #define vec_min(vec) *min_element(vec.begin(), vec.end());
-#define put_vec(vec) trav(x,vec) cout<<x<<""; cout<<endl;
+#define put_vec(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
 #define put(x) cout<<x<<endl;
 #define put2(x,y) cout<<x<<" "<<y<<endl;
 #define put3(x,y,z) cout<<x<<" "<<y<<" "<<z<<endl;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 const LL MOD = 1e9+7;
-const int INF = 100;
-const int maxn = 1e6 + 5;
-int dp[maxn+1]; // dp[i] min length to make sum i
+const LL INF = 1e10+5;
 
-int ans = 0;
 
-int solve(LL sm){
-    if(sm<4) return sm==0 ? 0 : INF;
-    if(dp[sm]!=-1) return dp[sm];
-    int r[] = {4,7};
-    int res = INF;
-    trav(x,r){
-        res = min(res,solve(sm-x)+1);
-    }
-    return res;
-}
 
 // driver code
 int main()
@@ -77,12 +64,9 @@ int main()
     int T = 1;
     // cin>>T;
     while(T--){
-        LL n;
+        int n;
         cin >> n;
-        fill(dp,dp+maxn,-1);
-        VI res;
-        if(solve(n)) {put_vec(res)} 
-        else put(-1)
+        put((LL)pow(2,n+1) - 2L);
     }
 
     return 0;
