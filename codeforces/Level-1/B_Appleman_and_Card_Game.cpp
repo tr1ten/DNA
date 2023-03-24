@@ -72,8 +72,8 @@ int main()
         trav(x,s) vec[x-'A']++;
         sort_vec(vec);
         LL res=0;
-        FOR(i,0,26){
-            int sz = min(t,vec[i]);
+        ROF(i,0,26){
+            LL sz = min(t,vec[i]);
             res += sz*sz;
             t-=sz;
             if(t==0) break;
