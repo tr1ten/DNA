@@ -61,10 +61,34 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T = 1;
-    // cin>>T;
+    int T ;
+    cin>>T;
     while(T--){
-        
+        int n;
+        cin >> n;
+        VI vec(n);
+        take_vec(vec,n);
+        sort_vec(vec);
+        LL md = INF;
+        int ind = -1;
+        FOR(i,1,n){
+            if(vec[i]-vec[i-1]<md) {
+                ind = i;
+                md = vec[i] - vec[i-1];
+            }
+        }
+        VI res;
+        res.push_back(vec[ind-1]);
+        FOR(i,ind+1,n){
+            res.push_back(vec[i]);
+        }
+        FOR(i,0,ind-1){
+            res.push_back(vec[i]);
+            
+        }
+        res.push_back(vec[ind]);
+        put_vec(res);
+
     }
 
     return 0;
