@@ -66,25 +66,18 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        int res=0;
-        int vec[2*n+1];
-        fill(vec,vec+2*n+1,0);
-        int arr[n+1];
+        LL res=0;
+        LL arr[n+1];
         FOR(i,1,n+1){
-            int x;
-            cin >> x;
-            vec[x] = i+1;
-            arr[i+1] = x;
+            cin >> arr[i];
         }
-        FOR(x,1,2*n+1){
-            if(!vec[x]) continue;
-            int ind = vec[x];
-            int j = ceil(ind/x)*x;
-            for(;j<=n;j+=x){
-                if(ind==j) continue;
-                if(ind+j==x*arr[j]) res++;
+        FOR(i,1,n+1){
+            for(LL j=arr[i]-i;j<=n;j +=arr[i]){
+                if(j<=i || arr[j]*arr[i]!=i+j) continue;
+                res++;
             }
         }
+        
         put(res);
     }
 
