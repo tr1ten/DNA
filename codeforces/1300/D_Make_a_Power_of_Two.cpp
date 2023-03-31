@@ -53,38 +53,69 @@ typedef unordered_map<LL,LL> MII;
 
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
+const LL P2LIM = (LL)2e18;
 
+int solve(string s, string t)
+{
+	int tp = 0;
+	int sp = 0;
+	int taken = 0;
 
+	while (sp < s.length() && tp < t.length())
+	{
+		if(s[sp] == t[tp])
+		{
+			taken++;
+			tp++;
+		}
+		sp++;
+	}
 
+	return (int)s.length() - taken + (int)t.length() - taken;
+}
+
+vector<string> ts;
 // driver code
 int main()
 {
+    for (LL p2 = 1; p2 <= P2LIM; p2 *= 2) ts.push_back(to_string(p2));
+
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
+    const int MX = 100;
     int T ;
     cin>>T;
     while(T--){
-        int m;
-        cin >> m;
-        mk_mat(mat,2,m,0);
-        FOR(i,0,2){
-            FOR(j,0,m) cin >> mat[i][j];
+        string s;
+        cin >> s;
+        int res = 1000;
+        trav(tar,ts){
+            // WA  not working for last test case :()
+            mk_mat(dp,s.size()+1,tar.size()+1,1000);
+            FOR(i,0,tar.size()) dp[s.size()][i] = tar.size()-i; // we can just add chars to right
+            FOR(i,0,s.size()) dp[i][tar.size()] = s.size()-i; // we can remove chars from right
+            dp[s.size()][tar.size()] = 0;
+            ROF(i,0,s.size()){
+                ROF(j,0,tar.size()){
+                    if(s[i]==tar[j]) dp[i][j] = dp[i+1][j+1]; // no op
+                    else dp[i][j] = dp[i+1][j]+1; // remove 
+                }
+            }
+            // int j =0,i=0;
+            // int taken = 0; // just be greedy and find tar as subseq in s
+            // while(i<s.length() && j<tar.length()){
+            //     if(s[i]==tar[j]){
+            //         taken++;
+            //         j++;
+            //     }
+            //     i++;
+            // }
+            res = min(res,dp[0][0] );
+            // put3("res for k=",k,dp[0][0]);
+
         }
-        mk_mat(dp,3,m+1,0);
-        auto func = [&](){
-            ROF(j,0,m) dp[1][j] = dp[1][j+1] + mat[1][j];
-            ROF(j,0,m) dp[0][j] = mat[0][j]+ max(dp[1][j],dp[0][j+1]);
-            int j=0;
-            while(j<m && dp[0][j+1]>dp[1][j]) mat[0][j++] = 0;
-            j--;
-            while(j<m) mat[1][j++] =0;
-            return dp[0][0];
-
-        };
-        put(func());
-        put(func());
+        put(res);
     }
-
 
     return 0;
 }
