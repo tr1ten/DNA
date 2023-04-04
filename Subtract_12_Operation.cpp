@@ -64,7 +64,44 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        
+        set<PI> st;
+        VI vec(n);
+        FOR(i,0,n){
+            int x;
+            cin >> x;
+            vec[i] = x;
+            st.insert({x,i});
+        }
+        while(!st.empty()){
+            PI p = *(st.begin());
+            st.erase(st.begin());
+            if(p.second+1==n) continue;
+            LL b=vec[p.second+1];
+            LL a = vec[p.second];
+            if(b>=2) {
+                int mv = b/2;
+                a -=mv;
+                b -=2*mv;
+            }
+            if(a>=1 && b==1) {
+                b = -1;
+                a -=1;
+            }
+            vec[p.second] = a;
+            if(vec[p.second+1] == b) continue;
+            st.erase({vec[p.second+1],p.second+1});
+            vec[p.second+1] = b;
+            st.insert({vec[p.second+1],p.second+1});
+        }
+        LL res=0;
+        FOR(i,1,n){
+            if(vec[i]>0 && vec[i-1]>0){
+                vec[i] -=2;
+                vec[i-1] -=1;
+            }
+        }
+        trav(x,vec) res+= abs(x);
+        put(res);
     }
 
     return 0;
