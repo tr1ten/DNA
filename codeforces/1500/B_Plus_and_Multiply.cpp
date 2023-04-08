@@ -75,7 +75,12 @@ int main()
         LL n, a, b;
         cin >> n >> a >> b;
         LL prod=1;
-        if(b%a==0  || (n%a)%(b%a)==0) {put("Yes");goto end;}
+        int i=0;
+        if((n-1)%b==0) {put("Yes");goto end;}
+        if(a!=1) {while(prod*a<=n){
+            prod *=a;
+            if((n-prod)%b==0) {put("Yes") goto end;}
+        }}
         put("No");
         end:;
 

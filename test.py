@@ -1,42 +1,18 @@
-def f(s, x, y):
+from itertools import zip_longest
+def f(l,r):
     res = 0
-    save = ""
-    for i in range(len(s)):
-        for j in range(i+1, len(s)):
-            a = s[i:j+1]
-            if (a.count(x) and a.count(y)):
-                if (res < a.count(y)-a.count(x) or (res == a.count(y)-a.count(x) and len(a) < len(save))):
-                    save = a
-                res = max(res, a.count(y)-a.count(x))
-
-    return res, save
-
-
-def sub(s,c1, c2):  # c2 > c1
-    res = 0
-    i = 0
-    a = b = 0
-    for j in range(len(s)):
-        if(s[j] not in [c1,c2]): continue
-        a += s[j] == c1
-        b += s[j] == c2
-        while (i < j and b-a < 0):
-            a -= s[i] == c1
-            b -= s[i] == c2
-            i += 1
-        while (a > 1 and i < j and s[i] != c2):
-            a -= s[i] == c1
-            i += 1
-        if (a and b):
-            res = max(b-a, res)
+    for i in range(l+1,r+1):
+        for x,y in zip_longest(str(i)[::-1],str(i-1)[::-1],fillvalue="$"):
+            if(x!=y): res+=1 
     return res
-
-
-s = '''fsoxzotgvxguvudpgntfujuvrkgkfwqalayujcbryotoyslfwhhwfxgwrbitncjpvpowejsyboaeqhpvgkjxijisnrjbawpedhrlablukuhzxhlrclmbbszoloeqqfhguocowsadhxkkvxxupwxyvqdqcagxldmzsuvjqjedteoizobbmtlnzmllaxbysymnhactdqyhipvazsqpnwulnsguchspaycvtbzdnhzrjjlbjmtvhtrcqcutthlyjjrhyjilayiqsjusojpypnuspxfxvcffpiebmlfdoqebsiqtflsddoxmcpooqkkjkgsgenvpwszzhqbqbaognwgdswtmiishmwgiknqfixlzqgbcsmfbfupbzvzbxexrdcoilspuae'''
-
-# for i in set(s):
-#     for j in set(s):
-print(f(s, 'f', 'j'))
-s2 = 'jpvpowejsyboaeqhpvgkjxijisnrjbawpedhrlablukuhzxhlrclmbbszoloeqqfhguocowsadhxkkvxxupwxyvqdqcagxldmzsuvjqjedteoizobbmtlnzmllaxbysymnhactdqyhipvazsqpnwulnsguchspaycvtbzdnhzrjjlbjmtvhtrcqcutthlyjjrhyjilayiqsjusoj'
-print(sub(s, 'f', 'j'))
-print(s.index(s2),s.index(s2)+len(s2))
+def f2(r):
+    s = str(r)
+    res = 0
+    d = [1, 11, 111, 1111, 11111, 111111, 1111111, 11111111, 111111111, 1111111111]
+    for i in range(len(s)):
+        res += int(s[i])*(d[len(s)-i-1])
+    return res
+        
+while(1):
+    l,r = map(int,input().split())
+    print(f(l,r),f2(r)-f2(l))
