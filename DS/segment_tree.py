@@ -63,13 +63,13 @@ class RangeQuery :
         return self._lower_max(0, self.n-1, k, 1)    
 def main():
     n = 5                                       
-    arr = [1,2,3,4,5]
-    rq = RangeQuery(1000000)
+    arr = [-1,-1,-1,-4,-5]
+    rq = RangeQuery(100)
     for i in range(n):
         rq.update(i,arr[i])
-    print(rq.query_sum(0,4))
+    print(rq.query_sum(2,4))
     rq.update(0,10)
-    print(rq.query_max(0,2))
+    print(rq.query_max(2,4))
     
 if __name__ == "__main__":
     main()
