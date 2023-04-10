@@ -19,7 +19,6 @@ class Solution:
         
         u = m
         v = n
-        
         while u > 0 and v> 0:
             if text1[u - 1] == text2[v - 1]:
                 ans += text1[u - 1]
@@ -30,6 +29,10 @@ class Solution:
                     u = u - 1
                 else:
                     v = v - 1
-        print(ans[::-1])
-        return DP[m][n]
-		
+        return (ans[::-1])
+def main():
+    s = input()
+    t = input()
+    print(Solution().longestCommonSubsequence(s,t))
+    
+main();

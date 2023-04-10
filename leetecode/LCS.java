@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 class LCS {
     public int longestCommonSubsequence(String text1, String text2) {
         int[][] dp = new int[text1.length()+1][text2.length()+1];
@@ -13,6 +15,10 @@ class LCS {
     }
     public static void main(String[] args) {
         LCS s = new LCS();
-        System.out.println(s.longestCommonSubsequence("afgcfbcde", "abcde"));
+        Scanner sc = new Scanner(System.in);
+        String st = sc.nextLine();
+        String t = sc.nextLine();
+        sc.close();
+        System.out.println(s.longestCommonSubsequence(st, t));
     }
 }
