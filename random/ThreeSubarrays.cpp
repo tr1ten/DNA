@@ -22,7 +22,7 @@ typedef unordered_map<LL,LL> MII;
 #define MP make_pair
 #define F first
 #define S second
-#define FOR(i,a,b) for (LL i = (a); i < (b); i++)
+#define FOR(i,a,b) for (int i = (a); i < (b); i++)
 #define F0R(i,a) FOR(i,0,a)
 #define rep(N) FOR(i,0,N)
 #define ROF(i,a,b) for (int i = (b)-1; i >= (a); i--)
@@ -49,66 +49,44 @@ typedef unordered_map<LL,LL> MII;
 
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
-void myerase(ordered_multiset<LL> &t, LL v){
-    LL rank = t.order_of_key(v);//Number of elements that are less than v in t
-    auto it = t.find_by_order(rank); //Iterator that points to the (rank+1)th element in t
-    t.erase(it);
-}
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
+
+
+
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T=1;
-    constexpr int N = 1e5 + 5;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
-        LL n,q;
-        take2(n,q);
-        LL total=0;
-        vector<vector<pair<LL,LL>>> events(N);
-        LL killed[q];
-        memset(killed,0,sizeof killed);
-        rep(n){
-            LL x1,x2,x3;
-            take3(x1,x2,x3);
-            total += x2-x1+1;
-            events[x1].push_back({1,x3});
-            events[x2+1].push_back({-1,x3});
-        }
-        vector<vector<pair<LL,LL>>> heros(N);
-        FOR(i,0,q){
-            LL x1,x2;
-            take2(x1,x2);
-            heros[x1].push_back({i,x2});
-        }
-        ordered_multiset<LL> ms;
-        LL cur=0;
-        LL i = 0;
-        FOR(e,0,N){
-            trav(p,events[e]){
-                cur +=p.first;
-                if(p.first==-1) {
-                    myerase(ms,p.second);
-                    }
-                else ms.insert(p.second);
-            }
-            sort_vec(heros[e]);
-            LL last_s=0;
-            trav(h,heros[e]){
-                if(h.second<=last_s) continue;
-                killed[h.first] =ms.order_of_key(h.second) - ms.order_of_key(last_s);
-                last_s = h.second;
+        int n;
+        cin >> n;
+        VI A(n);
+        take_vec(A,n);
+        int K = 3; // general K non overlapping subarrays
+        LL dp[n+1][K+1];
+        FOR(k,0,K+1) {
+            FOR(i,0,n+1){
+                dp[i][k] = k>0 ? -INF : 0 ;
             }
         }
-        LL ans[q];
-        FOR(i,0,q){
-            ans[i] = total - killed[i];
-            total -=killed[i];
+        
+        FOR(k,1,K+1){
+            LL sm=0;
+            int i = 1; // starting of sliding window
+            FOR(j,1,n+1){
+                sm += A[j-1];
+                dp[j][k] = max(dp[j-1][k],sm+dp[i-1][k-1]);
+                if(sm<0) {
+                    sm=0;
+                    i = j+1;
+                }
+            }
         }
-        put_vec(ans);
+        put(dp[n][K])
     }
 
     return 0;
