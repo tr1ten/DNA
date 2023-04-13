@@ -30,7 +30,7 @@ typedef unordered_map<LL,LL> MII;
 #define trav(a,arr) for (auto& a: (arr))
 #define sz(x) (int)(x).size()
 #define mk_vec(name,sz,value) VI name(sz,value)
-#define mk_mat(name,n,m,value) vector<vector<int>> name(n, vector<int>(m, value))
+#define mk_mat(name,n,m,value) vector<vector<LL>> name(n, vector<LL>(m, value))
 #define contains(x) find(x) != string::npos
 #define take_vec(vec,sz) FOR(i,0,sz) cin>>vec[i]
 #define sort_vec(vec) sort(vec.begin(), vec.end())
@@ -52,50 +52,46 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+VII mul(VII m1,VII m2){
+    LL n=m1.size(),m=m1[0].size(),x=m2[0].size();
+    mk_mat(res,n,x,0);
+    FOR(i,0,n){
+        FOR(j,0,x){
+            FOR(k,0,m){
+                res[i][j] = (res[i][j] + (m1[i][k]*m2[k][j])%MOD)%MOD;   
+            }
+        }
+    }
+    return res;
+}
 
+VII fast_pow(VII a,LL b){
+
+    if(b==0) {
+        mk_mat(res,a.size(),a[0].size(),0);
+        FOR(i,0,a.size()) res[i][i] = 1;
+        return res;
+    }
+    if(b==1) return a;
+    if(b%2==0){
+        return fast_pow(mul(a,a),b/2);
+    }
+    else{
+        return mul(a,fast_pow(mul(a,a),b/2));
+    }
+}
 
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin>>T;
+    int T=1;
+    // cin>>T;
     while(T--){
-        int n,m;
-        LL k;
-        take3(n,m,k);
-        mk_mat(mat,n,m,0);
-        FOR(i,0,n){
-            FOR(j,0,m) cin >> mat[i][j];
-        }
-        mk_mat(pref,n+1,m+1,0);
-        ROF(i,0,n){
-            ROF(j,0,m){
-                pref[i][j] = mat[i][j] + pref[i+1][j] + pref[i][j+1] - pref[i][j];
-            }
-        }
-        if(pref[0][0]<k+1) {put("-1");continue;}
-        auto get = [&](int j1,int i1,int j2,int i2){
-            return pref[i1][j1]+pref[i2+1][j2+1]-pref[i1][j2+1]-pref[i2+1][j1];
-        };
-        auto ok = [&](int mid){
-            FOR(i,min(mid-1,n-1),n){
-                FOR(j,min(m-1,mid-1),m){
-                    int j2=max(0,j-mid+1),i2 = max(i-mid+1,0);
-                    int mi=(i2+i)/2,mj = (j2+j)/2;
-                    if(mat[mi][mj] && get(j2,i2,j,i)>=k+1) return true; 
-                }
-            }
-            return false;
-        };
-        LL lo =0,hi = max(n,m)+1;
-        while(lo<hi){
-            int d = lo + (hi-lo)/2;
-            if(ok(d)) hi = d;
-            else lo = d+1;
-        }
-        put(lo/2)
+        VII a={{0,0,0,1},{1,0,0,1},{0,1,0,0},{0,1,1,0}};
+        VII res = fast_pow(a,1000000);
+        // put(res); 
     }
 
     return 0;

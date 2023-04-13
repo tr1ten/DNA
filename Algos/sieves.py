@@ -26,7 +26,7 @@ sieve()
 x = 12
 print("prime factorization for", x, ": ",
 								end = "")
-
+import math
 def factors2(x):
     ret = set()
     if(x==1): return ret
@@ -38,4 +38,4 @@ def factors2(x):
     return ret
 # calling getFactorization function
 p = factors2(x)
-print(p)
+print([factors2(x) for x in [20,24,1000,1] ])
