@@ -63,3 +63,23 @@ int main()
     
     return 0;
 }
+
+
+// void merge(VI &A,int i,int j,int k){
+//     VI temp;
+//     int p2=j+1;
+//     FOR(p1,i,j+1){
+//         while(p2<=k && A[p2]<A[p1]) temp.push_back(A[p2++]);
+//         temp.push_back(A[p1]);
+//     }
+//     while(p2<=k) temp.push_back(A[p2++]);
+//     int c=0;
+//     FOR(p,i,k+1) A[p] = temp[c++]; // lmao
+// }
+// void merge_sort(VI &A,int i,int j){
+//     if(i>=j) return;
+//     int mid = (i+j)/2;
+//     merge_sort(A,i,mid);
+//     merge_sort(A,mid+1,j);
+//     merge(A,i,mid,j);
+// }
