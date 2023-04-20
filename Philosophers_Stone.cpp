@@ -30,7 +30,7 @@ typedef unordered_map<LL,LL> MII;
 #define trav(a,arr) for (auto& a: (arr))
 #define sz(x) (int)(x).size()
 #define mk_vec(name,sz,value) VI name(sz,value)
-#define mk_mat(name,n,m,value) vector<vector<int>> name(n, vector<int>(m, value))
+#define mk_mat(name,n,m,value) vector<vector<LL>> name(n, vector<LL>(m, value))
 #define contains(x) find(x) != string::npos
 #define take_vec(vec,sz) FOR(i,0,sz) cin>>vec[i]
 #define sort_vec(vec) sort(vec.begin(), vec.end())
@@ -57,30 +57,26 @@ const LL INF = 1e18+5;
 // driver code
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(nullptr);
     int T;
     cin>>T;
     while(T--){
-        LL n;
-        take(n);
-        VII A;
-        FOR(i,0,n){
-            VI v(3);
-            cin >> v[0] >> v[1] >> v[2];
-            A.push_back(v);
+      int n,m;
+      take2(n,m); 
+      mk_mat(dp,n,m,0); 
+      FOR(i,0,n){
+        FOR(j,0,m){
+            cin >> dp[i][j];
         }
-        LL mxi = 0;
-        LL mni = 0;
-        LL eqi=-1;
-        FOR(i,0,n){
-            if(A[mni][0]>A[i][0] ||  (A[mni][0]==A[i][0] && A[mni][2]>A[i][2])) mni = i;
-            if(A[mxi][1]<A[i][1] || (A[mxi][1]==A[i][1] && A[mxi][2]>A[i][2])) mxi = i;
-            if(eqi!=-1 && (A[mxi][1]!=A[eqi][1] ||  A[mni][0]!=A[eqi][0])) eqi=-1;
-            if( (A[mxi][1]==A[i][1] &&  A[mni][0]==A[i][0] && (eqi==-1 || A[eqi][2] >A[i][2]) )) eqi=i;
-            put(min(A[mxi][2] + A[mni][2] ,eqi!=-1  ? A[eqi][2] : INF )) ;
+      }
+      ROF(i,0,n-1){
+        FOR(j,0,m){
+             dp[i][j] += max(dp[i+1][j],max(j-1>=0 ? dp[i+1][j-1] : -INF,j+1<m ? dp[i+1][j+1] : -INF) );
         }
+      }
+        put(*max_element(all(dp[0])))
+    }
 
-    } 
     return 0;
 }

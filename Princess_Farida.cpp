@@ -50,7 +50,7 @@ typedef unordered_map<LL,LL> MII;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 const LL MOD = 1e9+7;
-const LL INF = 1e18+5;
+const LL INF = 1e10+5;
 
 
 
@@ -61,26 +61,20 @@ int main()
     cin.tie(nullptr);
     int T;
     cin>>T;
-    while(T--){
-        LL n;
-        take(n);
-        VII A;
-        FOR(i,0,n){
-            VI v(3);
-            cin >> v[0] >> v[1] >> v[2];
-            A.push_back(v);
+    FOR(i,1,T+1){
+        int n;
+        cin >> n ;
+        VI A(n);
+        take_vec(A,n);
+        LL dp0= A[0], dp1= A[1];
+        FOR(i,2,n){
+            LL temp = dp1;
+            dp1 = max(dp0+A[i],dp1);
+            dp0 = temp;
         }
-        LL mxi = 0;
-        LL mni = 0;
-        LL eqi=-1;
-        FOR(i,0,n){
-            if(A[mni][0]>A[i][0] ||  (A[mni][0]==A[i][0] && A[mni][2]>A[i][2])) mni = i;
-            if(A[mxi][1]<A[i][1] || (A[mxi][1]==A[i][1] && A[mxi][2]>A[i][2])) mxi = i;
-            if(eqi!=-1 && (A[mxi][1]!=A[eqi][1] ||  A[mni][0]!=A[eqi][0])) eqi=-1;
-            if( (A[mxi][1]==A[i][1] &&  A[mni][0]==A[i][0] && (eqi==-1 || A[eqi][2] >A[i][2]) )) eqi=i;
-            put(min(A[mxi][2] + A[mni][2] ,eqi!=-1  ? A[eqi][2] : INF )) ;
-        }
+        put(max(dp1,dp0));
+        
+    }
 
-    } 
     return 0;
 }
