@@ -61,18 +61,9 @@ int main()
     cin.tie(nullptr);
     int T;
     cin>>T;
-    FOR(i,1,T+1){
+    while(T--){
         int n;
-        cin >> n ;
-        VI A(n);
-        take_vec(A,n);
-        LL dp0= A[0], dp1= A[1];
-        FOR(i,2,n){
-            LL temp = dp1;
-            dp1 = max(dp0+A[i],dp1);
-            dp0 = temp;
-        }
-        put(max(dp1,dp0));
+        cin >> n;
         
     }
 

@@ -51,40 +51,83 @@ typedef unordered_map<LL,LL> MII;
 
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
-vector<bool> vis;
-VII adj;
-void dfs(int u){
-    vis[u] = 1;
-    trav(v,adj[u]){
-        if(!vis[v]) dfs(v);
-    }
 
-}
+
+class BIT{
+public:
+    VI T;
+    BIT(int n){
+        T.assign(n+1,0);
+    }
+    void update(int i,LL d){
+        i +=1;
+        while(i<=T.size()){
+            T[i] +=d;
+            i += (i&(-i));
+        }
+    }
+    LL sum(int i){
+        LL r = 0;
+        i +=1;
+        while(i>0){
+            r += T[i];
+            i -= (i&(-i));
+        }
+        return r;
+    }
+};
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T=1;
+    int T=10;
     // cin>>T;
-    while(T--){
-       int n,m;
-       take2(n,m);
-        adj.assign(n,VI());
-        FOR(i,0,m){
-            int u,v;
-            take2(u,v);
-            u--;v--;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
-
+    FOR(i,1,T+1){
+        int n;
+        cin >>n;
+        string s;
+        take(s);
+        LL a=0;
+        LL o=0;
+        BIT bit = BIT(n);
+        FOR(i,0,s.size()){
+            char x = s[i];
+            if(x=='(') o++;
+            if(x==')' && o) {o--;a++;}
+            bit.update(i,x=='(' ? 1 : -1);
         }
-        if(m>n-1) put("NO")
-        else {
-            vis.assign(n,0);
-            dfs(0);
-            if(find(all(vis),false)==vis.end()) put("YES")
-            else put("NO")
+        LL np = (n-2*a)/2;
+        int q;
+        take(q);
+        put("Test "+to_string(i)+":")
+        rep(q){
+            int x;
+            cin >> x;
+            if(x==0){
+                if(np) put("NO")
+                else put("YES")
+                // put2(s,np);
+            }
+            else{
+                x--;
+                LL lf = bit.sum(x-1);
+                LL rf = bit.sum(n-1)- bit.sum(x);
+                if(s[x]=='('){
+                    s[x] = ')';
+                    if (rf==-1) np++;
+                    if(rf<-1) np+=2;
+                    if(lf>0) np -= lf==1 ? 1 : 2;
+                    bit.update(x,-2);
+                }
+                else{
+                    s[x] = '(';
+                    if(lf==1) np++;
+                    if(lf>1) np+=2;
+                    if (rf<0) np -= rf==-1 ? 1 : 2;
+                    bit.update(i,2);
+                }
+            }
         }
     }
 

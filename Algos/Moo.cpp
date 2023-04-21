@@ -39,9 +39,7 @@ typedef unordered_map<LL, LL> MII;
 #define vec_sum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vec_max(vec) *max_element(vec.begin(), vec.end());
 #define vec_min(vec) *min_element(vec.begin(), vec.end());
-#define put_vec(vec)               \
-    trav(x, vec) cout << x << " "; \
-    cout << endl;
+#define put_vec(vec)  trav(x, vec) cout << x << endl; 
 #define put(x) cout << (x) << endl;
 #define put2(x, y) cout << (x) << " " << (y) << endl;
 #define put3(x, y, z) cout << (x) << " " << (y) << " " << (z) << endl;
@@ -60,64 +58,75 @@ typedef unordered_map<LL, LL> MII;
 
 const LL MOD = 1e9 + 7;
 const LL INF = 1e10 + 5;
-const int N = 1e4 + 5;
-bool PRIME[N];
-void sieves()
+int b_len;
+struct Query
 {
-    memset(PRIME, 1, sizeof PRIME);
-    FOR(i, 2, N)
+    int l, r, idx;
+    bool operator<(Query other)
     {
-        if (!PRIME[i])
-            continue;
-        for (LL j = i * i; j < N; j += i)
-        {
-            PRIME[j] = 0;
-        }
+        return make_pair(l / b_len, r) < make_pair(other.l / b_len, other.r);
     }
-}
-const int P[] = {1, 10, 100, 1000};
+};
+
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin >> T;
+    int T = 1;
+    // cin>>T;
     while (T--)
     {
-        sieves();
-        LL s, t;
-        take2(s, t);
-        deque<pair<LL, LL>> dq;
-        dq.push_back({0, s});
-        PRIME[s] = false;
-        while (!dq.empty())
+        int n;
+        take(n);
+        VI A(n);
+        take_vec(A, n);
+        b_len = sqrt(n + 0.0) + 1;
+        int q;
+        take(q);
+        vector<Query> Q;
+        FOR(i, 0, q)
         {
-            auto p = dq.front();
-            dq.pop_front();
-            if (p.second == t)
-            {
-                put(p.first);
-                goto end;
-            }
-            FOR(i, 0, 4)
-            {
-                FOR(d, 0, 10)
-                {
-                    int c = ((p.second / P[i]) % 10);
-                    if (i == 3 && d == 0)
-                        continue;
-                    LL t1 = p.second - P[i] * c + P[i] * d;
-                    if (PRIME[t1])
-                    {
-                        PRIME[t1] = false;
-                        dq.push_back({p.first + 1, t1});
-                    }
-                }
-            }
+            int l, r;
+            take2(l, r);
+            Q.push_back({l-1, r-1, i});
         }
-        put(-1);
-    end:;
+        sort_vec(Q); // sort based on block index than right 
+        int curL = 0, curR = -1;
+        unordered_map<int, int> ans;
+        int res[q];
+        FOR(i, 0, q)
+        {
+            Query qr = Q[i];
+            // add to ans datastricture
+            while (curL > qr.l)
+            {
+                curL--;
+                ans[A[curL]]++;
+            }
+            while (curR < qr.r)
+            {
+                curR++;
+                ans[A[curR]]++;
+            }
+            // remove from ans datastructure
+            while (curL < qr.l)
+            {
+                ans[A[curL]]--;
+                if (ans[A[curL]] == 0)
+                    ans.erase(ans.find(A[curL]));
+                curL++;
+            }
+            while (curR > qr.r)
+            {
+                ans[A[curR]]--;
+                if (ans[A[curR]] == 0)
+                    ans.erase(ans.find(A[curR]));
+                curR--;
+            }
+            res[qr.idx] = ans.size();
+        }
+        put_vec(res);
     }
 
     return 0;
