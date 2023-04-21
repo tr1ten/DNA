@@ -53,70 +53,34 @@ const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
 
-class Node{
-    public:
-        int open,close;
-        Node(int o,int c){
-            open = o;
-            close = c;
-        }
-        Node(){open=0;close=0;}
-        void invert(){
-            open ^=1;
-            close ^=1;
-        }
-};
-const int N = 1e5 + 5;
-int n;
-Node *t;
 
-Node combine(Node tl,Node tr){
-    Node tn;
-    tn.open = max(0,tl.open - tr.close) + tr.open;
-    tn.close = max(0,tr.close - tl.open) + tl.close;
-    return tn;
-}
-void build() {  // build the tree
-  for (int i = n - 1; i > 0; --i) {t[i] = combine(t[i<<1], t[i<<1|1]);}
-}
-void modify(int p) {
-
-  for (t[p += n].invert(); p >>= 1; ) t[p] = combine(t[p<<1], t[p<<1|1]);
-}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T=10;
-    FOR(i,1,T+1){
-        int len;
-        scanf("%d",&len);
-        n = pow(2, ceil(log(len)/log(2)));
-        t = new Node[2*n+1];
-        char s[len+1];
-        scanf("%s",s);
-        FOR(i,0,len){
-            Node node;
-            node.open = s[i]=='(' ? 1 : 0;
-            node.close = s[i]==')' ? 1 : 0;
-            t[i+n] = node;
-        }
-        build();
-        int q;
-        scanf("%d",&q);
-        printf("Test %d:\n",i);
-        rep(q){
-            int x;
-            scanf("%d",&x);
-            if(x==0){
-                if(t[1].open==0 && t[1].close==0) puts("YES");
-                else puts("NO");
+    int T=1;
+    // cin>>T;
+    while(T--){
+        int n,m;   
+        take2(n,m);
+        VI A(n);
+        take_vec(A,n);
+        auto ok = [&](LL k){
+            int res = 0;
+            trav(x,A){
+                res += max(0LL,x-k);
             }
-            else{
-                modify(--x);
-            }
+            cout << k << " "<< res << endl;
+            return res>=m;
+        } ;
+        LL lo = 1,hi= 1e10;
+        while(lo<hi){
+            LL mid = lo + (hi-lo)/2;
+            if(ok(mid)) lo = mid+1;
+            else hi = mid-1;
         }
+        put(lo);
     }
 
     return 0;
