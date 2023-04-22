@@ -52,17 +52,81 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+string add(string a,string b){
+    int c = 0;
+    reverse(all(a));
+    reverse(all(b));
+    string res;
+    FOR(i,0,max(a.size(),b.size())){
+        int sm= c + (i< a.size() ? (a[i]-'0') : 0) + (i<b.size() ? (b[i]-'0') : 0);
+        res += to_string(sm%10);
+        c = sm/10;
+    }
+    if(c) res=  res +  to_string(c);
+    reverse(all(res));
+    return res;
+}
 
+string sub(string a,string b){ // a>=b
+    int br = 0;
+    reverse(all(a));
+    reverse(all(b));
+    string res;
+    FOR(i,0,a.size()){
+        int cur = a[i]-'0' - br;
+        br = 0;
+        int other = i<b.size() ? b[i]-'0' : 0;
+        if(cur<other) {cur+=10;br=1;}
+        int sm= cur-other;
+        res += to_string(sm%10);
+    }
+    while(res.size() && res.back()=='0') res.pop_back();
+    reverse(all(res));
+    return res;
+}
+bool lt(string &a,string &b){
+    if(a.size()<b.size()) return true;
+    if(a.size()>b.size()) return false;
+    FOR(i,0,a.size()){
+        if(a[i]>b[i]) return false;
+    }
+    return true;
+}
+string div(string a){
+    int i = 0;
+    string b = "2";
+    string res;
+    int c=0;
+    while(i<a.size()){
+        string cur = "";
+        do{
+            if(cur.size()>0 && res.size()) res.push_back('0');
+            cur += a[i++];
+        }
+        while( i<a.size() && (atoi(cur.c_str())+c*10)<2);
+        int sm = c*10 + atoi(cur.c_str());
+        res += to_string(sm/2);
+        c = sm%2;
+    }
+    return res;
+}
 
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin>>T;
+    int T=10;
+    // cin>>T;
     while(T--){
-        
+        string a,b;
+        cin >> a;
+        cin >> b;
+        string sum = add(a,b);
+        string y = div(sum);
+        put(y);
+        put(sub(y,b));
+
     }
 
     return 0;

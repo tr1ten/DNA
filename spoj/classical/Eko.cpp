@@ -62,25 +62,25 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n,m;   
+        LL n,m;   
         take2(n,m);
         VI A(n);
         take_vec(A,n);
         auto ok = [&](LL k){
-            int res = 0;
+            LL res = 0;
             trav(x,A){
                 res += max(0LL,x-k);
             }
-            cout << k << " "<< res << endl;
             return res>=m;
         } ;
-        LL lo = 1,hi= 1e10;
-        while(lo<hi){
-            LL mid = lo + (hi-lo)/2;
-            if(ok(mid)) lo = mid+1;
-            else hi = mid-1;
-        }
-        put(lo);
+        // LL lo = 1,hi= 1e10;
+        // while(lo<hi){
+        //     LL mid = lo + (hi-lo)/2;
+        //     if(ok(mid)) lo = mid;
+        //     else hi = mid-1;
+        // }
+        LL r = 0; for(int i = 62; i >= 0; --i) { if( ok(r + (1LL<<i)) ) r += (1LL<<i); }
+        put(r);
     }
 
     return 0;

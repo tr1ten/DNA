@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int n, l;
+int n, l; // nodes, logn
 vector<vector<int>> adj;
 
 int timer;
