@@ -54,7 +54,7 @@ const LL INF = 1e10+5;
 
 
 // Segment Tree
-const int N = 1e2;  // limit for array size
+const int N = 3*(1e5);  // limit for array size
 int n;  // array size, near power of two
 LL t[2 * N]; // tree
 int combine(int left,int right){return max(left,right);}
@@ -170,7 +170,7 @@ LL query_up(int a,int b){
     LL res = 0;
     while(head[a]!=head[b]){
         if(depth[a]>depth[b]) swap(a,b);
-        res = max(res,query(pos[head[b]],pos[b]));
+        res = max(res,query(pos[head[b]],pos[b]+1));
         b = parent[head[b]];
     }
     if(depth[a]>depth[b]) swap(a,b);
@@ -207,6 +207,7 @@ int main()
             take2(a,b);
             --a;--b;
             adj[a].push_back(b);
+            adj[b].push_back(a);
         }
         init(0);
         while(q-->0){
@@ -216,13 +217,14 @@ int main()
                 int l = lca(--a,--b);
                 LL mx = query_up(l,a);
                 mx = max(mx,query_up(l,b));
-                put(mx);
+                cout << mx << " " ;
             }
             else{
                 update(pos[a-1],b);
             }
             
         }
+        cout << endl;
     }
 
     return 0;

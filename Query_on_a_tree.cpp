@@ -168,7 +168,7 @@ LL query_up(int a,int b){
     LL res = 0;
     while(head[a]!=head[b]){
         if(depth[a]>depth[b]) swap(a,b);
-        res = max(res,query(pos[head[b]],pos[b]));
+        res = max(res,query(pos[head[b]],pos[b]+1) );
         b = parent[head[b]];
     }
     if(depth[a]>depth[b]) swap(a,b);
@@ -200,6 +200,7 @@ int main()
             take3(a,b,c);
             --a;--b;
             adj[a].push_back(b);
+            adj[b].push_back(a);
             cost[a][b] = c;
             cost[b][a] = c;
         }

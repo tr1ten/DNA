@@ -29,7 +29,7 @@ int main() {
   scanf("%d", &n);
   for (int i = 0; i < n; ++i) scanf("%d", t + n + i);
   build();
-  // update(0, 1);
+  update(1, 101);
   printf("%d\n", query(1, 2));
   return 0;
 }
