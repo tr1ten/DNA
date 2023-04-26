@@ -52,6 +52,15 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+int dfs(int u,int p,VII &adj){
+    int res = 1;
+    trav(v,adj[u]){
+        if(p==v) continue;
+        res += dfs(v,u,adj);
+    }
+    return res;
+}
+
 // driver code
 int main()
 {
@@ -60,25 +69,26 @@ int main()
     int T;
     cin>>T;
     while(T--){
-        LL n,k;
-        take2(n,k);
-        VI st(32);
-        rep(n){
-            LL x;
-            cin >> x;
-            FOR(i,0,32){
-                if((x&(1<<i)) ){st[i]++;}
-            }
+        int n,root;
+        cin >> n >> root;
+        --root;
+        VI deg(n);
+        FOR(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            u--;
+            v--;
+            deg[u]++;
+            deg[v]++;
+
         }
-        LL res = 0;
-        FOR(i,0,32){
-            if(st[i]>0 && st[i]<n){
-                if(k&(1<<i)) res = max((k^(1<<i)) | ((1<<i) - 1)  ,res); 
-                else res = max(res,k);
-                
-            }
+        if(deg[root]<=1) put("Ayush")
+        else{
+            if(n%2) put("Ashish")
+            else put("Ayush")
         }
-        put(res);
+
     }
+
     return 0;
 }

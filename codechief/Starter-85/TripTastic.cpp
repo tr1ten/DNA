@@ -90,13 +90,13 @@ int main()
             }
             return false;
         };
-        LL lo =0,hi = max(n,m);
-        while(lo<hi){
-            int d = lo + (hi-lo)/2;
-            if(ok(d)) hi = d;
-            else lo = d+1;
+        LL r = 0;
+        for (int i = 30; i >=0; --i)
+        {
+            if (!ok(r + (1LL << i))) r += (1LL << i); // add binary bit
         }
-        put(lo)
+        if(ok(r)) put(r)
+        else put(r+1);
     }
 
     return 0;
