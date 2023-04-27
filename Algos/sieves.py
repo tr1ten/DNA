@@ -37,5 +37,6 @@ def factors2(x):
     if(x>1): ret.add(x)
     return ret
 # calling getFactorization function
-p = factors2(x)
-print([factors2(x) for x in [20,24,1000,1] ])
+p = factors2(4)
+print(p)
+# print([factors2(x) for x in [20,24,1000,1] ])
