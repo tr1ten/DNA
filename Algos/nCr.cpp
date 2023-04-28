@@ -52,8 +52,7 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
-
-const int N=1000 + 5;
+const int N = 1000 + 5;
 LL fact[N];
 LL inv[N];
 LL finv[N];
@@ -69,36 +68,9 @@ void pre(){
 LL nCk(int n,int k){
     return  (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
 }
-// driver code
-int main()
+int main(int argc, char const *argv[])
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
     pre();
-    int T;
-    cin>>T;
-    while(T--){
-        LL n,k;
-        take2(n,k);
-        unordered_map<LL,LL> mp;
-        priority_queue<LL> q;
-        FOR(i,0,n){
-            int x;
-            cin >> x;
-            mp[x]++;
-            if(mp[x]==1) q.push(x);
-        }
-        LL res = 1;
-        while(k>0){
-            LL yn = mp[q.top()];
-            q.pop();
-            LL yk = min(k,yn);
-            res *=nCk(yn,yk);
-            res %=MOD;
-            k -=yk;
-        }
-        put(res);
-    }
-
+    cout << nCk(10,2);
     return 0;
 }
