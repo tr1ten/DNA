@@ -64,24 +64,42 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        string s;
-        cin >> s;
-        if(n%2){
-            put(-1);
-            continue;
-        }
-        VI same(26,0);
-        VI cnt(26,0);
+        VI A(n);
+        take_vec(A,n);
+        VI B(n);
+        VI P(n);
+        int k =0;
         FOR(i,0,n){
-            if(i<n/2 &&  s[i]==s[n-i-1]) same[s[i]-'a']++;
-            cnt[s[i]-'a']++;
+            if(!P[A[i]-1]) {
+                B[i] = A[i];P[A[i]-1] = i+1;k++;
+                }
         }
-        sort_vec(cnt);
-        if(cnt[25]>n/2) {put(-1);continue;}
-        sort_vec(same);
-        LL k = reduce(all(same));
-        LL moves = max((k+1)/2,same[25]);
-        put(moves);
+        stack<int> st;
+        FOR(i,0,n) {
+            if(!P[i]) st.push(i+1);
+        }
+        FOR(i,0,n){
+            if(!B[i]) {
+                int x = st.top();
+                st.pop();
+                if(x-1==i){
+                    int y=A[x-1];
+                    int z = P[y-1];
+                    B[i] = y;
+                    B[z-1] = i+1;
+                    P[i] = z;
+                    P[y-1] = i+1;
+                }
+                else{
+                    B[i] = x;
+                    P[x-1] = i+1;
+                }
+            }
+        }
+        put(k)
+        put_vec(B);
+        
+
     }
 
     return 0;

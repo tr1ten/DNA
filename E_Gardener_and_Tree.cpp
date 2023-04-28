@@ -62,8 +62,37 @@ int main()
     int T;
     cin>>T;
     while(T--){
-        LL x;
-        take(x);
+       int n,k;
+       take2(n,k);
+        VII adj(n);
+        VI deg(n);
+        rep(n-1){
+            int u,v;
+            take2(u,v);
+            adj[--u].push_back(--v);
+            adj[v].push_back(u);
+            deg[u]++;
+            deg[v]++;
+        }
+        queue<LL> q;
+        FOR(i,0,n) {
+            if(deg[i]<=1) q.push(i);
+        }
+        VI lvls{0};
+        while(!q.empty()){
+            int sz=q.size();
+            rep(sz){
+                int u = q.front();
+                q.pop();
+                trav(v,adj[u]){
+                    deg[v]--;
+                    if(deg[v]==1) q.push(v); 
+                }
+            }
+            lvls.push_back(lvls.back() + sz);
+        }
+        put(n-lvls[min(k,(int)lvls.size()-1)])
+
     }
 
     return 0;

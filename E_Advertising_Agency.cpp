@@ -52,7 +52,33 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
-
+vector<long long> factorial;
+vector<long long> modInverseArray;
+long long mmi(long long n) {
+	if(modInverseArray.size() > n)
+        return modInverseArray[n];
+    // If Empty
+	if(modInverseArray.size() == 0){
+        // Value for 0 ignored and 1 is 1
+        modInverseArray.push_back(0);
+        modInverseArray.push_back(1);
+    }
+	for(long long i = modInverseArray.size(); i <= n; i++)
+		modInverseArray.push_back((-(MOD/i) * modInverseArray[MOD % i]) % MOD + MOD);
+    return modInverseArray[n];
+}
+long long findfac(long long a){
+    if(factorial.size() > a)
+        return factorial[a];
+    if(factorial.size() == 0)
+        factorial.push_back(1);
+    for(long long i = factorial.size(); i <= a;i++)
+        factorial.push_back((factorial[i-1]*i)%MOD);
+    return factorial[a];
+}
+long long nCk(long long n, long long k){
+    return (k>=0 && k<=n && n>=0)?((findfac(n)*mmi(findfac(k))%MOD)*mmi(findfac(n-k))%MOD):-1;
+}
 
 // driver code
 int main()
@@ -62,45 +88,24 @@ int main()
     int T;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        VI A(n);
-        take_vec(A,n);
-        VI B(n);
-        vector<bool> V(n,false);
-        VI P(n);
-        int k =0;
+        LL n,k;
+        take2(n,k);
+        map<LL,LL> mp;
         FOR(i,0,n){
-            if(!P[A[i]-1]) {
-                B[i] = A[i];P[A[i]-1] = i+1;k++;
-                }
+            int x;
+            cin >> x;
+            mp[x]++;
         }
-        stack<int> st;
-        FOR(i,0,n) {
-            if(!V[i]) st.push(i+1);
+        LL res = 1;
+        while(k>0){
+            LL yn = (*mp.rbegin()).second;
+            LL yk = min(k,yn);
+            res *=nCk(yn,yk);
+            res %=MOD;
+            k -=yk;
+            mp.erase(prev(mp.end()));
         }
-        FOR(i,0,n){
-            if(!B[i]) {
-                int x = st.top();
-                st.pop();
-                if(x-1==i){
-                    int y=A[x-1];
-                    int z = P[y-1];
-                    B[i] = y;
-                    B[z-1] = i+1;
-                    P[i] = z;
-                    P[y-1] = i+1;
-                }
-                else{
-                    B[i] = x;
-                    P[x-1] = i+1;
-                }
-            }
-        }
-        put(k)
-        put_vec(B);
-        
-
+        put(res);
     }
 
     return 0;
