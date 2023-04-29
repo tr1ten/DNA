@@ -52,14 +52,27 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+const int N = 2*(1e5) + 5;
 
-LL dfs(int u,VII &adj,VI &V){
-    LL res = V[u];
-    if(adj[u].size() ==0 ) return res;
-    trav(v,adj[u]){
-        res += dfs(v,adj,V);
+LL A[N]; // max ans at node
+LL L[N]; // number of leaves of subtree
+LL S[N]; // total citizenss
+
+void dfs(int u,VII &adj,VI &V){
+    S[u] = V[u];
+    if(adj[u].size()==0){
+        A[u] = V[u];
+        L[u] = 1;
+        return;
     }
-    return (res+1)/2;
+    A[u] = 0,L[u]=0;
+    trav(v,adj[u]){
+        dfs(v,adj,V);
+        S[u] +=S[v];
+        A[u] = max(A[u],A[v]);
+        L[u] +=L[v];    
+    }
+    A[u] = max(A[u],(LL)ceil(S[u]*1.0/L[u]));
 }
 
 // driver code
@@ -78,20 +91,10 @@ int main()
             cin >> x;
             adj[x-1].push_back(i+1);
         }
-        // VI A(n);
-        // take_vec(A,n);
-        // put(dfs(0,adj,A));
-        LL sm = 0;
-        FOR(i,0,n) {
-            LL x;
-            cin >> x;
-            sm +=x;
-        }
-        LL cnt = 0;
-        FOR(i,0,n){
-            if(adj[i].size()==0) cnt++;
-        }
-        put((LL)ceil(sm*1.0/cnt));
+        VI B(n);
+        take_vec(B,n);
+        (dfs(0,adj,B));
+        put(A[0]);
     }
 
     return 0;
