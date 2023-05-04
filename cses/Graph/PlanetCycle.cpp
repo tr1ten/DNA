@@ -100,7 +100,7 @@ int main()
     }
     VI dist(N,0); // node distance from root (or cycle)
     FOR(u,0,N){
-        if(cycle_id[next[u]]==-1 || cycle_id[u]!=-1) continue; // if part of cycle or not root
+        if(cycle_id[next[u]]==-1 || cycle_id[u]!=-1) continue; // if part of cycle or not root, next node should not be part of tree but current
         stack<int> st;
         dist[u] = 1;
         st.push(u);
