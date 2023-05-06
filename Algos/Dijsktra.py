@@ -6,8 +6,8 @@ def dijsktra(src,k,adj):
         q = [(0,src)]
         dist[src] = []
         while(q):
-            c,u  = heapq.heappop(q) # once pop out we know this is min
-            if not dist[u] or dist[u][-1]!=c: dist[u].append(c) # rather than using distance, we use array size as status to know if its optimal or not
+            c,u  = heapq.heappop(q) # once pop out we know this is min, first pop u is always min 
+            if not dist[u] or (len(dist[u])<k and dist[u][-1]!=c): dist[u].append(c) # rather than using distance, we use array size as status to know if its optimal or not
             else: continue # required! for time complexity
             for v,w in adj[u]:
                 if(len(dist[v]) == k): continue 
