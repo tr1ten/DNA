@@ -5,10 +5,6 @@ res = requests.get(
     'https://coderbyte.com/api/challenges/json/age-counting'
 ).json()
 
-# res= {
-#     'data': "'key':a, age=58, key=b, age=64, key=c, age=47"
-    
-# }
 
 data = res['data']
 pt = data.split(", ")
