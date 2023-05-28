@@ -1,25 +1,14 @@
 package DS;
 
 
-public class TreeNode {
-    public TreeNode right;
-    public TreeNode left;
-    public int val;
-    TreeNode(int val) {this.val = val;}
-    TreeNode(int val,TreeNode r,TreeNode l) {
-        this.val = val;
-        this.right = r;
-        left = l;
-    }
 
-}
 public class BST {
     TreeNode root;
     TreeNode search(TreeNode root,int val){
         if(root==null) return null;
         if(root.val==val) return root;
         if(root.val<val) return search(root.right, val);
-        return search(root.left, val)
+        return search(root.left, val);
     }
     TreeNode _insert(TreeNode root,int val){
         if(root==null) return new TreeNode(val);
@@ -48,7 +37,7 @@ public class BST {
             // swap and return root
             if(p!=null) p.left = null;
             temp.left = root.left;
-            temp.right = root.right;
+            temp.right = root.right; // Bad bad
             return temp;
         }
         else if(root.val<val) root.right = _delete(root.right, val);
@@ -97,3 +86,15 @@ public class BST {
 
     }
 }
+class TreeNode {
+    public TreeNode right;
+    public TreeNode left;
+    public int val;
+    TreeNode(int val) {this.val = val;}
+    TreeNode(int val,TreeNode r,TreeNode l) {
+        this.val = val;
+        this.right = r;
+        left = l;
+    }
+
+};
