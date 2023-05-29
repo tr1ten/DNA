@@ -8,7 +8,6 @@ class Node:
 class BST:
     def __init__(self) -> None:
         self.root = None
-    
     def _insert(self,node:Node,val:int):
         if not node: return Node(val)
         if node.val<val: node.left = self._insert(node.left,val)
