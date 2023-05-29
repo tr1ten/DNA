@@ -138,13 +138,8 @@ void LinkedList<T>::deleteNode(int index)
     if (index == 0)
     {
         // delete head ie whole LinkedList
-        temp = head;
-        while (temp)
-        {
-            auto temp2 = temp->next;
-            delete temp;
-            temp = temp2;
-        }
+        delete this->head;
+        this->head = nullptr;
     }
     else
     {
