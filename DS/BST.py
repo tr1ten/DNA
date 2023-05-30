@@ -10,14 +10,14 @@ class BST:
         self.root = None
     def _insert(self,node:Node,val:int):
         if not node: return Node(val)
-        if node.val<val: node.left = self._insert(node.left,val)
-        else: node.right = self._insert(node.left,val)
+        if node.val<val: node.right = self._insert(node.right,val)
+        else: node.left = self._insert(node.left,val)
         return node
     def _search(self,node:Node,val:int):
         if not node: return None
         if node.val==val: return node
-        if node.val<val: return self._search(node.left,val)
-        return self._search(node.right,val)
+        if node.val<val: return self._search(node.right,val)
+        return self._search(node.left,val)
     def _delete(self,node:Node,val:int):
         if not node: return None
         if node.val==val:
@@ -30,15 +30,15 @@ class BST:
             node.right = self._delete(node.right,temp.val)
             return node
             
-        if node.val<val: node.left= self._delete(node.left,val)
-        else: node.right= self._delete(node.right,val)
+        if node.val<val: node.right= self._delete(node.right,val)
+        else: node.left= self._delete(node.left,val)
         return node
     
     def _inorder(self,node:Node) -> Iterator[int]:
         if not node: return
-        yield from self._inorder(node.right) # opposite ordering due to how generator works
-        yield node.val
         yield from self._inorder(node.left)
+        yield node.val
+        yield from self._inorder(node.right) # opposite ordering due to how generator works
     
     def insert(self,val:int):
         self.root = self._insert(self.root,val)
