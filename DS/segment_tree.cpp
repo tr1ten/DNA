@@ -5,6 +5,7 @@ using namespace std;
 const int N = 1e2;  // limit for array size
 int n;  // array size, near power of two
 int t[2 * N];
+// iterative segment tree
 
 int combine(int left,int right){return max(left,right);}
 void build() {  // build the tree; fill from last secnod layer

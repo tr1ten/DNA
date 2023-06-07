@@ -50,12 +50,13 @@ class RangeQuery:
    
 def main():
     n = 5                                       
-    arr = [-1,2     ,-10,-4,-5]
+    arr = [0,1,0,1,0]
     rq = RangeQuery(5,max, basev=-float('inf'))
     for i in range(n):
         rq.update(i,arr[i])
-    print(rq.query(4,4))
-    rq.update(0,10)
+    print(rq.query(3,3))
+    rq.update(3,10)
+    print(rq.query(3,3))
     
 if __name__ == "__main__":
     main()

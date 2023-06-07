@@ -1,5 +1,5 @@
 from typing import List
-
+# battle tested
 class RangeQuery :
     def __init__(self,n:int) :
         # approx power of 2
