@@ -48,24 +48,52 @@ typedef unordered_map<LL,LL> MII;
 #define take3(x,y,z) cin >> x >> y >> z;
 
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
+struct pair_hash {
+    template <class T1, class T2>
+    std::size_t operator () (const std::pair<T1,T2> &p) const {
+        auto h1 = std::hash<T1>{}(p.first);
+        auto h2 = std::hash<T2>{}(p.second);
 
+        // Mainly for demonstration purposes, i.e. works but is overly simple
+        // In the real world, use sth. like boost.hash_combine
+        return h1 ^ h2;  
+    }
+};
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+const int ROW = 7;
+const int COL = 7;
+LL rec(LL r,LL c,int ind,string s,unordered_set<PI,pair_hash> &vis){
+    auto key = make_pair(r,c);
+    if(vis.find(key)!=vis.end()) return 0;
+    if(r==ROW-1 && c==0 && ind==s.length()) return 1;
+    if((ind==s.length() || r==ROW-1 && c==0)) return 0;
+    if(c==0 || c==COL-1 && (r-1<0 || vis.find(make_pair(r-1,c))==vis.end() ) &&  (r+1>=ROW || vis.find(make_pair(r+1,c))==vis.end() )) return 0;
+    if(r==0 || r==ROW-1 && (c-1<0 || vis.find(make_pair(r,c-1))==vis.end() ) &&  (c+1>=COL || vis.find(make_pair(r,c+1))==vis.end() )) return 0;
 
-
+    LL res = 0;
+    vis.insert(key);
+    if((s[ind]=='L' || s[ind]=='?')  && c-1>=0)  res+=rec(r,c-1,ind+1,s,vis);
+    if((s[ind]=='R' || s[ind]=='?')  && c+1<COL)  res+=rec(r,c+1,ind+1,s,vis);
+    if((s[ind]=='U' || s[ind]=='?')  && r-1>=0)  res+=rec(r-1,c,ind+1,s,vis);
+    if((s[ind]=='D' || s[ind]=='?')  && r+1<ROW)  res+=rec(r+1,c,ind+1,s,vis);
+    vis.erase(key);
+    return res;
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin>>T;
+    int T=1;
+    // cin>>T;
     while(T--){
-        LL a,b;
-        cin >> a >> b;
-        cout <<  (2*a>=b && 2*b>=a && ((2*b-a)%3==0) && ((2*a-b)%3==0) ? "YES" : "NO") <<endl;
-    }
+        string s;
+        cin >> s;
+        unordered_set<PI,pair_hash> uo;
+        put(rec(0,0,0,s,uo))
+    }   
 
     return 0;
 }

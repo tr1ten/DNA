@@ -62,9 +62,7 @@ int main()
     int T;
     cin>>T;
     while(T--){
-        LL a,b;
-        cin >> a >> b;
-        cout <<  (2*a>=b && 2*b>=a && ((2*b-a)%3==0) && ((2*a-b)%3==0) ? "YES" : "NO") <<endl;
+        
     }
 
     return 0;

@@ -52,20 +52,50 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+const int ROW =8;
+const int COL =8;
+bool blocked[ROW][COL];
+bool valid(VI rows){
+    FOR(i,0,rows.size()){
+        FOR(j,i+1,rows.size()){
+            if(rows[j]==rows[i]) return false;
+            if(abs(j-i)==abs(rows[j]-rows[i])) return false;
+        }
+    }
+    return true;
+}
+int nqueens(VI queens){
+    if(ROW==queens.size()){
+        return 1;
+    }
+    LL res = 0;
+    FOR(c,0,COL){
+        if(blocked[queens.size()][c]) continue;
+        queens.push_back(c);
+        if(valid(queens)) res += nqueens(queens);
+        queens.pop_back();
+    }
+    return res;
 
-
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T;
-    cin>>T;
+    int T=1;
+    memset(blocked,0,sizeof blocked);
+    // cin>>T;
     while(T--){
-        LL a,b;
-        cin >> a >> b;
-        cout <<  (2*a>=b && 2*b>=a && ((2*b-a)%3==0) && ((2*a-b)%3==0) ? "YES" : "NO") <<endl;
+        FOR(r,0,ROW){
+            FOR(c,0,COL){
+                char ch;
+                cin >> ch;
+                if(ch=='*') blocked[r][c] = true;
+            }
+        }
     }
-
+    VI v;
+    cout << nqueens(v);
     return 0;
 }

@@ -12,7 +12,7 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // find_by_order(k)  returns iterator to kth element starting from 0;
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
-typedef long long LL; 
+typedef u_int64_t LL; 
 typedef vector<LL> VI;
 typedef vector<VI> VII;
 typedef pair<LL,LL> PI;
@@ -52,6 +52,10 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
+LL rec(LL d){
+    if(d==1) return 1;
+    return 9*(d-1)*(pow(10,d-2)) + rec(d-1);
+}
 
 
 // driver code
@@ -59,12 +63,20 @@ int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
+    VI bases{1};
+    FOR(d,2,21){
+        bases.push_back(9*(d-1)*(pow(10,d-2)) + bases.back());
+    }
     int T;
     cin>>T;
     while(T--){
-        LL a,b;
-        cin >> a >> b;
-        cout <<  (2*a>=b && 2*b>=a && ((2*b-a)%3==0) && ((2*a-b)%3==0) ? "YES" : "NO") <<endl;
+        LL s;
+        take(s);
+        auto it = upper_bound(all(bases),s);
+        LL d = distance(bases.begin(),it);
+        LL base = *(--it);
+        LL num = pow(10,d-1) +  (s-base)/d,r = (s-base)%d;
+        put(to_string(num)[r]);
     }
 
     return 0;
