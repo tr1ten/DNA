@@ -62,23 +62,33 @@ struct pair_hash {
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
-const int ROW = 7;
-const int COL = 7;
-LL rec(LL r,LL c,int ind,string s,unordered_set<PI,pair_hash> &vis){
-    auto key = make_pair(r,c);
-    if(vis.find(key)!=vis.end()) return 0;
-    if(r==ROW-1 && c==0 && ind==s.length()) return 1;
-    if((ind==s.length() || r==ROW-1 && c==0)) return 0;
-    if(c==0 || c==COL-1 && (r-1<0 || vis.find(make_pair(r-1,c))==vis.end() ) &&  (r+1>=ROW || vis.find(make_pair(r+1,c))==vis.end() )) return 0;
-    if(r==0 || r==ROW-1 && (c-1<0 || vis.find(make_pair(r,c-1))==vis.end() ) &&  (c+1>=COL || vis.find(make_pair(r,c+1))==vis.end() )) return 0;
-
+int dy[] = {-1,1,0,0};
+int dx[] = {0,0,-1,1};
+const int PLen = 48;
+int p[PLen];
+const int GS = 9;
+bool vis[GS][GS]; // padding on four sides
+LL tryP(int pidx,int r,int c){ // i index
+    if(pidx==PLen && r==7 && c==1) return 1; // reach target after all steps
+    if(pidx==PLen || (r==7 && c==1)) return 0;  // invalid
+    if(
+        ((vis[r+1][c] && vis[r-1][c]) && !vis[r][c+1] && !vis[r][c-1])
+        ||
+        ((vis[r][c+1] && vis[r][c-1]) && !vis[r+1][c] && !vis[r-1][c])
+    ) return 0; // optimization 3: if we cannot move forward but can go left and right then that mean grid split into two parts
+    vis[r][c] = 1;
     LL res = 0;
-    vis.insert(key);
-    if((s[ind]=='L' || s[ind]=='?')  && c-1>=0)  res+=rec(r,c-1,ind+1,s,vis);
-    if((s[ind]=='R' || s[ind]=='?')  && c+1<COL)  res+=rec(r,c+1,ind+1,s,vis);
-    if((s[ind]=='U' || s[ind]=='?')  && r-1>=0)  res+=rec(r-1,c,ind+1,s,vis);
-    if((s[ind]=='D' || s[ind]=='?')  && r+1<ROW)  res+=rec(r+1,c,ind+1,s,vis);
-    vis.erase(key);
+    if(p[pidx]<4){
+        int nr=r+dy[p[pidx]],nc = c+dx[p[pidx]];
+        if(!vis[nr][nc]) res+=tryP(pidx+1,nr,nc);
+    }
+    else{
+        FOR(i,0,4){
+            int nr=r+dy[i],nc = c+dx[i];
+            if(!vis[nr][nc]) res+=tryP(pidx+1,nr,nc);
+        }
+    }
+    vis[r][c] = 0;
     return res;
 }
 // driver code
@@ -91,8 +101,23 @@ int main()
     while(T--){
         string s;
         cin >> s;
-        unordered_set<PI,pair_hash> uo;
-        put(rec(0,0,0,s,uo))
+        unordered_map<char,int> mp;
+        mp['U'] = 0;
+        mp['D'] = 1;
+        mp['L'] = 2;
+        mp['R'] = 3;
+        mp['?'] = 4;
+        FOR(i,0,s.length()){
+            p[i] = mp[s[i]];   
+        }
+        memset(vis,0,sizeof vis);
+        FOR(i,0,GS){
+            vis[i][0] = true;
+            vis[i][8] = true;
+            vis[0][i] = true;
+            vis[8][i] = true;
+        }
+        put(tryP(0,1,1));
     }   
 
     return 0;
