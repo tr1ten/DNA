@@ -51,44 +51,44 @@ typedef unordered_map<LL,LL> MII;
 
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
-const int MAX = 200005;
-// find if we can partition array into two equal subset. knapsack
-bool bad(VI &v){
-    LL sm=0;
-    trav(x,v){
-        sm +=x;
-    }
-    if(sm&1) return 0;
-    bitset<MAX> bs;
-    bs[0] = 1;
-    trav(x,v){
-        bs |= (bs<<x); // this is same as adding x to bs
-    }
-    return bs[sm/2];
 
-}
+
+const int MAX = 200005;
+// driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    int T=1;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
         int n;
-        take(n);
+        cin >> n;
+        map<LL,LL> mp;
         VI A(n);
-        take_vec(A,n);
-        pair<int,int> mn(30,0);
         FOR(i,0,n){
-            mn=  min(mn,make_pair(__builtin_ctz(A[i]),i+1 ));
+            int x;
+            cin >> x;
+            mp[x] +=1;
+            A[i] = x;
         }
-        if(bad(A)){
-            put(1);
-            put(mn.second);
+        VI dp(n+1,-1);
+        stack<int> st;
+        LL sm=0;
+        FOR(i,0,n+1){
+            if(i-1>=0 && mp[i-1]==0){
+                if(st.empty()) break;
+                int j  =st.top();
+                st.pop();
+                sm += i-j-1;
+            }
+            dp[i] = sm + mp[i];
+            while(i>0 && mp[i-1]>1){
+                st.push(i-1);
+                mp[i-1]--;
+            }
         }
-        else{
-            put(0);
-        }
+        put_vec(dp);
     }
 
     return 0;
