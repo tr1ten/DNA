@@ -10,7 +10,7 @@ class RangeQuery:
         self.basef = basef
         self.basev = basev
         self.n = n
-        self.tree = [0] * ( 2**ceil(log2(n)+1) - 1 )
+        self.tree = [self.basev] * ( 2**ceil(log2(n)+1) - 1 )
     
     def __str__(self):
         return ' '.join([str(x) for x in self.tree])
