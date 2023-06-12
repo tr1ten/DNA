@@ -30,7 +30,7 @@ typedef unordered_map<LL,LL> MII;
 #define trav(a,arr) for (auto& a: (arr))
 #define sz(x) (int)(x).size()
 #define mk_vec(name,sz,value) VI name(sz,value)
-#define mk_mat(name,n,m,value) vector<vector<int>> name(n, vector<int>(m, value))
+#define mk_mat(name,n,m,value) vector<vector<LL>> name(n, vector<LL>(m, value))
 #define contains(x) find(x) != string::npos
 #define take_vec(vec,sz) FOR(i,0,sz) cin>>vec[i]
 #define sort_vec(vec) sort(vec.begin(), vec.end())
@@ -57,23 +57,32 @@ const LL INF = 1e10+5;
 // driver code
 int main()
 {
-      std::cin.tie(nullptr);
-  std::cout.tie(nullptr);
-
-    std::freopen("ladder.in", "r", stdin);
-    std::freopen("ladder.out", "w", stdout);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
     int T=1;
     // cin>>T;
     while(T--){
-        int n;
-        take(n);
-        VI dp(n);
-        take_vec(dp,n);
-        dp[n-2] += dp[n-1];
-        ROF(i,0,n-2){
-            dp[i] += max(dp[i+1],dp[i+2]);
+        LL N = 8;
+        mk_mat(g,N,N,0LL);
+        FOR(i,0,N){
+            FOR(j,0,N){
+                cin >> g[i][j];
+            }
         }
-        put(max(dp[0],dp[1]))
+        mk_mat(dp,N,N,INF);
+        int dx[] = {1,1,0};
+        int dy[] = {0,-1,-1};
+        dp[N-1][0] = g[N-1][0];
+        ROF(i,0,N){
+            FOR(j,0,N){
+                FOR(k,0,3){
+                    int y=i+dy[k],x=j+dx[k];
+                    if(y<0 || x<0 | x>=N || y>=N) continue;
+                    dp[y][x] = min(dp[i][j]+g[y][x],dp[y][x]);
+                }
+            }
+        } 
+        put(dp[0][N-1]);
     }
 
     return 0;

@@ -57,23 +57,15 @@ const LL INF = 1e10+5;
 // driver code
 int main()
 {
-      std::cin.tie(nullptr);
-  std::cout.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    int T;
+    cin>>T;
+    std::freopen("knapsack.in", "r", stdin);
+    std::freopen("knapsack.out", "w", stdout);
 
-    std::freopen("ladder.in", "r", stdin);
-    std::freopen("ladder.out", "w", stdout);
-    int T=1;
-    // cin>>T;
     while(T--){
-        int n;
-        take(n);
-        VI dp(n);
-        take_vec(dp,n);
-        dp[n-2] += dp[n-1];
-        ROF(i,0,n-2){
-            dp[i] += max(dp[i+1],dp[i+2]);
-        }
-        put(max(dp[0],dp[1]))
+        
     }
 
     return 0;

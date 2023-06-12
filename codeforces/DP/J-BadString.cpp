@@ -52,28 +52,32 @@ typedef unordered_map<LL,LL> MII;
 const LL MOD = 1e9+7;
 const LL INF = 1e10+5;
 
-
+const int N = 25;
+// dp[n][0] - # of string of length n and without a
+// dp[n][1] - with b  at start
+LL dp[N][3]; 
 
 // driver code
 int main()
 {
-      std::cin.tie(nullptr);
-  std::cout.tie(nullptr);
-
-    std::freopen("ladder.in", "r", stdin);
-    std::freopen("ladder.out", "w", stdout);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
+    // std::freopen("badsubs.in", "r", stdin);
+    // std::freopen("badsubs.out", "w", stdout);
     int T=1;
+    memset(dp,0,sizeof dp);
+    dp[0][0] =1;
+    FOR(i,0,3) dp[1][i] = 1;
+    FOR(n,2,N){
+        dp[n][0] = dp[n-1][0] + dp[n-1][2];
+        dp[n][1] = dp[n-1][0] + dp[n-1][1] + dp[n-1][2];
+        dp[n][2] = dp[n-1][0] + dp[n-1][1] + dp[n-1][2];
+    }
     // cin>>T;
     while(T--){
         int n;
-        take(n);
-        VI dp(n);
-        take_vec(dp,n);
-        dp[n-2] += dp[n-1];
-        ROF(i,0,n-2){
-            dp[i] += max(dp[i+1],dp[i+2]);
-        }
-        put(max(dp[0],dp[1]))
+        cin >> n;
+        cout << dp[n][0] + dp[n][1] + dp[n][2] << endl;
     }
 
     return 0;

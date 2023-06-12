@@ -57,23 +57,31 @@ const LL INF = 1e10+5;
 // driver code
 int main()
 {
-      std::cin.tie(nullptr);
-  std::cout.tie(nullptr);
-
-    std::freopen("ladder.in", "r", stdin);
-    std::freopen("ladder.out", "w", stdout);
+    ios_base::sync_with_stdio(false);
+    cin.tie(nullptr);
     int T=1;
     // cin>>T;
     while(T--){
         int n;
-        take(n);
-        VI dp(n);
-        take_vec(dp,n);
-        dp[n-2] += dp[n-1];
-        ROF(i,0,n-2){
-            dp[i] += max(dp[i+1],dp[i+2]);
+        cin >> n;
+        VII g(n);
+        VII dp(n);
+        FOR(k,1,n+1){
+            VI a(k);
+            take_vec(a,k);
+            g[k-1] = a;
+            VI b(k);
+            dp[k-1] = b;
         }
-        put(max(dp[0],dp[1]))
+        dp[0][0]=g[0][0];
+        FOR(i,0,n-1){
+            FOR(j,0,i+1){
+                dp[i+1][j] = max(dp[i+1][j],dp[i][j] + g[i+1][j]); 
+                dp[i+1][j+1] = max(dp[i+1][j+1],dp[i][j] + g[i+1][j+1]);
+
+            }
+        }
+        put(*max_element(all(dp[n-1])));
     }
 
     return 0;
