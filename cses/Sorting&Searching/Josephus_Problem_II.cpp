@@ -64,6 +64,16 @@ int main()
     while(T--){
         int n,p;
         cin >> n >> p;
+        ordered_set<int> os;
+        FOR(i,1,n+1) os.insert(i);
+        int pos = 0;
+        while(os.size()>1){
+            pos = (pos+p)%os.size();
+            const auto it = os.find_by_order(pos);
+            cout << *it << " ";
+            os.erase(it);
+        }
+        cout << *os.find_by_order(0)<< endl;
     }
 
     return 0;
