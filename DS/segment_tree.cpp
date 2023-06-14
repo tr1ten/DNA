@@ -4,7 +4,7 @@
 using namespace std;
 const int N = 1e2;  // limit for array size
 int n;  // array size, near power of two
-int t[2 * N];
+int t[2 * N]; // 0 index
 // iterative segment tree
 
 int combine(int left,int right){return max(left,right);}
@@ -17,7 +17,7 @@ void update(int p, const int value) {
   for (t[p += n] = value; p >>= 1; ) t[p] = combine(t[p<<1], t[p<<1|1]);
 }
 
-int query(int l, int r) { // [l,r)
+int query(int l, int r) { // [l,r) important
   int resl=0, resr=0;
    for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
     if (l&1) resl = combine(resl, t[l++]); // l&1 mean l is right child, parent not included so shift to parent right
@@ -29,8 +29,8 @@ int query(int l, int r) { // [l,r)
 int main() {
   scanf("%d", &n);
   for (int i = 0; i < n; ++i) scanf("%d", t + n + i);
-  build();
-  update(1, 101);
-  printf("%d\n", query(1, 2));
+  build(); // fill other layers
+  update(0, 101);
+  printf("%d\n", query(0, 2));
   return 0;
 }
