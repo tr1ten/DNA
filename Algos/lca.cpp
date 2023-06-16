@@ -36,7 +36,7 @@ int lca(int u, int v)
     if (is_ancestor(v, u))
         return v;
     for (int i = l; i >= 0; --i) {
-        if (!is_ancestor(up[u][i], v))
+        if (!is_ancestor(up[u][i], v)) // similar to exhaustive binary search 
             u = up[u][i];
     }
     return up[u][0];

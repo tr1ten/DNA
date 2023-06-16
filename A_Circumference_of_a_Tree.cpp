@@ -49,22 +49,27 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-ll res = 1;
-ll rec(vii &adj,int u,int p){
-    ll mx1=0;
-    ll mx2=0;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        ll ret = rec(adj,v,u);
-        if(ret>mx1){
-            mx2=mx1;
-            mx1 =ret;
+ll res=1;
+vi bfs(ll u,vii &adj){
+    deque<pi> dq;
+    vector<bool> vis(adj.size(),false);
+    dq.push_back(mp(0LL,u));
+    vi dist(adj.size(),0);
+    dist[u] = 0;
+    vis[u] = 1;
+    while(!dq.empty()){
+        auto u = dq.front();
+        if(u.first>dist[u.second]) continue;
+        dq.pop_front();
+        trav(v,adj[u.second]){
+            if(!vis[v]) {
+                dist[v] = u.first + 1;
+                vis[v] = 1;
+                dq.push_back(mp(dist[v],v));
+            }
         }
-        else if(ret>mx2) {mx2 = ret;}
     }
-    if(mx1>0 && mx2>0) res = max(res,mx1+mx2+1);
-    else res = max(res,mx1+1);
-    return mx1+1;
+    return dist;
 }
 // driver code
 int main()
@@ -85,9 +90,12 @@ int main()
             adj[u].push_back(v);
             adj[v].push_back(u);
         }
-        res = 1;
-        rec(adj,0,-1);
-        put(3*(res-1));
+        auto d1 = bfs(0,adj);
+        auto it = max_element(all(d1));
+        int farthest = distance(d1.begin(),it);
+        auto d2 = bfs(farthest,adj);
+        res = *max_element(all(d2));
+        cout << 3*res;
     }
 
     return 0;

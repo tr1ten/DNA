@@ -49,59 +49,70 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-ll res=1;
-vi bfs(ll u,vii &adj){
-    deque<pi> dq;
-    vector<bool> vis(adj.size(),false);
-    dq.push_back(mp(0LL,u));
-    vi dist(adj.size(),0);
-    dist[u] = 0;
-    vis[u] = 1;
-    while(!dq.empty()){
-        auto u = dq.front();
-        if(u.first>dist[u.second]) continue;
-        dq.pop_front();
-        trav(v,adj[u.second]){
-            if(!vis[v]) {
-                dist[v] = u.first + 1;
-                vis[v] = 1;
-                dq.push_back(mp(dist[v],v));
-            }
-        }
-    }
-    return dist;
-}
-// driver code
-int main()
+
+int n, l; // nodes, logn
+vector<vector<int>> adj;
+
+int timer;
+vector<int> tin, tout;
+vector<vector<int>> up;
+
+void dfs(int v, int p)
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+    tin[v] = ++timer;
+    up[v][0] = p;
+    for (int i = 1; i <= l; ++i)
+        up[v][i] = up[up[v][i-1]][i-1];
 
-    int T=1;
-    // cin>>T;
-    while(T--){
-        int n;
-        cin >> n;
-        vii adj(n);
-        rep(i,0,n-1){
-            int u,v;
-            cin >> u >> v;
-            u--;v--;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
-        }
-        auto d1 = bfs(0,adj);
-        auto it = max_element(all(d1));
-        int f1 = distance(d1.begin(),it);
-        auto d2 = bfs(f1,adj);
-        auto it2 = max_element(all(d2));
-        int f2 = distance(d2.begin(),it2);
-        auto d3 = bfs(f2,adj);
-        res = *max_element(all(d2));
-        rep(i,0,n){
-            cout << max(res ,max(d2[i],d3[i]) + 1) << endl;
-        }
+    for (int u : adj[v]) {
+        if (u != p)
+            dfs(u, v);
     }
 
+    tout[v] = ++timer;
+}
+
+bool is_ancestor(int u, int v)
+{
+    return tin[u] <= tin[v] && tout[u] >= tout[v];
+}
+
+int lca(int u, int v)
+{
+    if (is_ancestor(u, v))
+        return u;
+    if (is_ancestor(v, u))
+        return v;
+    for (int i = l; i >= 0; --i) {
+        if (!is_ancestor(up[u][i], v)) // similar to exhaustive binary search 
+            u = up[u][i];
+    }
+    return up[u][0];
+}
+
+void preprocess(int root) {
+    tin.resize(n);
+    tout.resize(n);
+    timer = 0;
+    l = ceil(log2(n));
+    up.assign(n, vector<int>(l + 1));
+    dfs(root, root);
+}
+int main(int argc, char const *argv[])
+{
+    // assign adj list
+    int n;
+    cin >> n;
+    adj.resize(n);
+    rep(i,0,n){
+        int u,v;
+        cin >> u >> v;
+        u--;v--;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    // max move to k steps 
+    
+    // preprocess(9);
     return 0;
 }
