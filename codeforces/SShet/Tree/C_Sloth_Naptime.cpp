@@ -56,17 +56,18 @@ vector<vector<int>> adj;
 int timer;
 vector<int> tin, tout;
 vector<vector<int>> up;
-
-void dfs(int v, int p)
+vector<int> depth;
+void dfs(int v, int p,int d)
 {
     tin[v] = ++timer;
     up[v][0] = p;
+    depth[v] = d;
     for (int i = 1; i <= l; ++i)
         up[v][i] = up[up[v][i-1]][i-1];
 
     for (int u : adj[v]) {
         if (u != p)
-            dfs(u, v);
+            dfs(u, v,d+1);
     }
 
     tout[v] = ++timer;
@@ -93,18 +94,26 @@ int lca(int u, int v)
 void preprocess(int root) {
     tin.resize(n);
     tout.resize(n);
+    depth.resize(n);
     timer = 0;
     l = ceil(log2(n));
     up.assign(n, vector<int>(l + 1));
-    dfs(root, root);
+    dfs(root, root,0);
+}
+int parent(int u,int k){
+    int v = u;
+    per(i,0,32){
+        if(k&(1<<i)) v = up[v][i];
+        if(v==up[v][0]) break;
+    }
+    return v;
 }
 int main(int argc, char const *argv[])
 {
     // assign adj list
-    int n;
     cin >> n;
     adj.resize(n);
-    rep(i,0,n){
+    rep(i,0,n-1){
         int u,v;
         cin >> u >> v;
         u--;v--;
@@ -112,7 +121,25 @@ int main(int argc, char const *argv[])
         adj[v].push_back(u);
     }
     // max move to k steps 
-    
-    // preprocess(9);
+    int root = 0;
+    preprocess(root);
+    int q ;
+    cin >>q;
+    rep(i,0,q){
+        int u,v,e;
+        cin >> u >> v >> e;
+        u--;v--;
+        int lc = lca(u,v);
+        int p1 = depth[u] - depth[lc];
+        int p2 =  depth[v] - depth[lc];
+        if((p1+p2)<=e) cout << v+1 << endl;
+        else {
+            if(e<=p1) {cout<<parent(u,e)+1 <<endl;}
+            else{
+                e -=p1;
+                cout << parent(v,p2-e)+1 << endl;
+            }
+        }
+    }
     return 0;
 }
