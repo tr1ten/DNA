@@ -61,16 +61,11 @@ bool cmp(Q A, Q B)
   return (A.r < B.r)^(A.l/S%2); // change direction after each block change due to q.l
 }
 const int N = 2e6 + 3;
-unordered_map<ll,ll> cnt;
-ll fav;
-ll res=0;
+unordered_map<ll,ll> cnt; // DS to get & update res 
+ll res=0; // running ans of each query
 void add(int j){
-    res += cnt[j^fav];
-    cnt[j]++;
 }
 void del(int j){
-    cnt[j]--;
-    res -= cnt[j^fav];
 }
 int main()
 {
@@ -79,42 +74,37 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-         int n,t;
-        cin >> n >> t >> fav;
+        int n,t;
+        cin >> n >> t;
         vi A(n);
         tkv(A,n);
-        A.insert(A.begin(),0);
         vector<Q> ques;
         rep(i,0,t){
             int l,r;
             cin >> l >> r;
-            ques.push_back({l-1,r,i});
+            ques.push_back({l-1,r-1,i}); // 0 index
         }
         sort(all(ques),cmp);
-        int curL = 1;
-        int curR = 0;
+        int curL = 0;
+        int curR = -1;
         vi ans(t);
-        vi xs{0};
-        rep(i,1,n+1){
-            xs.pb(xs.back()^(A[i])); // prefix xor
-        }
         rep(i,0,t){
             auto q =ques[i];
             while(curL>q.l){ // add
                 curL--;
-                add(xs[curL]);
+                // add();
             }
             while(curL<q.l){ // remove 
-                del(xs[curL]);
+                // del();
                 curL++;
             }
             while(curR>q.r){    // rempve
-                del(xs[curR]);
+                // del();
                 curR--;
             }
             while(curR<q.r){ // add
                 curR++;
-                add(xs[curR]);
+                // add();
             }
             ans[q.idx] = res;
         }

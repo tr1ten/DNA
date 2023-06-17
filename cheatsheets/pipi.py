@@ -224,3 +224,5 @@ def reverse(arr, i, j):
 def is_subseq(x, y):
     it = iter(y)
     return all(c in it for c in x)
+
+print('\n'.join([' | '.join(['{:4}'.format(str(item)) for item in row]) for row in dp]))
