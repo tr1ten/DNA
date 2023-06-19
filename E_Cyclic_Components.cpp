@@ -25,7 +25,7 @@ typedef unordered_map<ll,ll> mll;
 #define trav(a,arr) for (auto& a: (arr))
 #define sz(x) (int)(x).size()
 #define mk_vec(name,sz,value) vi name(sz,value)
-#define mk_mat(name,n,m,value) vector<vector<int>> name(n, vector<int>(m, value))
+#define mk_mat(name,n,m,value) vector<vi> name(n, vi(m, value))
 #define contains(x) find(x) != string::npos
 #define tkv(vec,sz) rep(i,0,sz) cin>>vec[i]
 #define srv(vec) sort(vec.begin(), vec.end())
@@ -41,29 +41,7 @@ typedef unordered_map<ll,ll> mll;
 #define mod(x) (x + MOD)%MOD
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
-
-void __print(int x) {cerr << x;}
-void __print(long x) {cerr << x;}
-void __print(long long x) {cerr << x;}
-void __print(unsigned x) {cerr << x;}
-void __print(unsigned long x) {cerr << x;}
-void __print(unsigned long long x) {cerr << x;}
-void __print(float x) {cerr << x;}
-void __print(double x) {cerr << x;}
-void __print(long double x) {cerr << x;}
-void __print(char x) {cerr << '\'' << x << '\'';}
-void __print(const char *x) {cerr << '\"' << x << '\"';}
-void __print(const string &x) {cerr << '\"' << x << '\"';}
-void __print(bool x) {cerr << (x ? "true" : "false");}
-
-
-template<typename T, typename V>
-void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
-template<typename T>
-void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
-void _print() {cerr << "]\n";}
-template <typename T, typename... V>
-void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+void __print(auto x) {cerr << x;}
 #ifndef ONLINE_JUDGE
 #define debug(x) cerr << #x <<" "; __print(x); cerr << endl;
 #else
@@ -71,36 +49,19 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-int mxd;
-const int MAX = 1e5 + 5; 
-void dfs(int u,int p,vii &adj, vi &down){
+const int N = 2*1e5 + 5;
+bool vis[N];
+bool dfs(int u,vii &adj){
+    vis[u] = 1;
+    bool res = adj[u].size()==2;
     trav(v,adj[u]){
-        if(v==p) continue;
-        dfs(v,u,adj,down);
-        down[u] = max(down[v]+1,down[u]);
-    }
-}
-void dfs2(int u,int p,ll mx,vii &adj,vi &down,vi &up){
-    if(p!=u) up[u] = max(up[u],max(up[p] + 1,1+mx)); // farther from parent or parent subtree
-    ll mx1 = -INF;
-    ll mx2 = -INF;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        if(down[v]>mx1){
-            mx2=mx1;
-            mx1 = down[v];
-        }
-        else if(down[v]>mx2){
-            mx2 = down[v];
+        if(!vis[v]) {
+            res = res&dfs(v,adj);
         }
     }
-    trav(v,adj[u]){
-        if(v==p) continue;
-        dfs2(v,u ,((down[v] == mx1) ? mx2 : mx1) + 1,adj,down,up);
-    }
-    
+    return res;
 }
-
+// driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -110,40 +71,20 @@ int main()
     // cin>>T;
     while(T--){
         int n,m;
-        cin >> n >> m >> mxd;
+        cin >> n >> m;
         vii adj(n);
-        vi up(n,-INF);
-        vi down(n,-INF);
         rep(i,0,m){
-            int x;
-            cin >> x;
-            up[--x] = 0;
-            down[x] = 0;
-        }
-        rep(i,0,n-1){
             int u,v;
             cin >> u >> v;
             u--;v--;
             adj[u].push_back(v);
             adj[v].push_back(u);
         }
-        // number of nodes at distance <=d from m given vertices
-        // tree 
-        // for each given node
-        // two cases
-        // in subtree - 
-        // in other subtree 
-        dfs(0,0,adj,down);
-        dfs2(0,0,-INF,adj,down,up);
         ll res = 0;
-        // debug(down)
-        // debug(up)
         rep(i,0,n){
-            res += (max(up[i],down[i]) <= mxd);
+            if(!vis[i] && dfs(i,adj)) res++;
         }
         put(res);
-
-        
     }
 
     return 0;
