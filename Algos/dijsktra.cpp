@@ -25,7 +25,6 @@ vector<int> dijsktra(int S,vector<vector<pair<int,ll>>> &adj){
     }
     return par; // or par according to needs
 }
-
 int main(int argc, char const *argv[])
 {
     int n,m;
@@ -33,22 +32,13 @@ int main(int argc, char const *argv[])
     int D = n-1;
     int S = 0;
     vector<vector<pair<int,ll>>> adj(n);
-    map<pair<int,int>,ll> edges;
     while(m--){
         int u,v;
         ll w;
         cin >> u >> v >> w;
         u--;v--;
-        auto p = make_pair(u,v);
-        auto p2 = make_pair(v,u);
-        if(edges.count(p)==0 || edges[p]>w) edges[p] =w;
-        if(edges.count(p2)==0 || edges[p2]>w) edges[p2] =w;
-
-    }
-    for(auto e:edges){
-        adj[e.first.first].push_back(make_pair(e.first.second,e.second));
-        // adj[e.first.second].push_back(make_pair(e.first.second,e.second));
-
+        adj[u].push_back(make_pair(v,w));
+        adj[v].push_back(make_pair(u,w));
     }
     auto par = dijsktra(S,adj);
     if(par[D]==-1) cout << (-1) << endl;
