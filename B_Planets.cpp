@@ -49,88 +49,70 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-#include <bits/stdc++.h>
-
-using namespace std;
-
-const int N = 1e5 +5;
-vector<int> ids;
-vector<int> low;
-bool onStack[N];
-stack<int> st;
-vector<vector<int>> g;
-int timer;
-int scc_count;
-void dfs(int u){
-    onStack[u] = 1;
-    st.push(u);
-    ids[u] = low[u] = timer++;
-    for(int v:g[u]){
-        if(ids[v]==-1) dfs(v);
-        if(onStack[v]) low[u] = min(low[u],low[v]); // maintain stack invariant, only include node in scc
+const int N = 1e6 + 5;
+ll dist[N];
+struct comp{
+    bool operator()(int u,int v) const{
+        if(dist[u]!=dist[v]) return dist[u]<dist[v];
+        return u<v;
     }
-    if(low[u]==ids[u]){
-        while(!st.empty()) {
-            int v = st.top();
-            onStack[v] = 0;
-            low[v] = low[u];// once scc completed, reset back to start
-            st.pop();
-            if(v==u) break;
-        } 
-        scc_count++;
-    }
-}
-int stronglyConnectedComponents(int n, vector<vector<int>> &adj)
-{
-    timer=0;
-    scc_count = 0;
-    ids.resize(n);
-    fill(ids.begin(),ids.end(),-1);
-    low.resize(n);
-    g=adj;
-    for(int i=0;i<n;i++){
-        if(ids[i]==-1){
-            dfs(i);
+};
+// this is actually faster than original djistkra using priority queues
+ll dijsktra(int S,vector<int> cont[],vector<vector<pair<int,ll>>> &adj){
+    int n = adj.size();
+    fill_n(dist,n,INF);
+    dist[S] = 0;
+    set<int,comp> pq;
+    rep(i,0,n) pq.insert(i);
+    while(!pq.empty()){
+        int u = *pq.begin();
+        pq.erase(pq.begin());
+        if(u==n-1 || dist[u]==INF) return dist[n-1];
+        auto it = lower_bound( all(cont[u]),(dist[u]));
+        while(it!=cont[u].end() && (*it)==dist[u]){
+            dist[u]++;
+            it++;
         }
-    }
-    return scc_count;
-}
-// driver code
-int main()
-{
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    int T=1;
-    // cin>>T;
-    while(T--){
-        int n,m;
-        cin >> n >> m;
-        string hors;
-        string vers;
-        cin >> hors;
-        cin >> vers;
-        vector<vector<int>> adj(n*m);
-        int dx[] = {0,0,-1,1};
-        int dy[] = {-1,1,0,0};
-        char dir[] = {'^','v','<','>'};
-        rep(i,0,n){
-            rep(j,0,m){
-                rep(k,0,4){
-                    int y=i+dy[k];
-                    int x=j+dx[k];
-                    if(y<n && y>=0 && x<m && x>=0){
-                        if(hors[y]!=dir[k] && vers[x]!=dir[k]) continue;
-                        adj[i*m + j].push_back(y*m + x);
-                    }
-                }
+        rep(i,0,adj[u].size()){
+            auto p  =adj[u][i];
+            auto qi = pq.find(p.first);
+            if(qi!=pq.end() && dist[p.first]>dist[u] + p.second){
+                pq.erase(qi);
+                dist[p.first] = dist[u] + p.second;
+                pq.insert(p.first);
             }
         }
-        int sc = stronglyConnectedComponents(n*m,adj);
-        if(sc==1) put("YES")
-        else put("NO")
     }
+    return INF; // or par according to needs
+}
+int main(int argc, char const *argv[])
+{
+    int n,m;
+    cin >> n >> m;
+    int D = n-1;
+    int S = 0;
+    vector<vector<pair<int,ll>>> adj(n);
+    while(m--){
+        int u,v;
+        ll w;
+        cin >> u >> v >> w;
+        u--;v--;
+        adj[u].push_back(make_pair(v,w));
+        adj[v].push_back(make_pair(u,w));
+    }
+    vector<int> cont[n];
+    rep(i,0,n){
+        int k;
+        cin >> k;
+        while(k--){
+            int x;
+            cin >> x;
+            cont[i].push_back(x);
+        }
+    }
+    auto dist= dijsktra(0,cont,adj);
+    if(dist<INF) put(dist)
+    else put(-1)
 
     return 0;
 }

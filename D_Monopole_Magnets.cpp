@@ -49,52 +49,16 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-#include <bits/stdc++.h>
-
-using namespace std;
-
-const int N = 1e5 +5;
-vector<int> ids;
-vector<int> low;
-bool onStack[N];
-stack<int> st;
-vector<vector<int>> g;
-int timer;
-int scc_count;
-void dfs(int u){
-    onStack[u] = 1;
-    st.push(u);
-    ids[u] = low[u] = timer++;
-    for(int v:g[u]){
-        if(ids[v]==-1) dfs(v);
-        if(onStack[v]) low[u] = min(low[u],low[v]); // maintain stack invariant, only include node in scc
+const int N = 1e3 + 5;
+bool grid[N][N];
+int dx[] = {0,0,-1,1};
+int dy[] = {-1,1,0,0};
+void dfs(int x,int y,int n,int m){
+    grid[y][x] = 1;
+    rep(k,0,4){
+        int i = y+dy[k],j = x+dx[k];
+        if(i>=0 && i<n && j>=0 && j<m && !grid[i][j]) dfs(j,i,n,m);
     }
-    if(low[u]==ids[u]){
-        while(!st.empty()) {
-            int v = st.top();
-            onStack[v] = 0;
-            low[v] = low[u];// once scc completed, reset back to start
-            st.pop();
-            if(v==u) break;
-        } 
-        scc_count++;
-    }
-}
-int stronglyConnectedComponents(int n, vector<vector<int>> &adj)
-{
-    timer=0;
-    scc_count = 0;
-    ids.resize(n);
-    fill(ids.begin(),ids.end(),-1);
-    low.resize(n);
-    g=adj;
-    for(int i=0;i<n;i++){
-        if(ids[i]==-1){
-            dfs(i);
-        }
-    }
-    return scc_count;
 }
 // driver code
 int main()
@@ -106,30 +70,53 @@ int main()
     // cin>>T;
     while(T--){
         int n,m;
-        cin >> n >> m;
-        string hors;
-        string vers;
-        cin >> hors;
-        cin >> vers;
-        vector<vector<int>> adj(n*m);
-        int dx[] = {0,0,-1,1};
-        int dy[] = {-1,1,0,0};
-        char dir[] = {'^','v','<','>'};
+        cin >> n >> m ;
+        bool awr[n];
+        bool awc[m];
         rep(i,0,n){
+            string s;
+            cin >> s;
             rep(j,0,m){
-                rep(k,0,4){
-                    int y=i+dy[k];
-                    int x=j+dx[k];
-                    if(y<n && y>=0 && x<m && x>=0){
-                        if(hors[y]!=dir[k] && vers[x]!=dir[k]) continue;
-                        adj[i*m + j].push_back(y*m + x);
-                    }
-                }
+                grid[i][j] = (s[j]=='.');
+                if(!grid[i][j]) {awr[i]= 0;awc[j]=0;}
             }
         }
-        int sc = stronglyConnectedComponents(n*m,adj);
-        if(sc==1) put("YES")
-        else put("NO")
+        bool allrow_w = (find(awr,awr+n,false)==awr+n);
+        bool allcol_w = (find(awc,awc+m,false)==awc+m);
+        bool pos = 1;
+        rep(c,0,m){
+            int r=0;
+            int cnt = 0;
+            while(r<n){
+                if(grid[r][c]) {r++;continue;}
+                cnt+=1;
+                while(r<n && !grid[r][c]) {r++;}
+            }
+            if(cnt>1 || (cnt==0 && !allrow_w)) {pos = 0;break;}
+        }
+        if(pos){
+            rep(r,0,n){
+            int c=0;
+            int cnt = 0;
+            while(c<m){
+                if(grid[r][c]) {c++;continue;}
+                cnt+=1;
+                while(c<m && !grid[r][c]) {c++;}
+            }
+            if(cnt>1 || (cnt==0 && !allcol_w)) {pos = 0;break;}
+        }
+        }
+        if(!pos) put(-1)
+        else{
+            int cnt = 0;
+            rep(i,0,n){
+                rep(j,0,m){
+                    if(!grid[i][j]) {dfs(j,i,n,m);cnt++;}
+                }
+            }
+            put(cnt);
+        }
+        
     }
 
     return 0;

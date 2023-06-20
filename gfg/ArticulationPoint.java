@@ -19,7 +19,8 @@ class Solution
             if(lowestTime[v]==null){
                  dfs(v, u,adj);
                  lowestTime[u] = Math.min(lowestTime[u], lowestTime[v]);
-                if(lowestTime[v]>=visitTime[u] && p!=-1) ap[u] = true;
+                 // compare it with visit time, since we might have also visited some lower nodes but that doesn't make it non ap
+                if(lowestTime[v]>=visitTime[u] && p!=-1) ap[u] = true; // only check for newly discovered node, since already visited node cannot be broken by this
                 child++;
             }
             else{

@@ -50,52 +50,18 @@ void __print(auto x) {cerr << x;}
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-#include <bits/stdc++.h>
+struct pair_hash {
+    template <class T1, class T2>
+    std::size_t operator () (const std::pair<T1,T2> &p) const {
+        auto h1 = std::hash<T1>{}(p.first);
+        auto h2 = std::hash<T2>{}(p.second);
 
-using namespace std;
+        // Mainly for demonstration purposes, i.e. works but is overly simple
+        // In the real world, use sth. like boost.hash_combine
+        return h1 ^ h2;  
+    }
+};
 
-const int N = 1e5 +5;
-vector<int> ids;
-vector<int> low;
-bool onStack[N];
-stack<int> st;
-vector<vector<int>> g;
-int timer;
-int scc_count;
-void dfs(int u){
-    onStack[u] = 1;
-    st.push(u);
-    ids[u] = low[u] = timer++;
-    for(int v:g[u]){
-        if(ids[v]==-1) dfs(v);
-        if(onStack[v]) low[u] = min(low[u],low[v]); // maintain stack invariant, only include node in scc
-    }
-    if(low[u]==ids[u]){
-        while(!st.empty()) {
-            int v = st.top();
-            onStack[v] = 0;
-            low[v] = low[u];// once scc completed, reset back to start
-            st.pop();
-            if(v==u) break;
-        } 
-        scc_count++;
-    }
-}
-int stronglyConnectedComponents(int n, vector<vector<int>> &adj)
-{
-    timer=0;
-    scc_count = 0;
-    ids.resize(n);
-    fill(ids.begin(),ids.end(),-1);
-    low.resize(n);
-    g=adj;
-    for(int i=0;i<n;i++){
-        if(ids[i]==-1){
-            dfs(i);
-        }
-    }
-    return scc_count;
-}
 // driver code
 int main()
 {
@@ -105,31 +71,40 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        string hors;
-        string vers;
-        cin >> hors;
-        cin >> vers;
-        vector<vector<int>> adj(n*m);
-        int dx[] = {0,0,-1,1};
-        int dy[] = {-1,1,0,0};
-        char dir[] = {'^','v','<','>'};
+        int x0,y0,x1,y1,n;
+        cin >> y0 >> x0 >> y1 >> x1;
+        cin >> n;
+        unordered_set<pair<int,int>,pair_hash> st;
+        unordered_map<pair<int,int>,ll,pair_hash> dist;
         rep(i,0,n){
-            rep(j,0,m){
-                rep(k,0,4){
-                    int y=i+dy[k];
-                    int x=j+dx[k];
-                    if(y<n && y>=0 && x<m && x>=0){
-                        if(hors[y]!=dir[k] && vers[x]!=dir[k]) continue;
-                        adj[i*m + j].push_back(y*m + x);
-                    }
+            int r,c1,c2;
+            cin >> r>>c1>>c2;
+            rep(c,c1,c2+1){
+                auto p = mp(c,r);
+                st.insert(p);
+            }
+        }
+        int dx[] = {0,0,-1,1,1,-1,1,-1};
+        int dy[] = {-1,1,0,0,1,-1,-1,1};
+        deque<pair<int,int>> dq;
+        auto start = mp(x0,y0);
+        dq.push_back(start);
+        dist[start] = 0;
+        pair<int,int> tar = mp(x1,y1);
+        int ans = -1;
+        while(!dq.empty()){
+            auto u = dq.front();
+            if(u==tar) {ans= dist[u];break;}
+            dq.pop_front();
+            rep(k,0,8){
+                auto p=mp(u.first+dx[k],u.second+dy[k]);
+                if(st.count(p)>0 && dist.count(p)==0){
+                    dist[p] = dist[u] +1;
+                    dq.push_back(p);
                 }
             }
         }
-        int sc = stronglyConnectedComponents(n*m,adj);
-        if(sc==1) put("YES")
-        else put("NO")
+        put(ans);
     }
 
     return 0;

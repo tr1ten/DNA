@@ -12,7 +12,7 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // find_by_order(k)  returns iterator to kth element starting from 0;
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
-typedef long long ll; 
+typedef int ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -47,55 +47,12 @@ void __print(auto x) {cerr << x;}
 #else
 #define debug(x)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
 
-#include <bits/stdc++.h>
-
-using namespace std;
-
-const int N = 1e5 +5;
-vector<int> ids;
-vector<int> low;
-bool onStack[N];
-stack<int> st;
-vector<vector<int>> g;
-int timer;
-int scc_count;
-void dfs(int u){
-    onStack[u] = 1;
-    st.push(u);
-    ids[u] = low[u] = timer++;
-    for(int v:g[u]){
-        if(ids[v]==-1) dfs(v);
-        if(onStack[v]) low[u] = min(low[u],low[v]); // maintain stack invariant, only include node in scc
-    }
-    if(low[u]==ids[u]){
-        while(!st.empty()) {
-            int v = st.top();
-            onStack[v] = 0;
-            low[v] = low[u];// once scc completed, reset back to start
-            st.pop();
-            if(v==u) break;
-        } 
-        scc_count++;
-    }
-}
-int stronglyConnectedComponents(int n, vector<vector<int>> &adj)
-{
-    timer=0;
-    scc_count = 0;
-    ids.resize(n);
-    fill(ids.begin(),ids.end(),-1);
-    low.resize(n);
-    g=adj;
-    for(int i=0;i<n;i++){
-        if(ids[i]==-1){
-            dfs(i);
-        }
-    }
-    return scc_count;
-}
+struct Node{
+    int d;
+    int u;
+    int t;
+};
 // driver code
 int main()
 {
@@ -105,31 +62,50 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        string hors;
-        string vers;
-        cin >> hors;
-        cin >> vers;
-        vector<vector<int>> adj(n*m);
-        int dx[] = {0,0,-1,1};
-        int dy[] = {-1,1,0,0};
-        char dir[] = {'^','v','<','>'};
+        int n,m,k,s;
+        cin >> n >> m >> k >> s;
+        int dist[n][k];
+        memset(dist,-1,sizeof dist);
+        deque<Node> dq;
         rep(i,0,n){
-            rep(j,0,m){
-                rep(k,0,4){
-                    int y=i+dy[k];
-                    int x=j+dx[k];
-                    if(y<n && y>=0 && x<m && x>=0){
-                        if(hors[y]!=dir[k] && vers[x]!=dir[k]) continue;
-                        adj[i*m + j].push_back(y*m + x);
-                    }
-                }
+            int x;
+            cin >> x;
+            x--;
+            dq.push_back({0,i,x});
+            dist[i][x] = 0;
+        }
+        vii adj(n);
+        rep(i,0,m){
+            int u,v;
+            cin >> u >> v;
+            u--;v--;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        while(!dq.empty()){
+            auto u = dq.front();
+            dq.pop_front();
+            trav(v,adj[u.u]){
+                if(dist[v][u.t]!=-1) continue;
+                dist[v][u.t] = u.d + 1;
+                dq.push_back({u.d+1,v,u.t});
             }
         }
-        int sc = stronglyConnectedComponents(n*m,adj);
-        if(sc==1) put("YES")
-        else put("NO")
+        priority_queue<int> pq;
+        rep(i,0,n){
+            rep(j,0,k){
+                if(pq.size()<s) pq.push(dist[i][j]);
+                else if(pq.top()>dist[i][j]){
+                    pq.pop();
+                    pq.push(dist[i][j]);
+                } 
+            }
+            ll sm = 0;
+            while(!pq.empty()){ sm+=pq.top();pq.pop();}
+            cout << sm << " ";
+        }   
+        cout << endl;
+        
     }
 
     return 0;
