@@ -12,7 +12,7 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // find_by_order(k)  returns iterator to kth element starting from 0;
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
-typedef long long ll; 
+typedef int ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -47,49 +47,70 @@ void __print(auto x) {cerr << x;}
 #else
 #define debug(x)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
-
-// driver code
+const int N = 2*(1e5) + 5;
+int d_min[N];
+int d_max[N];
+int amin[N];
+int amax[N];
+int cost[N];
+vii adj;
+void dfs(int u,int p,int sm){
+    sm +=cost[u];
+    amin[u] = min(sm,amin[p]);
+    amax[u] = max(sm,amax[p]);
+    d_min[u] = min(d_min[p],sm-amax[u]);
+    d_max[u] = max(d_max[p],sm -amin[u]);
+    trav(v,adj[u]){
+        if(v!=p){
+            dfs(v,u,sm);
+        }
+    }
+}
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-
-    int T=1;
-    // cin>>T;
+ 
+    int T;
+    cin>>T;
     while(T--){
         int n;
         cin >> n;
-        mk_mat(dist,n,n,INF);
+        adj.clear();
+        adj.push_back({1});
+        adj[0].push_back(1); // 0 dummy node
+        int cnt = 1;
+        cost[1] = 1;
+        cost[0] = 0;
+        adj.push_back(vi());
+        vector<pi> qrs;
         rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
+            char x;
+            cin >> x;
+            if(x=='+'){
+                int p,c;
+                cin >> p >> c;
+                adj[p].push_back(++cnt);
+                cost[cnt] = c;
+                adj.push_back(vi());
+            }
+            else{
+                int u,v,k;
+                cin >> u >> v >> k;
+                qrs.push_back(mp(v,k));
             }
         }
-        vi a(n);
-        tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
-                }
-            }
-            res.push_back(sm);
+        amin[0] = 0;
+        amax[0] = 0;
+        d_min[0]=0;
+        d_max[0] =0;
+        dfs(1,0,0);
+        trav(q,qrs){
+            if((q.second>=0 && q.second<=d_max[q.first] ) || (q.second<=0 && q.second>=d_min[q.first])) put("YES")
+            else put("NO")
         }
-        reverse(all(res));
-        pvc(res);
+ 
     }
-
+ 
     return 0;
 }

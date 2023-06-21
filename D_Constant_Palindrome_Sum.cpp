@@ -49,46 +49,44 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+const int N = 2*(1e5) + 5;
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T=1;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        mk_mat(dist,n,n,INF);
-        rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
-            }
-        }
+        int n,k;
+        cin >> n >> k;
+        int pref[2*k + 1];
+        memset(pref,0,sizeof pref);
         vi a(n);
         tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
-                }
-            }
-            res.push_back(sm);
+        unordered_map<int,int> cnt;
+        rep(i,0,n/2){
+            ll a1= a[i];
+            ll b1 = a[n-i-1];
+            ll sm = a[i] + a[n-i-1];
+            int l1=0,r1=sm-(max(a1,b1)-1),l2=sm + 1 + k - min(a1,b1),r2=2*k + 1;
+            pref[l1] +=2;
+            pref[r1] -=2;
+            pref[l2] +=2;
+            pref[r2] -=2;
+            pref[r1] +=1;
+            pref[l2] -=1;
+            cnt[sm] +=1;
+            
         }
-        reverse(all(res));
-        pvc(res);
+        int res = n;
+        rep(i,1,2*k+1){
+            pref[i] += pref[i-1];
+            res = min(res,pref[i]-cnt[i]);
+        }
+        put(res);
+
     }
 
     return 0;

@@ -49,46 +49,67 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+int n;
+vi qrs;
+vpi lrs;
+bool ok(int x){
+    if(x>=qrs.size()) return 1;
+    int a[n];
+    memset(a,0,sizeof a);
+    rep(i,0,x+1){
+        a[qrs[i]] = 1;
+    }
+    int pref[n+1];
+    pref[0] =0 ;
+    rep(i,0,n) pref[i+1] = a[i] + pref[i];
+    trav(lr,lrs){
+        ll ones = pref[lr.second+1] - pref[lr.first];
+        if(ones>lr.second-lr.first+1-ones) return 1;
+    }
+    return 0;
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T=1;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        mk_mat(dist,n,n,INF);
-        rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
-            }
+        int m;
+        cin >> n >> m;
+        lrs.clear();
+        qrs.clear();
+        rep(i,0,m){
+            ll l,r;
+            cin >> l >> r;
+            l--;r--;
+            lrs.push_back(mp(l,r));
         }
-        vi a(n);
-        tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
-                }
-            }
-            res.push_back(sm);
+        int q;
+        cin >> q;
+        qrs.resize(q);
+        rep(i,0,q) {
+            int u;
+            cin >> u;
+            u --;
+            qrs[i] = u;
         }
-        reverse(all(res));
-        pvc(res);
+        int lo=0,hi=q-1;
+        int ans = q;
+        while(lo<=hi){
+            int mid = (lo+hi)/2;
+            if(ok(mid)) {
+                ans = mid;
+                hi = mid-1;
+            }
+            else lo = mid+1;
+        }
+        if(ans>q-1 || !ok(ans)) put(-1)
+        else put(ans+1);
+
+
     }
 
     return 0;

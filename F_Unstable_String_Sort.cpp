@@ -50,6 +50,19 @@ void __print(auto x) {cerr << x;}
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+vi p;
+vi q;
+
+string dfs(int prev,int idx,int k){
+    if(idx==p.size()) return k==0 ? "$" : "";
+    rep(i,prev,prev+k+1){
+        string nxt = dfs(i,idx+1,k-(i==prev ? 0 : 1));
+        char x = 97 + i;
+        if(nxt.size()) return x+nxt;
+        if(idx+1>p[idx] || idx+1>q[idx]) break; 
+    }
+    return "";
+}
 // driver code
 int main()
 {
@@ -59,36 +72,19 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        mk_mat(dist,n,n,INF);
-        rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
-            }
+        int n,k;
+        cin >> n >> k;
+        p.resize(n);
+        q.resize(n);
+        tkv(p,n);
+        tkv(q,n);
+        string s = 'a' + dfs(0,1,k-1);
+        if(s.back()!='$') put("NO")
+        else{
+            put("YES")
+            put(s.substr(0,n));
         }
-        vi a(n);
-        tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
-                }
-            }
-            res.push_back(sm);
-        }
-        reverse(all(res));
-        pvc(res);
+
     }
 
     return 0;

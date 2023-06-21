@@ -50,6 +50,22 @@ void __print(auto x) {cerr << x;}
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+const int N = 205;
+string mem[26][26][N];
+
+string dp(int o1,int z1,int idx,string &s){
+    if(idx==s.size()) return "$";
+    if(mem[o1][z1][idx]!="-1") return mem[o1][z1][idx];
+    if(s[idx]-'a'>=z1){
+        string nxt = dp(o1,s[idx]-'a', idx+1,s);
+        if(nxt.size()) return mem[o1][z1][idx] = "0"+ nxt;
+    }
+    if(s[idx]-'a'>=o1){
+        string nxt = dp(s[idx]-'a',z1, idx+1,s);
+        if(nxt.size()) return mem[o1][z1][idx] = "1"+ nxt;
+    }
+    return mem[o1][z1][idx]="";
+}
 // driver code
 int main()
 {
@@ -61,34 +77,19 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        mk_mat(dist,n,n,INF);
-        rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
-            }
-        }
-        vi a(n);
-        tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
+        string s;
+        cin >> s;
+        rep(i,0,26){
+            rep(k,0,26){
+                rep(j,0,N){
+                    mem[i][k][j] = "-1";
                 }
             }
-            res.push_back(sm);
-        }
-        reverse(all(res));
-        pvc(res);
+        }        
+        string ans = dp(0,0,0,s);
+        if(ans.size()) {put("YES") put(ans.substr(0,n))}
+        else put("NO")
+        
     }
 
     return 0;

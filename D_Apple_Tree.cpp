@@ -49,46 +49,47 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+const int n = 2*(1e5) + 5;
+ll lvs[n];
+void dfs(int u,int p,vii &adj){
+    lvs[u] = 0;
+    ll cnt = 0;
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs(v,u,adj);
+        lvs[u] += lvs[v];
+        cnt +=1;
+    }
+    if(cnt==0) lvs[u]++;
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T=1;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
         int n;
         cin >> n;
-        mk_mat(dist,n,n,INF);
-        rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
-            }
+        vii adj(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            u--;v--;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
-        vi a(n);
-        tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
-                }
-            }
-            res.push_back(sm);
+        dfs(0,0,adj);
+        int q;
+        cin >> q;
+        rep(i,0,q){
+            int u,v;
+            cin >> u >> v;
+            u--;v--;
+            put(lvs[u]*lvs[v])
         }
-        reverse(all(res));
-        pvc(res);
     }
 
     return 0;

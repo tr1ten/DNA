@@ -41,14 +41,36 @@ typedef unordered_map<ll,ll> mll;
 #define mod(x) (x + MOD)%MOD
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
-void __print(auto x) {cerr << x;}
 #ifndef ONLINE_JUDGE
 #define debug(x) cerr << #x <<" "; __print(x); cerr << endl;
 #else
 #define debug(x)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll INF = 1e15 +5;
+const int N = 2*(1e5 + 5);
+vector<ll> dijsktra(int S,vector<vector<pair<int,ll>>> &adj){
+    int n = adj.size();
+    vector<ll> dist(n,INF);
+    vector<int> par(n,-1);
+    dist[S] = 0;
+    par[S] = S;
+    priority_queue<pair<ll,int>,vector<pair<ll,int>>,greater<pair<ll,int>>> pq;
+    pq.push(make_pair(0LL,S));
+    while(!pq.empty()){
+        auto u = pq.top();
+        pq.pop();
+        if(u.first>dist[u.second]) continue;
+        for(auto &v:adj[u.second]){
+            if(dist[v.first]>dist[u.second] + v.second){
+                dist[v.first] = dist[u.second] + v.second;
+                par[v.first] = u.second;
+                pq.push(make_pair(dist[v.first],v.first));
+            }
+        }
+    }
+    return dist; // or par according to needs
+}
 
 // driver code
 int main()
@@ -56,39 +78,38 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T=1;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        mk_mat(dist,n,n,INF);
-        rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
-            }
+        int n,m,a,b,c;
+        cin >> n >> m >> a >> b >> c;
+        a--;b--;c--;
+        vi prices(m);
+        tkv(prices,m);
+        srv(prices);
+        vi pref(m+1);
+        pref[0] = 0;
+        rep(i,0,m) pref[i+1] = pref[i] + prices[i];
+        
+        vector<vector<pair<int,ll>>> adj(n);
+        rep(i,0,m){
+            int x,y;
+            cin >> x >> y;
+            x--;y--;
+            adj[x].push_back(mp(y,1LL));
+            adj[y].push_back(mp(x,1LL));
         }
-        vi a(n);
-        tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
-                }
-            }
-            res.push_back(sm);
+        auto da = dijsktra(a,adj);
+        auto db = dijsktra(b,adj);
+        auto dc = dijsktra(c,adj);
+        ll res= INF;
+        rep(k,0,n){
+            ll cb = da[k]>m ? INF : pref[db[k]];
+            ll ca = (da[k] + db[k])>m ? INF :  pref[da[k] + db[k]] - cb;
+            ll cc = (da[k] + db[k] + dc[k] )> m ? INF : pref[da[k] + db[k] + dc[k]] - cb - ca;
+            res = min(res, ca  + 2*cb + cc);
         }
-        reverse(all(res));
-        pvc(res);
+        put(res)
     }
 
     return 0;

@@ -56,39 +56,25 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T=1;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
         int n;
         cin >> n;
-        mk_mat(dist,n,n,INF);
-        rep(i,0,n){
-            rep(j,0,n){
-                ll w;
-                cin >> w;
-                dist[i][j] = w;
-            }
-        }
         vi a(n);
         tkv(a,n);
-        reverse(all(a));
-        bool inc[n];
-        memset(inc,0,sizeof inc);
-        vi res;
-        trav(k,a){
-            k--;
-            inc[k] = 1;
-            ll sm = 0;
-            rep(i,0,n){
-                rep(j,0,n){
-                    dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
-                    if(inc[i] && inc[j]) sm += dist[i][j]; // only include those pair which exist in graph
+        int i = 0;
+        int res = 0;
+        ll sm = 0;
+        trav(x,a){sm += abs(x);}
+        while(i<n){
+            if(a[i]<0) {
+                res +=1;
+            while(i<n && a[i]<=0) i++;
                 }
-            }
-            res.push_back(sm);
+            i +=1;
         }
-        reverse(all(res));
-        pvc(res);
+        put2(sm,res);
     }
 
     return 0;
