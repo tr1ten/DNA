@@ -17,17 +17,35 @@ while(t):
     n,m = map(int,input().split())
     a = list( map(int,input().split()))
     s = input()
-    pre=[0]
-    for i in range(n): pre.append((pre[-1] + a[i])%mod)
-    @cache
-    def rec(i,j):
-        if j-i+1==1: 
-            return (pre[j+1] - pre[i] + mod)%mod
-        res = 0
-        inv = fast_pow(j-i,mod-2,mod)
-        for k in range(i,j):
-            res += (rec(i,k)*inv)%mod
+    p = [[[0]*(n+1) for j in range(n+1)] for i in range(m+1)] # prob of sum i to j at kth query
+    p[0][0][n] = -1
+    p[0][0][n-1] = 1
+    for idx in range(m+1): # we will try to find out the contribution of each prob
+        for i in range(n):
+            for j in range(1,n+1):
+                p[idx][i][j] += p[idx][i][j-1] 
+                # p[idx][i][j] %= mod
+        if idx==m: continue
+        for i in range(n):
+            for j in range(i,n):
+                if i==j: # this will still contribute to next state
+                    p[idx+1][i][i] = (p[idx+1][i][i]+p[idx][i][j])%mod
+                    p[idx+1][i][i+1] = (p[idx+1][i][i+1]-p[idx][i][j])%mod
+                    continue
+                inv = fast_pow(j-i,mod-2,mod)
+                prob  = (inv*p[idx][i][j])%mod
+                if(s[idx]=='L'):
+                    p[idx+1][i][i] = (p[idx+1][i][i]+prob)%mod
+                    p[idx+1][i][j] = (p[idx+1][i][j] -prob)%mod
+                else:
+                    p[idx+1][i+1][j+1] = (p[idx+1][i+1][i+1]+prob)%mod
+                    p[idx+1][j][j+1] = (p[idx+1][i+1][j+1]-prob)%mod
+    res = 0
+    for i in range(n):
+        sm = 0
+        for j in range(i,n):
+            sm =(sm+a[j])%mod
+            res += (p[m][i][j]*sm)%mod
             res %=mod
-        return res
-    print(rec(0,n-1))
+    print(res)
             
