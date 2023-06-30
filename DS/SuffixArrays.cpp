@@ -45,3 +45,21 @@ namespace SuffixArray
 		}
 	}
 }
+
+// Example usage
+int main()
+{
+	SuffixArray::S = "abracadabra";
+	SuffixArray::buildSA();
+	SuffixArray::buildLCP();
+	FOR(i,0, strlen(SuffixArray::S))
+	{
+		printf("%2d\t%s\n", SuffixArray::sa[i], SuffixArray::S + SuffixArray::sa[i]);
+	}
+	puts("");
+	FOR(i,0, strlen(SuffixArray::S))
+	{
+		printf("%2d\t%d\n", i, SuffixArray::lcp[i]);
+	}
+	return 0;
+}

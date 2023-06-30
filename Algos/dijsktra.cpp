@@ -23,7 +23,7 @@ vector<int> dijsktra(int S,vector<vector<pair<int,ll>>> &adj){
             }
         }
     }
-    return par; // or par according to needs
+    return par; // or dist according to needs
 }
 int main(int argc, char const *argv[])
 {
