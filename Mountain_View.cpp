@@ -49,60 +49,35 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-void update(int BIT[],int x,int val,int N) { ++x;  while(x<=N)  {  BIT[x]+=val;BIT[x] %=MOD; x+=(x&-x);  } }
-ll query(int BIT[],int x) {  ++x;  ll res=0;  while(x>0)  {  res+=BIT[x];res%=MOD;  x-=(x&-x);  } return res; } 
-ll range(int bit[],int a,int b){ return (query(bit,b) - query(bit,a-1) + MOD)%MOD;}
 
-ll fast_pow(ll a,ll b,ll MOD){
-    if(b==0) return 1;
-    if(b==1) return a;
-    ll res = fast_pow(a,b/2,MOD);
-    if(b%2==0) return (res*res)%MOD;
-    return (((res*res)%MOD)*a)%MOD;
-}
 // driver code
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(nullptr);
+    freopen("mountains.in", "r", stdin);
+    freopen("mountains.out", "w", stdout);
     int T=1;
     // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        vpi pts;
-        map<int,int> cnt;
-        rep(i,0,n) {
+        map<ll,ll> cnt;
+        cnt[-INF] = 0;
+        vpi A;
+        rep(i,0,n){
             int x,y;
             cin >> x >> y;
-            pts.push_back(mp(x,y));
-            cnt[y]++;
+            A.push_back(mp(x-y,-(x+y)));
         }
-        unordered_map<int,int> yid;
-        int id = 0;
-        trav(y,cnt){
-            yid[y.first] = id++;
+        srv(A);
+        ll end = -INF;
+        ll res= 0 ;
+        trav(x,A){
+            if(end<-x.second) res++;
+            end = max(end,-x.second);
         }
-        srv(pts);
-        ll ex=0;
-        rep(i,0,n){
-            int bit[id+1];
-            memset(bit,0,sizeof bit);
-            ll ins = 0;
-            update(bit,yid[pts[i].second],1,id);
-            rep(j,i+1,n){
-                update(bit,yid[pts[j].second],1,id);
-                int y1 = yid[pts[i].second];
-                int y2 = yid[pts[j].second];
-                ins += range(bit,0,min(y1,y2))*range(bit,max(y1,y2),id-1);
-            }
-            ex += ins;
-        }
-        put((ex) + n + 1)
-        
-
-
+        put(res);
     }
 
     return 0;
