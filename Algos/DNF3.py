@@ -20,6 +20,7 @@ def dnf(A):
             A[hi],A[mid] = A[mid],A[hi]  
         else: mid +=1
 
-A = [1,0,1,0,2,1,0,2]
-dnf(A)
-print(A)
+def main():
+    A = [1,0,1,0,2,1,0,2]
+    dnf(A)
+    print(A)
