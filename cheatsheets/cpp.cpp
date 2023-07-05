@@ -23,32 +23,32 @@ template<class K,class V> using ht = gp_hash_table<
 		>
 >;
 
-int main() {
-	ht<int,null_type> g; g.resize(5);
-    g.insert(1);
-	cout << g.get_actual_size() << "\n"; // 8
-	cout << g.size() << "\n"; // 0
-}
+// int main() {
+// 	ht<int,null_type> g; g.resize(5);
+//     g.insert(1);
+// 	cout << g.get_actual_size() << "\n"; // 8
+// 	cout << g.size() << "\n"; // 0
+// }
 
 // helper functions
-inline void print_vec(VI &vec){
-    trav(x,vec) cout << x << " ";
-    cout << endl;
-}
+// inline void print_vec(VI &vec){
+//     trav(x,vec) cout << x << " ";
+//     cout << endl;
+// }
 
-inline void print_mat(VII &mat){
-    trav(x,mat){
-        trav(y,x) cout << y << " ";
-        cout << endl;
-    }
-}
-inline void print_set(set<LL> &s){
-    trav(x,s) cout << x << " ";
-    cout << endl;
-}
-inline void print_map(MII &m){
-    trav(x,m) cout << x.first << " " << x.second << endl;
-}
+// inline void print_mat(VII &mat){
+//     trav(x,mat){
+//         trav(y,x) cout << y << " ";
+//         cout << endl;
+//     }
+// }
+// inline void print_set(set<LL> &s){
+//     trav(x,s) cout << x << " ";
+//     cout << endl;
+// }
+// inline void print_map(MII &m){
+//     trav(x,m) cout << x.first << " " << x.second << endl;
+// }
 inline int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
 inline int lcm(int a, int b) { return a * (b / gcd(a, b)); }
 inline int mod(int a, int b) { return (b + (a % b)) % b; }
@@ -88,4 +88,22 @@ struct custom_hash {
     }
 };
 
-unordered_map<long long, int, custom_hash> safe_map;
+// unordered_map<long long, int, custom_hash> safe_map;
+
+#include <bits/stdc++.h>
+using namespace std;
+
+bool cmp(const int x,const int &y) { return x < y; }
+
+int main() {
+	int M = 4;
+	priority_queue<int,vector<int>,function<bool(int,int)>> v(cmp);
+	for (int i = 0; i < M; ++i) {
+		int w;
+        cin >>  w;
+		v.push(w);
+	}
+	// sort(begin(v), end(v),cmp);
+    // for(auto c:v) cout << c << " ";
+    while(!v.empty()) {cout << " " << v.top(); v.pop();} // work in reverse
+}
