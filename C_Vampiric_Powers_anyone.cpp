@@ -56,51 +56,25 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int T=1;
-    // cin>>T;
+    int T;
+    cin>>T;
     while(T--){
-        ll x1,y1;
-        ll x2,y2;
-        cin >> x1 >> y1;
-        cin >> x2 >> y2;
         int n;
         cin >> n;
-        string s;
-        cin >> s;
-        ll netx = 0;
-        ll nety = 0;
+        unordered_set<int> st;
+        st.insert(0);
+        ll xr = 0;
+        ll res = 0;
         rep(i,0,n){
-            if(s[i]=='L') netx--;
-            if(s[i]=='R') netx++;
-            if(s[i]=='U') nety++;
-            if(s[i]=='D') nety--;
-        }
-        auto ok = [&](ll x){
-            ll ex=0;
-            ll ey=0;
-            ll d= x/n;
-            rep(i,0,(x%n) ){
-                if(s[i]=='L') ex--;
-                if(s[i]=='R') ex++;
-                if(s[i]=='U') ey++;
-                if(s[i]=='D') ey--;
+            ll x;
+            cin >> x;
+            xr ^= x;
+            trav(y,st){
+                res = max(res,xr^y);
             }
-            ll fx = x1 + netx*d+ex,fy = y1 + nety*d + ey;
-            // cerr << x << " " << fx << " " << fy << endl;
-            ll ham = abs(fx-x2) + abs(fy-y2);
-            return ham<=x;
-        };
-        ll lo=1,hi = 1e18;
-        ll ans = -1;
-        while(lo<=hi){
-            ll mid = lo + (hi-lo)/2;
-            if(ok(mid)) {
-                hi = mid-1;
-                ans = mid;
-            }
-            else lo = mid+1;
+            st.insert(xr);
         }
-        put(ans);
+        put(res);
     }
 
     return 0;

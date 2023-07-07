@@ -59,48 +59,25 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll x1,y1;
-        ll x2,y2;
-        cin >> x1 >> y1;
-        cin >> x2 >> y2;
         int n;
         cin >> n;
-        string s;
-        cin >> s;
-        ll netx = 0;
-        ll nety = 0;
-        rep(i,0,n){
-            if(s[i]=='L') netx--;
-            if(s[i]=='R') netx++;
-            if(s[i]=='U') nety++;
-            if(s[i]=='D') nety--;
-        }
-        auto ok = [&](ll x){
-            ll ex=0;
-            ll ey=0;
-            ll d= x/n;
-            rep(i,0,(x%n) ){
-                if(s[i]=='L') ex--;
-                if(s[i]=='R') ex++;
-                if(s[i]=='U') ey++;
-                if(s[i]=='D') ey--;
+        vi A(n);
+        tkv(A,n);
+        map<int,int> st;
+        vii res;
+        trav(x,A){
+            auto it = st.lower_bound(x);
+            int id = res.size();
+            if(!(it==st.begin())){
+                it--;
+                id = (*it).second;
+                st.erase(it);
             }
-            ll fx = x1 + netx*d+ex,fy = y1 + nety*d + ey;
-            // cerr << x << " " << fx << " " << fy << endl;
-            ll ham = abs(fx-x2) + abs(fy-y2);
-            return ham<=x;
-        };
-        ll lo=1,hi = 1e18;
-        ll ans = -1;
-        while(lo<=hi){
-            ll mid = lo + (hi-lo)/2;
-            if(ok(mid)) {
-                hi = mid-1;
-                ans = mid;
-            }
-            else lo = mid+1;
+            else res.push_back(vi());
+            st[x]=id;
+            res[id].push_back(x);
         }
-        put(ans);
+        rep(i,0,res.size()) {pvc(res[i]);}
     }
 
     return 0;

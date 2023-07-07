@@ -49,7 +49,16 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+vi A;
+const int N = 105;
+int mem[N][N][2];
+ll rec(int i,int k,bool s){
+    if(i==A.size()) return k==0 ? 0 : INF;
+    if(mem[i][k][s]!=-1) return (mem[i][k][s]);
+    ll res = rec(i+1,k,0) ; // old continue
+    if(k) res = min(res,rec(i+1,k-1,1));
+    return mem[i][k][s] = res +  (s ? 0 : abs(A[i]-A[i-1]));
+}
 // driver code
 int main()
 {
@@ -57,50 +66,14 @@ int main()
     cin.tie(nullptr);
 
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll x1,y1;
-        ll x2,y2;
-        cin >> x1 >> y1;
-        cin >> x2 >> y2;
-        int n;
-        cin >> n;
-        string s;
-        cin >> s;
-        ll netx = 0;
-        ll nety = 0;
-        rep(i,0,n){
-            if(s[i]=='L') netx--;
-            if(s[i]=='R') netx++;
-            if(s[i]=='U') nety++;
-            if(s[i]=='D') nety--;
-        }
-        auto ok = [&](ll x){
-            ll ex=0;
-            ll ey=0;
-            ll d= x/n;
-            rep(i,0,(x%n) ){
-                if(s[i]=='L') ex--;
-                if(s[i]=='R') ex++;
-                if(s[i]=='U') ey++;
-                if(s[i]=='D') ey--;
-            }
-            ll fx = x1 + netx*d+ex,fy = y1 + nety*d + ey;
-            // cerr << x << " " << fx << " " << fy << endl;
-            ll ham = abs(fx-x2) + abs(fy-y2);
-            return ham<=x;
-        };
-        ll lo=1,hi = 1e18;
-        ll ans = -1;
-        while(lo<=hi){
-            ll mid = lo + (hi-lo)/2;
-            if(ok(mid)) {
-                hi = mid-1;
-                ans = mid;
-            }
-            else lo = mid+1;
-        }
-        put(ans);
+        int n,k;
+        cin >> n >> k;
+        A.resize(n);
+        tkv(A,n);
+        memset(mem,-1,sizeof mem);
+        put(rec(0,k-1,1));
     }
 
     return 0;

@@ -59,48 +59,62 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll x1,y1;
-        ll x2,y2;
-        cin >> x1 >> y1;
-        cin >> x2 >> y2;
-        int n;
-        cin >> n;
-        string s;
-        cin >> s;
-        ll netx = 0;
-        ll nety = 0;
-        rep(i,0,n){
-            if(s[i]=='L') netx--;
-            if(s[i]=='R') netx++;
-            if(s[i]=='U') nety++;
-            if(s[i]=='D') nety--;
-        }
+        ll n,k;
+        cin >> n>> k;
+        vi A(n);
+        tkv(A,n);
+        srv(A);
+        ll mid = A[n/2];
         auto ok = [&](ll x){
-            ll ex=0;
-            ll ey=0;
-            ll d= x/n;
-            rep(i,0,(x%n) ){
-                if(s[i]=='L') ex--;
-                if(s[i]=='R') ex++;
-                if(s[i]=='U') ey++;
-                if(s[i]=='D') ey--;
+            ll res =0 ;
+            trav(a,A){
+                res += max(0LL,abs(mid-a)-x); 
             }
-            ll fx = x1 + netx*d+ex,fy = y1 + nety*d + ey;
-            // cerr << x << " " << fx << " " << fy << endl;
-            ll ham = abs(fx-x2) + abs(fy-y2);
-            return ham<=x;
+            return res<=k;
         };
-        ll lo=1,hi = 1e18;
-        ll ans = -1;
+        ll lo = 0,hi = 1e10;
+        ll mind = INF; 
         while(lo<=hi){
-            ll mid = lo + (hi-lo)/2;
-            if(ok(mid)) {
-                hi = mid-1;
-                ans = mid;
+            ll m = (lo+hi)/2;
+            if(ok(m)) {
+                hi = m-1;
+                mind = m;
             }
-            else lo = mid+1;
+            else lo = m+1;
         }
-        put(ans);
+        ll res=  0;
+        unordered_map<ll,ll> cnt;
+        rep(i,0,n){
+            res += max(0LL,abs(mid-A[i])-mind); 
+            if(A[i] < mid-mind) A[i] = mid-mind;
+            else if(A[i]>mid+mind) A[i] = mind+mid;
+            cnt[A[i]]++;
+        }
+        // debug(res);
+        srv(A);
+        ll left = k-res;
+        ll ex1=0;
+        ll cur_min = A[0];
+        while (left>0 && cur_min<A[n-1]) 
+        {
+            if(left<cnt[cur_min]) break;
+            ex1++;
+            left -=cnt[cur_min];
+            cnt[cur_min+1] += cnt[cur_min];
+            cur_min++;
+        }
+        ll cur_max = A[n-1];
+        ll ex2 = 0;
+        left = k-res;
+        while (left>0 && cur_max>A[0]) 
+        {
+            if(left<cnt[cur_max]) break;
+            ex2++;
+            left -=cnt[cur_max];
+            cnt[cur_max-1] += cnt[cur_max];
+            cur_max--;
+        }
+        put(min(cur_max-A[0],A[n-1]-cur_min));
     }
 
     return 0;

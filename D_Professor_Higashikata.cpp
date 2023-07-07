@@ -50,6 +50,9 @@ void __print(auto x) {cerr << x;}
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+void update(int BIT[],int x,int val,int N) { ++x;  while(x<=N)  {  BIT[x]+=val;BIT[x] %=MOD; x+=(x&-x);  } }
+ll query(int BIT[],int x) {  ++x;  ll res=0;  while(x>0)  {  res+=BIT[x];res%=MOD;  x-=(x&-x);  } return res; } 
+ll range(int bit[],int a,int b){ return (query(bit,b) - query(bit,a-1) + MOD)%MOD;}
 // driver code
 int main()
 {
@@ -59,49 +62,51 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll x1,y1;
-        ll x2,y2;
-        cin >> x1 >> y1;
-        cin >> x2 >> y2;
-        int n;
-        cin >> n;
+        int n,m,q;
+        cin >> n >> m >> q;
         string s;
         cin >> s;
-        ll netx = 0;
-        ll nety = 0;
-        rep(i,0,n){
-            if(s[i]=='L') netx--;
-            if(s[i]=='R') netx++;
-            if(s[i]=='U') nety++;
-            if(s[i]=='D') nety--;
-        }
-        auto ok = [&](ll x){
-            ll ex=0;
-            ll ey=0;
-            ll d= x/n;
-            rep(i,0,(x%n) ){
-                if(s[i]=='L') ex--;
-                if(s[i]=='R') ex++;
-                if(s[i]=='U') ey++;
-                if(s[i]=='D') ey--;
+        int cnt = 0;
+        vector<int> prs(n,n-1); // stores priority
+        int bit[n+1];
+        memset(bit,0,sizeof bit);
+        set<int> st;
+        rep(i,0,n) st.insert(i);
+        int d = 0;
+        rep(i,0,m){
+            int l,r;
+            cin >> l >> r;
+            l--;r--;
+            auto it  = st.lower_bound(l);
+            while (it!=st.end() && *it<=r)
+            {
+                prs[*it] = cnt++;
+                update(bit,cnt-1,(s[*it]=='1') ? 1 : 0,n);
+                it++;
+                st.erase(prev(it));
+                d++;
             }
-            ll fx = x1 + netx*d+ex,fy = y1 + nety*d + ey;
-            // cerr << x << " " << fx << " " << fy << endl;
-            ll ham = abs(fx-x2) + abs(fy-y2);
-            return ham<=x;
-        };
-        ll lo=1,hi = 1e18;
-        ll ans = -1;
-        while(lo<=hi){
-            ll mid = lo + (hi-lo)/2;
-            if(ok(mid)) {
-                hi = mid-1;
-                ans = mid;
+        } 
+        int ones = count(all(s),'1');
+        rep(i,0,q){
+            int x ;
+            cin >> x;
+            x--;
+            ll ans;
+            if(s[x]=='1'){
+                ones--;
+                update(bit,prs[x],-1,n);
+                ans = min(d,ones) - range(bit,0,min(d,ones)-1);
+                s[x] = '0';
             }
-            else lo = mid+1;
+            else{
+                ones++;
+                update(bit,prs[x],1,n);
+                ans = min(d,ones) - range(bit,0,min(d,ones)-1);
+                s[x] = '1';
+            }
+            put(ans);
         }
-        put(ans);
     }
-
     return 0;
 }

@@ -49,6 +49,32 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+vi A;
+vi V;
+double f(double x){
+    double time = 0;
+    rep(i,0,A.size()){
+        time = max(time,abs(A[i]-x)*1.0/V[i]);
+    }
+    // debug(x)
+    // debug(time)
+    return time;
+}
+
+double ternary_search(double l, double r) {
+    double eps = 1e-6;              //set the error limit here
+    while (r - l > eps) {
+        double m1 = l + (r - l) / 3;
+        double m2 = r - (r - l) / 3;
+        double f1 = f(m1);      //evaluates the function at m1
+        double f2 = f(m2);      //evaluates the function at m2
+        if (f1 > f2)
+            l = m1;
+        else
+            r = m2;
+    }
+    return f(l);                    //return the maximum of f(x) in [l, r]
+}
 
 // driver code
 int main()
@@ -59,48 +85,14 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll x1,y1;
-        ll x2,y2;
-        cin >> x1 >> y1;
-        cin >> x2 >> y2;
         int n;
         cin >> n;
-        string s;
-        cin >> s;
-        ll netx = 0;
-        ll nety = 0;
-        rep(i,0,n){
-            if(s[i]=='L') netx--;
-            if(s[i]=='R') netx++;
-            if(s[i]=='U') nety++;
-            if(s[i]=='D') nety--;
-        }
-        auto ok = [&](ll x){
-            ll ex=0;
-            ll ey=0;
-            ll d= x/n;
-            rep(i,0,(x%n) ){
-                if(s[i]=='L') ex--;
-                if(s[i]=='R') ex++;
-                if(s[i]=='U') ey++;
-                if(s[i]=='D') ey--;
-            }
-            ll fx = x1 + netx*d+ex,fy = y1 + nety*d + ey;
-            // cerr << x << " " << fx << " " << fy << endl;
-            ll ham = abs(fx-x2) + abs(fy-y2);
-            return ham<=x;
-        };
-        ll lo=1,hi = 1e18;
-        ll ans = -1;
-        while(lo<=hi){
-            ll mid = lo + (hi-lo)/2;
-            if(ok(mid)) {
-                hi = mid-1;
-                ans = mid;
-            }
-            else lo = mid+1;
-        }
-        put(ans);
+        A.resize(n);
+        V.resize(n);
+        tkv(A,n);
+        tkv(V,n);
+        
+        cout <<setprecision(7) << (ternary_search((double)*min_element(all(A)),(double)*max_element(all(A))));
     }
 
     return 0;
