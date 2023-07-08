@@ -57,66 +57,24 @@ int main()
     cin.tie(nullptr);
 
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll n,k;
-        cin >> n>> k;
-        vi A(n);
-        tkv(A,n);
-        srv(A);
-        ll mid = A[n/2];
-        auto ok = [&](ll x){
-            ll res =0 ;
-            trav(a,A){
-                res += max(0LL,abs(mid-a)-x); 
+        ll n;
+        cin >> n;
+        int f= 0;
+        rep(k,2,1000){
+            ll p = 1;
+            ll cur = 0;
+            ll step = 0;
+            while(cur<n){
+                cur += p;
+                p *=k;
+                step +=1;
             }
-            return res<=k;
-        };
-        ll lo = 0,hi = 1e10;
-        ll mind = INF; 
-        while(lo<=hi){
-            ll m = (lo+hi)/2;
-            if(ok(m)) {
-                hi = m-1;
-                mind = m;
-            }
-            else lo = m+1;
+            if(step>=3 &&  cur==n) {f=1;break;}
         }
-        ll res=  0;
-        unordered_map<ll,ll> cnt;
-        rep(i,0,n){
-            res += max(0LL,abs(mid-A[i])-mind); 
-            if(A[i] < mid-mind) A[i] = mid-mind;
-            else if(A[i]>mid+mind) A[i] = mind+mid;
-            cnt[A[i]]++;
-        }
-        debug(res);
-        debug(mid);
-        debug(mind);
-        srv(A);
-        ll left = k-res;
-        ll ex1=0;
-        ll cur_min = A[0];
-        while (left>0 && cur_min<A[n-1]) 
-        {
-            if(left<cnt[cur_min]) break;
-            ex1++;
-            left -=cnt[cur_min];
-            cnt[cur_min+1] += cnt[cur_min];
-            cur_min++;
-        }
-        ll cur_max = A[n-1];
-        ll ex2 = 0;
-        left = k-res;
-        while (left>0 && cur_max>A[0]) 
-        {
-            if(left<cnt[cur_max]) break;
-            ex2++;
-            left -=cnt[cur_max];
-            cnt[cur_max-1] += cnt[cur_max];
-            cur_max--;
-        }
-        put(A[n-1]-A[0] );
+        if(f) put("YES")
+        else put("NO");
     }
 
     return 0;

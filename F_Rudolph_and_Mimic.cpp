@@ -53,70 +53,61 @@ const ll INF = 1e10+5;
 // driver code
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(nullptr);
 
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll n,k;
-        cin >> n>> k;
-        vi A(n);
-        tkv(A,n);
-        srv(A);
-        ll mid = A[n/2];
-        auto ok = [&](ll x){
-            ll res =0 ;
-            trav(a,A){
-                res += max(0LL,abs(mid-a)-x); 
-            }
-            return res<=k;
-        };
-        ll lo = 0,hi = 1e10;
-        ll mind = INF; 
-        while(lo<=hi){
-            ll m = (lo+hi)/2;
-            if(ok(m)) {
-                hi = m-1;
-                mind = m;
-            }
-            else lo = m+1;
-        }
-        ll res=  0;
-        unordered_map<ll,ll> cnt;
+        int n;
+        cin >> n;
+        vector<int> A(n);
+        unordered_map<int,int> cnt;
         rep(i,0,n){
-            res += max(0LL,abs(mid-A[i])-mind); 
-            if(A[i] < mid-mind) A[i] = mid-mind;
-            else if(A[i]>mid+mind) A[i] = mind+mid;
-            cnt[A[i]]++;
+            int x;
+            cin >> x;
+            cnt[x]++;
+            A[i] =x;
         }
-        debug(res);
-        debug(mid);
-        debug(mind);
-        srv(A);
-        ll left = k-res;
-        ll ex1=0;
-        ll cur_min = A[0];
-        while (left>0 && cur_min<A[n-1]) 
-        {
-            if(left<cnt[cur_min]) break;
-            ex1++;
-            left -=cnt[cur_min];
-            cnt[cur_min+1] += cnt[cur_min];
-            cur_min++;
+        auto keep = [&](int k){
+            int nt = n;
+            cout.flush();
+            if(k==-1){
+                cout << "- 0" << endl;
+            cout.flush();
+
+            } 
+            else{
+                vi vic;
+                rep(i,0,n){
+                    if(A[i]!=k) vic.push_back(i);
+                };
+                cout << "- " << vic.size() << " ";
+                rep(i,0,vic.size()) cout << vic[i]+1 << " ";
+                nt -=vic.size();
+                cout.flush();
+            }
+            n = nt;
+            A.resize(n);
+            unordered_map<int,int> temp;
+            int ret =-1;
+            rep(i,0,n){
+                cin >> A[i];
+                temp[A[i]]++;
+                if(temp[A[i]] > cnt[A[i]]) ret= i;
+            }
+            cnt =temp;
+            cout.flush();
+            return ret;
+        };
+        int a=-1;
+        int f= -1;
+        rep(p,0,5){
+            a = keep(a);
+            if(a!=-1 && cnt[a]==1) {f=a+1;break;}
         }
-        ll cur_max = A[n-1];
-        ll ex2 = 0;
-        left = k-res;
-        while (left>0 && cur_max>A[0]) 
-        {
-            if(left<cnt[cur_max]) break;
-            ex2++;
-            left -=cnt[cur_max];
-            cnt[cur_max-1] += cnt[cur_max];
-            cur_max--;
-        }
-        put(A[n-1]-A[0] );
+        put(f);
+        cout.flush();
     }
 
     return 0;
