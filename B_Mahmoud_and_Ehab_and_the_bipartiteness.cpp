@@ -49,20 +49,22 @@ void __print(auto x) {cerr << x;}
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-set<int> unvisited;
-vector<set<int>> nadj;
-void dfs(int u,int &vec){
-    unvisited.erase(unvisited.find(u));
-    vec++;
-    int last = -1;
-    while(!unvisited.empty()){
-        auto it = unvisited.upper_bound(last);
-        if(it==unvisited.end()) break;
-        int v = *it;
-        last = v;
-        if(nadj[u].count(v)) continue;
-        dfs(v,vec);
+
+ll res = 0;
+vii adj;
+void dfs(int u,int p,vi &V){
+    V[3]++; // own
+    res += V[0];
+    vi cur = {V[1],V[2],V[3],0};
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs(v,u,cur);
     }
+    V[1] = cur[0]; // always zero?
+    V[2] = cur[1];
+    V[3] = cur[2];
+    V[1]++; // grand parent
+
 }
 // driver code
 int main()
@@ -73,33 +75,20 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        nadj.resize(n);
-        unvisited.clear();
-        rep(i,0,n) unvisited.insert(i);
-        rep(i,0,m){
+        int n;
+        cin >> n;
+        adj.resize(n);
+        rep(i,0,n-1){
             int u,v;
-            cin >> u >> v;
+            cin >> u>>v;
             u--;v--;
-            nadj[u].insert(v);
-            nadj[v].insert(u);
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
-        vi res;
-        rep(i,0,n){
-            if(unvisited.count(i)){
-                int A=0;
-                dfs(i,A);
-                res.push_back(A);
-            }
-        }
-        put(res.size());
-        srv(res);
-        rep(i,0,res.size()) {
-            cout << res[i] << " ";
-        }
-        cout << endl;
-
+        res = 0;
+        vi A = {0,0,0,0};
+        dfs(0,-1,A);
+        put(res);
     }
 
     return 0;
