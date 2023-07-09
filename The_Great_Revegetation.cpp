@@ -25,9 +25,9 @@ typedef unordered_map<ll,ll> mll;
 #define trav(a,arr) for (auto& a: (arr))
 #define sz(x) (int)(x).size()
 #define mk_vec(name,sz,value) vi name(sz,value)
-#define mk_mat(name,n,m,value) vector<vi> name(n, vi(m, value))
+#define mk_mat(name,n,m,value) vector<vector<int>> name(n, vector<int>(m, value))
 #define contains(x) find(x) != string::npos
-#define tkv(vec,sz) rep(i,0,sz) cin>>vec[i]
+#define tkv(vec,sz) FOR(i,0,sz) cin>>vec[i]
 #define srv(vec) sort(vec.begin(), vec.end())
 #define all(x) x.begin(), x.end()
 #define less(a,b) a<b
@@ -41,6 +41,7 @@ typedef unordered_map<ll,ll> mll;
 #define mod(x) (x + MOD)%MOD
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
+
 
 void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
@@ -71,57 +72,56 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-vii adj;
-// i hate ...
-// void dfs(int u,int p,vi &V){
-//     V[3] = 1; // own
-//     debug(u,p);
-//     debug(V);
-//     res += V[0];
-//     vi cur = {V[1],V[2],V[3],0};
-    // trav(v,adj[u]){
-    //     if(v==p) continue;
-    //     cur[3] = 0;
-    //     dfs(v,u,cur);
-    //     cur[0]++;
-    // }
-//     V[2] = cur[1]; // always zero?
-//     V[3] = cur[2];
-//     V[1] += V[3];
-// }
-ll a,b;
-void rec(int u,int p, int g){
-    if (g) a++;
-    else b++;
+vi clr;
+ll dfs(int u,bool g,vector<vector<pair<int,bool>>> &adj){
+    clr[u] = g;
+    int child = 0;
     trav(v,adj[u]){
-        if(v==p) continue;
-        rec(v,u,!g);
+        if(clr[v.first]!=-1){
+            if(clr[v.first]!=g^v.second) return false;
+            continue;
+        }
+        if(!dfs(v.first,g^v.second,adj)) return false;
     }
+    return true;
 }
 // driver code
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(nullptr);
+    freopen("revegetate.in","r",stdin);
+    freopen("revegetate.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        adj.resize(n);
-        rep(i,0,n-1){
+        int n,m;
+        cin >> n>> m;
+        vector<vector<pair<int,bool>>> adj(n);
+        clr.resize(n,-1);
+        rep(i,0,m){
+            char x;
             int u,v;
-            cin >> u>>v;
+            cin >> x >> u >> v;
             u--;v--;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+            adj[u].push_back(mp(v,x=='D'));
+            adj[v].push_back(mp(u,x=='D'));
         }
-        a=0;
-        b=0;
-        rec(0,-1,0);
-        put(a*b - (n-1) );
+        ll res = 0;
+        int f = 0;
+        rep(i,0,n){
+            if(clr[i]!=-1) continue;
+            bool val=dfs(i,0,adj);
+            if(!val) {f=1;break;}
+            res += 1;
+        }
+        if(f) put("0")
+        else{
+            cout << 1;
+            while(res-->0) cout << 0;
+            cout << endl;
+        }
+
     }
 
     return 0;

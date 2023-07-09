@@ -41,12 +41,8 @@ typedef unordered_map<ll,ll> mll;
 #define mod(x) (x + MOD)%MOD
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
-void __print(auto x) {cerr << x;}
-#ifndef ONLINE_JUDGE
-#define debug(x) cerr << #x <<" "; __print(x); cerr << endl;
-#else
-#define debug(x)
-#endif
+
+
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
