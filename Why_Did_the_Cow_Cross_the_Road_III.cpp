@@ -72,81 +72,80 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1005;
-ll mat[N][N];
+const int N = 105;
 bool vis[N][N];
 bool check[N][N];
-int n,m;
-int total;
-
-ll flood_fill(int i,int j,ll diff){
-    queue<pair<int,int>> q;
-    q.push(make_pair(i,j));
-    vis[i][j]=1;
+bool ban[N][N][N][N];
+int n, m;
+int i_min, i_max, j_min, j_max;
+ll flood_fill(int i, int j)
+{
+    queue<pair<int, int>> q;
+    q.push(make_pair(i, j));
+    vis[i][j] = 1;
     ll cun = 0;
-    int dx[] = {0,0,-1,1};
-    int dy[] = {-1,1,0,0};
+    int dx[] = {0, 0, -1, 1};
+    int dy[] = {-1, 1, 0, 0};
     while (!q.empty())
-    {   
+    {
         auto p = q.front();
         cun += check[p.first][p.second];
-        // debug("visiting ",cun,p,diff,check[p.first][p.second]);
         q.pop();
-        for(int k=0;k<4;k++){
-            int y =p.first+dy[k],x=p.second+dx[k];
-            if(x<m && y <n && x>=0 && y>=0 && !vis[y][x] && abs(mat[y][x]-mat[p.first][p.second])  <= diff) {
-                vis[y][x] =1;
-                q.push(make_pair(y,x));
+        for (int k = 0; k < 4; k++)
+        {
+            int y = p.first + dy[k], x = p.second + dx[k];
+            if (x <= j_max && y <= i_max && x >= j_min && y >= i_min && !vis[y][x] && !ban[p.first][p.second][y][x])
+            {
+                vis[y][x] = 1;
+                q.push(make_pair(y, x));
             }
         }
     }
     return cun;
-    
 }
-bool ok(ll x){
-    ll cnt = 0;
-    memset(vis,0,sizeof vis);
-    int f = 0;
-    rep(i,0,n){
-        rep(j,0,m){
-            if(check[i][j]){cnt = flood_fill(i,j,x);f=1; break;}
-        }
-        if(f) break;
-
-    }
-    return cnt>=total;
-}
-
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("ccski.in","r",stdin);
-    freopen("ccski.out","w",stdout);	  
+    freopen("countcross.in","r",stdin);
+    freopen("countcross.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        cin >> n >> m;
-        rep(i,0,n){
-            rep(j,0,m) cin >> mat[i][j];
+        int n,k,r;
+        cin >> n >> k >> r;
+        i_min = 0;j_min=0;i_max=n-1;j_max=n-1;
+        rep(i,0,r){
+            int r1,c1,r2,c2;
+            cin >> r1>>c1>>r2>> c2;
+            r1--;r2--;c1--;c2--;
+            ban[r1][c1][r2][c2]=1;
+            ban[r2][c2][r1][c1]=1;
         }
-        rep(i,0,n){
-            rep(j,0,m) {cin >> check[i][j];total+=check[i][j]; }
-            
+        rep(i,0,k){
+            int r,c;
+            cin >> r >> c;
+            r--;c--;
+            check[r][c]=1;
         }
-        ll lo = 0,hi =1e10;
-        ll ans=1e10;
-        while(lo<=hi){
-            ll mid = (lo+hi)/2;
-            if(ok(mid)){
-                hi = mid-1;
-                ans = mid;
+        vi cmpts;
+        rep(i,0,n){
+            rep(j,0,n){
+                if(!vis[i][j]){
+                    int area = flood_fill(i,j);
+                    cmpts.push_back(area);
+                }
             }
-            else lo = mid+1;
-            // debug(mid,lo,hi);
         }
-        put(ans);
+        ll res = 0;
+        rep(i,0,cmpts.size()){
+            rep(j,i+1,cmpts.size()){
+                res += cmpts[i]*cmpts[j];
+            }
+        }
+        put(res);
+        
     }
 
     return 0;

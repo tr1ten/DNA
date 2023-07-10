@@ -72,81 +72,66 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1005;
-ll mat[N][N];
-bool vis[N][N];
-bool check[N][N];
-int n,m;
-int total;
+vii adj;
+vi vis;
+ll timer;
+ll res;
+struct Trip
+{
+    int x;
+    int y;
+    int z;
+};
+vector<Trip> ans;
 
-ll flood_fill(int i,int j,ll diff){
-    queue<pair<int,int>> q;
-    q.push(make_pair(i,j));
-    vis[i][j]=1;
-    ll cun = 0;
-    int dx[] = {0,0,-1,1};
-    int dy[] = {-1,1,0,0};
-    while (!q.empty())
-    {   
-        auto p = q.front();
-        cun += check[p.first][p.second];
-        // debug("visiting ",cun,p,diff,check[p.first][p.second]);
-        q.pop();
-        for(int k=0;k<4;k++){
-            int y =p.first+dy[k],x=p.second+dx[k];
-            if(x<m && y <n && x>=0 && y>=0 && !vis[y][x] && abs(mat[y][x]-mat[p.first][p.second])  <= diff) {
-                vis[y][x] =1;
-                q.push(make_pair(y,x));
-            }
+bool dfs(int u,int p){
+    vis[u] = timer++;
+    vector<int> cur;
+    trav(v,adj[u]){
+        if (v==p) continue;
+        if(vis[v]!=-1){
+            if(vis[v]<=vis[u]) cur.push_back(v);
+        }
+        else{
+            if(dfs(v,u)) cur.push_back(v);
         }
     }
-    return cun;
-    
-}
-bool ok(ll x){
-    ll cnt = 0;
-    memset(vis,0,sizeof vis);
-    int f = 0;
-    rep(i,0,n){
-        rep(j,0,m){
-            if(check[i][j]){cnt = flood_fill(i,j,x);f=1; break;}
-        }
-        if(f) break;
-
+    for(int i=0;i<cur.size()/2;i++){
+        ans.push_back({cur[2*i],u,cur[2*i + 1]});
     }
-    return cnt>=total;
+    if(cur.size()%2==0) return 1;
+    if(p!=-1) ans.push_back({p,u,cur.back()});
+    return 0;
 }
-
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("ccski.in","r",stdin);
-    freopen("ccski.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
+        int n,m;
         cin >> n >> m;
+        adj.resize(n);
+        vis.resize(n,-1);
+        rep(i,0,m){
+            int u,v;
+            cin >> u >> v;
+            u--;v--;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        // for each dfs tree
         rep(i,0,n){
-            rep(j,0,m) cin >> mat[i][j];
+            if(vis[i]==-1) dfs(i,-1);
         }
-        rep(i,0,n){
-            rep(j,0,m) {cin >> check[i][j];total+=check[i][j]; }
-            
+        put(ans.size());
+        trav(x,ans){
+            put3(x.z+1,x.y+1,x.x+1);
         }
-        ll lo = 0,hi =1e10;
-        ll ans=1e10;
-        while(lo<=hi){
-            ll mid = (lo+hi)/2;
-            if(ok(mid)){
-                hi = mid-1;
-                ans = mid;
-            }
-            else lo = mid+1;
-            // debug(mid,lo,hi);
-        }
-        put(ans);
     }
 
     return 0;

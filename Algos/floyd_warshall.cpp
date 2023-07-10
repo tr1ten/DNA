@@ -72,81 +72,51 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1005;
-ll mat[N][N];
-bool vis[N][N];
-bool check[N][N];
-int n,m;
-int total;
-
-ll flood_fill(int i,int j,ll diff){
-    queue<pair<int,int>> q;
-    q.push(make_pair(i,j));
-    vis[i][j]=1;
-    ll cun = 0;
-    int dx[] = {0,0,-1,1};
-    int dy[] = {-1,1,0,0};
-    while (!q.empty())
-    {   
-        auto p = q.front();
-        cun += check[p.first][p.second];
-        // debug("visiting ",cun,p,diff,check[p.first][p.second]);
-        q.pop();
-        for(int k=0;k<4;k++){
-            int y =p.first+dy[k],x=p.second+dx[k];
-            if(x<m && y <n && x>=0 && y>=0 && !vis[y][x] && abs(mat[y][x]-mat[p.first][p.second])  <= diff) {
-                vis[y][x] =1;
-                q.push(make_pair(y,x));
-            }
-        }
-    }
-    return cun;
-    
-}
-bool ok(ll x){
-    ll cnt = 0;
-    memset(vis,0,sizeof vis);
-    int f = 0;
-    rep(i,0,n){
-        rep(j,0,m){
-            if(check[i][j]){cnt = flood_fill(i,j,x);f=1; break;}
-        }
-        if(f) break;
-
-    }
-    return cnt>=total;
-}
 
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("ccski.in","r",stdin);
-    freopen("ccski.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        cin >> n >> m;
-        rep(i,0,n){
-            rep(j,0,m) cin >> mat[i][j];
+        int n;
+        cin >> n;
+        vi nxt(n);
+        rep(i,0,n) {
+            int x;
+            cin >> x;
+            nxt[i] = x-1;
         }
+        vi cycle(n,-1);
         rep(i,0,n){
-            rep(j,0,m) {cin >> check[i][j];total+=check[i][j]; }
-            
-        }
-        ll lo = 0,hi =1e10;
-        ll ans=1e10;
-        while(lo<=hi){
-            ll mid = (lo+hi)/2;
-            if(ok(mid)){
-                hi = mid-1;
-                ans = mid;
+            if(cycle[i]!=-1) continue;
+            vi path{i};
+            cycle[i] = -2; // change status
+            while(cycle[nxt[path.back()]] == -1) {
+                cycle[nxt[path.back()]] = -2;
+                path.push_back(nxt[path.back()]);
             }
-            else lo = mid+1;
-            // debug(mid,lo,hi);
+            int u = path.back();
+            if(cycle[nxt[u]]!=-2){ // if part of chain, find closes cycle root
+                trav(v,path) cycle[v] = cycle[nxt[u]];
+                continue;
+            }
+            bool cyc = 0; // if cycle
+            trav(v,path){
+                cyc |= nxt[u]==v;
+                if(cyc) cycle[v] = v; // cycle is present
+                else cycle[v] = nxt[u]; // outside cycle
+            }
         }
-        put(ans);
+        rep(i,0,n){
+            cout << (cycle[i]+1) << " ";
+        }
+        cout << endl;
+
     }
 
     return 0;

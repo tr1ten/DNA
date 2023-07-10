@@ -72,81 +72,61 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1005;
-ll mat[N][N];
-bool vis[N][N];
-bool check[N][N];
-int n,m;
-int total;
 
-ll flood_fill(int i,int j,ll diff){
-    queue<pair<int,int>> q;
-    q.push(make_pair(i,j));
-    vis[i][j]=1;
-    ll cun = 0;
-    int dx[] = {0,0,-1,1};
-    int dy[] = {-1,1,0,0};
-    while (!q.empty())
-    {   
-        auto p = q.front();
-        cun += check[p.first][p.second];
-        // debug("visiting ",cun,p,diff,check[p.first][p.second]);
-        q.pop();
-        for(int k=0;k<4;k++){
-            int y =p.first+dy[k],x=p.second+dx[k];
-            if(x<m && y <n && x>=0 && y>=0 && !vis[y][x] && abs(mat[y][x]-mat[p.first][p.second])  <= diff) {
-                vis[y][x] =1;
-                q.push(make_pair(y,x));
+vector<bool> odd; // odd outdegree or not
+vector<pair<int,int>> ans;
+vi vis;
+vii adj;
+ll timer = 0;
+void dfs(int u,int p){
+    vis[u] = timer++;
+    trav(v,adj[u]){
+        if(v==p) continue;
+        if(vis[v]!=-1){
+            if(vis[v] <= vis[u]){ // check if it is backedge that is going from child to its ancestor
+                odd[u] =odd[u]^1;
+                ans.push_back(mp(u,v)); // assign upward edge why?
             }
         }
-    }
-    return cun;
-    
-}
-bool ok(ll x){
-    ll cnt = 0;
-    memset(vis,0,sizeof vis);
-    int f = 0;
-    rep(i,0,n){
-        rep(j,0,m){
-            if(check[i][j]){cnt = flood_fill(i,j,x);f=1; break;}
+        else{
+            dfs(v,u);
+            if(odd[v]) {ans.push_back(mp(v,u)); odd[v]=0;}
+            else{ ans.push_back(mp(u,v)); odd[u] =odd[u]^1;}
+
         }
-        if(f) break;
-
     }
-    return cnt>=total;
 }
-
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("ccski.in","r",stdin);
-    freopen("ccski.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
+        int n,m;
         cin >> n >> m;
-        rep(i,0,n){
-            rep(j,0,m) cin >> mat[i][j];
+        adj.resize(n);
+        rep(i,0,m){
+            int u,v;
+            cin >> u >> v;
+            u--;v--;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
+        vis.resize(n,-1);
+        odd.resize(n,0);
         rep(i,0,n){
-            rep(j,0,m) {cin >> check[i][j];total+=check[i][j]; }
-            
+            if(vis[i]==-1) dfs(i,-1);
         }
-        ll lo = 0,hi =1e10;
-        ll ans=1e10;
-        while(lo<=hi){
-            ll mid = (lo+hi)/2;
-            if(ok(mid)){
-                hi = mid-1;
-                ans = mid;
+        if(accumulate(all(odd),0)) put("IMPOSSIBLE") // all vertices should have even edges
+        else {
+            trav(x,ans){
+                put2(x.first+1,x.second+1)
             }
-            else lo = mid+1;
-            // debug(mid,lo,hi);
         }
-        put(ans);
     }
 
     return 0;

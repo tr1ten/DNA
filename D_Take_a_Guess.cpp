@@ -72,81 +72,42 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1005;
-ll mat[N][N];
-bool vis[N][N];
-bool check[N][N];
-int n,m;
-int total;
-
-ll flood_fill(int i,int j,ll diff){
-    queue<pair<int,int>> q;
-    q.push(make_pair(i,j));
-    vis[i][j]=1;
-    ll cun = 0;
-    int dx[] = {0,0,-1,1};
-    int dy[] = {-1,1,0,0};
-    while (!q.empty())
-    {   
-        auto p = q.front();
-        cun += check[p.first][p.second];
-        // debug("visiting ",cun,p,diff,check[p.first][p.second]);
-        q.pop();
-        for(int k=0;k<4;k++){
-            int y =p.first+dy[k],x=p.second+dx[k];
-            if(x<m && y <n && x>=0 && y>=0 && !vis[y][x] && abs(mat[y][x]-mat[p.first][p.second])  <= diff) {
-                vis[y][x] =1;
-                q.push(make_pair(y,x));
-            }
-        }
-    }
-    return cun;
-    
-}
-bool ok(ll x){
-    ll cnt = 0;
-    memset(vis,0,sizeof vis);
-    int f = 0;
-    rep(i,0,n){
-        rep(j,0,m){
-            if(check[i][j]){cnt = flood_fill(i,j,x);f=1; break;}
-        }
-        if(f) break;
-
-    }
-    return cnt>=total;
-}
 
 // driver code
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    freopen("ccski.in","r",stdin);
-    freopen("ccski.out","w",stdout);	  
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(nullptr);
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        cin >> n >> m;
-        rep(i,0,n){
-            rep(j,0,m) cin >> mat[i][j];
+        int n,k;
+        cin >> n >> k;
+        auto sum = [&](int i,int j){
+            int oz;
+            int az;
+            cout << "or " << i << " " << j << endl;
+            cout.flush();
+            cin >> oz;
+            cout << "and " << i << " " << j << endl;
+            cout.flush();
+            cin >> az;
+            int xr = ((~az) & oz);
+            int sm = (2*(az) ) + xr;
+            return sm;
+        };
+        int s1 = sum(1,2);
+        int s2 = sum(2,3);
+        int s3 = sum(3,1);
+        int a = (s1+ s3-s2)/2;
+        vi A{a,s2-(s3-a),s3-a};
+        rep(i,4,n+1){
+            A.push_back(sum(i,i-1) - A.back());
         }
-        rep(i,0,n){
-            rep(j,0,m) {cin >> check[i][j];total+=check[i][j]; }
-            
-        }
-        ll lo = 0,hi =1e10;
-        ll ans=1e10;
-        while(lo<=hi){
-            ll mid = (lo+hi)/2;
-            if(ok(mid)){
-                hi = mid-1;
-                ans = mid;
-            }
-            else lo = mid+1;
-            // debug(mid,lo,hi);
-        }
-        put(ans);
+        srv(A);
+        put(A[k-1]);
     }
 
     return 0;
