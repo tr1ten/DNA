@@ -83,8 +83,21 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
+        int n;
+        cin >> n;
+        vi A(n,-1);
+        if(n==1) put(1)
+        else if(n==2) put2(2,1)
+        else{
+            A[n/2] = 1;
+            A[0] = 2;
+            A[n-1] = 3;
+            int cnt = 4;
+            rep(i,0,n){
+                if(A[i]==-1) A[i] = cnt++;
+            }
+            pvc(A);
+        }
         
     }
 
