@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -82,29 +81,28 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll n;
+        int n;
         cin >> n;
-        ll res = 0;
-        ll temp = n;
-        ll lmt = sqrt(n);
-        rep(i,2,lmt+1){
-            if(n%i!=0) continue;
-            ll cnt = 0;
-            while ((n%i)==0)
-            {
-                n /=i;
-                cnt++;
+        string s;
+        cin >> s;
+        if(n%3==1) put("YES")
+        else{
+            int f = 0;
+            rep(c,0,26){
+                int f1 =-1;
+                int f2 = -1;
+                rep(i,0,n){
+                    if(s[i]-'a' != c) continue;
+                    if(f1==-1 && i%3==0) f1 = i;
+                    else if(f1!=-1 && (n-1-i)%3==0) f2 = i; 
+                }
+                if(f1!=-1 && f2!=-1) {f=1;break;}
             }
-            ll k = 0;
-            while (k*(k+1) <= 2*cnt) k++;
-            k--;
-            // debug(i,cnt,k,n);
-            res +=k;
-        }
-        if(n>1) res++;
-        put(res);
+            if(f) put("YES")
+            else put("NO")
+        } 
     }
 
     return 0;

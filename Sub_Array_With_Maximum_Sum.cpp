@@ -71,8 +71,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
-
+const ll INF = 1e16+5;
 
 // driver code
 int main()
@@ -82,28 +81,30 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll n;
+        int n;
         cin >> n;
-        ll res = 0;
-        ll temp = n;
-        ll lmt = sqrt(n);
-        rep(i,2,lmt+1){
-            if(n%i!=0) continue;
-            ll cnt = 0;
-            while ((n%i)==0)
-            {
-                n /=i;
-                cnt++;
-            }
-            ll k = 0;
-            while (k*(k+1) <= 2*cnt) k++;
-            k--;
-            // debug(i,cnt,k,n);
-            res +=k;
+        vi A(n);
+        vi B(n);
+        tkv(A,n);
+        tkv(B,n);
+        ll dp[n+1][2]; // reversed or not
+        memset(dp,0,sizeof dp);
+        ll dp0 = 0; // maximum prefix 
+        ll dp1 = INF;
+        ll res= 0; // single element
+        rep(i,0,n){
+            // dp[i+1][0] = max(0LL,max(max(A[i],B[i]),A[i]+B[i]+dp[i][0]) ) ;
+            // dp[i+1][1] = max(0LL,min(max(max(A[i],B[i]),A[i]+B[i]+dp[i][1]),max(min(A[i],B[i]),A[i]+B[i]+dp[i][0])));
+            // res = max(res, max(dp[i+1][i],min(max(A[i],0LL)+dp[i][1], min(A[i],B[i]) +dp[i][0])) );
+            ll t0 = dp0;
+            ll t1 =dp1;
+            dp0 = max(0LL,max(t0+A[i]+B[i], max(A[i],B[i])) );
+            dp1 = max(0LL,min(max(t1+A[i]+B[i],max(A[i],B[i]) ) , max(t0+A[i]+B[i], min(A[i],B[i]))) );
+            // debug(dp0,dp1);
+            res = max(res,max(max(A[i],B[i]),min(max(dp1,t0+max(0LL,min(A[i],B[i])) ), t1+max(A[i],max(B[i],A[i]+B[i])) )) );
         }
-        if(n>1) res++;
         put(res);
     }
 

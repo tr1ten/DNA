@@ -5,17 +5,17 @@ const int N = 1e5 + 5;
 int sieve[N+1];
 // find prime <sqrt(MAX)
 // O(LlogL)
-// void preprocess(){
-//     sieve[0] = 1;
-//     sieve[1] = 1;
-//     for(int x=2;x<=N;x++){
-//         if(sieve[x]!=0) continue; 
-//         sieve[x] = x;
-//         for(int u=2*x;u<=N;u +=x){
-//             sieve[u] = x;
-//         }
-//     }
-// }
+void preprocess(){
+    sieve[0] = 1;
+    sieve[1] = 1;
+    for(int x=2;x<=N;x++){
+        if(sieve[x]!=0) continue; 
+        sieve[x] = x;
+        for(int u=2*x;u<=N;u +=x){
+            sieve[u] = x;
+        }
+    }
+}
 
 vector<int> factors(int x){
     vector<int> res;
