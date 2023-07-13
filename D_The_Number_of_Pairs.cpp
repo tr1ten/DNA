@@ -72,6 +72,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+
 const int N = 1e5 + 5;
 int sieve[N+1];
 // find prime <sqrt(MAX)
@@ -88,41 +89,41 @@ void preprocess(){
     }
 }
 
-mll factors(int x){
-    mll res;
+vector<int> factors(int x){
+    vector<int> res;
     while(x>1){
         int f = sieve[x];
-        while(x%f==0) {x/=f;res[f]++;}
+        if(x%f==0) res.push_back(f);
+        while(x%f==0) x/=f;
     }
     return res;
 }
+
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);
-    preprocess();	  
+    // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
-        mll cnt;
+        int n;
+        cin >> n;
+        ll c,d,x;
+        cin >> c>> d >>x;
+        vi divs;
+        rep(i,1,sqrt(x)+1){
+            if(i%2!=0) continue;
+            divs.push_back(i);
+            if(i*i!=x) divs.push_back(x/i);
+        }
         ll res = 0;
-        rep(i,0,n){
-            ll x;
-            cin >> x;
-            ll req=1;
-            ll cur=1;
-            trav(f,factors(x)){
-                req *= pow(f.first, (k-(f.second)%k)%k);
-                cur *= pow(f.first,f.second%k);
-            }
-            res += cnt[req];
-            cnt[cur]++;
-            // debug(x,cnt,factors(x),res);
+        trav(div,divs){
+            ll ab = ((x/div) +  d)/c;
+           debug(ab)
+            // res += pow(2,factors(ab).size());
         }
         put(res);
     }

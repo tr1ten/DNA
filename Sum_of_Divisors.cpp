@@ -72,29 +72,17 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1e5 + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
+ll fast_pow(ll a,ll b){
+    if(b==0) return 1;
+    if(b==1) return a;
+    ll res = fast_pow(a,b/2);
+    if(b%2==0) return (res*res)%MOD;
+    return (((res*res)%MOD)*a)%MOD;
 }
-
-mll factors(int x){
-    mll res;
-    while(x>1){
-        int f = sieve[x];
-        while(x%f==0) {x/=f;res[f]++;}
-    }
-    return res;
+ll t_inv;
+ll prefix(ll n){
+    if(n==0) return 0;
+    return mod(mod(n*(n+1))*t_inv);
 }
 // driver code
 int main()
@@ -102,30 +90,30 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);
-    preprocess();	  
+    // freopen("output.out","w",stdout);	  
     int T=1;
+    t_inv = fast_pow(2,MOD-2);
     // cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
-        mll cnt;
+        ll n;
+        cin >> n;
+        if(n==1) {
+            put(1);
+            break;
+        }
+        ll i = 1;
         ll res = 0;
-        rep(i,0,n){
-            ll x;
-            cin >> x;
-            ll req=1;
-            ll cur=1;
-            trav(f,factors(x)){
-                req *= pow(f.first, (k-(f.second)%k)%k);
-                cur *= pow(f.first,f.second%k);
-            }
-            res += cnt[req];
-            cnt[cur]++;
-            // debug(x,cnt,factors(x),res);
+        while(i<n){
+            // ll i_inv = fast_pow(i,MOD-2);
+            ll q = n/i;
+            // ll q_inv = fast_pow(q,MOD-2);
+            ll nxt_i  = (n/q) + 1;
+            ll sm = mod( prefix(mod(nxt_i - 1)) - prefix(mod(i-1)) );
+            res = mod(res+mod(sm*q));
+            i = nxt_i;
+            // debug(q,i,sm*q);
         }
         put(res);
     }
-
     return 0;
 }

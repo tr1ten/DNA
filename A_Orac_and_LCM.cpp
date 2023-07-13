@@ -72,29 +72,16 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1e5 + 5;
-int sieve[N+1];
+const int N = 2*(1e5) + 5;
+vector<vector<int>> divs(N+1);
 // find prime <sqrt(MAX)
 // O(LlogL)
 void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
     for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
         }
     }
-}
-
-mll factors(int x){
-    mll res;
-    while(x>1){
-        int f = sieve[x];
-        while(x%f==0) {x/=f;res[f]++;}
-    }
-    return res;
 }
 // driver code
 int main()
@@ -107,22 +94,21 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
+        int n;
+        cin >> n;
         mll cnt;
-        ll res = 0;
         rep(i,0,n){
-            ll x;
+            int x;
             cin >> x;
-            ll req=1;
-            ll cur=1;
-            trav(f,factors(x)){
-                req *= pow(f.first, (k-(f.second)%k)%k);
-                cur *= pow(f.first,f.second%k);
+            trav(d,divs[x]){
+                cnt[d]++;
             }
-            res += cnt[req];
-            cnt[cur]++;
-            // debug(x,cnt,factors(x),res);
+        }
+        ll res = 1;
+        trav(x,cnt){
+            if(x.second>=n-1){
+                res = lcm(res,x.first);
+            }
         }
         put(res);
     }

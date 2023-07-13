@@ -72,59 +72,50 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1e5 + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
+vector<long long> A;
+vector<unordered_map<int,int>> dp; // dp[i,j] -> max len of subarray ending at i having gcd j
 void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
+    dp[0][A[0]] = 0;
+    for(int i=1;i<A.size();i++){
+        dp[i][A[i]] = 0;
+        for(auto x:dp[i-1]){
+            int new_gcd = gcd(x.first,A[i]);
+            dp[i][new_gcd] = max(dp[i][new_gcd],x.second+1);
         }
     }
 }
 
-mll factors(int x){
-    mll res;
-    while(x>1){
-        int f = sieve[x];
-        while(x%f==0) {x/=f;res[f]++;}
-    }
-    return res;
-}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);
-    preprocess();	  
+    // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
-        mll cnt;
-        ll res = 0;
+        int n;
+        cin >> n;
+        A.clear();
+        dp.clear();
+        A.resize(n);
+        dp.resize(n);
+        tkv(A,n);
+        preprocess();
+        vector<int> ans(n,0);
         rep(i,0,n){
-            ll x;
-            cin >> x;
-            ll req=1;
-            ll cur=1;
-            trav(f,factors(x)){
-                req *= pow(f.first, (k-(f.second)%k)%k);
-                cur *= pow(f.first,f.second%k);
+            trav(x,dp[i]){
+                ans[x.second] = max(ans[x.second],x.first);
             }
-            res += cnt[req];
-            cnt[cur]++;
-            // debug(x,cnt,factors(x),res);
         }
-        put(res);
+        int mx = 1;
+        per(i,0,n){
+            mx = max(ans[i],mx);
+            ans[i] = mx;
+        }
+        pvc(ans);
+
     }
 
     return 0;

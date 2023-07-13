@@ -31,13 +31,13 @@ const int K = 9000;
 vector<vector<int>> divs(N+1);
 // find prime <sqrt(MAX)
 // O(LlogL)
-void preprocess(){
-    for(int x=2;x<=N;x++){
-        for(int u=x;u<=N;u +=x){
-            divs[u].push_back(x);   
-        }
-    }
-}
+// void preprocess(){
+//     for(int x=2;x<=N;x++){
+//         for(int u=x;u<=N;u +=x){
+//             divs[u].push_back(x);   
+//         }
+//     }
+// }
 
 int main(int argc, char const *argv[])
 {
@@ -52,12 +52,12 @@ int main(int argc, char const *argv[])
 	// 				cur.push_back(a[i]/j);
 	// 		}
 	// 	}
-    while(1){
-        int x;
-        cin >> x;
-        auto fac = divs[x];
-        for(auto f:fac) cout << f << " ";
-        cout << endl;
-    }
+    // while(1){
+    //     int x;
+    //     cin >> x;
+    //     auto fac = divs[x];
+    //     for(auto f:fac) cout << f << " ";
+    //     cout << endl;
+    // }
     return 0;
 }

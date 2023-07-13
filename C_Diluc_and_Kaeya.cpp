@@ -72,59 +72,33 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1e5 + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
 
-mll factors(int x){
-    mll res;
-    while(x>1){
-        int f = sieve[x];
-        while(x%f==0) {x/=f;res[f]++;}
-    }
-    return res;
-}
+#define double long double
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);
-    preprocess();	  
+    // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
-        mll cnt;
-        ll res = 0;
+        int n;
+        cin >> n;
+        string s;
+        cin >> s;
+        ll m=0;
+        unordered_map<double,ll> cnt;
         rep(i,0,n){
-            ll x;
-            cin >> x;
-            ll req=1;
-            ll cur=1;
-            trav(f,factors(x)){
-                req *= pow(f.first, (k-(f.second)%k)%k);
-                cur *= pow(f.first,f.second%k);
-            }
-            res += cnt[req];
-            cnt[cur]++;
-            // debug(x,cnt,factors(x),res);
-        }
-        put(res);
+            m += (s[i]=='D');
+            double cr = INF;
+            if(m>0) cr = (i+1)*1.0/m;
+            cnt[cr]++;
+            cout << cnt[cr] << " ";
+            // debug(cnt);
+        }   
+        cout << endl;
     }
 
     return 0;
