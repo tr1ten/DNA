@@ -42,6 +42,7 @@ vector<vector<int>> divs(N+1);
 int main(int argc, char const *argv[])
 {
     preprocess();
+    
     // standard divisors
     // for(int j=1;j*j<=a[i];j++)
 	// 	{		

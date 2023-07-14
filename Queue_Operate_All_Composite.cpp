@@ -38,7 +38,7 @@ typedef unordered_map<ll,ll> mll;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
-#define mod(x) (x + MOD)%MOD
+#define mod(x) ((x) + MOD)%MOD
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
@@ -70,33 +70,34 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 998244353;
 const ll INF = 1e10+5;
 
-const int N = 1e5 + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
+ll a=1;
+ll b=0;
+ll yb = 0;
+ll ya = 1; 
+ll fast_pow(ll a,ll b,ll MOD){
+    if(b==0) return 1;
+    if(b==1) return a;
+    ll res = fast_pow(a,b/2,MOD);
+    if(b%2==0) return (res*res)%MOD;
+    return (((res*res)%MOD)*a)%MOD;
 }
 
-vector<int> factors(int x){
-    vector<int> res;
-    while(x>1){
-        int f = sieve[x];
-        if(x%f==0) res.push_back(f);
-        while(x%f==0) x/=f;
-    }
-    return res;
+void add(ll c,ll d){
+    a = mod(c*a);
+    b = mod(mod(c*b)+d);
+}
+ll x_inv(ll x){
+    return mod(mod(x-yb)*fast_pow(ya,MOD-2,MOD));
+}
+ll f(ll x){
+    return mod(mod(a*x_inv(x)) + b);
+}
+void remove(ll c,ll d){
+    yb = mod(yb + mod(ya*d));
+    ya = mod(ya*c);
 }
 
 // driver code
@@ -106,28 +107,35 @@ int main()
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
-    preprocess();
     int T=1;
+    deque<pair<ll,ll>> dq;
     cin>>T;
     while(T--){
-        ll c,d,x;
-        cin >> c>> d >>x;
-        ll res = 0;
-        for(int i=1;i*i<=x;i++){
-            if(x%i!=0) continue;
-            ll xx = x/i;
-            if((xx+d)%c==0){
-                ll cc = (xx+d)/c;
-                res += (1<<(factors(cc).size()));
-            }
-            if(x!=i*i){
-                if((i+d)%c==0){
-                    ll cc = (i+d)/c;
-                    res += (1<<(factors(cc).size()));
-                }
-            }
+        int t;
+        cin >> t;
+        switch (t)
+        {
+        case 0:
+            {ll c,d;
+            cin >> c >> d;
+            dq.push_back({c,d});
+            add(c,d);
+            break;}
+        case 1:
+            {auto p = dq.front();
+            remove(p.first,p.second);
+            dq.pop_front();
+            break;}
+        case 2:
+            {ll x;
+            cin >> x;
+            put(f(x))
+            break;}
+        default:
+            assert(t<3);
+            break;
         }
-        put(res);
+
     }
 
     return 0;

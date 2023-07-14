@@ -70,33 +70,14 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-const int N = 1e5 + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
-
-vector<int> factors(int x){
-    vector<int> res;
-    while(x>1){
-        int f = sieve[x];
-        if(x%f==0) res.push_back(f);
-        while(x%f==0) x/=f;
-    }
-    return res;
+ll fast_pow(ll a,ll b,ll MOD){
+    if(b==0) return 1;
+    if(b==1) return a;
+    ll res = fast_pow(a,b/2,MOD);
+    if(b%2==0) return (res*res)%MOD;
+    return (((res*res)%MOD)*a)%MOD;
 }
 
 // driver code
@@ -106,27 +87,15 @@ int main()
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
-    preprocess();
     int T=1;
     cin>>T;
     while(T--){
-        ll c,d,x;
-        cin >> c>> d >>x;
-        ll res = 0;
-        for(int i=1;i*i<=x;i++){
-            if(x%i!=0) continue;
-            ll xx = x/i;
-            if((xx+d)%c==0){
-                ll cc = (xx+d)/c;
-                res += (1<<(factors(cc).size()));
-            }
-            if(x!=i*i){
-                if((i+d)%c==0){
-                    ll cc = (i+d)/c;
-                    res += (1<<(factors(cc).size()));
-                }
-            }
-        }
+        ll a,b,c;
+        cin >> a >> b >> c;
+        ll m1 = 1e9 + 7;
+        ll m_1 = m1-1;
+        ll p = fast_pow(b,c,m_1);
+        ll res = fast_pow(a,p,m1);
         put(res);
     }
 

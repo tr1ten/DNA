@@ -73,32 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-const int N = 1e5 + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
-
-vector<int> factors(int x){
-    vector<int> res;
-    while(x>1){
-        int f = sieve[x];
-        if(x%f==0) res.push_back(f);
-        while(x%f==0) x/=f;
-    }
-    return res;
-}
-
 // driver code
 int main()
 {
@@ -106,28 +80,13 @@ int main()
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
-    preprocess();
     int T=1;
     cin>>T;
     while(T--){
-        ll c,d,x;
-        cin >> c>> d >>x;
-        ll res = 0;
-        for(int i=1;i*i<=x;i++){
-            if(x%i!=0) continue;
-            ll xx = x/i;
-            if((xx+d)%c==0){
-                ll cc = (xx+d)/c;
-                res += (1<<(factors(cc).size()));
-            }
-            if(x!=i*i){
-                if((i+d)%c==0){
-                    ll cc = (i+d)/c;
-                    res += (1<<(factors(cc).size()));
-                }
-            }
-        }
-        put(res);
+        int n;
+        
+        cin >> n;
+
     }
 
     return 0;
