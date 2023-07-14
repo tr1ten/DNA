@@ -75,8 +75,6 @@ const ll INF = 1e10+5;
 
 ll a=1;
 ll b=0;
-ll yb = 0;
-ll ya = 1; 
 ll fast_pow(ll a,ll b,ll MOD){
     if(b==0) return 1;
     if(b==1) return a;
@@ -89,15 +87,13 @@ void add(ll c,ll d){
     a = mod(c*a);
     b = mod(mod(c*b)+d);
 }
-ll x_inv(ll x){
-    return mod(mod(x-yb)*fast_pow(ya,MOD-2,MOD));
-}
 ll f(ll x){
-    return mod(mod(a*x_inv(x)) + b);
+    return mod(mod(a*x) + b);
 }
 void remove(ll c,ll d){
-    yb = mod(yb + mod(ya*d));
-    ya = mod(ya*c);
+    ll inv = fast_pow(c,MOD-2,MOD);
+    a = mod(a*inv);
+    b = mod(b-mod(a*d));
 }
 
 // driver code

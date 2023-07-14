@@ -72,13 +72,43 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-ll fast_pow(ll a,ll b,ll MOD){
-    if(b==0) return 1;
-    if(b==1) return a;
-    ll res = fast_pow(a,b/2,MOD);
-    if(b%2==0) return (res*res)%MOD;
-    return (((res*res)%MOD)*a)%MOD;
+
+const int N = 3*(1e5)+5;
+ll facts[N+1];
+ll invs[N+1];
+ll fast_pow(ll x,ll n,ll m){
+    x = x%m;
+    ll res = 1;
+    while (n>0)
+    {
+        if(n%2==1) res = (res*x)%m; 
+        x = x*x%m;
+        n /=2;
+    }
+    return res;
 }
+void factorials(){
+    facts[0] = 1;
+    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
+}
+
+
+void inverses(){
+    invs[N] = fast_pow(facts[N],MOD-2,MOD);
+    for(int i=N-1;i>=0;i--) invs[i] = invs[i+1]*(i+1)%MOD;
+}
+
+ll ncr(int n,int r){
+    if(n<r) return 0;
+    return (((facts[n]*invs[n-r])%MOD)*invs[r])%MOD;
+}
+
+void preprocess(){
+    factorials();
+    inverses();
+}
+
+
 // driver code
 int main()
 {
@@ -86,38 +116,32 @@ int main()
     cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
+    preprocess();
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        ll MOD_1 = MOD-1;
-
-        ll MOD_2 = MOD-2;
-        ll cnt=1;
-        ll sm = 1;
-        ll prod = 1;
-        vpi prs;
-        rep(i,0,n){
-            ll p,k;
-            cin >> p >> k;
-            prs.push_back(mp(p,k));
+        int n,m,k;
+        cin >> n >> m >> k;
+        int cnt[n+5];
+        memset(cnt,0,sizeof cnt);
+        ll res = 0;
+        rep(i,1,n+1){
+            int x;
+            cin >> x;
+            cnt[x]++;
         }
-        ll div2 = 1;
-        trav(pr,prs){
-            cnt = mod(cnt*(pr.second+1));
-            ll inv = fast_pow(pr.first-1,MOD_2,MOD);
-            ll val = mod((mod(fast_pow(pr.first,pr.second+1,MOD) - 1))*inv);
-            sm = mod(sm*val);
-            ll f1 = (pr.second*(pr.second+1)/2);
-            // ll pp = f1*((K+-pr.second-1+MOD_1)%MOD_1) ;
-            // ll pp = (pr.second*(pr.second+1)/2)*(K-pr.second-1); 
-            ll fs = fast_pow(fast_pow(pr.first,pr.second*(pr.second+1)/2 ,MOD),div2,MOD);           
-            // debug(fs);
-            prod = mod(mod(fast_pow(prod,pr.second+1,MOD))*fs);
-            div2 = div2*(pr.second+1)%MOD_1;
+        ll sm = 0;
+        int i = 0;
+        rep(j,1,n+1) {
+            rep(c,1,min(cnt[j],m)+1){
+                if(sm<m-c) continue;
+                res = mod(res+mod(ncr(cnt[j],c)*ncr(sm,m-c)) );
+            }
+            sm +=cnt[j];
+            if(j-i==k) {sm-=cnt[i++];}
         }
-        put3(cnt,sm,prod);
+        put(res);
+        
     }
 
     return 0;

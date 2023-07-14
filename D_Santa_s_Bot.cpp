@@ -38,7 +38,7 @@ typedef unordered_map<ll,ll> mll;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
-#define mod(x) (x + MOD)%MOD
+#define mod(x) (((x) + MOD)%MOD)
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
@@ -70,8 +70,15 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 998244353;
 const ll INF = 1e10+5;
+ll fast_pow(ll a,ll b,ll MOD){
+    if(b==0) return 1;
+    if(b==1) return a;
+    ll res = fast_pow(a,b/2,MOD);
+    if(b%2==0) return (res*res)%MOD;
+    return (((res*res)%MOD)*a)%MOD;
+}
 
 // driver code
 int main()
@@ -81,12 +88,31 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n;
-        
+        ll n;
         cin >> n;
-
+        vii A(n);
+        mll cnt;
+        rep(i,0,n){
+            ll k;
+            cin >> k;
+            rep(j,0,k){
+                ll x;
+                cin >> x;
+                A[i].push_back(x);
+                cnt[x]++;
+            }
+        }
+        ll res = 0;
+        rep(i,0,n){
+            ll si = 0;
+            ll ki = A[i].size();
+            trav(x,A[i]) si = mod(si+cnt[x]);
+            ll inv = fast_pow(mod(mod(n*n)*ki),MOD-2,MOD);
+            res = mod(res+mod(si*inv));
+        }
+        put(res);
     }
 
     return 0;

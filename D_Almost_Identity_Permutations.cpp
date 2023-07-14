@@ -70,15 +70,25 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
-ll fast_pow(ll a,ll b,ll MOD){
-    if(b==0) return 1;
-    if(b==1) return a;
-    ll res = fast_pow(a,b/2,MOD);
-    if(b%2==0) return (res*res)%MOD;
-    return (((res*res)%MOD)*a)%MOD;
+const int N = 1005;
+const int M  = 5;
+ll ncr[N+1][M+1];
+void binomial(){
+    for (int i = 0; i <=N; i++)
+    {
+        ncr[i][0] = 1;
+        if(i<=M) ncr[i][i] = 1;
+    }
+    for(int n=1;n<=N;n++){
+        for(int r=1;r<=min(n,M);r++){
+            if(r==n) continue;
+            ncr[n][r] = ncr[n-1][r-1] + ncr[n-1][r];
+        }
+    }
+    
 }
+// lmao two answer accepted by cf
+ll ders[5] = {1,0,1,2,9};
 // driver code
 int main()
 {
@@ -87,37 +97,17 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
+    binomial();
     // cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        ll MOD_1 = MOD-1;
-
-        ll MOD_2 = MOD-2;
-        ll cnt=1;
-        ll sm = 1;
-        ll prod = 1;
-        vpi prs;
-        rep(i,0,n){
-            ll p,k;
-            cin >> p >> k;
-            prs.push_back(mp(p,k));
+        ll n,k;
+        cin >> n >> k;
+        ll res=  0;
+        rep(i,0,k+1){
+            res += ncr[n][i]*(ders[i]);
+            // debug(ncr[n][i],(ders[i]));
         }
-        ll div2 = 1;
-        trav(pr,prs){
-            cnt = mod(cnt*(pr.second+1));
-            ll inv = fast_pow(pr.first-1,MOD_2,MOD);
-            ll val = mod((mod(fast_pow(pr.first,pr.second+1,MOD) - 1))*inv);
-            sm = mod(sm*val);
-            ll f1 = (pr.second*(pr.second+1)/2);
-            // ll pp = f1*((K+-pr.second-1+MOD_1)%MOD_1) ;
-            // ll pp = (pr.second*(pr.second+1)/2)*(K-pr.second-1); 
-            ll fs = fast_pow(fast_pow(pr.first,pr.second*(pr.second+1)/2 ,MOD),div2,MOD);           
-            // debug(fs);
-            prod = mod(mod(fast_pow(prod,pr.second+1,MOD))*fs);
-            div2 = div2*(pr.second+1)%MOD_1;
-        }
-        put3(cnt,sm,prod);
+        put(res);
     }
 
     return 0;
