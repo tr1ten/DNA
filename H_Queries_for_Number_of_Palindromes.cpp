@@ -72,46 +72,51 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+const int N = 5005;
+bool ispali[N][N];
+ll  subs[N][N];
 // driver code
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        ll n;
-        cin >> n ;
-        vi s(n);
-        vi t(n);
-        vpi b;
-        rep(i,0,n){
-            cin >> s[i] >> t[i];
-            b.push_back({(s[i]-t[i]) , i} );
-        }
-        map<ll,ll> ms;
-        ll cnt = 0;
-        vi ans(n);
-        rep(i,0,n){
-            auto it = (ms.lower_bound(b[i].first));
-            if(it!=ms.end()) {
-                ans[b[i].second] = (*it).second;
-                ms.erase(it);
-            }
-            else {
-                ans[b[i].second] = ++cnt;
-            }
-            ms[b[i].first] = ans[b[i].second];
-        }
-        debug(b);
-        put(cnt);
-        rep(i,0,n){
-            put3(s[i],t[i],ans[i]);
-        }
-    }
+        string s(N,'\0');
+        scanf("%s",s.c_str());
+        s.resize(strlen(s.c_str()));
+        int q;
+        scanf("%d",&q);
+        memset(subs,0,sizeof subs);
+        memset(ispali,0,sizeof ispali);
+        int n=s.size();
+        rep(len,1,n+1){
+            rep(l,0,n-len+1){
+                int r = l+len-1;
+                if(len==1) {
+                    ispali[l][r] = 1;
+                    subs[l][r] = 1;
+                    continue;
+                }
+                if(len == 2){
+                    ispali[l][r] = s[l]==s[r];
+                    subs[l][r] = 2 + ispali[l][r];
+                    continue;
+                }
+                ispali[l][r] = ((s[l]==s[r]) && ispali[l+1][r-1]);
+                subs[l][r] = (subs[l+1][r] + subs[l][r-1] - subs[l+1][r-1]) + ispali[l][r];
 
+            }
+        }
+        rep(i,0,q){
+            int l,r;
+            scanf("%d%d",&l,&r);
+            printf("%lld\n",subs[--l][--r]);
+        }
+
+    }
     return 0;
 }

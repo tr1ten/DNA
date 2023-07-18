@@ -83,34 +83,29 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll n;
-        cin >> n ;
-        vi s(n);
-        vi t(n);
-        vpi b;
-        rep(i,0,n){
-            cin >> s[i] >> t[i];
-            b.push_back({(s[i]-t[i]) , i} );
-        }
-        map<ll,ll> ms;
-        ll cnt = 0;
-        vi ans(n);
-        rep(i,0,n){
-            auto it = (ms.lower_bound(b[i].first));
-            if(it!=ms.end()) {
-                ans[b[i].second] = (*it).second;
-                ms.erase(it);
+        string s;
+        cin >> s;
+        int n = s.size();
+        vii dp;
+        dp.resize(n+1,vi(n+1,0));
+        for(int len=2;len<=n;len+=2){
+            rep(l,0,n-len+1){
+                int r = l+len-1;
+                if(len==2) dp[l][r] = s[l]==s[r] ? 1 : 0;
+                else{
+                    ll res = (s[l]==s[r])*dp[l+1][r-1];
+                    for(int k=l+1;k<r;k+=2){
+                        if(dp[l][k] && dp[k+1][r]){
+                        res = mod(res+mod(( 2*dp[l][k] )*(dp[k+1][r] ) + ((s[k+1]==s[r]) && k+2!=r) + ((s[l]==s[k]) && l+1!=k) ));
+                        }
+                        // debug(l,r,k,res,((s[k+1]==s[r]) && k+2!=r) + ((s[l]==s[k]) && l+1!=k));
+                        
+                    }
+                    dp[l][r] = res;
+                }
             }
-            else {
-                ans[b[i].second] = ++cnt;
-            }
-            ms[b[i].first] = ans[b[i].second];
         }
-        debug(b);
-        put(cnt);
-        rep(i,0,n){
-            put3(s[i],t[i],ans[i]);
-        }
+        put(dp[0][n-1]);
     }
 
     return 0;

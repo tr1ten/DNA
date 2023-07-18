@@ -72,7 +72,27 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+const int N = (1e5) + 5;
+ll mem[N][1<<7];
+int vals[N][7];
+int A[N];
+vi srs;
+int n,p,k;
+ll rec(int idx,int mask){
+    int sb = __popcount(mask);
+    if(idx>=k+p && sb==p) return 0;
+    if(idx==n) return -INF;
+    if(mem[idx][mask]!=-1) return mem[idx][mask];
+    ll res = -INF;
+    if(idx<sb+k) res = A[srs[idx]] + rec(idx+1,mask);
+    else res = rec(idx+1,mask);
+    rep(i,0,p){
+        if(mask&(1<<i)) continue;
+        res = max(res,rec(idx+1,mask | (1<<i)) + vals[srs[idx]][i] );
+    }
+    // debug(idx,mask,res);
+    return mem[idx][mask] = res;
+}
 // driver code
 int main()
 {
@@ -83,34 +103,18 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll n;
-        cin >> n ;
-        vi s(n);
-        vi t(n);
-        vpi b;
+        cin >> n >> p >> k;
+        tkv(A,n);
         rep(i,0,n){
-            cin >> s[i] >> t[i];
-            b.push_back({(s[i]-t[i]) , i} );
+            rep(j,0,p) {cin >> vals[i][j];}
         }
-        map<ll,ll> ms;
-        ll cnt = 0;
-        vi ans(n);
-        rep(i,0,n){
-            auto it = (ms.lower_bound(b[i].first));
-            if(it!=ms.end()) {
-                ans[b[i].second] = (*it).second;
-                ms.erase(it);
-            }
-            else {
-                ans[b[i].second] = ++cnt;
-            }
-            ms[b[i].first] = ans[b[i].second];
-        }
-        debug(b);
-        put(cnt);
-        rep(i,0,n){
-            put3(s[i],t[i],ans[i]);
-        }
+        memset(mem,-1,sizeof mem);
+        srs.clear();
+        rep(i,0,n) srs.push_back(i);
+        sort(all(srs),[&](int x,int y){
+            return A[x]>A[y];
+        });
+        put(rec(0,0));
     }
 
     return 0;

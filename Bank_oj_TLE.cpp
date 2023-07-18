@@ -72,7 +72,25 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+vi amt; // pre cal cost of each mask
+vi A;
+vi B;
+int N;
+bool flag;
+inline int pct(int x){ return __builtin_popcount(x);}
+void rec(vector<int> &nt,int idx,int t_mask,int mask,int target,int *dp){
+    if(idx==(int)nt.size()) {
+        int ans = dp[mask] | 1<<target;
+        if(amt[t_mask] == A[target] && pct(dp[mask | t_mask]) < pct(ans)) {
+            dp[mask | t_mask] = ans;
+            if(ans == N-1) flag = 1;
+        }
+        return;
+    }
+    rec(nt,idx+1,t_mask,mask,target,dp);
+    if(A[target] - amt[t_mask | 1<<nt[idx]] >=0) rec(nt,idx+1,t_mask | 1<<nt[idx],mask,target,dp);
+}
+// worst case still O(3^m)
 // driver code
 int main()
 {
@@ -83,34 +101,38 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll n;
-        cin >> n ;
-        vi s(n);
-        vi t(n);
-        vpi b;
-        rep(i,0,n){
-            cin >> s[i] >> t[i];
-            b.push_back({(s[i]-t[i]) , i} );
-        }
-        map<ll,ll> ms;
-        ll cnt = 0;
-        vi ans(n);
-        rep(i,0,n){
-            auto it = (ms.lower_bound(b[i].first));
-            if(it!=ms.end()) {
-                ans[b[i].second] = (*it).second;
-                ms.erase(it);
+        int n,m;
+        cin >> n >> m;
+        N = 1<<n;
+        int M = 1<<m;
+        A.resize(n);
+        tkv(A,n);
+        B.resize(m);
+        tkv(B,m);
+        amt.resize(M);
+        rep(mask,0,M){
+            ll sm = 0;
+            rep(i,0,m){
+                if((mask&(1<<i))) sm += B[i];
             }
-            else {
-                ans[b[i].second] = ++cnt;
+            amt[mask] = sm;
+        }
+        int dp[1<<m]; // max mask of people it can give slary to
+        memset(dp,0,sizeof dp);
+        flag = 0;
+        rep(mask,0,M){
+            vector<int> nt;
+            rep(i,0,m){
+                if((mask&(1<<i))==0) nt.push_back(i);
             }
-            ms[b[i].first] = ans[b[i].second];
+            rep(j,0,n){
+                if(dp[mask]&(1<<j)) continue; // already paid;
+                rec(nt,0,0,mask,j,dp);
+            }
+            if(flag) {break;}
         }
-        debug(b);
-        put(cnt);
-        rep(i,0,n){
-            put3(s[i],t[i],ans[i]);
-        }
+        if(flag) put("YES")
+        else put("NO")
     }
 
     return 0;

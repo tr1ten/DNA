@@ -72,45 +72,44 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    freopen("guard.in","r",stdin);
+    freopen("guard.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        ll n;
-        cin >> n ;
-        vi s(n);
-        vi t(n);
-        vpi b;
-        rep(i,0,n){
-            cin >> s[i] >> t[i];
-            b.push_back({(s[i]-t[i]) , i} );
+        ll N,H;
+        cin >> N >> H;
+        vi ht(N);
+        vi wt(N);
+        vi str(N);
+        rep(i,0,N){
+            cin >> ht[i] >> wt[i] >> str[i];
         }
-        map<ll,ll> ms;
-        ll cnt = 0;
-        vi ans(n);
-        rep(i,0,n){
-            auto it = (ms.lower_bound(b[i].first));
-            if(it!=ms.end()) {
-                ans[b[i].second] = (*it).second;
-                ms.erase(it);
+        ll dp[1<<N]; // dp[i] -> max safe factor with mask i
+        memset(dp,-1,sizeof dp);
+        ll ans = -1;
+        dp[0] = INF;
+        rep(mask,0,1<<N){
+            if (dp[mask] == -1) continue;
+            ll h = 0;
+            rep(i,0,N){
+                if(mask&(1<<i)) {h+=ht[i];continue;}
+                if(dp[mask]<wt[i]) continue;
+                int sub = mask | 1<<i;
+                ll sf = min(dp[mask]-wt[i],str[i]);
+                if(dp[sub]<sf) dp[sub] = sf;
             }
-            else {
-                ans[b[i].second] = ++cnt;
-            }
-            ms[b[i].first] = ans[b[i].second];
+            if(h>=H) ans = max(ans,dp[mask]);
         }
-        debug(b);
-        put(cnt);
-        rep(i,0,n){
-            put3(s[i],t[i],ans[i]);
-        }
+        if(ans>-1) put(ans)
+        else put("Mark is too tall");
+
+
     }
 
     return 0;

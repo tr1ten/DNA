@@ -83,34 +83,25 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll n;
-        cin >> n ;
-        vi s(n);
-        vi t(n);
-        vpi b;
-        rep(i,0,n){
-            cin >> s[i] >> t[i];
-            b.push_back({(s[i]-t[i]) , i} );
-        }
-        map<ll,ll> ms;
-        ll cnt = 0;
-        vi ans(n);
-        rep(i,0,n){
-            auto it = (ms.lower_bound(b[i].first));
-            if(it!=ms.end()) {
-                ans[b[i].second] = (*it).second;
-                ms.erase(it);
+        string s;
+        cin >> s;
+        int n = s.size();
+        vii dp;
+        dp.resize(n+1,vi(n+1,INF));
+        rep(len,1,n+1){
+            rep(l,0,n-len+1){
+                int r = l+len-1;
+                if(len==1) dp[l][r] = 1;
+                else if(len==2) dp[l][r] = s[l]==s[r] ? 0 : 2;
+                else{
+                    if(s[l]==s[r]) dp[l][r] = dp[l+1][r-1]; 
+                    rep(k,l,r){
+                        dp[l][r] = min(dp[l][r],dp[l][k]+dp[k+1][r]);
+                    }
+                }
             }
-            else {
-                ans[b[i].second] = ++cnt;
-            }
-            ms[b[i].first] = ans[b[i].second];
         }
-        debug(b);
-        put(cnt);
-        rep(i,0,n){
-            put3(s[i],t[i],ans[i]);
-        }
+        put(dp[0][n-1]);
     }
 
     return 0;

@@ -73,44 +73,83 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+vi D;
+int n;
+ll L;
+vii shows; 
+vector<vector<vector<int>>> nxt_show;
+void preprocess(){
+    nxt_show.resize(n);
+    rep(i,0,n){
+        nxt_show[i].resize(n);
+        rep(j,0,n){
+            if(i==j) continue;
+            nxt_show[i][j].resize(shows[i].size(),-1);
+            rep(ii,0,shows[i].size()){
+                auto it = upper_bound(all(shows[j]),shows[i][ii]+D[i]);
+                if(it==shows[j].begin()) nxt_show[i][j][ii] = -1;
+                else {
+                    it--;
+                    if((*it)+D[j]< shows[i][ii]+D[i] || (*it) > shows[i][ii]+D[i]) nxt_show[i][j][ii] = -1;
+                    else nxt_show[i][j][ii] = it-shows[j].begin();
+                }
+            }
+        }
+    }
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    freopen("movie.in","r",stdin);
+    freopen("movie.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        ll n;
-        cin >> n ;
-        vi s(n);
-        vi t(n);
-        vpi b;
+        cin >> n >> L;
+        D.resize(n);
+        shows.resize(n);
         rep(i,0,n){
-            cin >> s[i] >> t[i];
-            b.push_back({(s[i]-t[i]) , i} );
-        }
-        map<ll,ll> ms;
-        ll cnt = 0;
-        vi ans(n);
-        rep(i,0,n){
-            auto it = (ms.lower_bound(b[i].first));
-            if(it!=ms.end()) {
-                ans[b[i].second] = (*it).second;
-                ms.erase(it);
+            cin >> D[i];
+            int sz;
+            cin >> sz;
+            rep(j,0,sz) {
+                ll x;
+                cin >> x;
+                shows[i].push_back(x);
             }
-            else {
-                ans[b[i].second] = ++cnt;
+        }
+        preprocess();
+        vpi dp; // dp[i] -> last watched show time
+        dp.resize(1<<n,mp(-1,-1));
+        dp[0] = {0,0};
+        auto cmp = [&](pi &p1,pi &p2){
+            return shows[p1.first][p1.second] + D[p1.first] < shows[p2.first][p2.second] + D[p2.first];
+        };
+        int ans = n+1;
+        rep(mask,0,1<<n){
+            if(dp[mask].first==-1) continue;
+            rep(i,0,n){
+                if(mask&(1<<i)) continue;
+                int nxt = mask | (1<<i);
+                int sj = -1;
+                if(mask == 0){
+                    if(shows[i][0]==0) sj = 0;
+                }
+                else sj = nxt_show[dp[mask].first][i][dp[mask].second];
+                if(sj==-1) continue;
+                pi val = {i,sj};
+                if( dp[nxt].first==-1 || cmp(dp[nxt],val)) dp[nxt] =val;
+                if(shows[dp[nxt].first][dp[nxt].second] + D[dp[nxt].first] >=L) {
+                    ans =min(__builtin_popcount(nxt),ans);
+                    
+                    }
             }
-            ms[b[i].first] = ans[b[i].second];
         }
-        debug(b);
-        put(cnt);
-        rep(i,0,n){
-            put3(s[i],t[i],ans[i]);
-        }
+        if(ans==n+1) put(-1)
+        else put(ans);
+
     }
 
     return 0;
