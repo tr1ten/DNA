@@ -71,13 +71,24 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-ll rec(ll a,ll b){
-    if(a==0) return 0;
-    if(b==0) return 1;
-    if(a>=2*b) return rec(a%(2*b),b);
-    if(b>=2*a) return rec(a,b%(2*a));
-    return (1+rec(b,abs(a-b)))%3;
-
+const ll INF = 1e10+5;
+int solve(vector<int> &A){
+    int n =  A.size();
+    vii dp(n+1,vi(n+1,0));
+    rep(len,1,n+1){
+        rep(l,0,n-len+1){
+            int r = l+len-1;
+            if(len==1) {dp[l][r] = 1;continue;}
+            dp[l][r] = 1+dp[l+1][r];
+            if(A[l+1]==A[l]) dp[l][r] = 1 + dp[l+2][r];
+            rep(k,l+2,r+1){
+                if(A[k]==A[l]){
+                    dp[l][r] = min(dp[l][r],dp[l+1][k]+dp[k+1][r]);
+                }
+            }
+        }
+    }
+    return dp[0][n-1];
 }
 // driver code
 int main()
@@ -87,25 +98,13 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        vi A(n);
-        vi B(n);
+        vector<int>A(n);
         tkv(A,n);
-        tkv(B,n);
-        int c = -1;
-        bool f=1;
-        rep(i,0,n){
-            if(A[i] || B[i]){
-                int v = rec(A[i],B[i]);
-                if(c==-1) c=v;
-                else if(c!=v) {f=0;break;}
-            }
-        }
-        if(f) put("YES")
-        else put("NO");
+        cout << solve(A) << endl;
     }
 
     return 0;

@@ -71,41 +71,67 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-ll rec(ll a,ll b){
-    if(a==0) return 0;
-    if(b==0) return 1;
-    if(a>=2*b) return rec(a%(2*b),b);
-    if(b>=2*a) return rec(a,b%(2*a));
-    return (1+rec(b,abs(a-b)))%3;
-
+const ll INF = 1e10+5;
+int mem[20][50][2][2];
+ll rec(int pos,int k, bool f,bool started,int tar,int tar2,string &up) {
+    if(pos==up.size()){
+        if(!started) return 0;
+        if(tar2!=-1){
+            if(k==20) return 1;
+            return 0;
+        }
+        if(k>=20) return 1;
+        return 0;
+    }
+    if(mem[pos][k][f][started]!=-1) return mem[pos][k][f][started];
+    int lmt = 9;
+    if(!f) lmt = up[pos]-'0';
+    ll res = 0;
+    rep(d,0,lmt+1){
+        bool nf = f;
+        if(!f && d<up[pos]-'0') nf = 1;
+        bool nstarted = started || (d>0);
+        if(nstarted && tar2!=-1 && d!=tar && d!=tar2 ) continue;
+        int nk = k;
+        if(nstarted) {
+            if(d==tar) nk++;
+            else nk--;
+        }
+        res += rec(pos+1,nk,nf,nstarted,tar,tar2,up);
+    }
+    return mem[pos][k][f][started]= res;
+}
+ll helper(string &s){
+    ll res = 0;
+    rep(i,0,10){
+        memset(mem,-1,sizeof mem);
+        res +=rec(0,20,0,0,i,-1,s);
+    }
+    ll dups=0;
+    rep(i,0,10){
+        rep(j,0,10){
+            memset(mem,-1,sizeof mem);
+            dups +=rec(0,20,0,0,i,j,s);
+        }
+    }
+    
+    return res-(dups/2);
 }
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    freopen("odometer.in","r",stdin);
+    freopen("odometer.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi A(n);
-        vi B(n);
-        tkv(A,n);
-        tkv(B,n);
-        int c = -1;
-        bool f=1;
-        rep(i,0,n){
-            if(A[i] || B[i]){
-                int v = rec(A[i],B[i]);
-                if(c==-1) c=v;
-                else if(c!=v) {f=0;break;}
-            }
-        }
-        if(f) put("YES")
-        else put("NO");
+        ll x,y;
+        cin >> x >> y;
+        string a = to_string(y);
+        string b = to_string(x-1);
+        put(helper(a)-helper(b));
     }
 
     return 0;

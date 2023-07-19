@@ -72,6 +72,39 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+const int N = 1e3+5;
+ll facts[N+1];
+ll invs[N+1];
+ll fast_pow(ll x,ll n,ll m){
+    x = x%m;
+    ll res = 1;
+    while (n>0)
+    {
+        if(n%2==1) res = (res*x)%m; 
+        x = x*x%m;
+        n /=2;
+    }
+    return res;
+}
+void factorials(){
+    facts[0] = 1;
+    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
+}
+
+
+void inverses(){
+    invs[N] = fast_pow(facts[N],MOD-2,MOD);
+    for(int i=N-1;i>=0;i--) invs[i] = invs[i+1]*(i+1)%MOD;
+}
+
+ll ncr(int n,int r){
+    return (((facts[n]*invs[n-r])%MOD)*invs[r])%MOD;
+}
+
+void preprocess(){
+    factorials();
+    inverses();
+}
 
 // driver code
 int main()
@@ -81,6 +114,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
+    preprocess();
     // cin>>T;
     while(T--){
         string s;
@@ -88,20 +122,14 @@ int main()
         int n = s.size();
         vii dp;
         dp.resize(n+1,vi(n+1,0));
+        rep(i,0,n) dp[i+1][i] = 1;
         for(int len=2;len<=n;len+=2){
             rep(l,0,n-len+1){
                 int r = l+len-1;
-                if(len==2) dp[l][r] = s[l]==s[r] ? 1 : 0;
-                else{
-                    ll res = (s[l]==s[r])*dp[l+1][r-1];
-                    for(int k=l+1;k<r;k+=2){
-                        if(dp[l][k] && dp[k+1][r]){
-                        res = mod(res+mod(( 2*dp[l][k] )*(dp[k+1][r] ) + ((s[k+1]==s[r]) && k+2!=r) + ((s[l]==s[k]) && l+1!=k) ));
-                        }
-                        // debug(l,r,k,res,((s[k+1]==s[r]) && k+2!=r) + ((s[l]==s[k]) && l+1!=k));
-                        
+                for(int k=l+1;k<=r;k+=2){
+                    if(s[l]==s[k]){
+                        dp[l][r] = mod(dp[l][r] + mod(mod(dp[l+1][k-1]*dp[k+1][r])*ncr(len/2,(k-l+1)/2)));
                     }
-                    dp[l][r] = res;
                 }
             }
         }

@@ -71,42 +71,37 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-ll rec(ll a,ll b){
-    if(a==0) return 0;
-    if(b==0) return 1;
-    if(a>=2*b) return rec(a%(2*b),b);
-    if(b>=2*a) return rec(a,b%(2*a));
-    return (1+rec(b,abs(a-b)))%3;
+const ll INF = 1e10+5;
 
-}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    freopen("248.in","r",stdin);
+    freopen("248.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
         int n;
         cin >> n;
         vi A(n);
-        vi B(n);
         tkv(A,n);
-        tkv(B,n);
-        int c = -1;
-        bool f=1;
-        rep(i,0,n){
-            if(A[i] || B[i]){
-                int v = rec(A[i],B[i]);
-                if(c==-1) c=v;
-                else if(c!=v) {f=0;break;}
+        vii dp(n+1,vi(n+1,-1));
+        ll ans = 0;
+        rep(len,1,n+1){
+            rep(l,0,n-len+1){
+                int r = l+len-1;
+                if(len==1) {dp[l][r] = A[l];continue;}
+                rep(k,l,r){
+                    if(dp[l][k]!=-1 && dp[l][k]==dp[k+1][r]){
+                        dp[l][r] = max(dp[l][r],dp[l][k]+1);
+                    }
+                }
+                ans = max(dp[l][r],ans);
             }
         }
-        if(f) put("YES")
-        else put("NO");
+        put(ans);
     }
-
     return 0;
 }
