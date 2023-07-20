@@ -1,17 +1,40 @@
 class Solution:
     def isSolvable(self, words: List[str], result: str) -> bool:
         words.append(result)
-        def rec(assigned,i,j,tot,cur,mask):
-            if i==len(words):
-                cnt = int("".join(str(assigned[x]) for x in result))
-                return tot==2*cnt
-            if j>=len(words[i]): return rec(assigned,i+1,0,tot+cur,0,mask)
-            start = 1 if j==0 else 0
+        phobs = [x[0] for x in words if len(x)>1]
+        for i in range(len(words)):
+            if len(words[i])>len(result): return False
+            words[i] = words[i][::-1]
+        # main idea is to do column wise to prune early
+        def rec(assigned,i,j,carry,cur,nums):
+            if j==len(result): 
+                return cur==0
+            if i==len(words)-1:
+                if(cur==0 and words[i][j] in phobs): return False
+                if words[i][j] in assigned:
+                    if assigned[words[i][j]]==cur: return rec(assigned,0,j+1,0,carry,nums)
+                    return False
+                if cur not in nums: return False
+                nums.remove(cur)
+                assigned[words[i][j]] = cur
+                if rec(assigned,0,j+1,0,carry,nums): return True
+                assigned.pop(words[i][j])
+                nums.add(cur)
+                return False
+            if j>=len(words[i]): return rec(assigned,i+1,j,carry,cur,nums)
             if words[i][j] in assigned: 
-                return assigned[words[i][j]]>=start and rec(assigned,i,j+1,tot,cur*10 + assigned[words[i][j]],mask)
-            for k in range(start,10):
-                if (mask&(1<<k)): continue
-                assigned[words[i][j]] = k
-                if rec(assigned,i,j+1,tot,cur*10 + assigned[words[i][j]],mask | 1<<k): return 1
-                del  assigned[words[i][j]] 
-        return rec(dict(),0,0,0,0,0)
+                sm = cur+assigned[words[i][j]]
+                return rec(assigned,i+1,j,carry+sm//10,sm%10,nums)
+            for x in set(nums):
+                if(x==0 and words[i][j] in phobs ): continue
+                nums.remove(x)
+                assigned[words[i][j]] = x
+                sm = cur+x
+                if rec(assigned,i+1,j,carry + sm//10,sm%10,nums): return True
+                assigned.pop(words[i][j])
+                nums.add(x)
+            return False
+        df = dict()
+        res = rec(df,0,0,0,0,{0,1,2,3,4,5,6,7,8,9})
+        # print(df)
+        return res
