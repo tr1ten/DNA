@@ -25,12 +25,17 @@ int query(int l, int r) { // [l,r) important
   }
   return combine(resl, resr);
 }
+
+void init(int n){
+  for (int i = 0; i < n; ++i) t[n + i]=0;
+  build();
+}
 // todo lazy progation
 int main() {
   scanf("%d", &n);
   for (int i = 0; i < n; ++i) scanf("%d", t + n + i);
   build(); // fill other layers
-  update(0, 101);
+  // update(0, 101);
   printf("%d\n", query(0, 2));
   return 0;
 }

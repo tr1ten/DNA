@@ -27,6 +27,7 @@ long long query(int BIT[], int x)
 }
 long long range(int bit[], int a, int b) { return (query(bit, b) - query(bit, a - 1) + MOD) % MOD; }
 
+
 int main(int argc, char const *argv[])
 {
 
@@ -52,3 +53,5 @@ int main(int argc, char const *argv[])
     cout << range(bit, 0, 2) << endl;
     return 0;
 }
+
+
