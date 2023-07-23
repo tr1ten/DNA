@@ -55,3 +55,28 @@ int main(int argc, char const *argv[])
 }
 
 
+
+
+
+// int lsb(int x){
+//     return x&(-x);
+// }
+// void add(int bit[],int i,int x,int n){
+//     ++i;
+//     while (i<=n)
+//     {
+//         bit[i] +=x;
+//         i += lsb(i);
+//     }
+    
+// }
+// int query(int bit[],int i){
+//     i++;
+//     int res=0;
+//     while (i>0)
+//     {
+//         res += bit[i];
+//         i -=lsb(i);
+//     }
+//     return res;
+// }
