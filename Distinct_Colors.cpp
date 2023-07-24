@@ -73,6 +73,47 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+vi ending;
+int timer=0;
+vii adj;
+vi A;
+vi euler;
+void dfs(int u,int p){
+    timer++;
+    euler.push_back(u);
+    trav(v,adj[u] ) {
+        if(v==p) continue;
+        dfs(v,u);
+    }
+    ending[u] = timer;
+
+}
+
+
+int lsb(int x){
+    return x&(-x);
+}
+void add(int bit[],int i,int x,int n){
+    ++i;
+    while (i<=n)
+    {
+        bit[i] +=x;
+        i += lsb(i);
+    }
+    
+}
+int query(int bit[],int i){
+    i++;
+    int res=0;
+    while (i>0)
+    {
+        res += bit[i];
+        i -=lsb(i);
+    }
+    return res;
+}
+
+
 // driver code
 int main()
 {
@@ -81,9 +122,38 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n
+        int n;
+        cin >> n;
+        vi A;
+        A.resize(n);
+        tkv(A,n);
+        adj.resize(n);
+        ending.resize(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        dfs(0,0);
+        // debug(euler,ending);
+        unordered_map<int,int> last;
+        int bit[euler.size()+1];
+        memset(bit,0,sizeof bit);
+        vi res(n);
+        per(i,0,euler.size()){
+            int u = euler[i];
+            if(last.find(A[u])!=last.end()){
+                add(bit,last[A[u]],-1,euler.size());
+            }   
+            add(bit,i,1,euler.size());
+            last[A[u]] = i;
+            res[u] = query(bit,ending[u] - 1) - query(bit,i-1);
+        }
+        pvc(res);
     }
 
     return 0;

@@ -72,39 +72,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 2*(1e6)+5;
-ll facts[N+1];
-ll invs[N+1];
-ll fast_pow(ll x,ll n,ll m){
-    x = x%m;
-    ll res = 1;
-    while (n>0)
-    {
-        if(n%2==1)  res = (res*x)%m; 
-        x = x*x%m;
-        n /=2;
-    }
-    return res;
-}
-void factorials(){
-    facts[0] = 1;
-    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
-}
-
-
-void inverses(){
-    invs[N] = fast_pow(facts[N],MOD-2,MOD);
-    for(int i=N-1;i>=0;i--) invs[i] = invs[i+1]*(i+1)%MOD;
-}
-
-ll ncr(int n,int r){
-    return (((facts[n]*invs[n-r])%MOD)*invs[r])%MOD;
-}
-
-void preprocess(){
-    factorials();
-    inverses();
-}
 
 // driver code
 int main()
@@ -114,12 +81,43 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    preprocess();
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        put(ncr(n+m-1,n-1));
+        int n,k;
+        cin >> n >> k;
+        vi A;
+        rep(i,0,n){
+            ll x;
+            cin >> x;
+            A.push_back(x);
+        }
+        if(A[0]!=1){
+            put(1);
+            continue;
+        }
+        auto ok = [&] (ll x){
+            ll ops = 0;
+            per(i,0,n){
+                if(x<A[i]) continue;
+                ll m = (x-A[i])/(i+1);
+                m++;
+                ops +=m;
+                x -= m*(i+1);
+                if(x<0) return false;
+            }
+            return ops>k;
+        };
+        ll lo = 1,hi=1e12;
+        ll ans = -1;
+        while(lo<=hi){
+            ll mid = lo + (hi-lo)/2;
+            if(ok(mid)){
+                ans = mid;
+                hi =mid-1;
+            }
+            else lo=mid+1;
+        }
+        put(ans);
     }
 
     return 0;

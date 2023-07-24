@@ -72,38 +72,70 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 2*(1e6)+5;
-ll facts[N+1];
-ll invs[N+1];
-ll fast_pow(ll x,ll n,ll m){
-    x = x%m;
-    ll res = 1;
-    while (n>0)
-    {
-        if(n%2==1)  res = (res*x)%m; 
-        x = x*x%m;
-        n /=2;
+
+vi starting;
+vi ending;
+int timer=0;
+vii adj;
+vi A;
+vi euler;
+void dfs(int u,int p){
+    starting[u] = timer++;
+    euler.push_back(A[u]);
+    trav(v,adj[u] ) {
+        if(v==p) continue;
+        dfs(v,u);
+    }
+    ending[u] = timer;
+
+}
+int b_len;
+struct Q
+{
+    int l;
+    int r;
+    int idx;
+        bool operator<(Q &other){
+        return mp(l,r) < mp(other.l,other.r);
+    }
+};
+const int N = 2*(1e5)+5;
+int cnt[N];
+
+vi solve(vi A,vector<Q> qers){
+    int left=0,right=-1;
+    srv(qers);
+    vi res(qers.size());
+    ll siz = 0;
+    trav(q,qers){
+        while (right < q.r)
+        {
+            right++;
+            cnt[A[right]]++;
+            if(cnt[A[right]]==1 ) siz++;
+        }
+        while (left>q.l)
+        {
+            left--;
+            cnt[A[left]]++;
+            if(cnt[A[left]]==1 ) siz++;
+        }
+        while (left<q.l)
+        {
+            cnt[A[left]]--;
+            if(cnt[A[left]]==0 ) siz--;
+            left++;
+        }
+        while (right>q.r)
+        {
+            cnt[A[right]]--;
+            if(cnt[A[right]]==0 ) siz--;
+            right--;
+        }
+        res[q.idx ] = siz;
+
     }
     return res;
-}
-void factorials(){
-    facts[0] = 1;
-    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
-}
-
-
-void inverses(){
-    invs[N] = fast_pow(facts[N],MOD-2,MOD);
-    for(int i=N-1;i>=0;i--) invs[i] = invs[i+1]*(i+1)%MOD;
-}
-
-ll ncr(int n,int r){
-    return (((facts[n]*invs[n-r])%MOD)*invs[r])%MOD;
-}
-
-void preprocess(){
-    factorials();
-    inverses();
 }
 
 // driver code
@@ -114,12 +146,39 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    preprocess();
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        put(ncr(n+m-1,n-1));
+        int n;
+        cin >> n;
+        // vi A;
+        A.resize(n);
+        b_len = sqrt(n + 0.0) + 1;
+        unordered_map<int,int> ids;
+        rep(i,0,n){
+            ll x;
+            cin >> x;
+            if(!ids.count(x)) ids[x ] = ids.size();
+            A[i] = ids[x];
+        }
+        adj.resize(n);
+        starting.resize(n);
+        ending.resize(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+        dfs(0,0);
+        vector<Q> qers;
+        rep(i,0,n){
+            Q q = { (int)starting[i],(int)ending[i]-1,i};
+            qers.push_back(q );
+        } 
+        pvc(solve(euler,qers));
+
+        
     }
 
     return 0;

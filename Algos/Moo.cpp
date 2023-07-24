@@ -62,9 +62,17 @@ int b_len;
 struct Query
 {
     int l, r, idx;
-    bool operator<(Query other)
+    bool operator<(Query &other)
     {
-        return make_pair(l / b_len, r) < make_pair(other.l / b_len, other.r);
+            if(l/b_len != other.l/b_len)
+        {
+            return l < other.l;
+        }
+        if((l/b_len) & 1)
+        {
+            return r < other.r;
+        }
+        return r > other.r;
     }
 };
 

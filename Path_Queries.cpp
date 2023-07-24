@@ -72,38 +72,46 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 2*(1e6)+5;
-ll facts[N+1];
-ll invs[N+1];
-ll fast_pow(ll x,ll n,ll m){
-    x = x%m;
-    ll res = 1;
-    while (n>0)
+
+
+
+vi ending;
+vi starting;
+int timer=0;
+vii adj;
+vi A;
+vi euler;
+void dfs(int u,int p){
+    starting[u] = timer++;
+    euler.push_back(A[u]);
+    trav(v,adj[u] ) {
+        if(v==p) continue;
+        dfs(v,u);
+    }
+    euler.push_back(-A[u]);
+    ending[u] = timer++;
+
+}
+
+void update(ll BIT[], ll x, ll val, int N)
+{
+    ++x;
+    while (x <= N)
     {
-        if(n%2==1)  res = (res*x)%m; 
-        x = x*x%m;
-        n /=2;
+        BIT[x] += val;
+        x += (x & -x);
+    }
+}
+long long query(ll BIT[], int x)
+{
+    ++x;
+    long long res = 0;
+    while (x > 0)
+    {
+        res += BIT[x];
+        x -= (x & -x);
     }
     return res;
-}
-void factorials(){
-    facts[0] = 1;
-    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
-}
-
-
-void inverses(){
-    invs[N] = fast_pow(facts[N],MOD-2,MOD);
-    for(int i=N-1;i>=0;i--) invs[i] = invs[i+1]*(i+1)%MOD;
-}
-
-ll ncr(int n,int r){
-    return (((facts[n]*invs[n-r])%MOD)*invs[r])%MOD;
-}
-
-void preprocess(){
-    factorials();
-    inverses();
 }
 
 // driver code
@@ -114,12 +122,48 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    preprocess();
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        put(ncr(n+m-1,n-1));
+        int n,q;
+        cin >> n >> q;
+        A.resize(n);
+        starting.resize(n);
+        ending.resize(n);
+        tkv(A,n);
+        adj.resize(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            u--;v--;
+            adj[u].push_back(v);            
+            adj[v].push_back(u);            
+        }
+        dfs(0,0);
+        ll bit[euler.size()+1];
+        memset(bit,0,sizeof bit);
+        rep(i,0,euler.size()){
+            update(bit,i,euler[i],euler.size());
+        }
+        rep(i,0,q){
+            int t;
+            cin >> t;
+            if(t==2){
+                int s;
+                cin >> s;
+                --s;
+                put(query(bit,starting[s])); 
+            }
+            else{
+                int s;
+                ll x;
+                cin >> s >> x;
+                --s;
+                update(bit,starting[s],x-A[s],euler.size());
+                update(bit,ending[s],-(x-A[s]),euler.size());
+                A[s] = x; 
+            }
+        }
+
     }
 
     return 0;
