@@ -83,7 +83,16 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n
+        int n;
+        cin >> n;
+        vi A(n);
+        tkv(A,n);
+        ll res = INF;
+        rep(i,0,n-1){
+            if(A[i+1]<A[i]) {res=0;break;}
+            res = min(res,(A[i+1]-A[i] + 2)/2);
+        }
+        put(res);
     }
 
     return 0;
