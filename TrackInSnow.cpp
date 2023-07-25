@@ -81,26 +81,37 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int A,B,C;
-        ll k;
-        cin >> A >> B >> C >> k;
-        int f= 0;
-        rep(a,pow(10,A-1),pow(10,A)){
-            ll left = max(pow(10,C-1)-a,pow(10,B-1));
-            ll right = min(pow(10,C)-a,pow(10,B));
-            if(left>=right) continue;
-            ll cnt = right-left;
-            if(k<=cnt){
-                cout << a << " + " << left+k-1 << " = " << a+left+k-1 << endl;
-                f = 1;
-                break; 
-            }
-            k -=cnt;
+        int h,w;
+        cin >> h >> w;
+        string mat[h];
+        rep(i,0,h){
+            cin >> mat[i];
         }
-        if(!f) put("-1");
+        deque<pair<int,int>> q;
+        q.push_back({0,0});
+        int depth[h][w];
+        memset(depth,0,sizeof depth);
+        depth[0][0] = 1;
+        int ans = 1;
+        int dx[4]{1, -1, 0, 0}, dy[4]{0, 0, 1, -1};
+        while (!q.empty())
+        {
+            auto p = q.front();
+            q.pop_front();
+            ans = max(ans,depth[p.first][p.second]);
+            rep(i,0,4){
+                int x=p.second+dx[i],y=p.first+dy[i];
+                if(x<w && y<h && x>=0 && y>=0 && depth[y][x]==0 && mat[y][x]!='.'){
+                    depth[y][x] = depth[p.first][p.second] + (mat[y][x] != mat[p.first][p.second]);
+                    if(mat[y][x] != mat[p.first][p.second]) q.push_back({y,x});
+                    else  q.push_front({y,x});
+                }
+            }
+        }
+        put(ans);
+        
     }
-
     return 0;
 }

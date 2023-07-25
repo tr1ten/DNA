@@ -72,34 +72,53 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+vii adj;
+int n;
+vi bfs(int S){
+    queue<int> q;
+    vi dist(n,INF);
+    dist[S ] = 0;
+    q.push(S);
+    rep(i,0,n){
+        int u = q.front();
+        q.pop();
+        trav(v,adj[u]){
+            if(dist[v]>dist[u] +1){
+                dist[v] = dist[u]+1;
+                q.push(v);
+            }
+        }
+    }
+    return dist;
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    freopen("piggyback.in","r",stdin);
+    freopen("piggyback.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int A,B,C;
-        ll k;
-        cin >> A >> B >> C >> k;
-        int f= 0;
-        rep(a,pow(10,A-1),pow(10,A)){
-            ll left = max(pow(10,C-1)-a,pow(10,B-1));
-            ll right = min(pow(10,C)-a,pow(10,B));
-            if(left>=right) continue;
-            ll cnt = right-left;
-            if(k<=cnt){
-                cout << a << " + " << left+k-1 << " = " << a+left+k-1 << endl;
-                f = 1;
-                break; 
-            }
-            k -=cnt;
+        ll b,e,p,m;
+        cin >> b  >> e >> p >> n >> m;
+        adj.resize(n);
+        rep(i,0,m){
+            int u,v;
+            cin >> u >>v;
+            u--;v--;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
-        if(!f) put("-1");
+        vi d1 = bfs(0);
+        vi d2 = bfs(1);
+        vi dt = bfs(n-1);
+        ll res = INF;
+        rep(i,0,n){
+            res = min(res,d1[i]*b + d2[i]*e + dt[i]*(p));
+        }
+        put(res);
     }
 
     return 0;

@@ -73,33 +73,70 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+struct P {
+    int a;
+    int b;
+    int ops;
+};
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    freopen("pails.in","r",stdin);
+    freopen("pails.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int A,B,C;
-        ll k;
-        cin >> A >> B >> C >> k;
-        int f= 0;
-        rep(a,pow(10,A-1),pow(10,A)){
-            ll left = max(pow(10,C-1)-a,pow(10,B-1));
-            ll right = min(pow(10,C)-a,pow(10,B));
-            if(left>=right) continue;
-            ll cnt = right-left;
-            if(k<=cnt){
-                cout << a << " + " << left+k-1 << " = " << a+left+k-1 << endl;
-                f = 1;
-                break; 
+        int x,y,m,k;
+        cin >>  x >> y >> k >> m;
+        queue<P> q;
+        q.push({0,0,0});
+        int res = m;
+        set<pair<int,int>> vis;
+        while (!q.empty()) {
+            P p = q.front();
+            q.pop();
+            // debug(p.a,p.b,p.ops);;
+            res = min(res,abs(m-(p.a+p.b)));
+            if(p.ops==k) continue;
+            if(p.a<x && vis.find({x,p.b}) == vis.end()) 
+            {
+                vis.insert({x,p.b});
+                q.push({x,p.b,p.ops+1});
             }
-            k -=cnt;
+            if(p.b<y && vis.find({p.a,y}) == vis.end()) 
+            {
+                vis.insert({p.a,y});
+                q.push({p.a,y,p.ops+1});
+            }
+            if(p.a>0 && vis.find({0,p.b}) == vis.end()) 
+            {
+                vis.insert({0,p.b});
+                q.push({0,p.b,p.ops+1});
+            }
+            if(p.b>0 && vis.find({p.a,0}) == vis.end()) 
+            {
+                vis.insert({p.a,0});
+                q.push({p.a,0,p.ops+1});
+            }
+            if(p.b<y){
+                int d = min(y-p.b,p.a);
+                if(vis.find({p.a-d,p.b+d}) == vis.end()) {
+                    vis.insert({p.a-d,p.b+d});
+                    q.push({p.a-d,p.b+d,p.ops+1});
+                }
+            }
+            if(p.a<x){
+                int d = min(x-p.a,p.b);
+                if(vis.find({p.a+d,p.b-d}) == vis.end()) {
+                    vis.insert({p.a+d,p.b-d});
+                    q.push({p.a+d,p.b-d,p.ops+1});
+                }
+            }
         }
-        if(!f) put("-1");
+        put(res);            
+    
     }
 
     return 0;
