@@ -73,20 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-vii adj;
-vi tin;
-vi tout;
-vii nodes;
-ll timer = 0;
-void dfs(int u,int d){
-    tin[u] = timer++;
-    if(nodes.size()<=d) nodes.push_back(vi());
-    nodes[d].push_back(tin[u]);
-    trav(v,adj[u]){
-        dfs(v,d+1);
-    }
-    tout[u] = timer++;
-}
 // driver code
 int main()
 {
@@ -95,34 +81,20 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        adj.resize(n);
-        rep(i,1,n){
-            int x;
-            cin >> x;
-            x--;
-            // debug(i,x);
-            adj[x].push_back(i);
+        ll n,k,g;
+        cin >> n >> k >> g;
+        ll last = k*g - (n-1)*((g-1)/2);
+        if(last<0) put(g*k)
+        else{
+            ll r = last/g;
+            last = last%g;
+            if(last>=(g+1)/2) r++;
+            // long double r = round((long double)last*1.0/g);
+            // debug(n,k,g,last,r,k-r);
+            put((k-r)*g);
         }
-        tin.resize(n);
-        tout.resize(n);
-        dfs(0,0);
-        int q;
-        cin >> q;
-        // debug(tin,tout);
-        rep(i,0,q){
-            int u,d;
-            cin >> u >> d;
-            --u;
-            if(d>=nodes.size()) {put(0);continue;}
-            // debug(tout[u],tin[u],nodes[d]);
-            int res = upper_bound(all(nodes[d]),tout[u] ) - lower_bound(all(nodes[d]), tin[u]);
-            cout << res << endl;
-        }
-
 
     }
 
