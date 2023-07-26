@@ -4,7 +4,7 @@ vi bfs(int S){
     vi dist(n,INF);
     dist[S ] = 0;
     q.push(S);
-    rep(i,0,n){
+    while(!q.empty()){
         int u = q.front();
         q.pop();
         trav(v,adj[u]){
