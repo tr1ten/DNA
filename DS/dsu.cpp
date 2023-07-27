@@ -3,61 +3,27 @@
 using namespace std;
 
 
-class DSU
+struct DSU
 {
-public:
-    int *par;
-    int *sz;
-    DSU(int n)
-    {
-        this->par = new int[n];
-        this->sz = new int[n];
-        for (int i = 0; i < n; i++)
-        {
-            this->par[i] = i;
-            this->sz[i] = 1;
-        }
+    vector<int> parent;
+    vector<int> size;
+    DSU(int n){
+        parent.resize(n);
+        for(int i=0;i<n;i++) parent[i] = i; // oath compression
+        size.resize(n);
     }
-    int find(int x)
-    {
-        int p = x;
-        while (p != this->par[p])
-        {
-            p = par[p];
-        }
-        return p;
+    int find(int u){
+        if(parent[u]!=u) parent[u] = find(parent[u]);
+        return parent[u];
     }
-    void unionn(int u, int v)
-    {
-        int rootu = find(u);
-        int rootv = find(v);
-        if (rootu == rootv)
-            return;
-        if (sz[rootu] < sz[rootv])
-        {
-            par[rootu] = rootv;
-            sz[rootv] += sz[rootu];
-        }
-        else
-        {
-            par[rootv] = rootu;
-            sz[rootu] += sz[rootv];
-        }
+    bool unite(int u,int v){
+        int ra = find(u);
+        int rb = find(v);
+        if(ra==rb) return 0;
+        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
+        size[ra] +=size[rb]; // union by rank
+        parent[rb] = ra;
+        return 1;
     }
 };
 
-int main(int argc, char const *argv[])
-{
-    // test it
-    DSU dsu(10);
-    dsu.unionn(1, 2);
-    dsu.unionn(2, 3);
-    dsu.unionn(4, 5);
-    dsu.unionn(5, 6);
-    cout << dsu.find(1) << endl;
-    cout << dsu.find(2) << endl;
-    cout << dsu.find(3) << endl;
-    cout << dsu.find(4) << endl;
-    cout << dsu.find(5) << endl;
-    return 0;
-}
