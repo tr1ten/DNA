@@ -81,43 +81,22 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        int mat[n][m];
-        int mx = 0;
+        int n,k;
+        cin >> n >> k;
+        vpi A(n);
         rep(i,0,n){
-            rep(j,0,m) {cin >> mat[i][j]; mx = max(mat[i][j], mx);}
+            int x;
+            cin >> x;
+            if(x%k==0) A[i] = {-k,i};
+            else A[i] ={-(x%k),i};
         }
-        priority_queue<pair<int,pair<int,int>>> q;
-        int res[n][m];
-        memset(res,-1,sizeof res);
+        srv(A);
         rep(i,0,n){
-            rep(j,0,m){
-                if(mat[i][j]==mx) {q.push({mx,{i,j}}); res[i][j] = mx;}
-            }
+            cout << A[i].second+1 << " ";
         }
-        int dx[4] = {0,0,-1,1};
-        int dy[4] = {-1,1,0,0};
-        while (!q.empty())
-        {
-            auto p = q.top();
-            q.pop();
-            rep(k,0,4){
-                int x = dx[k] + p.second.second,y = dy[k] + p.second.first;
-                if(x<0 || y<0 || x>=m || y >= n || res[y][x]!=-1) continue;
-                int mn = min(mat[y][x],p.first);
-                res[y][x] = (mat[y][x] - mn);
-                q.push({mn,{y,x}});
-            }
-        }
-        rep(i,0,n){
-            rep(j,0,m){
-                cout << res[i][j]<< " "; 
-            }
-            cout << endl;
-        }
+        cout << endl;
     }
 
     return 0;

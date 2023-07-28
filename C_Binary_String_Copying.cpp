@@ -81,43 +81,41 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
         int n,m;
         cin >> n >> m;
-        int mat[n][m];
-        int mx = 0;
+        string s;
+        cin >> s;
+        vi zero(n);
+        vi one(n);
+        int last = -1;
         rep(i,0,n){
-            rep(j,0,m) {cin >> mat[i][j]; mx = max(mat[i][j], mx);}
+            if(s[i]=='0') last = i;
+            one[i] = last;
         }
-        priority_queue<pair<int,pair<int,int>>> q;
-        int res[n][m];
-        memset(res,-1,sizeof res);
-        rep(i,0,n){
-            rep(j,0,m){
-                if(mat[i][j]==mx) {q.push({mx,{i,j}}); res[i][j] = mx;}
+        last = n;
+        per(i,0,n){
+            if(s[i]=='1') last = i;
+            zero[i] = last;
+        }
+        unordered_map<int,set<int>> st;
+        int uniq = 0;
+        int res=  0;
+        rep(i,0,m){
+            int l,r;
+            cin >> l >>r;
+            l--;r--;
+            int lr = zero[l];
+            int rl = one[r];
+            // debug(lr,rl);
+            if(lr>=rl) uniq = 1; 
+            else {
+                if(st[lr].find(rl)==st[lr].end()) {res++;st[lr].insert(rl);}
             }
         }
-        int dx[4] = {0,0,-1,1};
-        int dy[4] = {-1,1,0,0};
-        while (!q.empty())
-        {
-            auto p = q.top();
-            q.pop();
-            rep(k,0,4){
-                int x = dx[k] + p.second.second,y = dy[k] + p.second.first;
-                if(x<0 || y<0 || x>=m || y >= n || res[y][x]!=-1) continue;
-                int mn = min(mat[y][x],p.first);
-                res[y][x] = (mat[y][x] - mn);
-                q.push({mn,{y,x}});
-            }
-        }
-        rep(i,0,n){
-            rep(j,0,m){
-                cout << res[i][j]<< " "; 
-            }
-            cout << endl;
-        }
+        // debug(res,uniq);
+        put(res+uniq);
     }
 
     return 0;

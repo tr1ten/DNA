@@ -83,41 +83,29 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        int mat[n][m];
-        int mx = 0;
+        int n;
+        cin >> n;
+        vi A(n);
+        tkv(A,n);
+        vector<bool> red(n);
+        int cost = 0;
         rep(i,0,n){
-            rep(j,0,m) {cin >> mat[i][j]; mx = max(mat[i][j], mx);}
-        }
-        priority_queue<pair<int,pair<int,int>>> q;
-        int res[n][m];
-        memset(res,-1,sizeof res);
-        rep(i,0,n){
-            rep(j,0,m){
-                if(mat[i][j]==mx) {q.push({mx,{i,j}}); res[i][j] = mx;}
-            }
-        }
-        int dx[4] = {0,0,-1,1};
-        int dy[4] = {-1,1,0,0};
-        while (!q.empty())
-        {
-            auto p = q.top();
-            q.pop();
-            rep(k,0,4){
-                int x = dx[k] + p.second.second,y = dy[k] + p.second.first;
-                if(x<0 || y<0 || x>=m || y >= n || res[y][x]!=-1) continue;
-                int mn = min(mat[y][x],p.first);
-                res[y][x] = (mat[y][x] - mn);
-                q.push({mn,{y,x}});
+            if(A[i]==2 ){
+                if(i-1>=0 && !red[i-1]) red[i-1] = 1;
+                if(i+1<n && !red[i+1]) red[i+1] = 1;
+                
+                if(!red[i]) {red[i] = 1;cost++;}
             }
         }
         rep(i,0,n){
-            rep(j,0,m){
-                cout << res[i][j]<< " "; 
+            if(A[i]==1 && !red[i]){
+                if(i-1>=0 && !red[i-1]) red[i-1] = 1;
+                else if(i+1<n && !red[i+1]) red[i+1] = 1;
+                if(!red[i]) {red[i] = 1;cost++;}
             }
-            cout << endl;
         }
+        int blue = count(all(red),0);
+        put(cost+blue);
     }
 
     return 0;
