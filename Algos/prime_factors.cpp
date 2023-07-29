@@ -11,7 +11,7 @@ void preprocess(){
     for(int x=2;x<=N;x++){
         if(sieve[x]!=0) continue; 
         sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
+        for(int u=x*x;u<=N;u +=x){
             sieve[u] = x;
         }
     }
