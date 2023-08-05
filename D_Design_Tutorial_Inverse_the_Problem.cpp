@@ -73,14 +73,52 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-struct Ladder
+
+struct DSU
 {
-    ll from_row;
-    ll from_col;
-    ll to_row;
-    ll to_col;
-    ll h;
+    vector<int> parent;
+    vector<int> size;
+    DSU(int n){
+        parent.resize(n);
+        for(int i=0;i<n;i++) parent[i] = i; // oath compression
+        size.resize(n);
+    }
+    int find(int u){
+        if(parent[u]!=u) parent[u] = find(parent[u]);
+        return parent[u];
+    }
+    bool unite(int u,int v){
+        int ra = find(u);
+        int rb = find(v);
+        if(ra==rb) return 0;
+        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
+        size[ra] +=size[rb]; // union by rank
+        parent[rb] = ra;
+        return 1;
+    }
 };
+vector<ll> dijsktra(int S,vector<vector<pair<int,ll>>> &adj){
+    int n = adj.size();
+    vector<ll> dist(n,INF);
+    vector<int> par(n,-1);
+    dist[S] = 0;
+    par[S] = S;
+    priority_queue<pair<ll,int>,vector<pair<ll,int>>,greater<pair<ll,int>>> pq;
+    pq.push(make_pair(0LL,S));
+    while(!pq.empty()){
+        auto u = pq.top();
+        pq.pop();
+        if(u.first>dist[u.second]) continue;
+        for(auto &v:adj[u.second]){
+            if(dist[v.first]>dist[u.second] + v.second){
+                dist[v.first] = dist[u.second] + v.second;
+                par[v.first] = u.second;
+                pq.push(make_pair(dist[v.first],v.first));
+            }
+        }
+    }
+    return dist; // or dist according to needs
+}
 
 // driver code
 int main()
@@ -90,68 +128,47 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n,m,k;
-        cin >> n >> m >>k;
-        vi xi(n+1);
-        rep(i,1,n+1) cin>>xi[i];
-        vector<set<int>> ladder_cols(n+1);
-        vector<vector<Ladder>> ladders(n+1);
-        unordered_map<ll,mll> health;
-        rep(i,0,k){
-            Ladder ld;
-            cin >> ld.from_row >> ld.from_col >> ld.to_row >> ld.to_col >> ld.h;
-            ladder_cols[ld.from_row].insert(ld.from_col);
-            ladder_cols[ld.to_row].insert(ld.to_col);
-            ladders[ld.from_row].push_back(ld);
-            
+        int n;
+        cin >> n;
+        vii dist(n,vi(n,INF));
+        rep(i,0,n){
+            rep(j,0,n){
+                cin >> dist[i][j];
+            }
         }
-        ladder_cols[1].insert(1);
-        ladder_cols[n].insert(m);
-        health[1][1] = 0;
-        auto exist= [&](int r,int c){
-            return health.count(r) && health[r].count(c);
-        };
-        
-        rep(row,1,n+1){ // find max health associ wi=ith each end point of ladder
-            priority_queue<pi> pq;
-            trav( col,ladder_cols[row]){
-                if(exist(row,col)) pq.push({health[row][col] , col} );
+        bool impossible = 0;
+        vector<pair<ll,pi>> edges;
+        rep(i,0,n){
+            if(dist[i][i]!=0 || impossible) {impossible=1;break;}
+            rep(j,i+1,n){
+                if(dist[i][j]!=dist[j][i] || dist[i][j]==0) {impossible=1;break;}
+                edges.push_back({dist[i][j],{i,j}});
             }
-            // debug(row,pq.size());
-            while(!pq.empty()){
-                auto p = pq.top();
-                // debug(row,p);
-                pq.pop();
-                if(p.first<health[row][p.second]) continue;
-                auto it = ladder_cols[row].lower_bound(p.second);
-                if(next(it)!=ladder_cols[row].end()){
-                    int nxt = *next(it);
-                    ll cost = abs(nxt-p.second)*xi[row];
-                    if(!exist(row,nxt) || health[row][nxt]<health[row][p.second] - cost ){
-                         health[row][nxt]=health[row][p.second] - cost;
-                        pq.push({health[row][nxt],nxt} );
-                    }
-                }
-                if((it)!=ladder_cols[row].begin()){
-                    int prv = *prev(it);
-                    ll cost = abs(prv-p.second)*xi[row];
-                    if(!exist(row,prv) || health[row][prv]<health[row][p.second] - cost ){
-                         health[row][prv]=health[row][p.second] - cost;
-                        pq.push({health[row][prv],prv} );
-                    }
-                }
-            }
-            trav(lad,ladders[row]){
-                if( exist(lad.from_row,lad.from_col) && (!exist(lad.to_row,lad.to_col) ||  health[lad.to_row][lad.to_col] <health[lad.from_row][lad.from_col]+lad.h )) {
-                    health[lad.to_row][lad.to_col] = health[lad.from_row][lad.from_col]+lad.h;
-                }
-            }
-            
         }
-        if(!exist(n,m)) cout << "NO ESCAPE" << endl;
-        else cout << -health[n][m] << endl;
+        if(impossible) {cout << "NO" << endl;continue;}
+        srv(edges);
+        DSU ds(n);
+        int cnt = 0;
+        vector<vector<pair<int,ll>>> adj(n);
+        trav(ed,edges){
+            if(ds.unite(ed.second.first,ed.second.second) ){
+                adj[ed.second.first].push_back({ed.second.second,ed.first });
+                adj[ed.second.second].push_back({ed.second.first,ed.first});
+                cnt++;
+            }
+        }
+        if(cnt!=n-1) {cout << "NO" <<endl;continue;}
+        rep(i,0,n){
+            auto di = dijsktra(i,adj);
+            rep(j,0,n){
+                if(di[j]!=dist[i][j]) {impossible  = 1;break;}
+            }
+            if(impossible) break;
+        }
+        if(impossible) put("NO")
+        else put("YES");
 
     }
 

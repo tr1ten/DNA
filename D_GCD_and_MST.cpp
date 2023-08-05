@@ -73,15 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-struct Ladder
-{
-    ll from_row;
-    ll from_col;
-    ll to_row;
-    ll to_col;
-    ll h;
-};
-
 // driver code
 int main()
 {
@@ -92,67 +83,42 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n,m,k;
-        cin >> n >> m >>k;
-        vi xi(n+1);
-        rep(i,1,n+1) cin>>xi[i];
-        vector<set<int>> ladder_cols(n+1);
-        vector<vector<Ladder>> ladders(n+1);
-        unordered_map<ll,mll> health;
-        rep(i,0,k){
-            Ladder ld;
-            cin >> ld.from_row >> ld.from_col >> ld.to_row >> ld.to_col >> ld.h;
-            ladder_cols[ld.from_row].insert(ld.from_col);
-            ladder_cols[ld.to_row].insert(ld.to_col);
-            ladders[ld.from_row].push_back(ld);
-            
+        ll n,p;
+        cin >> n >> p;
+        vi indices;
+        vi A;
+        rep(i,0,n){
+            int x;
+            cin >> x;
+            A.push_back(x);
+            indices.push_back(i);
         }
-        ladder_cols[1].insert(1);
-        ladder_cols[n].insert(m);
-        health[1][1] = 0;
-        auto exist= [&](int r,int c){
-            return health.count(r) && health[r].count(c);
-        };
-        
-        rep(row,1,n+1){ // find max health associ wi=ith each end point of ladder
-            priority_queue<pi> pq;
-            trav( col,ladder_cols[row]){
-                if(exist(row,col)) pq.push({health[row][col] , col} );
+        sort(all(indices),[&](int i,int j){
+            return A[i]<A[j];
+        });
+        ll ans = 0;
+        ll edge_rem = n-1;
+        vector<bool> conn(n-1); // i->i+1?
+        rep(i,0,n){
+            int j = indices[i];
+            int val = A[j];
+            if(val>=p) break; // no profit using this as edge from type 2
+            while(j>0 && !conn[j-1] && A[j-1]%val==0) {
+                conn[j-1] = 1;
+                ans += val;
+                j--;
+                edge_rem--;
             }
-            // debug(row,pq.size());
-            while(!pq.empty()){
-                auto p = pq.top();
-                // debug(row,p);
-                pq.pop();
-                if(p.first<health[row][p.second]) continue;
-                auto it = ladder_cols[row].lower_bound(p.second);
-                if(next(it)!=ladder_cols[row].end()){
-                    int nxt = *next(it);
-                    ll cost = abs(nxt-p.second)*xi[row];
-                    if(!exist(row,nxt) || health[row][nxt]<health[row][p.second] - cost ){
-                         health[row][nxt]=health[row][p.second] - cost;
-                        pq.push({health[row][nxt],nxt} );
-                    }
-                }
-                if((it)!=ladder_cols[row].begin()){
-                    int prv = *prev(it);
-                    ll cost = abs(prv-p.second)*xi[row];
-                    if(!exist(row,prv) || health[row][prv]<health[row][p.second] - cost ){
-                         health[row][prv]=health[row][p.second] - cost;
-                        pq.push({health[row][prv],prv} );
-                    }
-                }
+            j = indices[i];
+            while(j<n-1 && !conn[j] && A[j+1]%val==0) {
+                conn[j] = 1;
+                ans += val;
+                j++;
+                edge_rem--;
             }
-            trav(lad,ladders[row]){
-                if( exist(lad.from_row,lad.from_col) && (!exist(lad.to_row,lad.to_col) ||  health[lad.to_row][lad.to_col] <health[lad.from_row][lad.from_col]+lad.h )) {
-                    health[lad.to_row][lad.to_col] = health[lad.from_row][lad.from_col]+lad.h;
-                }
-            }
-            
         }
-        if(!exist(n,m)) cout << "NO ESCAPE" << endl;
-        else cout << -health[n][m] << endl;
-
+        ans += edge_rem*p;
+        put(ans);
     }
 
     return 0;

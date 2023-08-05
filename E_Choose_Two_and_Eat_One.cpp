@@ -73,85 +73,75 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-struct Ladder
+struct DSU
 {
-    ll from_row;
-    ll from_col;
-    ll to_row;
-    ll to_col;
-    ll h;
+    vector<int> parent;
+    vector<int> size;
+    DSU(int n){
+        parent.resize(n);
+        for(int i=0;i<n;i++) parent[i] = i; // oath compression
+        size.resize(n);
+    }
+    int find(int u){
+        if(parent[u]!=u) parent[u] = find(parent[u]);
+        return parent[u];
+    }
+    bool unite(int u,int v){
+        int ra = find(u);
+        int rb = find(v);
+        if(ra==rb) return 0;
+        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
+        size[ra] +=size[rb]; // union by rank
+        parent[rb] = ra;
+        return 1;
+    }
 };
+
+ll fast_pow(ll x,ll n,ll m){
+    x = x%m;
+    ll res = 1;
+    while (n>0)
+    {
+        if(n%2==1) res = (res*x)%m; 
+        x = x*x%m;
+        n /=2;
+    }
+    return res;
+}
 
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n,m,k;
-        cin >> n >> m >>k;
-        vi xi(n+1);
-        rep(i,1,n+1) cin>>xi[i];
-        vector<set<int>> ladder_cols(n+1);
-        vector<vector<Ladder>> ladders(n+1);
-        unordered_map<ll,mll> health;
-        rep(i,0,k){
-            Ladder ld;
-            cin >> ld.from_row >> ld.from_col >> ld.to_row >> ld.to_col >> ld.h;
-            ladder_cols[ld.from_row].insert(ld.from_col);
-            ladder_cols[ld.to_row].insert(ld.to_col);
-            ladders[ld.from_row].push_back(ld);
-            
+        int n,M;
+        cin >> n >> M;
+        vi A(n);
+        tkv(A,n);
+        vector<pair<ll,pi>> edges;
+        rep(i,0,n){
+            rep(j,i+1,n){
+                edges.push_back({ (fast_pow(A[i],A[j],M) + fast_pow(A[j],A[i],M))%M  , {i,j}});
+            }
         }
-        ladder_cols[1].insert(1);
-        ladder_cols[n].insert(m);
-        health[1][1] = 0;
-        auto exist= [&](int r,int c){
-            return health.count(r) && health[r].count(c);
-        };
+        srv(edges);
+        reverse(all(edges));
+        DSU ds(n);
+        ll res= 0;
+        int cnt = 0;
+        trav(ed,edges){
+            if(ds.unite(ed.second.first,ed.second.second)){
+                cnt++;
+                res += ed.first;
+            }
+            if(cnt==n-1) break;
+        }
+        put(res);
         
-        rep(row,1,n+1){ // find max health associ wi=ith each end point of ladder
-            priority_queue<pi> pq;
-            trav( col,ladder_cols[row]){
-                if(exist(row,col)) pq.push({health[row][col] , col} );
-            }
-            // debug(row,pq.size());
-            while(!pq.empty()){
-                auto p = pq.top();
-                // debug(row,p);
-                pq.pop();
-                if(p.first<health[row][p.second]) continue;
-                auto it = ladder_cols[row].lower_bound(p.second);
-                if(next(it)!=ladder_cols[row].end()){
-                    int nxt = *next(it);
-                    ll cost = abs(nxt-p.second)*xi[row];
-                    if(!exist(row,nxt) || health[row][nxt]<health[row][p.second] - cost ){
-                         health[row][nxt]=health[row][p.second] - cost;
-                        pq.push({health[row][nxt],nxt} );
-                    }
-                }
-                if((it)!=ladder_cols[row].begin()){
-                    int prv = *prev(it);
-                    ll cost = abs(prv-p.second)*xi[row];
-                    if(!exist(row,prv) || health[row][prv]<health[row][p.second] - cost ){
-                         health[row][prv]=health[row][p.second] - cost;
-                        pq.push({health[row][prv],prv} );
-                    }
-                }
-            }
-            trav(lad,ladders[row]){
-                if( exist(lad.from_row,lad.from_col) && (!exist(lad.to_row,lad.to_col) ||  health[lad.to_row][lad.to_col] <health[lad.from_row][lad.from_col]+lad.h )) {
-                    health[lad.to_row][lad.to_col] = health[lad.from_row][lad.from_col]+lad.h;
-                }
-            }
-            
-        }
-        if(!exist(n,m)) cout << "NO ESCAPE" << endl;
-        else cout << -health[n][m] << endl;
+
 
     }
 
