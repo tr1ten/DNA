@@ -73,6 +73,44 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+ll findMin(vector<ll> &arr, ll n)
+{
+    // Calculate sum of all elements
+    ll sum = 0;
+    for (ll i = 0; i < n; i++) sum += arr[i];
+ 
+    // Create an array to store results of subproblems
+    bool dp[sum + 1];
+    memset(dp,0,sizeof dp);
+    dp[0] = true;
+    for (ll i = 1; i <= n; i++) {
+        for (ll j = sum; j >=1; j--) {
+            // If i'th element is included
+            if (arr[i - 1] <= j)  dp[j] |= dp[j - arr[i - 1]];
+        }
+    }
+    ll diff = 0;
+    for (ll j = sum; j >= 0; j--) {
+        // Find the
+        if (dp[j] == true) {
+            diff = max(diff,(ll)j*(sum-j));
+        }
+    }
+    return diff;
+}
+ll ans;
+vii adj;
+ll dfs(int u){
+    vi pref{0};
+    ll sm =0;
+    trav(v,adj[u]){
+        ll childs = dfs(v);
+        pref.push_back(childs);
+        sm+=childs;
+    }
+    ans +=findMin(pref,pref.size());
+    return sm+1;
+}
 // driver code
 int main()
 {
@@ -81,23 +119,23 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
+        ans = 0;
         int n;
         cin >> n;
-        int n1 = 0;
-        ll ex = 0;
-        int n2 = 0;
-        ll sm = 0;
-        rep(i,0,n){
-            ll x;
+        adj.resize(n);
+        // int cnt = 0;
+        rep(i,1,n){
+            int x;
             cin >> x;
-            if(x==1) n1++; 
-            sm += x;
+            adj[x-1].push_back(i);
+            // cnt++;
         }
-        if(n==1 || sm<n+n1) put("NO")
-        else put("YES")
-        
+        // debug(cnt);
+        dfs(0);
+        put(ans);
+
     }
 
     return 0;
