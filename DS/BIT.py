@@ -13,3 +13,4 @@ class BIT:
             r += self.nums[i]
             i -= (i&(-i))
         return r
+from itertools import accumulate
