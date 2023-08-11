@@ -72,70 +72,47 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-const ll B = 9973;
-const ll mod = MOD;
+const int N = 50005;
+int dp[N][502];
+vii adj;
+int K;
+ll ans = 0;
+void dfs(int u,int p){
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs(v,u);
+        rep(d,0,K){
+            ans += dp[v][d]*dp[u][K-d-1];
+        }
+        rep(d,1,K+1){
+            dp[u][d] += dp[v][d-1];
+        }
+    }   
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("cownomics.in","r",stdin);
-    freopen("cownomics.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        vector<string> sp(n);
-        vector<string> nrm(n);
-        rep(i,0,n) cin >> sp[i];
-        rep(i,0,n) cin >> nrm[i];
-        int ans = -1;
-        int lo=1,hi=m;
-        vi pp{1};
-        rep(i,1,m+1){
-            pp.push_back(pp.back()*B%mod);
+        int n;
+        cin >> n >> K;
+        adj.resize(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
-        auto ok = [&] (int len){
-            ll p = 1;
-            vi hash(n,0);
-            vi hash2(n,0);
-            int pos = 0;
-            rep(i,0,m){
-                unordered_set<ll> hs;
-                int f = 1;
-                rep(j,0,n){
-                    if(i<=len-1) hash[j] = mod(mod(hash[j]*B) + (nrm[j][i]));
-                    else{
-                        hash[j] = mod(mod(mod(hash[j] - mod((nrm[j][i-len] - 'a')*pp[len-1]))*B) + (nrm[j][i]-'a'));
-                    } 
-                    if(i>=len-1) hs.insert(hash[j]);
-                }
-                rep(j,0,n){
-                    if(i<=len-1)   hash2[j] = mod(mod(hash2[j]*B) + (sp[j][i]));
-                    else{
-                        hash2[j] = mod(mod(mod(hash2[j] - mod((sp[j][i-len] - 'a')*pp[len-1]))*B) + (sp[j][i]-'a'));
-                    } 
-                    if(i>=len-1 && hs.find(hash2[j])!=hs.end() ) f=0;
-                }
-                if(i>=len-1 && f){return 1;}
-            }
-            return 0;
-        };
-        while (lo<=hi)
-        {
-            int mid = (lo+hi)/2;
-            if(ok(mid)){
-                ans = mid;
-                hi = mid-1;
-            }
-            else lo = mid+1;
-        }
+        rep(i,0,n) dp[i][0] = 1;
+        dfs(0,-1);
         put(ans);
-
-        
-    }
+    }   
 
     return 0;
 }

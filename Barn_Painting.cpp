@@ -72,69 +72,64 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+const int N = 1e5 + 5;
+vii adj;
+vi dp[3];
+void add(ll &a,ll &b){
+    a = a+b;
+    if(a>MOD) a-=MOD;
+}
+void prod(ll &a,ll &b){
+    a = a*b%MOD;
+}
+void dfs(int u,int p){
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs(v,u);
+        rep(c,0,3){
+            ll sm = 0;
+            rep(ce,0,3){
+                if(ce==c) continue;
+                add(sm,dp[ce][v]);
+            }
+            prod(dp[c][u],sm);
+        }
+    }
 
-const ll B = 9973;
-const ll mod = MOD;
+}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("cownomics.in","r",stdin);
-    freopen("cownomics.out","w",stdout);	  
+    freopen("barnpainting.in","r",stdin);
+    freopen("barnpainting.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        vector<string> sp(n);
-        vector<string> nrm(n);
-        rep(i,0,n) cin >> sp[i];
-        rep(i,0,n) cin >> nrm[i];
-        int ans = -1;
-        int lo=1,hi=m;
-        vi pp{1};
-        rep(i,1,m+1){
-            pp.push_back(pp.back()*B%mod);
+        int n,k;
+        cin >> n >> k;
+        adj.resize(n);
+        rep(i,0,n-1){
+            int x,y;
+            cin >> x >> y;
+            --x;--y;
+            adj[x].push_back(y);
+            adj[y].push_back(x);
         }
-        auto ok = [&] (int len){
-            ll p = 1;
-            vi hash(n,0);
-            vi hash2(n,0);
-            int pos = 0;
-            rep(i,0,m){
-                unordered_set<ll> hs;
-                int f = 1;
-                rep(j,0,n){
-                    if(i<=len-1) hash[j] = mod(mod(hash[j]*B) + (nrm[j][i]));
-                    else{
-                        hash[j] = mod(mod(mod(hash[j] - mod((nrm[j][i-len] - 'a')*pp[len-1]))*B) + (nrm[j][i]-'a'));
-                    } 
-                    if(i>=len-1) hs.insert(hash[j]);
-                }
-                rep(j,0,n){
-                    if(i<=len-1)   hash2[j] = mod(mod(hash2[j]*B) + (sp[j][i]));
-                    else{
-                        hash2[j] = mod(mod(mod(hash2[j] - mod((sp[j][i-len] - 'a')*pp[len-1]))*B) + (sp[j][i]-'a'));
-                    } 
-                    if(i>=len-1 && hs.find(hash2[j])!=hs.end() ) f=0;
-                }
-                if(i>=len-1 && f){return 1;}
+        rep(i,0,3) dp[i].resize(n,1);
+        rep(i,0,k){
+            int b,c;
+            cin >> b >> c;
+            --b;--c;
+            rep(d,0,3) {
+                if(c==d) continue;;
+                dp[d][b] = 0;
             }
-            return 0;
-        };
-        while (lo<=hi)
-        {
-            int mid = (lo+hi)/2;
-            if(ok(mid)){
-                ans = mid;
-                hi = mid-1;
-            }
-            else lo = mid+1;
         }
-        put(ans);
-
-        
+        dfs(0,-1);
+        // debug(dp[0],dp[1],dp[2]);
+        put(mod(dp[0][0]+dp[1][0] + dp[2][0]))
     }
 
     return 0;
