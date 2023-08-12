@@ -34,7 +34,7 @@ typedef unordered_map<ll,ll> mll;
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<endl;
+#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
@@ -72,56 +72,68 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-vii adj;
-vi sub;
-ll mod;
-vi ans;
-// fk not prime need to use prefix suffix
-void dfs(int u,int p){
-    ans[u] = sub[u];
-    ll pref(n);
-    ll cur = sub[u];
-    trav(v,adj[u]){
-        if(v==p) continue;
-        sub[u] = (cur/(sub[v]+1))%mod;
-        sub[v] = (sub[v]*(sub[u]+1))%mod;
-        dfs(v,u);
+struct DSU
+{
+    vector<int> parent;
+    vector<int> size;
+    DSU(int n){
+        parent.resize(n);
+        for(int i=0;i<n;i++) parent[i] = i; // oath compression
+        size.resize(n);
     }
-
-}
-void dfs2(int u,int p){
-    trav(v,adj[u]){
-        if(v==p) continue;
-        dfs2(v,u);
-        sub[u] = (sub[u]*(sub[v]+1))%mod;
+    int find(int u){
+        if(parent[u]!=u) parent[u] = find(parent[u]);
+        return parent[u];
     }
+    bool unite(int u,int v){
+        int ra = find(u);
+        int rb = find(v);
+        if(ra==rb) return 0;
+        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
+        size[ra] +=size[rb]; // union by rank
+        parent[rb] = ra;
+        return 1;
+    }
+};
+ll A = 2019201913;
+        ll B = 2019201949;
+        ll C = 2019201997;
+        
+ll f(int a,int b){
+    a++;b++;
+    return (A*a + B*b)%C;
 }
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    freopen("walk.in","r",stdin);
+    freopen("walk.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        int n;
-        cin >> n >> mod;
-        sub.resize(n,1);
-        adj.resize(n);
-        rep(i,0,n-1){
-            int u,v;
-            cin >> u >> v;
-            --u;--v;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+        ll n,k;
+        cin >> n >> k;
+        vi dist(n,C);
+        vector<bool> inmst(n,0);
+        rep(i,0,n){
+            int mi = -1;
+            rep(j,0,n){
+                if(!inmst[j] && (mi<0 || dist[mi] > dist[j])){
+                    mi = j;
+                }
+            }
+            inmst[mi] = 1;
+            rep(j,0,n){
+                if(!inmst[j]){
+                    dist[j] = min(dist[j],f(min(mi,j),max(mi,j)));
+                }
+            }
         }
-        dfs2(0,-1);
-        // debug(sub);
-        ans.resize(n);
-        dfs(0,-1);
-        pvc(ans);
+        srv(dist);
+        put(dist[n-k]);
+        
     }
 
     return 0;
