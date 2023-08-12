@@ -72,68 +72,27 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-struct DSU
-{
-    vector<int> parent;
-    vector<int> size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-ll A = 2019201913;
-        ll B = 2019201949;
-        ll C = 2019201997;
-        
-ll f(int a,int b){
-    a++;b++;
-    return (A*a + B*b)%C;c
-}
+const int N = 1e5 + 5;
+ll dp[N];
+ll pp[N];
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("walk.in","r",stdin);
-    freopen("walk.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
+    pp[0] = 1;
+    rep(i,1,N){
+        pp[i] = pp[i-1]*2%MOD;
+        dp[i] = mod(dp[i-1] + pp[i-1] - pp[(i/2)]);
+    }
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll n,k;
-        cin >> n >> k;
-        vi dist(n,C);
-        vector<bool> inmst(n,0);
-        rep(i,0,n){
-            int mi = -1;
-            rep(j,0,n){
-                if(!inmst[j] && (mi<0 || dist[mi] > dist[j])){
-                    mi = j;
-                }
-            }
-            inmst[mi] = 1;
-            rep(j,0,n){
-                if(!inmst[j]){
-                    dist[j] = min(dist[j],f(min(mi,j),max(mi,j)));
-                }
-            }
-        }
-        srv(dist);
-        put(dist[n-k]);
-        
+        int l,r;
+        cin >> l >> r;
+        put(mod(dp[r]-dp[l-1]));
     }
 
     return 0;

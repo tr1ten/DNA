@@ -72,68 +72,55 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-struct DSU
-{
-    vector<int> parent;
-    vector<int> size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-ll A = 2019201913;
-        ll B = 2019201949;
-        ll C = 2019201997;
-        
-ll f(int a,int b){
-    a++;b++;
-    return (A*a + B*b)%C;c
-}
+const int N = 1e4 + 5;;
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("walk.in","r",stdin);
-    freopen("walk.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll n,k;
-        cin >> n >> k;
-        vi dist(n,C);
-        vector<bool> inmst(n,0);
+        int n;
+        cin >> n;
+        vi A(n);
+        vi B(n);
+        ll sq_sum = 0;
+        ll sum = 0;
         rep(i,0,n){
-            int mi = -1;
-            rep(j,0,n){
-                if(!inmst[j] && (mi<0 || dist[mi] > dist[j])){
-                    mi = j;
-                }
+            ll x;
+            cin >> x;
+            sq_sum +=x*x; 
+            A[i] = x;
+            sum +=x;
+        }
+        rep(j,0,n){
+            ll x;
+            cin >> x;
+            sq_sum += x*x;
+            B[j] = x;
+            sum +=x;
+        }
+        vector<bool> dp(N);
+        dp[0] = 1;
+        rep(i,0,n){
+            vector<bool> temp(N);
+            rep(s,1,N){
+                if(s>=A[i]) temp[s] = temp[s] | dp[s-A[i]];
+                if(s>=B[i]) temp[s] = temp[s] | dp[s-B[i]];
             }
-            inmst[mi] = 1;
-            rep(j,0,n){
-                if(!inmst[j]){
-                    dist[j] = min(dist[j],f(min(mi,j),max(mi,j)));
-                }
+            dp = temp;
+        }
+        ll ans = INF;
+        rep(s,0,N){
+            if(dp[s]) {
+                ans = min(ans,s*s + (sum-s)*(sum-s));
             }
         }
-        srv(dist);
-        put(dist[n-k]);
-        
+        put((n-2)*sq_sum + ans);
+
     }
 
     return 0;

@@ -72,68 +72,73 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-struct DSU
-{
-    vector<int> parent;
-    vector<int> size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-ll A = 2019201913;
-        ll B = 2019201949;
-        ll C = 2019201997;
-        
-ll f(int a,int b){
-    a++;b++;
-    return (A*a + B*b)%C;c
-}
+
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("walk.in","r",stdin);
-    freopen("walk.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll n,k;
-        cin >> n >> k;
-        vi dist(n,C);
-        vector<bool> inmst(n,0);
+        ll n,m;
+        cin >> n >> m;
+        vi A(n);
+        tkv(A,n);
+        vector<int> C(n);
         rep(i,0,n){
-            int mi = -1;
-            rep(j,0,n){
-                if(!inmst[j] && (mi<0 || dist[mi] > dist[j])){
-                    mi = j;
-                }
+            char x;
+            cin >> x;
+            C[i] = (x=='R');
+        }
+        vector<int> sis;
+        rep(i,0,n) sis.push_back(i);
+        sort(all(sis),[&](int i,int j) {
+            return A[i] < A[j];
+        });
+        deque<int> sts[2][2]; // partity,L or R 
+        vi ans(n,-1);
+        trav(i,sis){
+            if(!C[i] && !sts[A[i]&1][1].empty()){
+                int al = A[i];
+                int j = sts[A[i]&1][1].back();
+                int ar = A[j];
+                sts[A[i]&1][1].pop_back();
+                ans[i] = ans[j] = (al-ar)/2;
             }
-            inmst[mi] = 1;
-            rep(j,0,n){
-                if(!inmst[j]){
-                    dist[j] = min(dist[j],f(min(mi,j),max(mi,j)));
-                }
+            else{
+                if(C[i]) sts[A[i]&1][C[i]].push_back(i);
+                else sts[A[i]&1][C[i]].push_front(i);
             }
         }
-        srv(dist);
-        put(dist[n-k]);
-        
+        rep(i,0,2){
+            rep(j,0,2){
+                int siz = sts[i][j].size();
+                    while(sts[i][j].size()>=2){
+                        int u =  sts[i][j].back();
+                        sts[i][j].pop_back();
+                        int v = sts[i][j].back();
+                        sts[i][j].pop_back();
+                        int al = A[u];
+                        int ar = A[v];
+                        if(al>ar) swap(ar,al);
+                        int d = abs(ar-al)/2;
+                        if(j)  ans[u] = ans[v] = m-ar+d;
+                        else  ans[u] = ans[v] = al+d;
+                    }
+            }
+        }
+        rep(i,0,2){
+            if(!sts[i][0].size() || !sts[i][1].size() ) continue;
+            int dl = A[sts[i][0].back()];
+            int dr = m - A[sts[i][1].back()];
+            int d1 = max(0,dr-dl);
+            int d2 = m - max(0,dl-dr);
+            ans[sts[i][0].back()] = ans[sts[i][1].back()] = abs(d1-d2)/2 + max(dl,dr);
+        }
+        pvc(ans);
     }
 
     return 0;

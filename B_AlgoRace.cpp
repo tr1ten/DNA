@@ -71,68 +71,62 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
-struct DSU
-{
-    vector<int> parent;
-    vector<int> size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-ll A = 2019201913;
-        ll B = 2019201949;
-        ll C = 2019201997;
-        
-ll f(int a,int b){
-    a++;b++;
-    return (A*a + B*b)%C;c
-}
+const ll INF = 1e16+5;
+
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    freopen("walk.in","r",stdin);
-    freopen("walk.out","w",stdout);	  
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);	  
     int T=1;
     // cin>>T;
     while(T--){
-        ll n,k;
-        cin >> n >> k;
-        vi dist(n,C);
-        vector<bool> inmst(n,0);
-        rep(i,0,n){
-            int mi = -1;
+        int n,m,r;
+        cin >> n >> m >>r;
+        vector<vii> dp(n+1,vii(n,vi(n,INF)));
+        // now find shortest distance from each car using floyd warshall
+        rep(c,0,m){
+            vii dist(n,vi(n,INF));
             rep(j,0,n){
-                if(!inmst[j] && (mi<0 || dist[mi] > dist[j])){
-                    mi = j;
+                rep(k,0,n){
+                    cin >> dist[j][k];
                 }
             }
-            inmst[mi] = 1;
-            rep(j,0,n){
-                if(!inmst[j]){
-                    dist[j] = min(dist[j],f(min(mi,j),max(mi,j)));
+            rep(k,0,n){
+                rep(i,0,n){
+                    rep(j,0,n){
+                        dist[i][j] = min(dist[i][j],dist[i][k] + dist[k][j]);
+                    }
+                }
+            }
+            // now set value for zero switch 
+            rep(i,0,n){
+                rep(j,0,n){
+                    dp[0][i][j] = min(dp[0][i][j],dist[i][j]);
                 }
             }
         }
-        srv(dist);
-        put(dist[n-k]);
+        // calculate value for k>0 switches
+        rep(k,1,n+1){
+            rep(i,0,n){
+                rep(j,0,n){
+                    rep(l,0,n){
+                        dp[k][i][j] = min(dp[k][i][j], dp[k-1][i][l] + dp[0][l][j] );
+                    }
+                }
+            }
+        }
+
+        // now ans queries
+        rep(i,0,r){
+            int s,t,k;
+            cin >> s >> t >> k;
+            --s;--t;
+            k = min(k,n);
+            put(dp[k][s][t]);
+        }   
         
     }
 
