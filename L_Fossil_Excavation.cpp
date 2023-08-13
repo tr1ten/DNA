@@ -72,6 +72,26 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+int n,k,m;
+vector<string> mat;
+int dx[] = {0,0,-1,1};
+int dy[] = {-1,1,0,0};
+void bfs(int i,int j,vii &dist){ // 0/1 bfs
+    dist[i][j] = mat[i][j]=='+';
+    deque<pair<int,int>> pq;
+    pq.push_back({i,j});
+    while(!pq.empty()){
+        auto p = pq.front();
+        pq.pop_front();
+        rep(k,0,4){
+            int y = p.first+dy[k];
+            int x = p.second + dx[k];
+            if(y<0 || y>=n || x>=n || x<0 || mat[y][x]=='#' || dist[y][x]!=INF) continue;
+            if(mat[y][x]=='.') {dist[y][x] = dist[p.first][p.second]; pq.push_front({y,x}); }
+            else {dist[y][x] = dist[p.first][p.second] + 1; pq.push_back({y,x}); }
+        }
+    }
+}
 
 // driver code
 int main()
@@ -81,39 +101,60 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        ll n,m;
-        cin >> m >> n;
-        int MX = 62;
-        vi cnt(MX,0);
-        ll sm = 0;
+        cin >> n >> k >>m;
+        mat.resize(n);
+        vector<vii> dists(k+1,vii(n,vi(n,INF)));
         rep(i,0,n){
-            ll x;
-            cin >> x;
-            sm += x;
-            cnt[__builtin_ctzll(x)]++;
+            cin >> mat[i];
         }
-        int ans = 0;
-        int i =0;
-        if(sm<m) {put(-1);continue;}
-        // debug(i,m,cnt);
-        while(i<MX-1){
-            ll tp = 1ll<<i;
-            if((tp&m)>0){ 
-                if(cnt[i]>0) cnt[i] -=1;
-                else {
-                while (i<MX-1 && cnt[i]==0){ i++;ans++;}
-                    cnt[i] -=1;
-                    continue;
+        // calcualate shortest distance from cells of interest 
+        bfs(0,0,dists[k]);
+        pair<ll,pi> foss[k];
+        rep(i,0,k){
+            cin >> foss[i].second.first >> foss[i].second.second >> foss[i].first;
+            foss[i].second.second--;
+            foss[i].second.first--;
+            bfs(foss[i].second.first,foss[i].second.second,dists[i]);
+        }
+        // similar to TSP
+        vii dp1(k,vi(1<<k,INF)); // dp[last][mask]: min cost to collect mask fossils ending at last (not considering return and max wt by wb)
+        // base case 
+        rep(i,0,k){
+            dp1[i][1<<i] = dists[k][foss[i].second.first][foss[i].second.second];
+        }
+        rep(mask,0,1<<k){
+            rep(last,0,k){
+                if(!(mask&(1<<last))) continue;
+                rep(to,0,k){
+                    if(!(mask&(1<<to))){
+                        dp1[to][mask | 1<<to] = min(dp1[to][mask | 1<<to],dp1[last][mask] + dists[last][foss[to].second.first][foss[to].second.second]);
+                    }
                 }
             }
-            cnt[i+1] += cnt[i]/2;
-            i++;
-            
         }
-        put(ans);
-        
+        vi dp2(1<<k,INF); // min cost to collect mask fossils and return before wt exceeds capacity
+        dp2[0] = 0;
+        rep(mask,0,1<<k){
+            // find total wt of foss
+            ll total = 0;
+            rep(i,0,k){
+                if(mask&(1<<i)) total+= foss[i].first; 
+            }
+            if(total<=m) {
+                rep(last,0,k){
+                    dp2[mask] = min(dp2[mask],dp1[last][mask] + dists[k][foss[last].second.first][foss[last].second.second]);
+                }
+            }
+            else{ // try to devide mask into two submask to find ans 
+                for(ll sub=mask;;sub=(sub-1)&(mask)){
+                    dp2[mask] = min(dp2[mask],dp2[sub]+ dp2[sub^mask]);
+                    if(sub==0) break;
+                }
+            }
+        }
+        put(dp2[(1<<k)-1]);
         
 
     }

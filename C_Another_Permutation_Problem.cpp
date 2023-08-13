@@ -72,18 +72,19 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 255;
-ll dp[N][N][N];
 int n;
-ll solve(int i,int mxi,int mxj){
-    debug(i,mxi,mxj);
-    if(i>n) return -mxi*mxj;
-    if(dp[i][mxi][mxj]!=-1) return dp[i][mxi][mxj];
-    ll res = i*i + solve(i+1, i*i>=mxi*mxj ? i : mxi,i*i>=mxi*mxj ? i : mxj); // put i here
-    ll sm = (i*(i-1))/2;
-    res = max(res,sm+i+solve(i+1, i >=(mxi+1)*mxj ? 1 : mxi+1,i >=(mxi+1)*mxj ? i : mxj)); // put 1 here 
-    dp[i][mxi][mxj] = res;
-    return res;
+ll solve(int M){
+    set<int> st;
+    rep(i,1,n+1) st.insert(i);
+    ll sm = 0;
+    per(p,1,n+1){
+        auto it = (st.upper_bound(M/p));
+        if(it==st.begin()) return -INF;
+        --it;
+        sm += (*it)*p;
+        st.erase(it);
+    }
+    return sm;
 }
 // driver code
 int main()
@@ -96,8 +97,17 @@ int main()
     cin>>T;
     while(T--){
         cin >> n;
-        memset(dp,-1,sizeof dp);
-        put(solve(1,0,0));
+        ll ans = 0;
+        set<ll> pos;
+        rep(i,1,n+1){
+            rep(j,1,n+1){
+                pos.insert(i*j);
+            }
+        }
+        trav(m,pos){
+            ans = max(ans,solve(m)-m);
+        }
+        put(ans);
     }
 
     return 0;
