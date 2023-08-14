@@ -72,54 +72,9 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-vector<string>  words;
-bool impossible;
-vii adj;
-const int A = 26;
-void build(){
-    rep(i,0,words.size() -1 ){
-        int f= 0;
-        rep(j,0,min(words[i].size(),words[i+1].size())){ // first unmatched letter decide the order of alphabets 
-            if(words[i][j] != words[i+1][j]) {
-                f=1;
-                adj[words[i][j] - 'a'].push_back(words[i+1][j]-'a');
-                break;
-            } 
-        }
-        if(!f && words[i].size()>words[i+1].size()) { // if invalid arrangement
-            impossible = 1;
-            return;
-        }
-    }
-}
+// metain first and second smallest path which may be same and may not exist
 
 
-vi topo(vii &adj){
-    int n = adj.size();
-    vi in(n);
-    rep(i,0,n){
-        trav(v,adj[i]){
-            in[v]++;
-        }
-    }
-    vi res;
-    queue<ll> q;
-    rep(i,0,n){
-        if(in[i]==0) q.push(i); 
-    }
-    while (!q.empty())
-    {
-        int v = q.front();
-        q.pop();
-        res.push_back(v);
-        trav(u,adj[v]){
-            in[u]--;
-            if(in[u]==0) q.push(u);
-        }
-    }
-    return res;
-    
-}
 // driver code
 int main()
 {
@@ -128,23 +83,9 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        words.resize(n);
-        trav(w,words) cin >> w;
-        adj.resize(A);
-        build();
-        if(impossible) put("Impossible")
-        else{
-            auto top = topo(adj);
-            if(top.size()!=A) put("Impossible")
-            else{
-                trav(i,top) cout << (char)('a' + i );
-            }
-            cout << endl;
-        }
+
     }
 
     return 0;
