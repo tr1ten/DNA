@@ -72,8 +72,33 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-// metain first and second smallest path which may be same and may not exist
 
+vi color;
+vii adj;
+vi ans;
+void dfs(int u){
+    color[u] = 1;
+    ans[u] = 1;
+    trav(v,adj[u]){
+        if(color[v]==1) ans[v] = -1;
+        else if(color[v]==2) ans[v] = 2;
+        if(color[v]==0)    dfs(v);
+
+    }
+    color[u] = 2;
+}
+void dfs2(int u,int prev){
+    color[u] = 1;
+    if(ans[u]>0 && !(ans[u]==2 && prev==1)) ans[u] = prev;
+    trav(v,adj[u]){
+        if(color[v]==0){
+            dfs2(v,ans[u]);
+        }
+    }
+    color[u] = 2;
+
+}
+// mentain first and second smallest path which may be same and may not exist
 
 // driver code
 int main()
@@ -85,7 +110,26 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-
+        int n,m;
+        cin >> n >> m;
+        adj.clear();
+        color.clear();
+        adj.resize(n);
+        ans.clear();
+        ans.resize(n);
+        color.resize(n);
+        rep(i,0,m){
+            ll u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+        }
+        dfs(0);
+        // debug(ans);
+        color.clear();
+        color.resize(n,0);
+        dfs2(0,1);
+        pvc(ans);
     }
 
     return 0;

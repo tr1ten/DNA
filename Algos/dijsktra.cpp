@@ -25,6 +25,31 @@ vector<int> dijsktra(int S,vector<vector<pair<int,ll>>> &adj){
     }
     return par; // or dist according to needs
 }
+
+vector<vector<long long>> dijsktra(vector<vector<pair<int,ll>>> &adj,int S,int K){
+    int n = adj.size();
+    vector<int> cnt(n,0);
+    priority_queue<pair<long long,int>> pq;
+    vector<vector<long long>> dist(n,vector<long long>(K,INF));
+    for(int k=0;k<K;k++) dist[S][k] = 0;
+    pq.push({0,S});
+    while (!pq.empty())
+    {
+        auto [d,u] = pq.top();
+        pq.pop();
+        if(cnt[u]==K) continue;
+        if(dist[u][cnt[u]]<d) continue;
+        cnt[u]++;
+        for(auto [v,w]:adj[u]){
+            if(dist[v][cnt[v]] > d+w) {
+                dist[v][cnt[v]] = d+w;
+                pq.push({dist[v][cnt[v]],v});
+            }
+        }
+    }
+    return dist;
+}
+
 int main(int argc, char const *argv[])
 {
     int n,m;

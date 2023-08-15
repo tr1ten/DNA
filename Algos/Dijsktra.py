@@ -2,7 +2,6 @@ import heapq
 from collections import *
 # general k minimum dijsktra O(K(VLOGV + E))
 
-
 def dijsktra(src, k, adj):
     dist = defaultdict(list)
     q = [(0, src)]
@@ -41,7 +40,6 @@ def dijsktra(src, adj):
                 heapq.heappush(q, (dist[v], v))
     return dist,par
 
-
 import heapq
 def dijsktra(adj,S,K):
     N = len(adj)
@@ -61,6 +59,7 @@ def dijsktra(adj,S,K):
                 dist[v][k+1] = dist[u][k];
                 heapq.heappush(dq,(dist[v][k+1],v,k+1))
     return dist
+
 def main():
     N,M,K = map(int,input().split())
     adj = [[] for i in range(N)]
