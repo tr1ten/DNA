@@ -76,27 +76,13 @@ const ll INF = 1e10+5;
 vi color;
 vii adj;
 vi ans;
-void dfs(int u){
+void dfs(int u,vi &color,set<int> st[2],bool inc){
     color[u] = 1;
-    ans[u] = 1;
     trav(v,adj[u]){
-        if(color[v]==1) ans[v] = -1;
-        else if(color[v]==2) ans[v] = 2;
-        if(color[v]==0)    dfs(v);
-
+        if(color[v]==0) dfs(v,color,st,inc);
+        else if(inc) st[color[v]-1].insert(v);
     }
     color[u] = 2;
-}
-void dfs2(int u,int prev){
-    color[u] = 1;
-    if(ans[u]>0 && !(ans[u]==2 && prev==1)) ans[u] = prev;
-    trav(v,adj[u]){
-        if(color[v]==0){
-            dfs2(v,ans[u]);
-        }
-    }
-    color[u] = 2;
-
 }
 // mentain first and second smallest path which may be same and may not exist
 
@@ -113,10 +99,8 @@ int main()
         int n,m;
         cin >> n >> m;
         adj.clear();
-        color.clear();
         adj.resize(n);
-        ans.clear();
-        ans.resize(n);
+        color.clear();
         color.resize(n);
         rep(i,0,m){
             ll u,v;
@@ -124,12 +108,23 @@ int main()
             --u;--v;
             adj[u].push_back(v);
         }
-        dfs(0);
-        // debug(ans);
-        color.clear();
-        color.resize(n,0);
-        dfs2(0,1);
-        pvc(ans);
+        set<int> st[2];
+        dfs(0,color,st,true);
+        vii c(2,vi(n,0));
+        per(i,0,2){
+            trav(v,st[i]){
+                dfs(v,c[i],st,false);
+            }
+        }
+        rep(i,0,n){
+            int ans = 1;
+            if(color[i]==0) ans = 0;
+            if(c[1][i]) ans = 2;
+            if(c[0][i]) ans = -1;
+            cout << ans << " ";   
+        }
+        cout << endl;
+
     }
 
     return 0;
