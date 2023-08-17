@@ -100,8 +100,25 @@ int main()
         auto pref = getp(s);
         auto suff = getp(rs);
         reverse(all(suff));
+        vi pm(pref.size());
+        vi sm(suff.size());
+        rep(i,1,n+1) pm[i] = max(pm[i-1],pref[i]);
+        per(i,0,n) sm[i] = max(sm[i+1], suff[i]);
         rep(a,1,n+1){
-            
+            auto ok = [&] (int x) {
+                int i = 0;
+                int sum = 0;
+                ll beauty=0;
+                rep(j,0,n){
+                    sum += (s[j]=='1');
+                    while(sum>x) {
+                        sum -= (s[i]=='1');
+                        i++;
+                    }
+                    beauty = max(beauty,(j-i+1)*a + max(pm[i],sm[j+1]));
+                }
+                return beauty;
+            }
         }
     }
 
