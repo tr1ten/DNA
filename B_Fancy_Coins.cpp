@@ -73,20 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-int ff(int s,int e,int k,string &st){
-    int i=s;
-    int sm =0;
-    int ans = 0;
-    rep(j,s,e+1){
-        sm += (st[j]=='0');
-        while (sm>k)
-        {
-            sm -= (st[i++]=='0');
-        }
-        ans = max(ans,j-i+1);
-    }
-    return ans;
-}
 // driver code
 int main()
 {
@@ -97,18 +83,36 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
-        string s;
-        cin >> s;
-        // fix lo find max l1 pair
-        vi pref{0};
-        rep(i,0,n){
-            pref.push_back(pref.back() + (s[i]=='0'));
+        ll m,k,a1,ak;
+        cin >> m >> k >> a1 >> ak;
+        ll ex = min(ak*k,(m/k)*k);
+        if(ex+a1>=m) put(0)
+        else{
+            m -=ex;
+            if(m<k) {put(m-a1);continue;}
+            ll x = m/k;
+            ll c = m - x*k;
+            auto cost = [&](int p){
+                ll x1 = x - (a1-p)/k;
+                ll c1 = c -(a1-p)%k;
+                return x1+max(0ll,c1);
+            };
+            ll res = cost(0); 
+            ll lo = 1,hi = min(a1,k);
+            while(lo<=hi){
+                ll mid = (lo+hi)/2;
+                if(cost(mid-1)>cost(mid)){
+                     res = cost(mid);
+                     lo = mid+1;
+                }
+                else hi = mid-1;
+            }
+            // rep(p,0,min(a1,k)+1){
+                
+            //     debug(p,res);
+            // }
+            put(res);
         }
-        
-        cout << endl;
-
     }
 
     return 0;

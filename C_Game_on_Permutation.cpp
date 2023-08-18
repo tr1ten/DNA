@@ -73,20 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-int ff(int s,int e,int k,string &st){
-    int i=s;
-    int sm =0;
-    int ans = 0;
-    rep(j,s,e+1){
-        sm += (st[j]=='0');
-        while (sm>k)
-        {
-            sm -= (st[i++]=='0');
-        }
-        ans = max(ans,j-i+1);
-    }
-    return ans;
-}
 // driver code
 int main()
 {
@@ -97,18 +83,32 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
-        string s;
-        cin >> s;
-        // fix lo find max l1 pair
-        vi pref{0};
-        rep(i,0,n){
-            pref.push_back(pref.back() + (s[i]=='0'));
+        int n;
+        cin >> n;
+        vi A(n);
+        tkv(A,n);
+        stack<int> st;
+        vi cnt(n+1,n);
+        per(i,0,n){
+            while(st.size() && A[st.top()]<A[i]){st.pop();}
+            if(st.size()) cnt[i] = st.top();
+            st.push(i);
         }
-        
-        cout << endl;
 
+        ordered_set<int> os;
+        ordered_multiset<int> ms;
+        int res = 0;
+        rep(i,0,n){
+            int x = A[i];
+            os.insert(x);
+            ms.insert(x);
+            int rank = os.order_of_key(x);
+            int rank2 = ms.order_of_key(x);
+            // debug(rank,cnt[i]);
+            if(rank && rank==rank2) res++;
+            if(rank) ms.insert(x);
+        }
+        put(res);
     }
 
     return 0;

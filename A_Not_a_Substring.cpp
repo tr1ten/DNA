@@ -73,20 +73,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-int ff(int s,int e,int k,string &st){
-    int i=s;
-    int sm =0;
-    int ans = 0;
-    rep(j,s,e+1){
-        sm += (st[j]=='0');
-        while (sm>k)
-        {
-            sm -= (st[i++]=='0');
-        }
-        ans = max(ans,j-i+1);
-    }
-    return ans;
-}
+
 // driver code
 int main()
 {
@@ -97,17 +84,23 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n,k;
-        cin >> n >> k;
-        string s;
+        int n;
+        string s ;
         cin >> s;
-        // fix lo find max l1 pair
-        vi pref{0};
-        rep(i,0,n){
-            pref.push_back(pref.back() + (s[i]=='0'));
+        n = s.size();
+        string s1;
+        string s2;
+        rep(i,0,n) s1.push_back('(');
+        rep(i,0,n) s1.push_back(')');
+        int t =0;
+        rep(i,0,2*n){
+            s2.push_back(t ? ')' : '(');
+            t^=1;
         }
-        
-        cout << endl;
+        // debug(n,s1,s2);
+        if(s1.find(s)==string::npos) {put("YES");put(s1);}
+        else if(s2.find(s)==string::npos) {put("YES");put(s2);}
+        else put("NO")
 
     }
 
