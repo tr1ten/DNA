@@ -73,19 +73,19 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-int ff(int s,int e,int k,string &st){
-    int i=s;
-    int sm =0;
-    int ans = 0;
-    rep(j,s,e+1){
-        sm += (st[j]=='0');
-        while (sm>k)
-        {
-            sm -= (st[i++]=='0');
+int n,k;
+vii get(string &s){
+    vii dp(n+1,vi(k+1,0)); // max consecutive one ending using i using k flips
+    vii dp2(n+1,vi(k+1,0)); // max consecutive one ending using i using k flips
+    rep(i,1,n+1) {dp[i][0] = s[i-1]=='1' ? (1+dp[i-1][0]) : 0; dp2[i][0] = max(dp2[i-1][0],dp[i][0]); }
+    rep(kk,1,k+1){
+        rep(i,1,n+1){
+            if(s[i-1]=='1') dp[i][kk] = dp[i-1][kk] + 1;
+            else dp[i][kk] = dp[i-1][kk-1] + 1;
+            dp2[i][kk] = max(dp2[i-1][kk],dp[i][kk]);
         }
-        ans = max(ans,j-i+1);
     }
-    return ans;
+    return dp2;
 }
 // driver code
 int main()
@@ -97,18 +97,37 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n,k;
         cin >> n >> k;
         string s;
         cin >> s;
         // fix lo find max l1 pair
         vi pref{0};
         rep(i,0,n){
-            pref.push_back(pref.back() + (s[i]=='0'));
+            pref.push_back(pref.back() + (s[i]=='1'));
         }
-        
-        cout << endl;
-
+        vii dp_pref = get(s);
+        string rs = s;
+        reverse(all(rs));
+        vii dp_suff = get(rs);
+        vi l1s(n+1,-1);
+        l1s[0] = dp_pref[n][k];
+        rep(lo,1,n+1){
+            rep(i,lo-1,n){
+                if(pref[i+1]-pref[i+1-lo]>k) continue;
+                int c = k - (pref[i+1]-pref[i+1-lo]);
+                assert(c>=0 && c<=k);
+                l1s[lo] = max(0ll,max(l1s[lo],max(dp_pref[i-lo+1][c],dp_suff[n-i-1][c])));
+            }
+        }
+        // debug(l1s);
+        vi ans(n,0);
+        rep(a,1,n+1){
+            rep(lo,0,n+1){
+                if(l1s[lo]==-1) continue;
+                ans[a-1] = max(ans[a-1],lo*a + l1s[lo]);
+            }
+        }
+        pvc(ans);
     }
 
     return 0;
