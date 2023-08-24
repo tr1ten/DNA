@@ -10,7 +10,7 @@ struct DSU
     DSU(int n){
         parent.resize(n);
         for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n);
+        size.resize(n,1);
     }
     int find(int u){
         if(parent[u]!=u) parent[u] = find(parent[u]);

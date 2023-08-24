@@ -74,32 +74,6 @@ const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
 
-
-struct DSU
-{
-    vi parent;
-    vi size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n,1);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-
-
 // driver code
 int main()
 {
@@ -112,22 +86,27 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        DSU dsu[2] = {DSU(n),DSU(n)};
-        rep(i,0,n-1){
-            int u,v,t;
-            cin >> u >> v >> t;
-            --u;--v;
-            dsu[t].unite(u,v);
+        vi A(n);
+        tkv(A,n);
+        vi pref(n);
+        vi suff(n);
+        rep(i,1,n){
+            int k = 1;
+            while(i-k>=0 && A[i-k]%A[i]==0) k += pref[i-k] + 1;
+            pref[i] = k-1;
         }
-        ll ans = 0;
-        rep(i,0,n){
-            // find all forest (0 / 1 ) and add pairs to ans
-            if(dsu[0].find(i)==i) ans +=  (dsu[0].size[i])*(dsu[0].size[i]-1);
-            if(dsu[1].find(i)==i) ans +=  dsu[1].size[i]*(dsu[1].size[i]-1);
-            ans += (dsu[0].size[dsu[0].find(i)]-1)*(dsu[1].size[dsu[1].find(i)]-1);
+        map<int,set<int>> cnt;
+        per(i,0,n-1){
+            int k = 1;
+            while(i+k<n && A[i+k]%A[i]==0) k += suff[i+k] + 1;
+            suff[i] = k-1;
         }
-        put(ans);
+        rep(i,0,n) cnt[pref[i]+suff[i]].insert(i-pref[i]+1);
+        // debug(pref,suff);
+        put2((*cnt.rbegin()).second.size(),(*cnt.rbegin()).first);
+        pvc((*cnt.rbegin()).second);
 
     }
+
     return 0;
 }

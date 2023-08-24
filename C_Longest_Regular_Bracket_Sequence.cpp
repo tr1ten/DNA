@@ -73,33 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
-
-struct DSU
-{
-    vi parent;
-    vi size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n,1);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-
-
 // driver code
 int main()
 {
@@ -110,24 +83,26 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        DSU dsu[2] = {DSU(n),DSU(n)};
-        rep(i,0,n-1){
-            int u,v,t;
-            cin >> u >> v >> t;
-            --u;--v;
-            dsu[t].unite(u,v);
+        string s;
+        cin >> s;
+        map<int,int> cnt;
+        stack<int> st;
+        vi dp(s.size(),0);
+        rep(i,0,s.size()){
+            if(s[i]=='('){
+                st.push(i);
+            }
+            else{
+                if(!st.empty()){
+                    dp[i] = i-st.top()+1 + (st.top()==0 ? 0 : dp[st.top()-1]);
+                    cnt[dp[i]]++;
+                    st.pop();
+                }
+            }
         }
-        ll ans = 0;
-        rep(i,0,n){
-            // find all forest (0 / 1 ) and add pairs to ans
-            if(dsu[0].find(i)==i) ans +=  (dsu[0].size[i])*(dsu[0].size[i]-1);
-            if(dsu[1].find(i)==i) ans +=  dsu[1].size[i]*(dsu[1].size[i]-1);
-            ans += (dsu[0].size[dsu[0].find(i)]-1)*(dsu[1].size[dsu[1].find(i)]-1);
-        }
-        put(ans);
-
+        if(cnt.size()==0 || ((*cnt.rbegin()).first==0)) put2(0,1)
+        else put2((*cnt.rbegin()).first,(*cnt.rbegin()).second);
     }
+
     return 0;
 }
