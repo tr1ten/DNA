@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -82,50 +81,19 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
         int n;
         cin >> n;
         vi A(n);
-        rep(i,0,n){
-            cin >> A[i];
-            A[i] &=1;
+        tkv(A,n);
+        vi b{A[0]};
+        rep(i,1,n){
+            if(A[i]<b.back()) b.push_back(A[i]);
+            b.push_back(A[i]);
         }
-        int i = 0;
-        set<pi> segs;
-        set<pi> even;
-        while(i<n){
-            int j = i;
-            while(j<n && A[j]==A[i]) j++;
-            segs.insert({i,j-1});
-            if((j-i)%2==0) even.insert({i,j-1}); // this can change parity byhorizontal brick
-            i = j;
-        }
-        while (segs.size()>1 && !even.empty())
-        {
-            auto s = *even.begin();
-            even.erase(even.begin());
-            segs.erase(segs.find(s));
-            auto it = segs.upper_bound(s);
-            if(it!=segs.end()){
-                s.second = (*it).second;
-                if(((*it).second+1-(*it).first )%2==0) even.erase(even.find(*it));
-                segs.erase(it);
-            }
-            it = segs.lower_bound(s);
-            if(it!=segs.begin()){
-                --it;
-                s.first = (*it).first;
-                if(((*it).second+1-(*it).first )%2==0) even.erase(even.find(*it));
-                segs.erase(it);
-            }
-            if((s.second-s.first+1)%2==0) even.insert(s);
-            segs.insert(s);
-        }
-        if(segs.size()<=1) put("YES")
-        else put("NO");
-        
-        
+        put(b.size());
+        pvc(b);
     }
 
     return 0;

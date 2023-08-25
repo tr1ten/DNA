@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -82,50 +81,36 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
         int n;
         cin >> n;
-        vi A(n);
+        vi A;
+        int f = 0;
         rep(i,0,n){
-            cin >> A[i];
-            A[i] &=1;
+            int x;
+            cin >> x;
+            if(x>n) f=1;
+            A.push_back(x);
         }
-        int i = 0;
-        set<pi> segs;
-        set<pi> even;
-        while(i<n){
-            int j = i;
-            while(j<n && A[j]==A[i]) j++;
-            segs.insert({i,j-1});
-            if((j-i)%2==0) even.insert({i,j-1}); // this can change parity byhorizontal brick
-            i = j;
-        }
-        while (segs.size()>1 && !even.empty())
-        {
-            auto s = *even.begin();
-            even.erase(even.begin());
-            segs.erase(segs.find(s));
-            auto it = segs.upper_bound(s);
-            if(it!=segs.end()){
-                s.second = (*it).second;
-                if(((*it).second+1-(*it).first )%2==0) even.erase(even.find(*it));
-                segs.erase(it);
+        if(!f){
+            int j = n-1;
+            int i= 0;
+            int prev = 0;
+            while (i<n && j>=0 && !f)
+            {
+                rep(k,i,i+A[j] -prev){
+                    if(A[k]!=j+1){ f=1;break;}
+                }
+                i += A[j]-prev;
+                prev = A[j];
+                j--;
             }
-            it = segs.lower_bound(s);
-            if(it!=segs.begin()){
-                --it;
-                s.first = (*it).first;
-                if(((*it).second+1-(*it).first )%2==0) even.erase(even.find(*it));
-                segs.erase(it);
-            }
-            if((s.second-s.first+1)%2==0) even.insert(s);
-            segs.insert(s);
+            f |= (i<n);
+
         }
-        if(segs.size()<=1) put("YES")
-        else put("NO");
-        
-        
+        if(!f) put("YES")
+        else put("NO")
     }
 
     return 0;
