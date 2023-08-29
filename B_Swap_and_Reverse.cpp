@@ -73,15 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-vi divs(ll x){
-    vi a{1};
-    rep(i,2,sqrt(x)+1){
-        if(x%i!=0) continue;
-        a.push_back(i);
-        if(x/i!=i) a.push_back(x/i);
-    }
-    return a;
-}
 // driver code
 int main()
 {
@@ -92,28 +83,29 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        ll x;
-        cin >> x;
-        vi ans;
-        unordered_map<int,int> cnt;
-        while (x>1)
-        {
-            ans.push_back(x);
-            vi di = divs(x);
-            reverse(all(di));
-            trav(v,di){
-                if(cnt[v]<2){
-                    x= x-v;
-                    cnt[v]++;
-                    break;
-                }
-            }
+        int n,k;
+        cin >> n >> k;
+        string s;
+        cin >> s;
+        if(k%2==0){
+            srv(s);
+            put(s);
         }
-        ans.push_back(1);
-        put(ans.size());
-        pvc(ans);
-
-        
+        else{
+            vector<char> c[2];
+            rep(i,0,n){
+                c[i%2].push_back(s[i]);
+            }
+            srv(c[0]);
+            srv(c[1]);
+            int i = 0;
+            int j = 0;
+            string ans;
+            rep(k,0,n){
+                ans += c[k%2][(k%2==0 ? i : j)++];
+            }
+            put(ans);
+        }
     }
 
     return 0;

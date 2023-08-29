@@ -72,22 +72,10 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-vi divs(ll x){
-    vi a{1};
-    rep(i,2,sqrt(x)+1){
-        if(x%i!=0) continue;
-        a.push_back(i);
-        if(x/i!=i) a.push_back(x/i);
-    }
-    return a;
-}
-bool isprime(ll x){
-    rep(i,2,sqrt(x)+1){
-        if(x%i==0) return 0;
-    }
-    return 1;
-}
+const int N = 3005;
+bitset<N> neg;
+bitset<N> pos;
+bitset<N> temp;
 
 // driver code
 int main()
@@ -99,25 +87,40 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        ll x;
-        cin >> x;
-        vi ans{x};
-        while (x&(x-1))
-        {
-            x -= (x&-x);
-            ans.push_back(x);
+        int n;
+        cin >> n;
+        vector<vector<bool>> mat(n+1,vector<bool>(1+n));
+        rep(i,1,1+n){
+            string s;
+            cin >> s;
+            rep(j,1,1+n){
+                mat[i][j] = s[j-1]-'0';
+            }
         }
-        while (x>1)
-        {
-            x = x>>1;
-            ans.push_back(x);
+        pos.reset();
+        neg.reset();
+        temp.reset();
+        ll ans =0;
+        rep(x,1,n+1){
+            temp[0] = neg[0];
+            rep(i,1,n+1){
+                temp[i] = temp[i-1]^pos[i-1]^neg[i];
+            }
+            bool f =neg[0];
+            bool l = pos[n];
+            pos = pos << 1;
+            neg = neg >> 1;
+            pos[n] = pos[n] ^ l;
+            neg[0] = neg[0] ^ f;
+            rep(y,1,n+1){
+                if(temp[y]^mat[x][y]){
+                    neg[y-1] =neg[y-1]^1;
+                    pos[y+1] =pos[y+1]^1;
+                    ans++;
+                }
+            }
         }
-        
-        put(ans.size());
-
-        pvc(ans);        
-
-        
+        put(ans);
     }
 
     return 0;
