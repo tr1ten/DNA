@@ -118,7 +118,7 @@ int main()
         rep(i,1,n+1){
             while (min_dp.size() && i-g[i-1]>min_dp.front()) min_dp.pop_front();
             while (min_dp.size() && i-l>=0 && dp[min_dp.back()]>=dp[i-l] ) min_dp.pop_back();
-            if(i-l>=0 && g[i-1] >= l) min_dp.push_back(i-l);
+            if( g[i-1] >= l) min_dp.push_back(i-l);
             if(min_dp.size()) 
             {
                 // debug(min_dp.front(),i,g[i-1]);

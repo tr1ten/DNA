@@ -73,35 +73,48 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 9;
-	static const long long B = 9973;
+#include <bits/stdc++.h>
+using namespace std;
+// Fenwick Tree
+// Time Complexity: O(logn) for both update and query
+void update(long double BIT[], int x, long double val, int N)
+{
+    ++x;
+    while (x <= N)
+    {
+        BIT[x] += val;
+        x += (x & -x);
+    }
+}
+long long query(long double BIT[], int x)
+{
+    ++x;
+    long long res = 0;
+    while (x > 0)
+    {
+        res += BIT[x];
+        x -= (x & -x);
+    }
+    return res;
+}
+long long range(long double bit[], int a, int b) { return (query(bit, b) - query(bit, a - 1) ) ; }
 
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
 
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
 
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
+const int N = 3*(1e5)  +5;
+int tin[N];
+int tout[N];
+int timer;
+vii adj;
+void dfs(int u,int p){
+    tin[u] = timer++;
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs(v,u);
+    }
+    tout[u] = timer-1;
+}
 
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
-		}
-	}
-
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
-	}
-};
-vector<long long> HashedString::pow = {1};
 // driver code
 int main()
 {
@@ -112,43 +125,41 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        HashedString hs(s);
-        string ts=s;
-        reverse(all(ts));
-        HashedString ps(ts);;
-        vi ans(s.size()+1);
-        int n = s.size();
-        pair<int,int> dp[n+1][n+1];
-        rep(len,1,n+1){
-            rep(i,0,n-len+1){
-                int j = i+len-1;
-                dp[i][j] = mp(n+1,-n-1);
-                if(hs.getHash(i,j) == ps.getHash(n-j-1,n-i-1)){
-                    dp[i][j] = {1,1};
-                    if(len==1) continue;
-                }
-                int mid = len/2;
-                int ei = i+mid-1;
-                int sj = j-mid+1;
-                if(hs.getHash(i,ei)==hs.getHash(sj,j)){
-                    dp[i][j].first = min(dp[i][j].first,dp[i][ei].first+1);
-                    dp[i][j].second = max(dp[i][j].second,dp[i][ei].second+1);
-                }
+        int n,q;
+        cin >> n;
+        adj.resize(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }  
+        long double bit[n+1];
+        memset(bit,0,sizeof bit);
+        cin >> q;
+        rep(i,0,q){
+            int t,x,y;
+            cin >> t >> x >> y;
+            if(t==1){
+                --x;
+                long double logy = log10(y);
+                long double diff = logy-range(bit,tin[x],tin[x]);
+                update(bit,x,diff,n);
+            }
+            else{
+                --x;--y;
+                long double xsum = range(bit,tin[x],tout[x]);
+                long double ysum = range(bit,tin[y],tout[y]);
+                long double diff = xsum - ysum;
+                if(diff>=9) put(1000000000)
+                else{
+                    long double ans = pow((long double)10,diff);
+                    cout << setprecision(6) << ans << endl;;
+                };
+                
             }
         }
-        rep(i,0,n){
-            rep(j,i,n){
-                if(dp[i][j].second==-n-1) continue;
-                // debug(dp[i][j]);
-                ans[dp[i][j].first-1] +=1;
-                ans[dp[i][j].second] -=1;
-            }
-        }
-        rep(i,1,ans.size()) ans[i] += ans[i-1];
-        ans.pop_back();
-        pvc(ans);
     }
 
     return 0;

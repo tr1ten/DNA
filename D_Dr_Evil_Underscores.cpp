@@ -73,35 +73,36 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 9;
-	static const long long B = 9973;
 
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
 
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
-
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
-
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
-		}
-	}
-
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
-	}
+const ll MX = 30;
+struct Node{
+    Node* childs[2] = {nullptr,nullptr};
+    ll n_leaves;
+    int val;
 };
-vector<long long> HashedString::pow = {1};
+
+void add(Node *node,ll x,ll i){
+    if(i<0) {node->n_leaves++;return;}
+    ll idx = (x>>i)&1;
+    if(node->childs[idx] ==nullptr) node->childs[idx] = new Node();
+    node->n_leaves += 1;
+    add(node->childs[idx],x,i-1);
+}
+// find number of x such that sm^x >= k
+ll query(Node *node,int i,int cur){
+    if(node==nullptr || i<0) return cur;
+    if(node->childs[0]==nullptr){
+        return query(node->childs[1],i-1,cur);
+    }
+    else if(node->childs[1]==nullptr){
+        return query(node->childs[0],i-1,cur);
+    }
+    else{
+        return min(query(node->childs[0],i-1,cur | (1ll<<i)),query(node->childs[1],i-1,cur | (1ll<<i)));
+    }
+}
+
 // driver code
 int main()
 {
@@ -112,43 +113,15 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        HashedString hs(s);
-        string ts=s;
-        reverse(all(ts));
-        HashedString ps(ts);;
-        vi ans(s.size()+1);
-        int n = s.size();
-        pair<int,int> dp[n+1][n+1];
-        rep(len,1,n+1){
-            rep(i,0,n-len+1){
-                int j = i+len-1;
-                dp[i][j] = mp(n+1,-n-1);
-                if(hs.getHash(i,j) == ps.getHash(n-j-1,n-i-1)){
-                    dp[i][j] = {1,1};
-                    if(len==1) continue;
-                }
-                int mid = len/2;
-                int ei = i+mid-1;
-                int sj = j-mid+1;
-                if(hs.getHash(i,ei)==hs.getHash(sj,j)){
-                    dp[i][j].first = min(dp[i][j].first,dp[i][ei].first+1);
-                    dp[i][j].second = max(dp[i][j].second,dp[i][ei].second+1);
-                }
-            }
-        }
+        int n;
+        cin >> n;
+        Node *root = new Node();
         rep(i,0,n){
-            rep(j,i,n){
-                if(dp[i][j].second==-n-1) continue;
-                // debug(dp[i][j]);
-                ans[dp[i][j].first-1] +=1;
-                ans[dp[i][j].second] -=1;
-            }
+            int x;
+            cin >> x;
+            add(root,x,MX);    
         }
-        rep(i,1,ans.size()) ans[i] += ans[i-1];
-        ans.pop_back();
-        pvc(ans);
+        put(query(root,MX,0));
     }
 
     return 0;

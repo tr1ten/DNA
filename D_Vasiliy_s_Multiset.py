@@ -39,18 +39,16 @@ def max_xor(x):
         ind = (x>>i)&1
         if cur.childs[ind^1]: cur = cur.childs[ind^1]
         else: cur = cur.childs[ind]
-    return cur.val
+    return cur.val^x
 
-def main():
-    A = [8,12,9]
-    for x in A: add(x)
-    print(max_xor(10)) # 12
-    remove(12)
-    print(max_xor(10)) # 12
-    remove(9)
-    print(max_xor(10)) # 12
-    
-
-if __name__=='__main__':
-    main();
-    
+n = int(input())
+add(0)
+for i in range(n):
+    t,x = input().split()
+    x = int(x)
+    if t=='+':
+        add(x)
+    elif t=="-":
+        remove(x)
+    else:
+        print(max_xor(x))

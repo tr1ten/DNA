@@ -76,7 +76,7 @@ const ll INF = 1e10+5;
 class HashedString {
   private:
 	// change M and B if you want
-	static const long long M = 1e9 + 9;
+	static const long long M = 1e9 + 7;
 	static const long long B = 9973;
 
 	// pow[i] contains B^i % M
@@ -101,7 +101,9 @@ class HashedString {
 		return (raw_val % M + M) % M;
 	}
 };
+
 vector<long long> HashedString::pow = {1};
+
 // driver code
 int main()
 {
@@ -112,43 +114,43 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        HashedString hs(s);
-        string ts=s;
-        reverse(all(ts));
-        HashedString ps(ts);;
-        vi ans(s.size()+1);
-        int n = s.size();
-        pair<int,int> dp[n+1][n+1];
-        rep(len,1,n+1){
-            rep(i,0,n-len+1){
-                int j = i+len-1;
-                dp[i][j] = mp(n+1,-n-1);
-                if(hs.getHash(i,j) == ps.getHash(n-j-1,n-i-1)){
-                    dp[i][j] = {1,1};
-                    if(len==1) continue;
-                }
-                int mid = len/2;
-                int ei = i+mid-1;
-                int sj = j-mid+1;
-                if(hs.getHash(i,ei)==hs.getHash(sj,j)){
-                    dp[i][j].first = min(dp[i][j].first,dp[i][ei].first+1);
-                    dp[i][j].second = max(dp[i][j].second,dp[i][ei].second+1);
-                }
-            }
-        }
+        int n,m;
+        cin >> n >> m;
+        unordered_map<int,map<pi,set<int>>> hashes;
         rep(i,0,n){
-            rep(j,i,n){
-                if(dp[i][j].second==-n-1) continue;
-                // debug(dp[i][j]);
-                ans[dp[i][j].first-1] +=1;
-                ans[dp[i][j].second] -=1;
+            string s;
+            cin >> s;
+            HashedString hs(s);
+            int nn = s.size();
+            hashes[nn][{0,hs.getHash(1,nn-1)}].insert(s[0]-'a');
+            hashes[nn][{hs.getHash(0,nn-2),0}].insert(s[nn-1]-'a');
+            rep(j,1,nn-1){
+                pi pp = {hs.getHash(0,j-1),hs.getHash(j+1,nn-1)};
+                hashes[nn][pp].insert(s[j]-'a');
             }
         }
-        rep(i,1,ans.size()) ans[i] += ans[i-1];
-        ans.pop_back();
-        pvc(ans);
+        rep(i,0,m){
+            string s;
+            cin >> s;
+            HashedString hs(s);
+            int nn = s.size();
+            int f = 0;
+            auto it1 =  hashes[nn].find({0,hs.getHash(1,nn-1)});
+            if(it1!=hashes[nn].end() && (*it1).second.find(s[0]-'a')==(*it1).second.end()) f=1;
+            it1 =  hashes[nn].find({hs.getHash(0,nn-2),0});
+            if(it1!=hashes[nn].end() && (*it1).second.find(s[nn-1]-'a')==(*it1).second.end()) f=1;
+            rep(j,1,nn-1){
+                if(f) break;
+                pi pp = {hs.getHash(0,j-1),hs.getHash(j+1,nn-1)};
+                it1 =  hashes[nn].find(pp);
+                if(it1!=hashes[nn].end() && (*it1).second.find(s[j]-'a')==(*it1).second.end()) f=1;
+            }
+            if(f) put("YES")
+            else put("NO")
+
+        }   
+
+
     }
 
     return 0;

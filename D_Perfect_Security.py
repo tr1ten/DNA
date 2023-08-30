@@ -1,5 +1,5 @@
 A = 2
-MX = 32;
+MX = 30;
 class Node:
     def __init__(self) -> None:
         self.childs = [None]*A
@@ -41,16 +41,24 @@ def max_xor(x):
         else: cur = cur.childs[ind]
     return cur.val
 
-def main():
-    A = [8,12,9]
-    for x in A: add(x)
-    print(max_xor(10)) # 12
-    remove(12)
-    print(max_xor(10)) # 12
-    remove(9)
-    print(max_xor(10)) # 12
-    
+def min_xor(x):
+    cur = root
+    for i in range(MX,-1,-1):
+        ind = ((x>>i)&1)^1
+        if cur.childs[ind^1]: cur = cur.childs[ind^1]
+        else: cur = cur.childs[ind]
+    return cur.val
 
-if __name__=='__main__':
-    main();
-    
+import sys
+import os, io
+input =sys.stdin.readline
+n = int(input())
+AA = list(map(int,input().split()))
+B = list(map(int,input().split()))
+for x in B: add(x)
+ans = []
+for x in AA:
+    y = min_xor(x)
+    remove(y)
+    ans.append(y^x)
+sys.stdout.write(" ".join(map(str,ans)) + "\n")

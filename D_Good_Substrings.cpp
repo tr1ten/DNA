@@ -72,7 +72,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
 class HashedString {
   private:
 	// change M and B if you want
@@ -101,7 +100,6 @@ class HashedString {
 		return (raw_val % M + M) % M;
 	}
 };
-vector<long long> HashedString::pow = {1};
 // driver code
 int main()
 {
@@ -112,43 +110,28 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        string s;
+        string s,al;
         cin >> s;
+        cin >> al;
+        int k;
+        cin >> k;
+        ll res = 0;
+        unordered_set<ll> seen;
         HashedString hs(s);
-        string ts=s;
-        reverse(all(ts));
-        HashedString ps(ts);;
-        vi ans(s.size()+1);
-        int n = s.size();
-        pair<int,int> dp[n+1][n+1];
-        rep(len,1,n+1){
-            rep(i,0,n-len+1){
-                int j = i+len-1;
-                dp[i][j] = mp(n+1,-n-1);
-                if(hs.getHash(i,j) == ps.getHash(n-j-1,n-i-1)){
-                    dp[i][j] = {1,1};
-                    if(len==1) continue;
+        rep(i,0,s.size()){
+            int cnt = 0;
+            ll hash = 0;
+            rep(j,i,s.size()){
+                cnt += (al[s[j]-'a']=='1');
+                ll hash = hs.getHash(i,j);
+                if((seen.find(hash) == seen.end())){
+                    seen.insert(hash);
+                    res++;
                 }
-                int mid = len/2;
-                int ei = i+mid-1;
-                int sj = j-mid+1;
-                if(hs.getHash(i,ei)==hs.getHash(sj,j)){
-                    dp[i][j].first = min(dp[i][j].first,dp[i][ei].first+1);
-                    dp[i][j].second = max(dp[i][j].second,dp[i][ei].second+1);
-                }
+
             }
         }
-        rep(i,0,n){
-            rep(j,i,n){
-                if(dp[i][j].second==-n-1) continue;
-                // debug(dp[i][j]);
-                ans[dp[i][j].first-1] +=1;
-                ans[dp[i][j].second] -=1;
-            }
-        }
-        rep(i,1,ans.size()) ans[i] += ans[i-1];
-        ans.pop_back();
-        pvc(ans);
+        put(res);
     }
 
     return 0;

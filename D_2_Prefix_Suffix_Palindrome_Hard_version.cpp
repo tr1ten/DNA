@@ -73,35 +73,20 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 9;
-	static const long long B = 9973;
+vi kmp(string &s){
+    string a = s;
+    reverse(all(a));
+    s = s+"#" + a;
+    vi lps(s.size());
+    ll i = 1, len = 0;
+    while (i<s.size()) {
+            if(s[i]==s[len]) lps[i++] = ++len;
+            else if(len==0) lps[i++] = 0;
+            else len = lps[len-1];
+        }
+    return lps;
+}
 
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
-
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
-
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
-
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
-		}
-	}
-
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
-	}
-};
-vector<long long> HashedString::pow = {1};
 // driver code
 int main()
 {
@@ -110,45 +95,32 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
         string s;
         cin >> s;
-        HashedString hs(s);
-        string ts=s;
-        reverse(all(ts));
-        HashedString ps(ts);;
-        vi ans(s.size()+1);
-        int n = s.size();
-        pair<int,int> dp[n+1][n+1];
-        rep(len,1,n+1){
-            rep(i,0,n-len+1){
-                int j = i+len-1;
-                dp[i][j] = mp(n+1,-n-1);
-                if(hs.getHash(i,j) == ps.getHash(n-j-1,n-i-1)){
-                    dp[i][j] = {1,1};
-                    if(len==1) continue;
-                }
-                int mid = len/2;
-                int ei = i+mid-1;
-                int sj = j-mid+1;
-                if(hs.getHash(i,ei)==hs.getHash(sj,j)){
-                    dp[i][j].first = min(dp[i][j].first,dp[i][ei].first+1);
-                    dp[i][j].second = max(dp[i][j].second,dp[i][ei].second+1);
-                }
-            }
+        string ps;
+        int i = 0;
+        int j=s.size()-1;
+        while (i<j && s[i]==s[j])
+        {
+            ps += s[i];
+            i++;j--;
         }
-        rep(i,0,n){
-            rep(j,i,n){
-                if(dp[i][j].second==-n-1) continue;
-                // debug(dp[i][j]);
-                ans[dp[i][j].first-1] +=1;
-                ans[dp[i][j].second] -=1;
-            }
+        string s1 = s.substr(i,j-i+1);
+        string s2 =s1;
+        reverse(all(s2));
+        vi l1 = kmp(s1);
+        vi l2 = kmp(s2);
+        string res;
+        string rps = ps;
+        reverse(all(rps));
+        if(l1.back()>=l2.back()){
+            res = ps + s1.substr(0,l1.back()) + rps;
         }
-        rep(i,1,ans.size()) ans[i] += ans[i-1];
-        ans.pop_back();
-        pvc(ans);
+        else res = ps + s2.substr(0,l2.back()) + rps;
+        put(res);
+
     }
 
     return 0;
