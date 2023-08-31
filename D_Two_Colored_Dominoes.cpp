@@ -73,56 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
-const int A = 10;
-const ll MX = 9;
-struct Node{
-    Node* childs[A];
-};
-
-void add(Node *root,string &s){
-    Node *node = root;
-    rep(i,0,MX){
-        assert(node!=nullptr);
-        int idx = s[i] - '0';
-        if(node->childs[idx]==nullptr) node->childs[idx] = new Node();
-        node = node->childs[idx];
-    }
-
-}
-void remove(Node *root,string &s){
-    Node *node = root;
-    vector<pair<Node *,int>> path;
-    rep(i,0,MX){
-        assert(node!=nullptr);
-        int idx = s[i] - '0';
-        path.push_back({node,idx});
-        node = node->childs[idx];
-    }
-        while (path.size())
-        {
-            auto p = path.back();
-            path.pop_back();
-            p.first->childs[p.second] = nullptr;
-            int f=0;
-            rep(i,0,A) {if(p.first->childs[i]) {f=1;break;}}
-            if(f) break; 
-       }
-}
-
-ll query(Node *node,int i,string &s){
-    if(node==nullptr) return false;
-    if(i==s.size()) return true;
-    bool f = 0;
-    int idx = s[i]-'0';
-    rep(j,0,A){
-        f |=query(node->childs[j],0,s);
-        if(f) return 1;
-    }
-    f |= query(node->childs[idx],i+1,s);
-    return f;
-}
-
 // driver code
 int main()
 {
@@ -131,29 +81,58 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        auto root = new Node();
-        vector<string> strs;
-        rep(i,0,n) {string s;cin >> s;strs.push_back(s);add(root,s);}
+        int n,m;
+        cin >> n >> m;
+        vector<string> mat(n);
         rep(i,0,n){
-            remove(root,strs[i]);
-            string ans = "";
-            rep(len,1,1+MX){
-                int f = -1;
-                rep(j,0,MX-len+1){
-                    int k = j+len-1;
-                    string rs = strs[i].substr(j,k-j+1);
-                    if(!query(root,0,rs)) {ans = rs;break;}
-                }
-                if(ans.size()) break;
-            }
-            // debug(query(root,0,strs[i]));
-            put(ans);
-            add(root,strs[i]);
+            cin >> mat[i];
         }
+        int pos = 1;
+        int total = 0;
+        rep(i,0,n){
+            int cnt = 0;
+            rep(j,0,m){
+                cnt += (mat[i][j]=='U' || mat[i][j]=='D');
+            }
+            if(cnt%2==1) {pos=0;break;}
+        }
+        if(pos){
+        rep(j,0,m){
+            int cnt = 0;
+            rep(i,0,n){
+                    cnt += (mat[i][j]=='L' || mat[i][j]=='R');
+                }
+                if(cnt%2==1) {pos=0;break;}
+            }   
+        }
+        if(!pos) put(-1)
+        else{
+            vi cw(m);
+            vi cb(m);
+            rep(i,0,n){
+                int rw = 0;
+                int rb = 0;
+                rep(j,0,m){
+                    if(mat[i][j]=='U') mat[i][j] = (rb > rw ? 'W' : 'B');
+                    if(mat[i][j]=='L') mat[i][j] = (cb[j] > cw[j] ? 'W' : 'B');
+                    if(mat[i][j]=='D') mat[i][j] = mat[i-1][j]=='W' ? 'B' : 'W';
+                    if(mat[i][j]=='R') mat[i][j] = mat[i][j-1]=='W' ? 'B' : 'W';        
+                    rw += mat[i][j]=='W';
+                    rb += mat[i][j]=='B';
+                    cw[j] += mat[i][j]=='W';
+                    cb[j] += mat[i][j]=='B';
+
+                }
+                pos = pos &(rb==rw);
+            }
+            rep(i,0,m) pos = pos &(cb[i]==cw[i]);
+            if(!pos) put(-1)
+            else rep(i,0,n) put(mat[i]);
+        }
+
+
     }
 
     return 0;

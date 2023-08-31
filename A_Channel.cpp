@@ -74,55 +74,6 @@ const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
 
-const int A = 10;
-const ll MX = 9;
-struct Node{
-    Node* childs[A];
-};
-
-void add(Node *root,string &s){
-    Node *node = root;
-    rep(i,0,MX){
-        assert(node!=nullptr);
-        int idx = s[i] - '0';
-        if(node->childs[idx]==nullptr) node->childs[idx] = new Node();
-        node = node->childs[idx];
-    }
-
-}
-void remove(Node *root,string &s){
-    Node *node = root;
-    vector<pair<Node *,int>> path;
-    rep(i,0,MX){
-        assert(node!=nullptr);
-        int idx = s[i] - '0';
-        path.push_back({node,idx});
-        node = node->childs[idx];
-    }
-        while (path.size())
-        {
-            auto p = path.back();
-            path.pop_back();
-            p.first->childs[p.second] = nullptr;
-            int f=0;
-            rep(i,0,A) {if(p.first->childs[i]) {f=1;break;}}
-            if(f) break; 
-       }
-}
-
-ll query(Node *node,int i,string &s){
-    if(node==nullptr) return false;
-    if(i==s.size()) return true;
-    bool f = 0;
-    int idx = s[i]-'0';
-    rep(j,0,A){
-        f |=query(node->childs[j],0,s);
-        if(f) return 1;
-    }
-    f |= query(node->childs[idx],i+1,s);
-    return f;
-}
-
 // driver code
 int main()
 {
@@ -131,29 +82,21 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        auto root = new Node();
-        vector<string> strs;
-        rep(i,0,n) {string s;cin >> s;strs.push_back(s);add(root,s);}
-        rep(i,0,n){
-            remove(root,strs[i]);
-            string ans = "";
-            rep(len,1,1+MX){
-                int f = -1;
-                rep(j,0,MX-len+1){
-                    int k = j+len-1;
-                    string rs = strs[i].substr(j,k-j+1);
-                    if(!query(root,0,rs)) {ans = rs;break;}
-                }
-                if(ans.size()) break;
-            }
-            // debug(query(root,0,strs[i]));
-            put(ans);
-            add(root,strs[i]);
+        int n,a,q;
+        cin >> n >> a >> q;
+        int res2= a;
+        int cur2 = a;
+        string s;
+        cin >> s;
+        rep(i,0,q){
+            cur2 += (s[i]=='+') ? 1 : -1;
+            res2 = max(res2,cur2);
         }
+        if(res2>=n ) put("YES")
+        else if(count(all(s),'+') >= n-a) put("MAYBE")
+        else put("NO") 
     }
 
     return 0;
