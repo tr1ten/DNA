@@ -73,37 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-vector<int> pifunc(string s) {
-    int n = (int)s.length();
-    vector<int> pi(n);
-    for (int i = 0; i < n; i++) {
-        int j = pi[i-1];
-        while (j > 0 && s[i] != s[j])
-            j = pi[j-1];
-        if (s[i] == s[j])
-            j++;
-        pi[i] = j;
-    }
-    return pi;
-}
-vector<int> zfunc(string &s) {
-    int n = s.size();
-    vector<int> z(n);
-    int l = 0, r = 0;
-    for(int i = 0; i < n; i++) {
-        if(i < r) {
-            z[i] = min(r - i, z[i - l]);
-        }
-        while(i + z[i] < n && s[z[i]] == s[i + z[i]]) {
-            z[i]++;
-        }
-        if(i + z[i] > r) {
-            l = i;
-            r = i + z[i];
-        }
-    }
-    return z;
-}
 
 // driver code
 int main()
@@ -117,21 +86,17 @@ int main()
     while(T--){
         string s;
         cin >> s;
-        string rs = s;
-        reverse(all(rs));
-        auto z = zfunc(s);
-        auto pp = pifunc(rs);
-        debug(z,pp);
-        map<int,int> cnt;
-        rep(i,1,s.size()-1){
-            if(pp[s.size()-i-1]<=z[i]) {
-                cnt[pp[s.size()-i-1]]++;
-            }
+        ll ans=0;
+        rep(i,0,s.size()){
+            int z=1;
+            while (i-z>=0 && i+z<s.size() && s[i+z]==s[i-z]) z++;
+            int z2 = 0;
+            while (i-z2>=0 && i+z2+1<s.size() && s[i-z2]==s[i+z2+1]) z2++;
+            // debug(i,z,z2);
+            ans += max(z,z2);
         }
-        put(cnt.size());
-        trav(x,cnt) put2(x.first,x.second+2);
-        put2(s.size(),1);
-    }
+        put(ans);
+    }   
 
     return 0;
 }
