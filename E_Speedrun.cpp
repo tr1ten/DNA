@@ -72,7 +72,34 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+vi topo(vii &adj,vi &p){
+    int n = adj.size();
+    vi in(n);
+    rep(i,0,n){
+        trav(v,adj[i]){
+            in[v]++;
+        }
+    }
+    vi res;
+    auto cmp = [&](int i,int j){
+        return p[i]>p[j];
+    };
+    priority_queue<int,vector<int>,decltype(cmp)> q(cmp);
+    rep(i,0,n){
+        if(in[i]==0) q.push(i); 
+    }
+    while (!q.empty())
+    {
+        int v = q.top();
+        q.pop();
+        res.push_back(v);
+        trav(u,adj[v]){
+            in[u]--;
+            if(in[u]==0) q.push(u);
+        }
+    }
+    return res;
+}
 // driver code
 int main()
 {
@@ -83,58 +110,38 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        vector<string> mat(n);
+        int n,m,k;
+        cin >> n >> m >> k;
+        vi hi(n);
+        tkv(hi,n);
+        vii adj(n);
+        rep(i,0,m){
+            int u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+        }
+        vi top = topo(adj,hi);
+        ll cur =0;
+        ll start = hi[top[0]];
+        ll days = 0;
         rep(i,0,n){
-            cin >> mat[i];
-        }
-        int pos = 1;
-        int total = 0;
-        rep(i,0,n){
-            int cnt = 0;
-            rep(j,0,m){
-                cnt += (mat[i][j]=='U' || mat[i][j]=='D');
+            if(cur<=hi[top[i]]){
+                cur = hi[top[i]];
             }
-            if(cnt%2==1) {pos=0;break;}
-        }
-        if(pos){
-        rep(j,0,m){
-            int cnt = 0;
-            rep(i,0,n){
-                    cnt += (mat[i][j]=='L' || mat[i][j]=='R');
-                }
-                if(cnt%2==1) {pos=0;break;}
-            }   
-        }
-        if(!pos) put(-1)
-        else{
-            vector<bool> row(n);
-            vector<bool> col(m);
-            rep(i,0,n){
-                rep(j,0,m){
-                    if(mat[i][j] == 'U' ){
-                        mat[i][j] = row[i]==0 ? 'W' : 'B';
-                        mat[i+1][j] = row[i]==0 ? 'B' : 'W';
-                        row[i] = row[i]^1;
-                        row[i+1] = row[i+1]^1;
-                    }   
-                }
+            else {
+                days++;
+                cur = hi[top[i]];
             }
-            rep(j,0,m){
-                rep(i,0,n){
-                    if(mat[i][j] == 'L' ){
-                        mat[i][j] = col[j]==0 ? 'W' : 'B';
-                        mat[i][j+1] = col[j]==0 ? 'B' : 'W';
-                        col[j] = col[j]^1;
-                        col[j+1] = col[j+1]^1;
-                    }   
-                }
-            }
-            if(!pos) put(-1)
-            else rep(i,0,n) put(mat[i]);
         }
-
+        if(m==0){
+            ll res = hi[top.back()] - hi[top[0]] ;
+            rep(i,1,n){
+                res = min(res,k+hi[top[i-1]]-hi[top[i]] ); 
+            }
+            put(res);
+        }
+        else put(days*k + (cur-start));
 
     }
 

@@ -72,33 +72,25 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-vi topo(vii &adj){
-    int n = adj.size();
-    vi in(n);
-    rep(i,0,n){
-        trav(v,adj[i]){
-            in[v]++;
+vector<int> zfunc(vi &s) {
+    int n = s.size();
+    vector<int> z(n);
+    int l = 0, r = 0;
+    for(int i = 1; i < n; i++) {
+        if(i < r) {
+            z[i] = min(r - i, z[i - l]);
+        }
+        while(i + z[i] < n && s[z[i]] == s[i + z[i]]) {
+            z[i]++;
+        }
+        if(i + z[i] > r) {
+            l = i;
+            r = i + z[i];
         }
     }
-    vi res;
-    queue<ll> q;
-    rep(i,0,n){
-        if(in[i]==0) q.push(i); 
-    }
-    while (!q.empty())
-    {
-        int v = q.front();
-        q.pop();
-        res.push_back(v);
-        trav(u,adj[v]){
-            in[u]--;
-            if(in[u]==0) q.push(u);
-        }
-    }
-    return res;
-    
+    return z;
 }
+
 // driver code
 int main()
 {
@@ -107,47 +99,25 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
-    while(T--){
-        int n,k;
-        cin >> n >> k;
-        vi C(n);
-        vii adj;
-        tkv(C,n);
-        vector<bool> un(n);
-        vi dp(n,INF);
-        rep(i,0,k){
-            int x;
-            cin >> x;
-            x--;
-            dp[x] = 0; 
+    // cin>>T;
+    while(T--){ 
+        int n,m;
+        cin >> n >> m;
+        vi a(n);
+        vi b(m);
+        tkv(a,n);
+        tkv(b,m);
+        if(m==1) {put(n);continue;}
+        vi s;
+        rep(i,1,m){s.push_back(b[i]-b[i-1]);}
+        s.push_back(INF);
+        rep(i,1,n){s.push_back(a[i]-a[i-1]);}
+        auto z = zfunc(s);
+        int res = 0;
+        rep(i,m,z.size()){
+            if(z[i]==m-1) res++;
         }
-        adj.resize(n);
-        vii bk(n);
-        rep(i,0,n){
-            int m;
-            cin >> m;
-            rep(j,0,m){
-                int x;
-                cin >> x;
-                x--;
-                adj[x].push_back(i);
-                bk[i].push_back(x);
-            }
-        }
-        vi top = topo(adj);
-        // debug(adj,top,C,dp);
-        trav(u,top){
-            dp[u] = min(dp[u],C[u]);
-            if(bk[u].size()==0) continue;
-            ll sm = 0;
-            trav(v,bk[u]){
-                sm += dp[v];
-            }
-            dp[u] = min(dp[u],sm);
-        }
-        pvc(dp);
-
+        put(res);
     }
 
     return 0;

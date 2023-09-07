@@ -73,6 +73,21 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+// very good questrion
+// based on time complexity analysis
+// like pre calculate borders where x is maximumm, now iterate over lower size portion
+int ans ;
+int n;
+const int N = 2*(1e5) + 5;
+int A[N];
+int ind[N];
+
+void update(int l,int r,int start,int end,int sum){
+    rep(i,l,r+1){
+        int tar = sum-A[i];
+        if(tar>=1 && tar<=n && ind[tar]>=start && ind[tar]<=end) ans++;
+    }
+}
 // driver code
 int main()
 {
@@ -81,61 +96,36 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        vector<string> mat(n);
-        rep(i,0,n){
-            cin >> mat[i];
+        cin>>n;
+        rep(i,1,1+n){
+            cin >> A[i];
+            ind[A[i]] = i;
         }
-        int pos = 1;
-        int total = 0;
-        rep(i,0,n){
-            int cnt = 0;
-            rep(j,0,m){
-                cnt += (mat[i][j]=='U' || mat[i][j]=='D');
-            }
-            if(cnt%2==1) {pos=0;break;}
+        stack<int> st;
+        vi lg(n+1,0);
+        vi rg(n+1,n+1);
+        rep(i,1,1+n){
+            while(st.size() && A[st.top()]<A[i]) st.pop();
+            if(st.size()) lg[i] = st.top();
+            st.push(i);
         }
-        if(pos){
-        rep(j,0,m){
-            int cnt = 0;
-            rep(i,0,n){
-                    cnt += (mat[i][j]=='L' || mat[i][j]=='R');
-                }
-                if(cnt%2==1) {pos=0;break;}
-            }   
+        st = stack<int>();
+        per(i,1,1+n){
+            while(st.size() && A[st.top()]<A[i]) st.pop();
+            if(st.size()) rg[i] = st.top();
+            st.push(i);
         }
-        if(!pos) put(-1)
-        else{
-            vector<bool> row(n);
-            vector<bool> col(m);
-            rep(i,0,n){
-                rep(j,0,m){
-                    if(mat[i][j] == 'U' ){
-                        mat[i][j] = row[i]==0 ? 'W' : 'B';
-                        mat[i+1][j] = row[i]==0 ? 'B' : 'W';
-                        row[i] = row[i]^1;
-                        row[i+1] = row[i+1]^1;
-                    }   
-                }
-            }
-            rep(j,0,m){
-                rep(i,0,n){
-                    if(mat[i][j] == 'L' ){
-                        mat[i][j] = col[j]==0 ? 'W' : 'B';
-                        mat[i][j+1] = col[j]==0 ? 'B' : 'W';
-                        col[j] = col[j]^1;
-                        col[j+1] = col[j+1]^1;
-                    }   
-                }
-            }
-            if(!pos) put(-1)
-            else rep(i,0,n) put(mat[i]);
+        rep(i,1,1+n){
+            int llen = i -lg[i] - 1;
+            int rlen = rg[i] - i -1;
+            if(llen==0 || rlen==0) continue;
+            if(llen<rlen)  update(i-llen,i-1,i+1,i+rlen,A[i]);
+            else update(i+1,i+rlen,i-llen,i-1,A[i]);
         }
-
-
+        put(ans);
+        
     }
 
     return 0;

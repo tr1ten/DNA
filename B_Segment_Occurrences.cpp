@@ -73,6 +73,21 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+
+vector<int> zfunc(string &s){
+    vector<int> z(s.size());
+    int l=0,r=0; // matched character range l...r
+    for(int i=0;i<s.size();i++){
+        if(i<=r) z[i] = min(r-i+1,z[i-l]);
+        while(i+z[i]<s.size() && s[i+z[i]]==s[z[i]]) z[i]++;
+        if(i+z[i]-1>r){
+            l = i;
+            r = i+z[i]-1;
+        }
+    }
+    return z;
+}
+
 // driver code
 int main()
 {
@@ -81,61 +96,27 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        vector<string> mat(n);
-        rep(i,0,n){
-            cin >> mat[i];
+        int n,m,q;
+        cin >> n >> m >> q;
+        string s,t;
+        cin >> s >> t;
+        string re = t+"#" +s;
+        auto z = zfunc(re);
+        vector<int> A;
+        rep(i,m+1,m+n+1){
+            if(z[i]==m) A.pb(i-(m+1));
         }
-        int pos = 1;
-        int total = 0;
-        rep(i,0,n){
-            int cnt = 0;
-            rep(j,0,m){
-                cnt += (mat[i][j]=='U' || mat[i][j]=='D');
-            }
-            if(cnt%2==1) {pos=0;break;}
+        // debug(z,A);
+        rep(i,0,q){
+            int l,r;
+            cin >> l >> r;
+            --l;--r;
+            r -= (m-1);
+            int ans =  (upper_bound(all(A),r)) - lower_bound(all(A),l) ;
+            put(max(0,ans));
         }
-        if(pos){
-        rep(j,0,m){
-            int cnt = 0;
-            rep(i,0,n){
-                    cnt += (mat[i][j]=='L' || mat[i][j]=='R');
-                }
-                if(cnt%2==1) {pos=0;break;}
-            }   
-        }
-        if(!pos) put(-1)
-        else{
-            vector<bool> row(n);
-            vector<bool> col(m);
-            rep(i,0,n){
-                rep(j,0,m){
-                    if(mat[i][j] == 'U' ){
-                        mat[i][j] = row[i]==0 ? 'W' : 'B';
-                        mat[i+1][j] = row[i]==0 ? 'B' : 'W';
-                        row[i] = row[i]^1;
-                        row[i+1] = row[i+1]^1;
-                    }   
-                }
-            }
-            rep(j,0,m){
-                rep(i,0,n){
-                    if(mat[i][j] == 'L' ){
-                        mat[i][j] = col[j]==0 ? 'W' : 'B';
-                        mat[i][j+1] = col[j]==0 ? 'B' : 'W';
-                        col[j] = col[j]^1;
-                        col[j+1] = col[j+1]^1;
-                    }   
-                }
-            }
-            if(!pos) put(-1)
-            else rep(i,0,n) put(mat[i]);
-        }
-
-
     }
 
     return 0;

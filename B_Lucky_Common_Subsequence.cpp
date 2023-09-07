@@ -73,6 +73,45 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+// dp[i][j][k] - max len of common seq of s[0...i]
+
+string s;
+string t;
+string p;
+const int N = 105;
+string mem[N][N][N];
+vector<int> pifunc(string s) {
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+        int j = pi[i-1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j-1];
+        if (s[i] == s[j])
+            j++;
+        pi[i] = j;
+    }
+    return pi;
+}
+vector<int> pp;
+string dp(int i,int j,int k){
+    if(k==p.size()) return "$";
+    if(i==s.size() || j==t.size()) return "";
+    if(mem[i][j][k]!="#") return mem[i][j][k]; 
+    string res;
+    if(s[i]==t[j]){
+        int to = (s[i]==p[k])?k+1:((k-1>=0 && p[pp[k-1]]==s[i]) ? pp[k-1]+1 : 0);
+        // debug(i,j,k,to);
+        string a = s[i] + dp(i+1,j+1,to);
+        if(a.back()!='$') res = a;  
+    }
+    string a = dp(i,j+1,k);
+    string b = dp(i+1,j,k);
+    if(a.back()!='$' && a.size()>b.size() && res.size()<a.size()) res =a;
+    else if(b.back()!='$' && b.size()>res.size()) res = b;
+    return mem[i][j][k]= res;
+}
+
 // driver code
 int main()
 {
@@ -81,61 +120,20 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    rep(i,0,N){
+        rep(j,0,N){
+            rep(k,0,N){
+                mem[i][j][k] = "#";
+            }
+        }
+    }
+    // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        vector<string> mat(n);
-        rep(i,0,n){
-            cin >> mat[i];
-        }
-        int pos = 1;
-        int total = 0;
-        rep(i,0,n){
-            int cnt = 0;
-            rep(j,0,m){
-                cnt += (mat[i][j]=='U' || mat[i][j]=='D');
-            }
-            if(cnt%2==1) {pos=0;break;}
-        }
-        if(pos){
-        rep(j,0,m){
-            int cnt = 0;
-            rep(i,0,n){
-                    cnt += (mat[i][j]=='L' || mat[i][j]=='R');
-                }
-                if(cnt%2==1) {pos=0;break;}
-            }   
-        }
-        if(!pos) put(-1)
-        else{
-            vector<bool> row(n);
-            vector<bool> col(m);
-            rep(i,0,n){
-                rep(j,0,m){
-                    if(mat[i][j] == 'U' ){
-                        mat[i][j] = row[i]==0 ? 'W' : 'B';
-                        mat[i+1][j] = row[i]==0 ? 'B' : 'W';
-                        row[i] = row[i]^1;
-                        row[i+1] = row[i+1]^1;
-                    }   
-                }
-            }
-            rep(j,0,m){
-                rep(i,0,n){
-                    if(mat[i][j] == 'L' ){
-                        mat[i][j] = col[j]==0 ? 'W' : 'B';
-                        mat[i][j+1] = col[j]==0 ? 'B' : 'W';
-                        col[j] = col[j]^1;
-                        col[j+1] = col[j+1]^1;
-                    }   
-                }
-            }
-            if(!pos) put(-1)
-            else rep(i,0,n) put(mat[i]);
-        }
-
-
+        cin >> s >> t >> p;
+        pp = pifunc(p);
+        string res =  dp(0,0,0);
+        if(res.size()==0) put(0)
+        else  cout << res << endl;
     }
 
     return 0;

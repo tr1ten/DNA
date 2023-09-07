@@ -73,6 +73,20 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+vector<int> pifunc(string s) {
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+        int j = pi[i-1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j-1];
+        if (s[i] == s[j])
+            j++;
+        pi[i] = j;
+    }
+    return pi;
+}
+
 // driver code
 int main()
 {
@@ -81,61 +95,28 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n,m;
-        cin >> n >> m;
-        vector<string> mat(n);
-        rep(i,0,n){
-            cin >> mat[i];
-        }
-        int pos = 1;
-        int total = 0;
-        rep(i,0,n){
-            int cnt = 0;
-            rep(j,0,m){
-                cnt += (mat[i][j]=='U' || mat[i][j]=='D');
+        string s;
+        string t;
+        cin >> s >> t;
+        auto pp = pifunc(t);
+        int c[2] = {0,0};
+        trav(x,s) c[x-'0']++;
+        int i = 0;
+        string res;
+        while (c[0] || c[1])
+        {
+            if(c[t[i]-'0']==0) break;
+            else {res += t[i];c[t[i]-'0']--;}
+            i++;
+            if(i==t.size()){
+                i = pp[t.size()-1];
             }
-            if(cnt%2==1) {pos=0;break;}
         }
-        if(pos){
-        rep(j,0,m){
-            int cnt = 0;
-            rep(i,0,n){
-                    cnt += (mat[i][j]=='L' || mat[i][j]=='R');
-                }
-                if(cnt%2==1) {pos=0;break;}
-            }   
-        }
-        if(!pos) put(-1)
-        else{
-            vector<bool> row(n);
-            vector<bool> col(m);
-            rep(i,0,n){
-                rep(j,0,m){
-                    if(mat[i][j] == 'U' ){
-                        mat[i][j] = row[i]==0 ? 'W' : 'B';
-                        mat[i+1][j] = row[i]==0 ? 'B' : 'W';
-                        row[i] = row[i]^1;
-                        row[i+1] = row[i+1]^1;
-                    }   
-                }
-            }
-            rep(j,0,m){
-                rep(i,0,n){
-                    if(mat[i][j] == 'L' ){
-                        mat[i][j] = col[j]==0 ? 'W' : 'B';
-                        mat[i][j+1] = col[j]==0 ? 'B' : 'W';
-                        col[j] = col[j]^1;
-                        col[j+1] = col[j+1]^1;
-                    }   
-                }
-            }
-            if(!pos) put(-1)
-            else rep(i,0,n) put(mat[i]);
-        }
-
-
+        while(c[0]){ res +='0';c[0]--;}
+        while(c[1]) {res +='1';c[1]--;}
+        put(res);
     }
 
     return 0;
