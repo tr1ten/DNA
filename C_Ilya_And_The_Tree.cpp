@@ -72,8 +72,40 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+vi divisors(int x){
+    vi cur;
+    for(int j=1;j*j<=x;j++)
+		{		
+			if(x%j==0)
+			{
+				cur.push_back(j);
+				if(j != x/j)
+					cur.push_back(x/j);
+			}
+		}
+    return cur;
+}
+vi ans;
+vi vals;
+vii adj;
+// nsqrta , either drop root or pick some divisor of root which cause less than 2 drops
+void dfs(int u,int p,mll &cnt,int g){
+    int ng = gcd(g,vals[u]);
+    if(p!=-1) ans[u] = ng;
+    trav(x,cnt){
+        cnt[x.first] += (vals[u]%x.first !=0);
+        if(cnt[x.first]<=1) ans[u] = max(ans[u],x.first);
+    }
+    trav(v,adj[u]){
+        if(v!=p) {
+            dfs(v,u,cnt, p==-1 ? 0 : ng);
+        }
+    }
+    trav(x,cnt){
+        cnt[x.first] -= (vals[u]%x.first !=0);
+    }
 
-
+}
 // driver code
 int main()
 {
@@ -84,19 +116,24 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        ll ans=0;
-        rep(i,0,s.size()){
-            int z=1;
-            while (i-z>=0 && i+z<s.size() && s[i+z]==s[i-z]) z++;
-            int z2 = 0;
-            while (i-z2>=0 && i+z2+1<s.size() && s[i-z2]==s[i+z2+1]) z2++;
-            // debug(i,z,z2);
-            ans += z+z2;
+        int n;
+        cin >> n;
+        ans.resize(n);
+        vals.resize(n);
+        tkv(vals,n);
+        adj.resize(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            adj[--u].push_back(--v);
+            adj[v].push_back(u);
         }
-        put(ans);
-    }   
+        auto divs = divisors(vals[0]);
+        mll cnt;
+        trav(x,divs) cnt[x]= 0;
+        dfs(0,-1,cnt,0);
+        pvc(ans);
+    }
 
     return 0;
 }

@@ -44,15 +44,15 @@ int main(int argc, char const *argv[])
     preprocess();
     
     // standard divisors
-    // for(int j=1;j*j<=a[i];j++)
-	// 	{		
-	// 		if(a[i]%j==0)
-	// 		{
-	// 			cur.push_back(j);
-	// 			if(j != a[i]/j)
-	// 				cur.push_back(a[i]/j);
-	// 		}
-	// 	}
+    for(int j=1;j*j<=a[i];j++)
+		{		
+			if(a[i]%j==0)
+			{
+				cur.push_back(j);
+				if(j != a[i]/j)
+					cur.push_back(a[i]/j);
+			}
+		}
     // while(1){
     //     int x;
     //     cin >> x;

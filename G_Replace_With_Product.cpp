@@ -4,6 +4,7 @@
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
+#include "G_Replace_With_Product.h"
 using namespace __gnu_pbds;
 template<class T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
@@ -13,6 +14,7 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
 typedef long long ll; 
+typedef long double dll;
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -73,7 +75,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -82,21 +83,47 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        ll ans=0;
-        rep(i,0,s.size()){
-            int z=1;
-            while (i-z>=0 && i+z<s.size() && s[i+z]==s[i-z]) z++;
-            int z2 = 0;
-            while (i-z2>=0 && i+z2+1<s.size() && s[i-z2]==s[i+z2+1]) z2++;
-            // debug(i,z,z2);
-            ans += z+z2;
+        int n;
+        cin >> n;
+        vi A(n);
+        tkv(A,n);
+        vi ps{0};
+        vector<dll> pp{0.0};
+        vi gr;
+        rep(i,0,n){
+            ps.push_back(ps.back()+A[i]);
+            pp.push_back(pp.back() + log10(A[i]*1.0));
+            if(A[i]>1) gr.push_back(i);
+        } 
+        int al = 1,ar=1;
+        ll res = 0;
+        debug(pp,ps,gr);
+        rep(i,0,n){
+            if(A[i]==1) continue;
+            dll pw =  pp[i]-pp[gr[0]] > 9 ? 1e9 : pow(10,pp[i]-pp[gr[0]]);
+            dll prev = ps[gr[0]] + pw + pp[i]-pp[gr[0]] + ps.back()-ps[gr[0]];
+            debug(i,prev);
+            rep(j,1,gr.size()){
+                if(gr[j]>i) break;
+                pw =  pp[i]-pp[gr[j]] > 9 ? 1e9 : pow(10,pp[i]-pp[gr[j]]);
+                dll nn = ps[gr[j]]+ pw + pp[i]-pp[gr[j]] + ps.back()-ps[gr[j]];
+                debug(nn,i,j);
+                if(nn<prev) {
+                    if(prev>res || (res==prev && (i-gr[j-1])<ar-al) ) {
+                        res = prev;
+                        al = 1+gr[j-1];
+                        ar = i+1;
+                    }
+                    break;
+                }
+                prev = nn;
+            }
         }
-        put(ans);
-    }   
+        put2(al,ar);
+        
+    }
 
     return 0;
 }

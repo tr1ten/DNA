@@ -72,8 +72,18 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+const int N = 1e7 + 5;
+int sieve[N+1];
+// find prime <sqrt(MAX)
+// O(LlogL)
+int isPrime(int x){
+    if(x<=2) return -1;
+    rep(i,2,sqrt(x) +1){
+        if((x%i)==0) return i;
+    }
+    return -1;
 
-
+}
 // driver code
 int main()
 {
@@ -82,21 +92,23 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    // preprocess();
+    cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        ll ans=0;
-        rep(i,0,s.size()){
-            int z=1;
-            while (i-z>=0 && i+z<s.size() && s[i+z]==s[i-z]) z++;
-            int z2 = 0;
-            while (i-z2>=0 && i+z2+1<s.size() && s[i-z2]==s[i+z2+1]) z2++;
-            // debug(i,z,z2);
-            ans += z+z2;
+        int l,r;
+        cin >> l >> r;
+        int f = 0;
+        rep(k,l,r+1){
+            int fa = isPrime(k);
+            if(fa==-1) continue;
+            else{
+                put2(fa,k-fa);
+                f=1;
+                break;
+            }
         }
-        put(ans);
-    }   
+        if(f==0) put(-1);
+    }
 
     return 0;
 }

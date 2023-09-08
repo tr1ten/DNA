@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -82,21 +81,43 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
+        int n;
+        cin >> n;
+        vi apref{0};
+        vi bpref{0};
+        vi A(n);
+        tkv(A,n);
         string s;
         cin >> s;
-        ll ans=0;
-        rep(i,0,s.size()){
-            int z=1;
-            while (i-z>=0 && i+z<s.size() && s[i+z]==s[i-z]) z++;
-            int z2 = 0;
-            while (i-z2>=0 && i+z2+1<s.size() && s[i-z2]==s[i+z2+1]) z2++;
-            // debug(i,z,z2);
-            ans += z+z2;
+        rep(i,0,n){
+            apref.push_back(apref.back()^(s[i]=='1' ? 0 : A[i]));
+            bpref.push_back(bpref.back()^(s[i]=='0' ? 0 : A[i]));
         }
-        put(ans);
-    }   
+        ll a = apref.back();
+        ll b = bpref.back();
+        int q;
+        cin >> q;
+        rep(i,0,q){
+            int x;
+            cin >> x;
+            if(x==1){
+                int l,r;
+                cin >> l >> r;
+                --l;--r;
+                a = a^(apref[r+1]^apref[l])^(bpref[r+1]^bpref[l]);
+                b = b^(apref[r+1]^apref[l])^(bpref[r+1]^bpref[l]);
+            }
+            else{
+                int t;
+                cin >> t;
+                if(t==0) cout << (a) << " ";
+                else cout << b << " ";
+            }
+        }
+        cout << endl;
+    }
 
     return 0;
 }

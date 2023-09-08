@@ -73,7 +73,32 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
+vi topo(vii &adj){
+    int n = adj.size();
+    vi in(n);
+    rep(i,0,n){
+        trav(v,adj[i]){
+            in[v]++;
+        }
+    }
+    vi res;
+    queue<ll> q;
+    rep(i,0,n){
+        if(in[i]==0) q.push(i); 
+    }
+    while (!q.empty())
+    {
+        int v = q.front();
+        q.pop();
+        res.push_back(v+1);
+        trav(u,adj[v]){
+            in[u]--;
+            if(in[u]==0) q.push(u);
+        }
+    }
+    return res;
+    
+}
 // driver code
 int main()
 {
@@ -82,21 +107,52 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        ll ans=0;
-        rep(i,0,s.size()){
-            int z=1;
-            while (i-z>=0 && i+z<s.size() && s[i+z]==s[i-z]) z++;
-            int z2 = 0;
-            while (i-z2>=0 && i+z2+1<s.size() && s[i-z2]==s[i+z2+1]) z2++;
-            // debug(i,z,z2);
-            ans += z+z2;
+        int n;
+        cin >> n;
+        vi vals(n);
+        vii adj(n);
+        vi nxt(n);
+        rep(i,0,n) {
+            int x;
+            cin >> x;
+            nxt[i] = x-1;
         }
-        put(ans);
-    }   
+        tkv(vals,n);
+        vi cycle(n,-1);
+        rep(i,0,n){
+            if(cycle[i]!=-1) continue;
+            vi path{i};
+            cycle[i] = -2; // change status
+            while(cycle[nxt[path.back()]] == -1) {
+                cycle[nxt[path.back()]] = -2;
+                path.push_back(nxt[path.back()]);
+            }
+            int u = path.back();
+            if(cycle[nxt[u]]!=-2){ // if part of chain, find closes cycle root
+                trav(v,path) adj[v].push_back(nxt[v]);
+                continue;
+            }
+            bool cyc = 0; // if cycle
+            vi inc;
+            int minv = nxt[u];
+            trav(v,path){
+                cyc |= nxt[u]==v;
+                if(cyc) {inc.push_back(v);
+                    if(vals[minv] > vals[v]) minv =v;
+                } // cycle is present
+                else adj[v].push_back(nxt[v]);
+            }
+            trav(v,inc){
+                if(v!=minv) adj[v].push_back(nxt[v]);
+            }
+        }
+        // debug(adj);
+        vi top = topo(adj);
+        assert(top.size()==n);
+        pvc(top);
+    }
 
     return 0;
 }

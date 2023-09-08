@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -82,21 +81,25 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        ll ans=0;
-        rep(i,0,s.size()){
-            int z=1;
-            while (i-z>=0 && i+z<s.size() && s[i+z]==s[i-z]) z++;
-            int z2 = 0;
-            while (i-z2>=0 && i+z2+1<s.size() && s[i-z2]==s[i+z2+1]) z2++;
-            // debug(i,z,z2);
-            ans += z+z2;
+        int n;
+        cin >> n;
+        map<int,int> a;
+        rep(i,0,n){
+            int d,s;
+            cin >> d >> s;
+            if(a.find(d)==a.end()) a[d] = s;
+            else a[d] = min(a[d],s);
+        }
+        int ans = 1000;
+        trav(x,a){
+            if(ans<x.first) break;
+            ans = min(ans,x.first + (x.second-1)/2);
         }
         put(ans);
-    }   
+
+    }
 
     return 0;
 }
