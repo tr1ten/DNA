@@ -73,7 +73,11 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
+bool isa(vi &a,int i){
+    if(i==0 || i==a.size()-1) return 0;
+    if(a[i-1] < a[i] && a[i] > a[i+1]) return 1;
+    return a[i-1] > a[i] && a[i] < a[i+1];
+}
 // driver code
 int main()
 {
@@ -82,33 +86,26 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
         int n;
         cin >> n;
-        vi A(n);
-        ll sum = 0;
-        bool af = 1;
-        rep(i,0,n){
-            cin >> A[i];
-            if(A[i]!=0) af = 0;
-            sum +=A[i];
+        vi a(n);
+        tkv(a,n);
+        int sm = 0;
+        rep(i,0,n){sm +=isa(a,i);}
+        int mn = 0;
+        rep(i,1,n-1){
+            int ol = isa(a,i) + isa(a,i-1) + isa(a,i+1);
+            int temp = a[i];
+            a[i] = a[i-1];
+            int nn = isa(a,i) + isa(a,i-1) + isa(a,i+1);
+            mn = min(mn,nn-ol);
+            a[i] = a[i+1];
+            nn = isa(a,i) + isa(a,i-1) + isa(a,i+1);
+            mn = min(mn,nn-ol);
         }
-        if(sum%3!=0 || n<3) {put(0);continue;}
-        ll tar = sum/3;
-        vi cnt = {1,0,0,0};
-        ll sm = 0;
-        rep(i,0,n-1){
-            sm +=A[i];
-            if(sm==2*tar){
-                cnt[2] +=cnt[1];
-                
-            }
-            if(sm==tar){
-                cnt[1] +=cnt[0];
-            }
-        }
-        put(cnt[2]);
+        put(max(0,sm + mn - 1));
     }
 
     return 0;

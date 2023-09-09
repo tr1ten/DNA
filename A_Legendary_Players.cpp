@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -84,31 +83,22 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi A(n);
-        ll sum = 0;
-        bool af = 1;
-        rep(i,0,n){
-            cin >> A[i];
-            if(A[i]!=0) af = 0;
-            sum +=A[i];
-        }
-        if(sum%3!=0 || n<3) {put(0);continue;}
-        ll tar = sum/3;
-        vi cnt = {1,0,0,0};
-        ll sm = 0;
-        rep(i,0,n-1){
-            sm +=A[i];
-            if(sm==2*tar){
-                cnt[2] +=cnt[1];
-                
-            }
-            if(sm==tar){
-                cnt[1] +=cnt[0];
-            }
-        }
-        put(cnt[2]);
+        string s;
+        unordered_map<string,int> ratings;
+        ratings["t"] = 3858;
+        ratings["k"] = 3679;
+        ratings["B"] = 3658;
+        ratings["U"] = 3648;
+        ratings["a"] = 3638;
+        ratings["S"] = 3630;
+        ratings["e"] = 3613;
+        ratings["m"] = 3555;
+        ratings["n"] = 3516;
+        ratings["s"] = 3481;
+        cin >> s;
+        put(ratings[s.substr(0,1)]);
+
+         
     }
 
     return 0;

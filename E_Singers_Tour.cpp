@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -82,33 +81,29 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        int n;
+        ll n;
         cin >> n;
-        vi A(n);
-        ll sum = 0;
-        bool af = 1;
+        vi b(n);
+        tkv(b,n);
+        if(n==1) {put("YES");pvc(b);continue;}
+        ll sm = accumulate(all(b),0LL);
+        if(sm%(n*(n+1)/2) !=0) {put("NO") continue;}
+        ll S = sm/(n*(n+1)/2);
+        int f =1;
+        vi a(n);
         rep(i,0,n){
-            cin >> A[i];
-            if(A[i]!=0) af = 0;
-            sum +=A[i];
+            ll d = b[(i+1)%n] - b[i] -S;
+            // debug(d);
+            if(d>=0 || (abs(d)%n)!=0) {f=0;break;}
+            a[(i+1)%n] = abs(d)/(n);
         }
-        if(sum%3!=0 || n<3) {put(0);continue;}
-        ll tar = sum/3;
-        vi cnt = {1,0,0,0};
-        ll sm = 0;
-        rep(i,0,n-1){
-            sm +=A[i];
-            if(sm==2*tar){
-                cnt[2] +=cnt[1];
-                
-            }
-            if(sm==tar){
-                cnt[1] +=cnt[0];
-            }
+        if(f==0) put("NO")
+        else {
+            put("YES")
+            pvc(a);
         }
-        put(cnt[2]);
     }
 
     return 0;

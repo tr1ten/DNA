@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -86,29 +85,24 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        vi A(n);
-        ll sum = 0;
-        bool af = 1;
-        rep(i,0,n){
-            cin >> A[i];
-            if(A[i]!=0) af = 0;
-            sum +=A[i];
+        vi divs;
+        rep(i,1,10){
+            if(n%i==0) divs.push_back(i);
         }
-        if(sum%3!=0 || n<3) {put(0);continue;}
-        ll tar = sum/3;
-        vi cnt = {1,0,0,0};
-        ll sm = 0;
-        rep(i,0,n-1){
-            sm +=A[i];
-            if(sm==2*tar){
-                cnt[2] +=cnt[1];
-                
+        string s;
+        rep(i,0,n+1){
+            int j=-1;
+            trav(x,divs){
+                if(i%(n/x)==0){
+                    j=x;
+                    break;
+                }
             }
-            if(sm==tar){
-                cnt[1] +=cnt[0];
-            }
+            if(j==-1) s.push_back('-');
+            else s += to_string(j);
         }
-        put(cnt[2]);
+        put(s)
+
     }
 
     return 0;

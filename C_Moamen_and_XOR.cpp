@@ -20,8 +20,8 @@ typedef vector<pi> vpi;
 typedef unordered_map<ll,ll> mll;
 #define pb push_back
 #define mp make_pair
-#define rep(i,a,b) for (int i = (a); i < (b); i++)
-#define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
+#define rep(i,a,b) for (ll i = (a); i < (b); i++)
+#define per(i,a,b) for (ll i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
 #define sz(x) (int)(x).size()
 #define mk_vec(name,sz,value) vi name(sz,value)
@@ -38,12 +38,11 @@ typedef unordered_map<ll,ll> mll;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
-#define mod(x) (x + MOD)%MOD
+#define mod(x) ((x + MOD)%MOD)
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
-void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -60,7 +59,7 @@ void __print(bool x) {cerr << (x ? "true" : "false");}
 template<typename T, typename V>
 void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
 template<typename T>
-void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
+void __print(const T &x) {ll f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
 void _print() {cerr << "]\n";}
 template <typename T, typename... V>
 void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
@@ -72,44 +71,74 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+const ll K = 2*(1e5) + 5;
+
+ll mpow(ll a, ll b, ll m)
+{
+    if (b == 0)
+        return 1;
+    ll x = mpow(a, b / 2, m);
+    x = (x * x) % m;
+    if (b % 2)
+    {
+        x = (x * a) % m;
+    }
+    return x;
+}
+
 
 
 // driver code
-int main()
+int32_t main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
-    int T=1;
-    // cin>>T;
-    while(T--){
-        int n;
-        cin >> n;
-        vi A(n);
-        ll sum = 0;
-        bool af = 1;
-        rep(i,0,n){
-            cin >> A[i];
-            if(A[i]!=0) af = 0;
-            sum +=A[i];
-        }
-        if(sum%3!=0 || n<3) {put(0);continue;}
-        ll tar = sum/3;
-        vi cnt = {1,0,0,0};
-        ll sm = 0;
-        rep(i,0,n-1){
-            sm +=A[i];
-            if(sm==2*tar){
-                cnt[2] +=cnt[1];
-                
-            }
-            if(sm==tar){
-                cnt[1] +=cnt[0];
-            }
-        }
-        put(cnt[2]);
-    }
 
-    return 0;
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    //    for(ll i = 2 ; i < sz ; i++){
+    //        if(primesVisited[i]) continue;
+    //        primes.pb(i);
+    //        for(ll j = i*i ; j < sz ; j+=i) primesVisited[j] = true;
+    //    }
+
+     ll mod =1000000007;
+     ll tc;
+     cin >> tc;
+     while(tc--){
+        ll n,k;
+        cin >> n >> k;
+        if(k == 0) cout << 1 << endl;
+        if(k == 0) continue;
+
+        vector<int> dp(k+1,0);
+
+        for(ll bit =0 ; bit < k ; bit++){
+            if(bit == 0){
+                ll waysToWin = 0;
+                if(n%2 == 0){
+                    waysToWin = (mpow(2,n-1,mod))%mod;
+                }else{
+                    waysToWin = (1 + mpow(2,n-1,mod))%mod;
+                }
+                dp[bit] = waysToWin;
+                continue;
+            }
+
+            ll waysToWin = 0;
+
+            if(n%2 == 0){
+                waysToWin += mpow(2,((bit*n)),mod);
+                ll temp = (((mpow(2,n-1,mod)-1+mod)%mod)*dp[bit-1])%mod;
+                waysToWin = (waysToWin + temp)%mod;
+            }else{
+                waysToWin += dp[bit-1];
+                ll temp = (mpow(2,n-1,mod)*dp[bit-1])%mod;
+                waysToWin = (waysToWin + temp)%mod;
+            }
+
+            dp[bit] = waysToWin;
+        }
+        cout << dp[k-1] << endl;
+     }
+
 }

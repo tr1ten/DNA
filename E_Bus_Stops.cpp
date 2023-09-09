@@ -73,7 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-
 // driver code
 int main()
 {
@@ -84,31 +83,33 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi A(n);
-        ll sum = 0;
-        bool af = 1;
-        rep(i,0,n){
-            cin >> A[i];
-            if(A[i]!=0) af = 0;
-            sum +=A[i];
-        }
-        if(sum%3!=0 || n<3) {put(0);continue;}
-        ll tar = sum/3;
-        vi cnt = {1,0,0,0};
-        ll sm = 0;
+        int n,X,Y;
+        cin >> n >> X >> Y;
+        vpi ed;
+        ll lc = 1;
         rep(i,0,n-1){
-            sm +=A[i];
-            if(sm==2*tar){
-                cnt[2] +=cnt[1];
-                
-            }
-            if(sm==tar){
-                cnt[1] +=cnt[0];
-            }
+            int p,t;
+            cin >> p >> t;
+            lc = lcm(lc,p);
+            ed.push_back({p,t});
         }
-        put(cnt[2]);
+        vi costs(lc,0);
+        rep(k,0,lc ){
+            ll t = X+k;
+            rep(i,0,n-1){
+                t += ed[i].second + (ed[i].first - t%(ed[i].first)) %ed[i].first ;
+                // debug(t);
+            }
+            costs[k] = t+Y;
+        }
+        int q;
+        cin >> q;
+        rep(i,0,q){
+            int m;
+            cin >> m;
+            put(costs[m%lc] + (m-(m%lc)) ); 
+        }
+
     }
 
     return 0;
