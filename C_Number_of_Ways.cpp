@@ -13,7 +13,6 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
 typedef long long ll; 
-typedef long double dll;
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -74,6 +73,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
+
 // driver code
 int main()
 {
@@ -82,49 +82,27 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        vi a(n);
-        tkv(a,n);
-        int l=0,r=n-1;
-        while(l<n && a[l]==1) l++;
-        while(r>l && a[r]==1) r--;
-        if(l==r) {put2(l+1,l+1) continue;}
-        int f = 0;
-        ll x=1;
-        rep(i,l,r+1){
-            x = x*a[i];
-            if(x>2*n) {f=1;break;}
+        vi A(n);
+        ll sum = 0;
+        bool af = 1;
+        rep(i,0,n){
+            cin >> A[i];
+            if(A[i]>0) af = 0;
+            sum +=A[i];
         }
-        if(f){
-            put2(l+1,r+1);
-        }
-        else{
-            vi inds;
-            vi ps{0};
-            vi pp{1};
-            rep(i,0,n){
-                if(a[i]>1) inds.push_back(i);
-                ps.push_back(ps.back() + a[i]);
-                pp.push_back(pp.back() * a[i]);
+        if(sum%3!=0 || n<3) {put(0);continue;}
+        ll tar = sum/3;
+        if(af){
+            ll res=0;
+            rep(iz,1,n-1){
+                res += n-iz-1;
             }
-            ll res = 0;
-            ll s=0,e=0;
-            trav(i,inds){
-                trav(j,inds){
-                    if(j<i) continue;
-                    ll val = ps[i] + ps.back()-ps[j+1] + pp[j+1]/pp[i];
-                    if(val>res){
-                        s = i;
-                        e = j;
-                        res = val;
-                    }
-                }
-            }
-            put2(s+1,e+1);
-
+            put(res);
+            continue;
         }
     }
 

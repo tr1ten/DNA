@@ -13,7 +13,8 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
 typedef long long ll; 
-typedef long double dll;
+typedef short u16;
+typedef long long u64;
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -36,7 +37,7 @@ typedef unordered_map<ll,ll> mll;
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
-#define put(x) cout<<(x)<<endl;
+#define put(x) printf("%s\n",x);
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
 #define mod(x) (x + MOD)%MOD
@@ -73,59 +74,83 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+int factors(int x){
+    int res  = 0;
+    if(x==1) return res;
+    for(int i=2;i<sqrt(x)+1;i++){
+        while (x%i==0)
+        {
+            res++;
+            x /=i;
+        }
+        
+    }
+    if(x>1) res++;
+    return res;
+}
+
+const int N = (1 << 16);
+
+struct Precalc {
+    u16 primes[6542]; // # of primes under N=2^16
+
+    constexpr Precalc() : primes{} {
+        bool marked[N] = {};
+        int n_primes = 0;
+
+        for (int i = 2; i < N; i++) {
+            if (!marked[i]) {
+                primes[n_primes++] = i;
+                for (int j = 2 * i; j < N; j += i)
+                    marked[j] = true;
+            }
+        }
+    }
+};
+
+constexpr Precalc P{};
+
+u64 find_factor(u64 n) {
+    for (u16 p : P.primes)
+        if (n % p == 0)
+            return p;
+    return 1;
+}
+
+
+
+int factorize(int n) {
+    if(n==1) return 0;
+    int res = 0;
+    int d;
+    do {
+        d = find_factor(n);
+        res++;
+        n /= d;
+    } while (d != 1 && n>1);
+    return res;
+}
 
 // driver code
 int main()
 {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+    // ios_base::sync_with_stdio(false);
+    // cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi a(n);
-        tkv(a,n);
-        int l=0,r=n-1;
-        while(l<n && a[l]==1) l++;
-        while(r>l && a[r]==1) r--;
-        if(l==r) {put2(l+1,l+1) continue;}
-        int f = 0;
-        ll x=1;
-        rep(i,l,r+1){
-            x = x*a[i];
-            if(x>2*n) {f=1;break;}
-        }
-        if(f){
-            put2(l+1,r+1);
-        }
-        else{
-            vi inds;
-            vi ps{0};
-            vi pp{1};
-            rep(i,0,n){
-                if(a[i]>1) inds.push_back(i);
-                ps.push_back(ps.back() + a[i]);
-                pp.push_back(pp.back() * a[i]);
-            }
-            ll res = 0;
-            ll s=0,e=0;
-            trav(i,inds){
-                trav(j,inds){
-                    if(j<i) continue;
-                    ll val = ps[i] + ps.back()-ps[j+1] + pp[j+1]/pp[i];
-                    if(val>res){
-                        s = i;
-                        e = j;
-                        res = val;
-                    }
-                }
-            }
-            put2(s+1,e+1);
-
-        }
+        int a,b,k;
+        scanf("%d%d%d",&a,&b,&k);
+        int gc = gcd(a,b);
+        int mv = (a!=gc) + (b!=gc);
+        if(k<mv) {put("NO") continue;}
+        auto mxv = factorize(gc);
+        auto az = factorize(a/gc);
+        auto bz = factorize(b/gc);
+        if(k>2*mxv+az+bz || (mv!=1 && k==1)) {put("NO");continue;}
+        else put("YES");
     }
 
     return 0;
