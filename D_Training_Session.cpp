@@ -73,11 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-bool isa(vi &a,int i){
-    if(i==0 || i==a.size()-1) return 0;
-    if(a[i-1] < a[i] && a[i] > a[i+1]) return 1;
-    return a[i-1] > a[i] && a[i] < a[i+1];
-}
 // driver code
 int main()
 {
@@ -88,26 +83,23 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
+        ll n;
         cin >> n;
-        vi a(n);
-        tkv(a,n);
-        int sm = 0;
-        rep(i,0,n){sm +=isa(a,i);}
-        int mn = 0;
-        rep(i,1,n-1){
-            int ol = isa(a,i) + isa(a,i-1) + isa(a,i+1);
-            int temp = a[i];
-            a[i] = a[i-1];
-            int nn = isa(a,i) + isa(a,i-1) + isa(a,i+1);
-            mn = min(mn,nn-ol);
-            a[i] = a[i+1];
-            nn = isa(a,i) + isa(a,i-1) + isa(a,i+1);
-            mn = min(mn,nn-ol);
-            a[i] = temp;
-            // debug(i,ol,nn,mn);
+        unordered_map<ll,ll> ct;
+        unordered_map<ll,ll> cd;
+        vpi a;
+        rep(i,0,n){
+            int x,y;
+            cin >> x >> y;
+            ct[x] ++;
+            cd[y]++;
+            a.push_back({x,y});
         }
-        put(sm+mn);
+        ll res = 0;
+        trav(x,a){
+            res += (ct[x.first]-1) * (cd[x.second]-1);
+        }
+        put((n*(n-1)*(n-2))/6 - res );
     }
 
     return 0;
