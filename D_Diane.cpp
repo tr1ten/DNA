@@ -72,18 +72,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-void rec(int n,vpi &ans){
-    if(n<=2) return ;
-    int y = sqrt(n);
-    while(y<ceil(n*1.0/y)) y++;
-    per(z,y+1,n){
-        ans.push_back({z,n});
-    }
-    ans.push_back({n,y});
-    ans.push_back({n,y});
 
-    rec(y,ans);
-}
 // driver code
 int main()
 {
@@ -96,17 +85,22 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        if(n==3){
-            put(2);
-            put2(3,2);
-            put2(3,2);
+        string res;
+        if(n<=26){
+            for(int i=0;i<n;i++){
+                res.push_back(i+'a');
+            }
         }
         else{
-            vpi ans;
-            rec(n,ans);
-            put(ans.size());
-            trav(x,ans) put2(x.first,x.second);
+            int mid = n/2;
+            rep(i,0,mid) res+='a';
+            res+='b';
+            rep(i,0,mid-1) res+='a';
+            if(n%2==1) res+='c';
         }
+        put(res);
+        
+
     }
 
     return 0;

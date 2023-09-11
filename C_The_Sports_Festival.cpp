@@ -72,18 +72,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-void rec(int n,vpi &ans){
-    if(n<=2) return ;
-    int y = sqrt(n);
-    while(y<ceil(n*1.0/y)) y++;
-    per(z,y+1,n){
-        ans.push_back({z,n});
-    }
-    ans.push_back({n,y});
-    ans.push_back({n,y});
-
-    rec(y,ans);
-}
+const int N = 2005;
+ll dp[N][N]; // minimum disperency from i to j
 // driver code
 int main()
 {
@@ -92,21 +82,20 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        if(n==3){
-            put(2);
-            put2(3,2);
-            put2(3,2);
+        vi a(n);
+        tkv(a,n);
+        srv(a);
+        rep(k,2,1+n){
+            rep(i,0,n-k+1){
+                int j = i+k-1;
+                dp[i][j] = a[j]-a[i] + min(dp[i+1][j],dp[i][j-1]); 
+            }
         }
-        else{
-            vpi ans;
-            rec(n,ans);
-            put(ans.size());
-            trav(x,ans) put2(x.first,x.second);
-        }
+        put(dp[0][n-1]);
     }
 
     return 0;

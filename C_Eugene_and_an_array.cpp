@@ -72,18 +72,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-void rec(int n,vpi &ans){
-    if(n<=2) return ;
-    int y = sqrt(n);
-    while(y<ceil(n*1.0/y)) y++;
-    per(z,y+1,n){
-        ans.push_back({z,n});
-    }
-    ans.push_back({n,y});
-    ans.push_back({n,y});
 
-    rec(y,ans);
-}
 // driver code
 int main()
 {
@@ -92,21 +81,27 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
-        int n;
+        ll n;
         cin >> n;
-        if(n==3){
-            put(2);
-            put2(3,2);
-            put2(3,2);
+        ll sm = 0;
+        ll bad = 0;
+        unordered_map<ll,int> ind;
+        ind[0] = -1;
+        int last = -2;
+        rep(i,0,n){
+            int x;
+            cin >> x;
+            sm +=x;
+            if(ind.find(sm)!=ind.end() && ind[sm]>last){
+                bad += (ind[sm]-last)*(n-i);
+                // debug(bad,last,ind[sm]);
+                last = ind[sm];
+            }
+            ind[sm] = i;
         }
-        else{
-            vpi ans;
-            rec(n,ans);
-            put(ans.size());
-            trav(x,ans) put2(x.first,x.second);
-        }
+        put((n*(n+1)/2) - bad);
     }
 
     return 0;

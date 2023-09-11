@@ -72,17 +72,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-void rec(int n,vpi &ans){
-    if(n<=2) return ;
-    int y = sqrt(n);
-    while(y<ceil(n*1.0/y)) y++;
-    per(z,y+1,n){
-        ans.push_back({z,n});
-    }
-    ans.push_back({n,y});
-    ans.push_back({n,y});
-
-    rec(y,ans);
+ll man(pi &a,pi &b){
+    return abs(a.first-b.first) + abs(b.second-a.second);
 }
 // driver code
 int main()
@@ -94,19 +85,22 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        if(n==3){
-            put(2);
-            put2(3,2);
-            put2(3,2);
+        int n,k,s,e;
+        cin >> n >> k >> s >>e;
+        s--;e--;
+        vpi points(n);
+        rep(i,0,n){
+            cin >> points[i].first >> points[i].second;
         }
-        else{
-            vpi ans;
-            rec(n,ans);
-            put(ans.size());
-            trav(x,ans) put2(x.first,x.second);
+        ll res = man(points[s],points[e]);
+        ll m1=INF,m2=INF;
+        rep(i,0,k){ 
+            m1 = min(m1,man(points[i],points[s]));
+            m2 = min(m2,man(points[i],points[e]));
         }
+        res = min(res,m1+m2);
+        // debug(m1,m2);
+        put(res);
     }
 
     return 0;

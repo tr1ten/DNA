@@ -72,18 +72,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-void rec(int n,vpi &ans){
-    if(n<=2) return ;
-    int y = sqrt(n);
-    while(y<ceil(n*1.0/y)) y++;
-    per(z,y+1,n){
-        ans.push_back({z,n});
-    }
-    ans.push_back({n,y});
-    ans.push_back({n,y});
-
-    rec(y,ans);
-}
+const int N = 105;
+int dp[N+2][N+2];
 // driver code
 int main()
 {
@@ -92,21 +82,27 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        if(n==3){
-            put(2);
-            put2(3,2);
-            put2(3,2);
+        rep(i,0,n){
+            int x1,x2,y1,y2;
+            cin >> x1 >> x2 >> y1 >> y2;
+            dp[y1][x1] +=1;
+            dp[y1][x2] -=1;
+            dp[y2][x1] -=1;
+            dp[y2][x2] +=1;
         }
-        else{
-            vpi ans;
-            rec(n,ans);
-            put(ans.size());
-            trav(x,ans) put2(x.first,x.second);
+        int res =0;
+        rep(i,0,N){ 
+            rep(j,0,N){
+                dp[i][j] += (i-1<0 ? 0 : dp[i-1][j]) + (j-1<0 ? 0 : dp[i][j-1]) - ((i-1<0 || j-1<0) ? 0:   dp[i-1][j-1]);
+                if(dp[i][j] > 0) res++;
+            }
         }
+        put(res);
+        
     }
 
     return 0;

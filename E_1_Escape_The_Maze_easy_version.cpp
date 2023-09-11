@@ -72,17 +72,18 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-void rec(int n,vpi &ans){
-    if(n<=2) return ;
-    int y = sqrt(n);
-    while(y<ceil(n*1.0/y)) y++;
-    per(z,y+1,n){
-        ans.push_back({z,n});
-    }
-    ans.push_back({n,y});
-    ans.push_back({n,y});
 
-    rec(y,ans);
+bool check(int u,int p,int t,vi &dist,vii &adj){
+    bool res = false;
+    int isleaf = 1;
+    trav(v,adj[u]){
+        if(v!=p){
+            isleaf = 0;
+            if(dist[v]<=t+1) continue;
+            res |= check(v,u,t+1,dist,adj);
+        }
+    }
+    return isleaf || res;
 }
 // driver code
 int main()
@@ -94,19 +95,39 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        if(n==3){
-            put(2);
-            put2(3,2);
-            put2(3,2);
+        int n,k;
+        cin >> n >> k;
+        vi dist(n,-1);
+        deque<int> dq;
+        rep(i,0,k){
+            int x;
+            cin >> x;
+            x--;
+            dist[x] = 0;
+            dq.push_back(x);
         }
-        else{
-            vpi ans;
-            rec(n,ans);
-            put(ans.size());
-            trav(x,ans) put2(x.first,x.second);
+        vii adj(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
+        while(dq.size()){
+            int u = dq.front();
+            dq.pop_front();
+            trav(v,adj[u]){
+                if(dist[v]==-1) {
+                    dist[v] = dist[u] + 1;
+                    dq.push_back(v);
+                }
+            }
+        }
+        // debug(dist);
+        bool ans = check(0,-1,0,dist,adj);
+        if(ans) put("YES")
+        else put("NO")
     }
 
     return 0;
