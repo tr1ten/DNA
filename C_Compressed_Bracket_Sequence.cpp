@@ -72,21 +72,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-int f= 1;
-ll dfs(int u,int p,vii &adj,vi &t,vi &h){
-    ll ttl =t[u];
-    ll childGood = 0;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        ll a =dfs(v,u,adj,t,h);
-        childGood += (h[v]+a)/2;
-        ttl +=a;
-    }
-    ll good = (h[u]+ttl)/2;
-    if((h[u]+ttl)%2!=0 || good<childGood || abs(h[u]) > ttl) f=0;
-    // debug(u,good,childGood,ttl,f);
-    return ttl;
-}
+
 // driver code
 int main()
 {
@@ -95,28 +81,31 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
-    rep(t,0,T){
-        ll n,m;
-        cin >> n >> m;
-        vi p(n);
-        tkv(p,n);
-        vi h(n);
-        tkv(h,n);
-        vii adj(n);
-        rep(i,0,n-1){
-            int u,v;
-            cin >> u>> v;
-            --u;--v;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+    // cin>>T;
+    while(T--){
+        int n;
+        cin >> n;
+        vi a(n);
+        tkv(a,n);
+        ll res =0;
+        rep(i,0,n){
+            if(i%2==1) continue;
+            ll req = 0;
+            ll op = 0;
+            rep(j,i+1,n){
+                if(j%2!=1){
+                    op +=a[j];
+                }
+                else{
+                    res += max(0ll,min(a[i]-req,a[j]-op) + (ll)((j-i)>1 ? 1 : 0));
+                    debug(i,j,op,req,max(0ll,min(a[i]-req,a[j]-op)+(ll)((j-i)>1 ? 1 : 0) ));
+                    op -= a[j];
+                    if(op<0) {req += abs(op);op=0;}
+                }
+            }
         }
-        f=1;
-        dfs(0,-1,adj,p,h);
-        if(f) put("YES")
-        else put("NO")
-
-    }   
+        put(res);
+    }
 
     return 0;
 }

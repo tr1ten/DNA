@@ -72,21 +72,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-int f= 1;
-ll dfs(int u,int p,vii &adj,vi &t,vi &h){
-    ll ttl =t[u];
-    ll childGood = 0;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        ll a =dfs(v,u,adj,t,h);
-        childGood += (h[v]+a)/2;
-        ttl +=a;
-    }
-    ll good = (h[u]+ttl)/2;
-    if((h[u]+ttl)%2!=0 || good<childGood || abs(h[u]) > ttl) f=0;
-    // debug(u,good,childGood,ttl,f);
-    return ttl;
-}
 // driver code
 int main()
 {
@@ -95,28 +80,25 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
-    rep(t,0,T){
-        ll n,m;
-        cin >> n >> m;
-        vi p(n);
-        tkv(p,n);
-        vi h(n);
-        tkv(h,n);
-        vii adj(n);
-        rep(i,0,n-1){
-            int u,v;
-            cin >> u>> v;
-            --u;--v;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+    // cin>>T;
+    while(T--){
+        ll a,b,c,d;
+        cin >> a >> b >> c >> d;
+        ll res = 0;
+        int N = a+b+c+d;
+        vi S(N+2);
+        rep(x,a,b+1){
+            S[b+x] +=1;
+            S[c+x+1] -=1;
         }
-        f=1;
-        dfs(0,-1,adj,p,h);
-        if(f) put("YES")
-        else put("NO")
-
-    }   
+        rep(i,1,N) S[i] +=S[i-1];
+        vi pref{0};
+        rep(i,0,N) pref.push_back(pref.back() + S[i]);
+        rep(z,c,d+1){
+            res += pref[b+c+1] - pref[z+1];
+        }
+        put(res);
+    }
 
     return 0;
 }

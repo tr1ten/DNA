@@ -72,21 +72,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-int f= 1;
-ll dfs(int u,int p,vii &adj,vi &t,vi &h){
-    ll ttl =t[u];
-    ll childGood = 0;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        ll a =dfs(v,u,adj,t,h);
-        childGood += (h[v]+a)/2;
-        ttl +=a;
-    }
-    ll good = (h[u]+ttl)/2;
-    if((h[u]+ttl)%2!=0 || good<childGood || abs(h[u]) > ttl) f=0;
-    // debug(u,good,childGood,ttl,f);
-    return ttl;
-}
+
 // driver code
 int main()
 {
@@ -95,28 +81,19 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
-    rep(t,0,T){
-        ll n,m;
-        cin >> n >> m;
-        vi p(n);
-        tkv(p,n);
-        vi h(n);
-        tkv(h,n);
-        vii adj(n);
-        rep(i,0,n-1){
-            int u,v;
-            cin >> u>> v;
-            --u;--v;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
-        }
-        f=1;
-        dfs(0,-1,adj,p,h);
-        if(f) put("YES")
-        else put("NO")
+    // cin>>T;
+    while(T--){
+        ll a[3] = {0,0,0};
+        cin >> a[0] >> a[1] >> a[2];
+        sort(a,a+3);
+        ll res= a[0] + min((a[2]-a[0])/2,a[1]-a[0]);
+        int d =min(a[0],a[2]/2);
+        // debug(d);
+        if(d>=a[0]) res = max(res,d + min(min(a[2]-2*d,a[1]),max(a[2]-2*d,a[1])/2));
+        if(d<=a[2]/2) res = max(res,d+min(a[1]/2,a[0]-d));
+        put(res);  
+    }
 
-    }   
 
     return 0;
 }
