@@ -72,26 +72,13 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-const ll MAXN = 2*(1e5 )+ 5;
-const ll MAXLOG = 62;
-ll n, q;
-vi a;
-ll st[MAXN][MAXLOG];
-
-void buildSparseTable() {
-    for (ll i = 0; i < n; i++)
-        st[i][0] = a[i];
-    for (ll j = 1; (1 << j) <= n; j++)
-        for (ll i = 0; i + (1 << j) <= n; i++)
-            st[i][j] = __gcd(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+void dfs(int u,int p,vii &adj,vi &t){
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs(v,u,adj,t);
+        t[u] +=t[v];
+    }
 }
-
-ll rangeGCD(ll l, ll r) {
-    ll k = log2(r - l + 1);
-    return __gcd(st[l][k], st[r - (1 << k) + 1][k]);
-}
-
 // driver code
 int main()
 {
@@ -102,30 +89,62 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        ll N;
-        cin >> N;
-        vi b;
-        b.resize(N);
-        tkv(b,N);
-        a.resize(N-1);
-        n = N-1;
-        rep(i,1,N){
-            a[i-1] = abs(b[i]-b[i-1]);
+        ll n,m;
+        cin >> n >> m;
+        vi p(n);
+        tkv(p,n);
+        vi h(n);
+        tkv(h,n);
+        vii adj(n);
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u>> v;
+            --u;--v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
         }
-        buildSparseTable();
-        ll i =0;
-        ll res = 1;
-        // debug(a);
-        rep(j,0,n)
+        dfs(0,-1,adj,p);
+        int f = 1;
+        queue<int> q;
+        ll bad = 0;
+        q.push(0);
+        vector<bool> seen(n);
+        seen[0] = 1;
+        ll prev=m;
+        while (f && q.size())
         {
-            if(i<j && rangeGCD(i,j)<=1) i++;
-            res = max(res,j-i+1 + (a[j]>1));
-            // debug(i,j,rangeGCD(i,j),res); // edge case for input containg 1
+            int z = q.size();
+            ll b=0;
+            ll nxb = 0;
+            ll total = 0;
+            rep(i,0,z){
+                int u = q.front();
+                q.pop();
+                int child = 0;
+                trav(v,adj[u]){
+                    if(!seen[v]){
+                        seen[v]= 1;
+                        child = 1;
+                         q.push(v);}
+                }
+                if((h[u]+p[u])%2!=0) {f=0;break;}
+                ll g=(h[u]+p[u])/2;
+                if(g>p[u] || g<0) {f=0;break;}
+                b+=(p[u]-g);
+                total += p[u];
+                // debug(u,b,g,p[u]);
+                if(child) nxb +=(p[u]-g);
+            }
+            // debug(q.size(),b,bad,nxb);
+            assert(b>=0 && nxb>=0 && total<=prev);
+            if(!f || b<bad-(prev-total)) {f=0;break;}
+            bad = nxb;
+            prev = total;
         }
-        put(res);
-        
+        if(f) put("YES")
+        else put("NO")
 
-    }
+    }   
 
     return 0;
 }

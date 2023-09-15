@@ -73,25 +73,30 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-const ll MAXN = 2*(1e5 )+ 5;
-const ll MAXLOG = 62;
-ll n, q;
-vi a;
-ll st[MAXN][MAXLOG];
 
-void buildSparseTable() {
-    for (ll i = 0; i < n; i++)
-        st[i][0] = a[i];
-    for (ll j = 1; (1 << j) <= n; j++)
-        for (ll i = 0; i + (1 << j) <= n; i++)
-            st[i][j] = __gcd(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
+const int K = 25;
+const int N = 1e5 + 5;
+
+ll  n,s;
+int check(int x,vi &a)
+{
+    ll suff=0;
+    ll sm = s;
+    deque<pi> dq;
+    per(i,0,n){
+        suff += a[i];
+        sm +=a[i];
+        while(dq.size() && dq.back().first<=suff) dq.pop_back();
+        while(dq.size() && dq.front().second>=i+x) dq.pop_front();
+        dq.push_back({suff,i});
+        if(i+x<=n){
+            if(sm>=0 && suff+s-dq.front().first>=0) return i;
+            sm -= a[i+x-1]; 
+        }
+        
+    }
+    return -1;
 }
-
-ll rangeGCD(ll l, ll r) {
-    ll k = log2(r - l + 1);
-    return __gcd(st[l][k], st[r - (1 << k) + 1][k]);
-}
-
 // driver code
 int main()
 {
@@ -102,29 +107,36 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        ll N;
-        cin >> N;
-        vi b;
-        b.resize(N);
-        tkv(b,N);
-        a.resize(N-1);
-        n = N-1;
-        rep(i,1,N){
-            a[i-1] = abs(b[i]-b[i-1]);
-        }
-        buildSparseTable();
-        ll i =0;
-        ll res = 1;
-        // debug(a);
-        rep(j,0,n)
-        {
-            if(i<j && rangeGCD(i,j)<=1) i++;
-            res = max(res,j-i+1 + (a[j]>1));
-            // debug(i,j,rangeGCD(i,j),res); // edge case for input containg 1
-        }
-        put(res);
+        cin >> n >> s;
+        vi a(n);
+        bool f= 0;
         
-
+        rep(i,0,n){
+            cin >> a[i];
+            if(a[i]+s>=0) f=1;
+        }
+        if(!f) put(-1)
+        else {
+            // suff - x >=0
+            int lo=1,hi=n;
+            int ans = 0;
+            int start = -1;
+            while (lo<=hi)
+            {
+                int mid = (lo+hi) >> 1;
+                int s = check(mid,a);
+                if(s!=-1){
+                    ans = mid;
+                    start = s;
+                    lo = mid+1;
+                }
+                else{
+                    hi = mid-1;
+                }
+            }
+            put2(start+1,start+ans);
+            
+        }
     }
 
     return 0;

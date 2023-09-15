@@ -73,25 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-const ll MAXN = 2*(1e5 )+ 5;
-const ll MAXLOG = 62;
-ll n, q;
-vi a;
-ll st[MAXN][MAXLOG];
-
-void buildSparseTable() {
-    for (ll i = 0; i < n; i++)
-        st[i][0] = a[i];
-    for (ll j = 1; (1 << j) <= n; j++)
-        for (ll i = 0; i + (1 << j) <= n; i++)
-            st[i][j] = __gcd(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]);
-}
-
-ll rangeGCD(ll l, ll r) {
-    ll k = log2(r - l + 1);
-    return __gcd(st[l][k], st[r - (1 << k) + 1][k]);
-}
-
 // driver code
 int main()
 {
@@ -102,29 +83,19 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        ll N;
-        cin >> N;
-        vi b;
-        b.resize(N);
-        tkv(b,N);
-        a.resize(N-1);
-        n = N-1;
-        rep(i,1,N){
-            a[i-1] = abs(b[i]-b[i-1]);
+        int n;
+        cin >> n;
+        vi a(n);
+        tkv(a,n);
+        srv(a);
+        vii dp(n+1,vi(2*n + 2,INF));
+        rep(i,0,2*n+2) dp[n][i] = 0;
+        per(i,0,n){
+            per(t,1,2*n+1){
+                dp[i][t] = min(abs(a[i]-t) + dp[i+1][t+1],dp[i][t+1]);
+            }
         }
-        buildSparseTable();
-        ll i =0;
-        ll res = 1;
-        // debug(a);
-        rep(j,0,n)
-        {
-            if(i<j && rangeGCD(i,j)<=1) i++;
-            res = max(res,j-i+1 + (a[j]>1));
-            // debug(i,j,rangeGCD(i,j),res); // edge case for input containg 1
-        }
-        put(res);
-        
-
+        put(dp[0][1]);
     }
 
     return 0;

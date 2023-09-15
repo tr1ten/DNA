@@ -1,4 +1,4 @@
-package Algos;
+package DS.SparseTable;
 
 import java.util.Scanner;
 
