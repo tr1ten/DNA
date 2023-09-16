@@ -1,0 +1,1 @@
+select mass*acceleration,name as force from observations;
