@@ -70,9 +70,19 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 998244353;
 const ll INF = 1e10+5;
-
+ll fast_pow(ll x,ll n){
+    x = x%MOD;
+    ll res = 1;
+    while (n>0)
+    {
+        if(n%2==1) res = (res*x)%MOD; 
+        x = x*x%MOD;
+        n /=2;
+    }
+    return res;
+}
 // driver code
 int main()
 {
@@ -83,13 +93,19 @@ int main()
     int T=1;
     // cin>>T;
     while(T--){
-        ll a[3] = {0,0,0};
-        cin >> a[0] >> a[1] >> a[2];
-        sort(a,a+3);
-        if(a[2] > 2*(a[0]+a[1])) put(a[0]+a[1])
-        else put((a[0]+a[1]+a[2])/3)
+        int n;
+        cin >> n;
+        rep(k,1,n+1){
+            if(k==n) cout << 10 << " ";
+            else {
+                ll res = mod(2*(90)*fast_pow(10,n-k-1));
+                res = mod(res+mod(mod((n-k-1)*810)*fast_pow(10,n-k-2)) );
+                cout << res << " ";
+            }
+        }
+        cout << endl;
+        
     }
-
 
     return 0;
 }

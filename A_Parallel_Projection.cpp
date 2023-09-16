@@ -81,15 +81,15 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--){
-        ll a[3] = {0,0,0};
-        cin >> a[0] >> a[1] >> a[2];
-        sort(a,a+3);
-        if(a[2] > 2*(a[0]+a[1])) put(a[0]+a[1])
-        else put((a[0]+a[1]+a[2])/3)
+        int w,d,h,a,b,f,g;
+        cin >> w >> d >>h >> a >> b >> f >> g;
+        ll ans = h;
+        ll cy = 2*min(min(d-b,d-g),min(b,g)) +  abs(b-g) + abs(a-f);
+        ll cx = 2*min(min(w-a,w-f),min(a,f)) +  abs(a-f) + abs(b-g);
+        put(ans+min(cy,cx));
     }
-
 
     return 0;
 }

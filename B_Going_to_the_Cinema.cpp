@@ -72,6 +72,39 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+const int N = 2*(1e5)+5;
+ll facts[N+1];
+ll invs[N+1];
+ll fast_pow(ll x,ll n,ll m){
+    x = x%m;
+    ll res = 1;
+    while (n>0)
+    {
+        if(n%2==1) res = (res*x)%m; 
+        x = x*x%m;
+        n /=2;
+    }
+    return res;
+}
+void factorials(){
+    facts[0] = 1;
+    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
+}
+
+
+void inverses(){
+    invs[N] = fast_pow(facts[N],MOD-2,MOD);
+    for(int i=N-1;i>=0;i--) invs[i] = invs[i+1]*(i+1)%MOD;
+}
+
+ll ncr(int n,int r){
+    return (((facts[n]*invs[n-r])%MOD)*invs[r])%MOD;
+}
+
+void preprocess(){
+    factorials();
+    inverses();
+}
 
 // driver code
 int main()
@@ -81,15 +114,25 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    // cin>>T;
+    preprocess();
+    cin>>T;
     while(T--){
-        ll a[3] = {0,0,0};
-        cin >> a[0] >> a[1] >> a[2];
-        sort(a,a+3);
-        if(a[2] > 2*(a[0]+a[1])) put(a[0]+a[1])
-        else put((a[0]+a[1]+a[2])/3)
+        int n;
+        cin >> n;
+        vi a(n);
+        tkv(a,n);
+        srv(a);
+        ll ans = 1;
+        int k = n-1;
+        while(k>=0){
+            if(a[k]>k){
+                while(k>=0 && a[k]>k) k--;
+                ans++;
+            }
+            else k--;
+        }
+        put(ans);
     }
-
 
     return 0;
 }
