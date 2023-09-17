@@ -73,10 +73,11 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-void dfs(int u,vii &adj,set<int> &visited){
+void dfs(int u,vii &adj,set<int> &visited,ll &cnt){
+    cnt++;
     visited.insert(u);
     trav(v,adj[u]){
-        if(!visited.count(v)) dfs(v,adj,visited);
+        if(!visited.count(v)) dfs(v,adj,visited,cnt);
     }
 }
 // driver code
@@ -89,7 +90,7 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
+        ll n;
         cin >> n;
         vi a(n+1);
         vii inv(n+2);
@@ -100,14 +101,16 @@ int main()
             inv[v].push_back(i);
         }
         set<int> good;
-        dfs(n+1,inv,good);
+        ll cnt = 0;
+        dfs(n+1,inv,good,cnt);
         int iscycle = 0;
         int node = 1;
-        set<int> bad;
         set<int> vis;
+        vi path;
         while (true)
         {
             vis.insert(node);
+            path.push_back(node);
             node +=a[node];
             
             if(vis.count(node)) {
@@ -116,18 +119,22 @@ int main()
             }
             if(!(node>=1 && node<=n)) break; // termimnal node
         }
-        rep(i,1,1+n){
-            if(good.count(i)==0) continue;
-            if(vis.count(i+a[i])) bad.insert(i);
+        cnt = 0;
+        ll ex=  0;
+        ll k = vis.size();
+        vis.clear();
+        trav(x,path){
+            // assert(vis.count(x)==0);
+            dfs(x,inv,vis,cnt);// count backedges
+            ex +=cnt;
         }
         if(iscycle){
-            ll ans = vis.size()*(good.size() + n);
+            ll ans = k*(good.size() + n);
             cout << ans << endl;
         }
         else{
-            int k = vis.size();
-            debug(k,good,bad);
-            ll ans = (n-k)*(2*n+1) + k*(n + good.size()) - k*(k+1)/2 - bad.size();
+            // debug(k,good,bad);
+            ll ans = (n-k)*(2*n+1) + k*(n + good.size()) -ex;
             cout << ans << endl;
         }
         

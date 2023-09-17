@@ -6,8 +6,7 @@ class Node:
         self.ended = False
         self.val = -1
         self.cnt = 0
-root = Node()
-def add(x):
+def add(root,x):
     cur = root
     for i in range(MX,-1,-1): # store from msb...lsb
         ind = (x>>i)&1
@@ -17,7 +16,7 @@ def add(x):
     cur.cnt+=1
     cur.val = x
 
-def remove(x):
+def remove(root,x):
     cur = root
     path = []
     for i in range(MX,-1,-1): # store from msb...lsb
@@ -30,10 +29,18 @@ def remove(x):
             p,i = path.pop()
             p.childs[i] = None
             if p.childs[i^1]: break 
+            
+def find(root,x):
+    cur = root
+    for i in range(MX,-1,-1): # store from msb...lsb
+        ind = (x>>i)&1
+        if not cur.childs[ind]: return 0
+        cur = cur.childs[ind]
+    return cur.cnt
 """
 Find max xor of x in trie
 """
-def max_xor(x):
+def max_xor(root,x):
     cur = root
     for i in range(MX,-1,-1):
         ind = (x>>i)&1
@@ -43,12 +50,14 @@ def max_xor(x):
 
 def main():
     A = [8,12,9]
-    for x in A: add(x)
-    print(max_xor(10)) # 12
-    remove(12)
-    print(max_xor(10)) # 12
-    remove(9)
-    print(max_xor(10)) # 12
+    root = Node()
+    for x in A: add(root,x)
+    print(find(root,8))
+    # print(max_xor(10)) # 12
+    # remove(12)
+    # print(max_xor(10)) # 12
+    # remove(9)
+    # print(max_xor(10)) # 12
     
 
 if __name__=='__main__':
