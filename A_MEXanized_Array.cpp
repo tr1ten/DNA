@@ -73,26 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-bool dfs(int i,vi &a,vii &c){
-    if(i==a.size()) return 1;
-    
-    if(!c[0][a[i]]){
-        c[0][a[i]] = 1;
-        if(!dfs(i+1,a,c)) {
-            c[0][a[i]] = 0;
-        }
-        else return 1;
-    }
-    if(!c[1][a[i]] ){
-        c[1][a[i]] = 1;
-        if(!dfs(i+1,a,c)) { 
-            c[0][a[i]] = 0;
-        }
-        else return 1; 
-    }
-    return 0;
-
-}
 // driver code
 int main()
 {
@@ -103,42 +83,13 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi a(n);
-        tkv(a,n);
-        vii c(2,vi(n+1));
-        bool f =dfs(0,a,c);
-        // debug(c);
-        vi p(n);
-        vi q(n);
-        set<int> stp;
-        set<int> stq;
-        rep(i,1,n+1) {
-            if(!c[1][i]) stq.insert(i);
-            if(!c[0][i])  stp.insert(i);
-            }
-        // debug(c);
-        rep(i,0,n){
-            if(c[0][a[i]] &&  stq.upper_bound(a[i])!=stq.begin()){
-                p[i] = a[i];
-                c[0][a[i]] = 0;
-                q[i] = *prev(stq.upper_bound(a[i]));
-                stq.erase(prev(stq.upper_bound(a[i])));
-            }
-            else if(c[1][a[i]] && stp.upper_bound(a[i])!=stp.begin()){
-                q[i] = a[i];
-                c[1][a[i]] = 0;
-                p[i] =  *prev(stp.upper_bound(a[i]));
-                stp.erase(prev(stp.upper_bound(a[i])));
-            }
-            else {f=0;
-            break;}
+        int n,k,x;
+        cin >> n >> k >> x;
+        if(k>min(n,x+1)) put(-1)
+        else{
+            ll ans = k*(k-1)/2 + (n-k)*(x==k ? x-1 : x);
+            put(ans);
         }
-        put(f ? "YES" : "NO");
-        if(!f) continue;
-        pvc(p);
-        pvc(q);
     }
 
     return 0;

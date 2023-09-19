@@ -73,26 +73,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-bool dfs(int i,vi &a,vii &c){
-    if(i==a.size()) return 1;
-    
-    if(!c[0][a[i]]){
-        c[0][a[i]] = 1;
-        if(!dfs(i+1,a,c)) {
-            c[0][a[i]] = 0;
-        }
-        else return 1;
-    }
-    if(!c[1][a[i]] ){
-        c[1][a[i]] = 1;
-        if(!dfs(i+1,a,c)) { 
-            c[0][a[i]] = 0;
-        }
-        else return 1; 
-    }
-    return 0;
-
-}
 // driver code
 int main()
 {
@@ -105,40 +85,48 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        vi a(n);
-        tkv(a,n);
-        vii c(2,vi(n+1));
-        bool f =dfs(0,a,c);
-        // debug(c);
-        vi p(n);
-        vi q(n);
-        set<int> stp;
-        set<int> stq;
-        rep(i,1,n+1) {
-            if(!c[1][i]) stq.insert(i);
-            if(!c[0][i])  stp.insert(i);
-            }
-        // debug(c);
+        vi diff(n);
+        vpi c(n);
         rep(i,0,n){
-            if(c[0][a[i]] &&  stq.upper_bound(a[i])!=stq.begin()){
-                p[i] = a[i];
-                c[0][a[i]] = 0;
-                q[i] = *prev(stq.upper_bound(a[i]));
-                stq.erase(prev(stq.upper_bound(a[i])));
-            }
-            else if(c[1][a[i]] && stp.upper_bound(a[i])!=stp.begin()){
-                q[i] = a[i];
-                c[1][a[i]] = 0;
-                p[i] =  *prev(stp.upper_bound(a[i]));
-                stp.erase(prev(stp.upper_bound(a[i])));
-            }
-            else {f=0;
-            break;}
+            cin >> c[i].first;
+            c[i].second = i;
         }
-        put(f ? "YES" : "NO");
-        if(!f) continue;
-        pvc(p);
-        pvc(q);
+        ll k;
+        cin >>k;
+        srv((c));
+        int prev = -1;
+        int i = 0;
+        stack<pi> st;
+        st.push({0,INF});
+        unordered_map<int,int> ind;
+        rep(i,0,n){ 
+            ind[c[i].first] = c[i].second;
+        }
+        while (i<n)
+        {
+            if(c[i].second<prev) continue;
+            while(i+1<n && c[i].first==c[i+1].first) {i++;}
+            pi a = st.top();
+            st.pop();
+            ll diff = c[i].first - a.first;
+            assert(diff>0);
+            ll lmt = min(k/diff,a.second);
+            st.push({a.first,a.second-lmt});
+            st.push({c[i].first,lmt});
+            k += a.first*lmt - c[i].first*lmt;
+            i++;
+        }
+        
+        while (st.top().first!=0)
+        {
+            diff[ind[st.top().first]] += st.top().second;
+            // debug(st.top());
+            st.pop();
+        }
+        
+        per(i,0,n-1) diff[i] += diff[i+1];
+        // debug(diff);
+        pvc(diff);
     }
 
     return 0;

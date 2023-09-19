@@ -71,28 +71,49 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll INF = 1e8;
 
-bool dfs(int i,vi &a,vii &c){
-    if(i==a.size()) return 1;
-    
-    if(!c[0][a[i]]){
-        c[0][a[i]] = 1;
-        if(!dfs(i+1,a,c)) {
-            c[0][a[i]] = 0;
-        }
-        else return 1;
-    }
-    if(!c[1][a[i]] ){
-        c[1][a[i]] = 1;
-        if(!dfs(i+1,a,c)) { 
-            c[0][a[i]] = 0;
-        }
-        else return 1; 
-    }
-    return 0;
+// credits:  https://codeforces.com/blog/entry/18051
+#include <bits/stdc++.h>
 
+using namespace std;
+const int N = 1e5 + 5;  // limit for array size
+int n;  // array size, near power of two
+int t[2 * N]; // 0 index
+// iterative segment tree
+
+int combine(int left,int right){return min(left,right);}
+void build() {  // build the tree; fill from last secnod layer
+    for (int i = n - 1; i > 0; --i) t[i] = combine(t[i<<1], t[i<<1|1]);
 }
+
+
+void update(int p, const int value) {
+  for (t[p += n] = value; p >>= 1; ) t[p] = combine(t[p<<1], t[p<<1|1]);
+}
+
+int query(int l, int r) { // [l,r) important
+  int resl=INF, resr=INF;
+   for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+    if (l&1) resl = combine(resl, t[l++]); // l&1 mean l is right child, parent not included so shift to parent right
+    if (r&1) resr = combine(t[--r], resr); 
+  }
+  return combine(resl, resr);
+}
+
+void init(int n){
+  for (int i = 0; i < n; ++i) t[n + i]=0;
+  build();
+}
+// todo lazy progation
+// int main() {
+//   scanf("%d", &n);
+//   for (int i = 0; i < n; ++i) scanf("%d", t + n + i);
+//   build(); // fill other layers
+//   // update(0, 101);
+//   printf("%d\n", query(0, 3));
+//   return 0;
+// }
 // driver code
 int main()
 {
@@ -103,42 +124,42 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
+        int n,k;
+        cin >> n >> k;
         vi a(n);
         tkv(a,n);
-        vii c(2,vi(n+1));
-        bool f =dfs(0,a,c);
-        // debug(c);
-        vi p(n);
-        vi q(n);
-        set<int> stp;
-        set<int> stq;
-        rep(i,1,n+1) {
-            if(!c[1][i]) stq.insert(i);
-            if(!c[0][i])  stp.insert(i);
-            }
-        // debug(c);
+        vi ii(k,-1);
+        vi jj(k,-1);
+        int j = 0;
+        vector<bool> in(k);
+        rep(i,0,n) in[a[i]-1] =1;
         rep(i,0,n){
-            if(c[0][a[i]] &&  stq.upper_bound(a[i])!=stq.begin()){
-                p[i] = a[i];
-                c[0][a[i]] = 0;
-                q[i] = *prev(stq.upper_bound(a[i]));
-                stq.erase(prev(stq.upper_bound(a[i])));
+            while(a[i]-1>=j){
+                ii[j] = i;
+                j++;
             }
-            else if(c[1][a[i]] && stp.upper_bound(a[i])!=stp.begin()){
-                q[i] = a[i];
-                c[1][a[i]] = 0;
-                p[i] =  *prev(stp.upper_bound(a[i]));
-                stp.erase(prev(stp.upper_bound(a[i])));
-            }
-            else {f=0;
-            break;}
+            if(j==k) break;
+            
         }
-        put(f ? "YES" : "NO");
-        if(!f) continue;
-        pvc(p);
-        pvc(q);
+        j = 0;
+        per(i,0,n){
+            while(a[i]-1>=j){
+                jj[j] = i;
+                j++;
+            }
+            if(j==k) break;
+            
+        }
+        // debug(ii,jj);
+        rep(i,0,k){
+            if(!in[i]) cout << "0" << " ";
+            else{
+            ll res = 2*(jj[i]-ii[i] + 1);
+            cout << res << " ";
+            }
+        }
+        cout << endl;
+
     }
 
     return 0;

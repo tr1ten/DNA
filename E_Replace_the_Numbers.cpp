@@ -72,27 +72,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
-bool dfs(int i,vi &a,vii &c){
-    if(i==a.size()) return 1;
-    
-    if(!c[0][a[i]]){
-        c[0][a[i]] = 1;
-        if(!dfs(i+1,a,c)) {
-            c[0][a[i]] = 0;
-        }
-        else return 1;
-    }
-    if(!c[1][a[i]] ){
-        c[1][a[i]] = 1;
-        if(!dfs(i+1,a,c)) { 
-            c[0][a[i]] = 0;
-        }
-        else return 1; 
-    }
-    return 0;
-
-}
+const int N = 5*(1e5) + 5;
+int a[N];
 // driver code
 int main()
 {
@@ -101,44 +82,38 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        vi a(n);
-        tkv(a,n);
-        vii c(2,vi(n+1));
-        bool f =dfs(0,a,c);
-        // debug(c);
-        vi p(n);
-        vi q(n);
-        set<int> stp;
-        set<int> stq;
-        rep(i,1,n+1) {
-            if(!c[1][i]) stq.insert(i);
-            if(!c[0][i])  stp.insert(i);
-            }
-        // debug(c);
+        vi ans;
+        vector<pair<int,pair<int,int>>> qs;
         rep(i,0,n){
-            if(c[0][a[i]] &&  stq.upper_bound(a[i])!=stq.begin()){
-                p[i] = a[i];
-                c[0][a[i]] = 0;
-                q[i] = *prev(stq.upper_bound(a[i]));
-                stq.erase(prev(stq.upper_bound(a[i])));
+            int t;
+            cin >> t;
+            if(t==1) {
+                int x;
+                cin >> x;
+                qs.push_back(make_pair(1,make_pair(x,-1)));
             }
-            else if(c[1][a[i]] && stp.upper_bound(a[i])!=stp.begin()){
-                q[i] = a[i];
-                c[1][a[i]] = 0;
-                p[i] =  *prev(stp.upper_bound(a[i]));
-                stp.erase(prev(stp.upper_bound(a[i])));
+            else{
+                int x,y;
+                cin >> x >> y;
+                qs.push_back(make_pair(2,make_pair(x,y)));
             }
-            else {f=0;
-            break;}
         }
-        put(f ? "YES" : "NO");
-        if(!f) continue;
-        pvc(p);
-        pvc(q);
+        per(i,0,n){
+            if(qs[i].first==1){
+                ans.push_back(a[qs[i].second.first]==0 ? qs[i].second.first : a[qs[i].second.first]);
+            }
+            else{
+                a[qs[i].second.first] = a[qs[i].second.second]==0 ? qs[i].second.second : a[qs[i].second.second];
+            }
+            
+        }
+        reverse(all(ans));
+        pvc(ans);
+    
     }
 
     return 0;
