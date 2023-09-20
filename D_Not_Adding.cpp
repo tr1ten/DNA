@@ -72,8 +72,18 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 5*(1e5) + 5;
-vector<int> a[N];
+const int N = 1e6 + 5;
+vector<vector<int>> divs(N+1);
+int dcs[N];
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    for(int x=2;x<=N;x++){
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
+        }
+    }
+}
 // driver code
 int main()
 {
@@ -82,37 +92,28 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
+    preprocess();
     // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        int k =0;
-        rep(i,0,n){
-            int t;
-            cin >> t;
-            if(t==1) {
-                int x;
-                cin >> x;
-                a[x].push_back(k++);
+        vi a(n);
+        tkv(a,n);
+        srv(a);
+        per(i,0,n){
+            divs[a[i]].push_back(1);
+            trav(x,divs[a[i]]){
+                if(dcs[x]==0) dcs[x] = a[i];
+                else dcs[x] = gcd(dcs[x],a[i]);
             }
-            else{
-                int x,y;
-                cin >> x >> y;
-                if(x==y) continue;
-                if(a[x].size()>a[y].size()) a[x].swap(a[y]);
-                for(int &i:a[x]){
-                    a[y].push_back(i);
-                }
-                a[x].clear();
-                
-            }
+            
+
         }
-        vi ans(k);
-        rep(i,0,N){
-            trav(j,a[i]) ans[j] = i;
+        int res=0;
+        rep(i,1,N){
+            if(dcs[i]==i){ res++;}
         }
-        pvc(ans);
-    
+        put(res-n);
     }
 
     return 0;
