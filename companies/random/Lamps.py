@@ -6,7 +6,7 @@ def solution(lamps,points):
         si.add(y)
     for x in points: si.add(x)
     si = sorted(si)
-    diff = [0]*(len(si) +1)
+    diff = [0]*(len(si) + 1)
     for x,y in lamps:
         diff[bisect.bisect(si,x)] +=1
         diff[bisect.bisect(si,y)+1] -=1
@@ -17,3 +17,4 @@ def solution(lamps,points):
     return ans
 
 print(solution([[1,7],[5,11],[7,9]],[7,1,5,10,9,15]))
+print(solution([[2,9],[6,13],[8,10]],[6,8,1,6]))
