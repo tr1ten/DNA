@@ -35,12 +35,13 @@ typedef unordered_map<ll,ll> mll;
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
-#define put(x) cout<<(x)<<"\n";
-#define put2(x,y) cout<<(x)<<" "<<(y)<<"\n";
-#define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<"\n";
+#define put(x) cout<<(x)<<endl;
+#define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
+#define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
 #define mod(x) (x + MOD)%MOD
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
+
 
 void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
@@ -63,6 +64,7 @@ void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ 
 void _print() {cerr << "]\n";}
 template <typename T, typename... V>
 void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+
 #ifndef ONLINE_JUDGE
 #define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
 #else
@@ -70,6 +72,28 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+const int N = 1e6 + 5;
+
+mll factors(ll x){
+    mll res ;
+    if(x==1) return res;
+    for(int i=2;i<sqrt(x)+1;i++){
+        while (x%i==0)
+        {
+            res[i]++;
+            x /=i;
+        }
+        
+    }
+    if(x>1) res[x]++;
+    return res;
+}
+ll prod(mll &cur){
+        ll dn = 1;
+        trav(x,cur) dn *=(x.second+1);
+        return dn;
+    
+}
 // driver code
 int main()
 {
@@ -78,13 +102,45 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin >> T;
+    cin>>T;
     while(T--){
-        ll n,k,x;
-        cin >> n >> k >> x;
-        // debug(n,k,x);
-        if(x<=(k*n - (k*(k-1)/2)) && x>=(k*(k+1)/2)) put("YES")
-        else put("NO")
+        ll n,q;
+        cin >> n >> q;
+        auto cur =factors(n);
+        auto temp=cur;
+        ll tn = n;
+        ll dn=1;
+        prod(cur);
+        rep(i,0,q){
+            int t;
+            cin >> t;
+            if(t==2){
+                cur=temp;
+                dn = prod(cur);
+            }
+            else{
+                int x;
+                cin >> x;
+                auto xt = factors(x);
+                trav(f,xt) cur[f.first] +=f.second; 
+                dn = prod(cur);
+                int mm = dn;
+                trav(f,cur){
+                    rep(i,0,f.second){
+                        if(mm%f.first!=0) break;
+                        mm /=f.first;
+                    }
+                }
+                debug(dn,n,x,cur,mm);
+                if(mm==1) put("YES")
+                else put("NO")
+            }
+        }
+        cout << endl;
+        
+
+        
     }
+
     return 0;
 }

@@ -35,12 +35,13 @@ typedef unordered_map<ll,ll> mll;
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
-#define put(x) cout<<(x)<<"\n";
-#define put2(x,y) cout<<(x)<<" "<<(y)<<"\n";
-#define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<"\n";
+#define put(x) cout<<(x)<<endl;
+#define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
+#define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
 #define mod(x) (x + MOD)%MOD
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
+
 
 void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
@@ -63,6 +64,7 @@ void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ 
 void _print() {cerr << "]\n";}
 template <typename T, typename... V>
 void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
+
 #ifndef ONLINE_JUDGE
 #define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
 #else
@@ -70,6 +72,16 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
+
+ll rec(ll n,ll m){
+    if((n%m)==0) return 0;
+    if(n==1) return m-1;
+    if(n>m) return rec(n%m,m);
+    ll g = gcd(m,n);
+    if(g>1) return g*(rec(n/g,m/g));
+    // debug(n,m);
+    return rec(n-1,m) + rec(1,m);
+}
 // driver code
 int main()
 {
@@ -78,13 +90,16 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin >> T;
+    cin>>T;
     while(T--){
-        ll n,k,x;
-        cin >> n >> k >> x;
-        // debug(n,k,x);
-        if(x<=(k*n - (k*(k-1)/2)) && x>=(k*(k+1)/2)) put("YES")
-        else put("NO")
+        ll n,m;
+        cin >> n>> m;
+        if(n%m==0 || ((m/gcd(m,n))&((m/gcd(m,n)-1) ))==0  )  {
+            put(rec(n,m));
+        }
+        else put(-1)
+
     }
+
     return 0;
 }

@@ -17,12 +17,26 @@ void preprocess(){
     }
 }
 
+mll factors(ll x){
+    mll res ;
+    if(x==1) return res;
+    for(int i=2;i<sqrt(x)+1;i++){
+        while (x%i==0)
+        {
+            res[i]++;
+            x /=i;
+        }
+        
+    }
+    if(x>1) res[x]++;
+    return res;
+}
+
 vector<int> factors(int x){
     vector<int> res;
     while(x>1){
         int f = sieve[x];
-        if(x%f==0) res.push_back(f);
-        while(x%f==0) x/=f;
+        while(x%f==0) {x/=f;res.push_back(f);}
     }
     return res;
 }
