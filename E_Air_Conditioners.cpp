@@ -71,16 +71,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
-const int N = 1005;
+const ll INF = 1e15+5;
 
-ll rec(int num,int mex,vi &cnt,vii &dp){
-    if(num<0 || mex==0) return 0;
-    if(dp[num][mex]!=-1) return dp[num][mex];
-    ll res = (cnt[num]-1)*mex + num + rec(num-1,num,cnt,dp);
-    if(num>0) res = min(res,rec(num-1,mex,cnt,dp));
-    return dp[num][mex]= res;
-}
 
 // driver code
 int main()
@@ -92,21 +84,33 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi cnt(n+1);
-        vii dp(n+1,vi(n+1,-1));
-        rep(i,0,n){
-            int x;
-            cin >> x;
-            if(x<=n) cnt[x]++;
+        int n,k;
+        cin >> n >> k;
+        vi a(k);
+        vpi t(k);
+        tkv(a,k);
+        rep(i,0,k){
+            cin >> t[i].second;
+            t[i].first = a[i];
         }
-        int mex = 0;
-        rep(i,0,n+1){
-            if(cnt[i]==0) {mex=i;break;}
+        srv(t);
+        vi suff(k+1,INF);
+        per(i,0,k){
+            suff[i] = min(suff[i+1],t[i].second+t[i].first);
         }
-        put(rec(mex-1,mex,cnt,dp));
-
+        vi pref(k+1,INF);
+        rep(i,1,1+k){
+            pref[i] = min(pref[i-1],t[i-1].second-t[i-1].first);
+        }
+        vi ans(n,INF);
+        // debug(pref,suff);
+        rep(i,1,n+1){
+            int idx = lower_bound(all(t),make_pair((ll)(i+1),0ll)) - t.begin();
+            if(idx>0) ans[i-1] = pref[idx]+i;
+            if(idx<k) ans[i-1] = min(ans[i-1],-i+suff[idx]);
+            // debug(i,idx,k,ans[i-1]);
+        }
+        pvc(ans);
     }
 
     return 0;

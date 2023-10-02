@@ -70,17 +70,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 998244353;
 const ll INF = 1e10+5;
-const int N = 1005;
-
-ll rec(int num,int mex,vi &cnt,vii &dp){
-    if(num<0 || mex==0) return 0;
-    if(dp[num][mex]!=-1) return dp[num][mex];
-    ll res = (cnt[num]-1)*mex + num + rec(num-1,num,cnt,dp);
-    if(num>0) res = min(res,rec(num-1,mex,cnt,dp));
-    return dp[num][mex]= res;
-}
 
 // driver code
 int main()
@@ -90,22 +81,33 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--){
         int n;
         cin >> n;
-        vi cnt(n+1);
-        vii dp(n+1,vi(n+1,-1));
-        rep(i,0,n){
-            int x;
-            cin >> x;
-            if(x<=n) cnt[x]++;
+        vi A(n);
+        tkv(A,n);
+        ll res =0;
+        rep(bit,0,32){
+            vi s = {0,0};
+            vi c = {0,0};
+            ll ans = 0;
+            bool cur = 0;
+            ll mask = 1ll<<bit;
+            rep(i,0,n){
+                bool x = (A[i]&(mask))>0;
+                c[cur]++;
+                s[cur] =mod(s[cur]+i);
+                ans += x ? mod(mod(c[cur]*(i+1)) - s[cur]) : mod(mod(c[cur^1]*(i+1)) - s[cur^1]);
+                ans = ans%MOD;
+                // ans += x ? c[cur] : c[cur^1];
+                // debug(x,bit,cur,i,A[i],ans,s,c);
+                cur^=x;
+            }
+            // debug(bit,ans,s,c);
+            res = mod(res+mod(ans*mask));
         }
-        int mex = 0;
-        rep(i,0,n+1){
-            if(cnt[i]==0) {mex=i;break;}
-        }
-        put(rec(mex-1,mex,cnt,dp));
+        put(res);
 
     }
 

@@ -72,16 +72,26 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1005;
+void gen(int n,int k,vi &ans){
+    if(n%2==1) {
+            ans.push_back(n/2);
+            ans.push_back(n/2);
+            ans.push_back(1);
+        }
+    else{
+        if(n%4==0){
+            ans.push_back(n/2);
+            ans.push_back(n/4);
+            ans.push_back(n/4);
+        }
+        else{
+            ans.push_back((n-1)/2);
+            ans.push_back((n-1)/2);
+            ans.push_back(2);
+        }
+    }
 
-ll rec(int num,int mex,vi &cnt,vii &dp){
-    if(num<0 || mex==0) return 0;
-    if(dp[num][mex]!=-1) return dp[num][mex];
-    ll res = (cnt[num]-1)*mex + num + rec(num-1,num,cnt,dp);
-    if(num>0) res = min(res,rec(num-1,mex,cnt,dp));
-    return dp[num][mex]= res;
 }
-
 // driver code
 int main()
 {
@@ -92,21 +102,12 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi cnt(n+1);
-        vii dp(n+1,vi(n+1,-1));
-        rep(i,0,n){
-            int x;
-            cin >> x;
-            if(x<=n) cnt[x]++;
-        }
-        int mex = 0;
-        rep(i,0,n+1){
-            if(cnt[i]==0) {mex=i;break;}
-        }
-        put(rec(mex-1,mex,cnt,dp));
-
+        int n,k;
+        cin >> n >> k;
+        vi ans;
+        rep(i,0,k-3) {ans.push_back(1);n--;}
+        gen(n,3,ans);
+        pvc(ans);
     }
 
     return 0;

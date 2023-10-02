@@ -70,17 +70,15 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 998244353;
 const ll INF = 1e10+5;
-const int N = 1005;
-
-ll rec(int num,int mex,vi &cnt,vii &dp){
-    if(num<0 || mex==0) return 0;
-    if(dp[num][mex]!=-1) return dp[num][mex];
-    ll res = (cnt[num]-1)*mex + num + rec(num-1,num,cnt,dp);
-    if(num>0) res = min(res,rec(num-1,mex,cnt,dp));
-    return dp[num][mex]= res;
+const int N = 2*(1e5)+10;
+ll facts[N+1];
+void factorials(){
+    facts[0] = 1;
+    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
 }
+
 
 // driver code
 int main()
@@ -90,24 +88,113 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);	  
     int T=1;
+    factorials();
     cin>>T;
     while(T--){
-        int n;
-        cin >> n;
-        vi cnt(n+1);
-        vii dp(n+1,vi(n+1,-1));
-        rep(i,0,n){
-            int x;
-            cin >> x;
-            if(x<=n) cnt[x]++;
+        string s;
+        cin >> s;
+        vi A;
+        int i =0;
+        ll sm = 0;
+        while (i<s.size())
+        {
+            char c = s[i];
+            int z =0;
+            while (i<s.size() && s[i]==c)
+            {
+                i++;
+                z++;
+            }
+            sm +=z-1;
+            A.push_back(z);
         }
-        int mex = 0;
-        rep(i,0,n+1){
-            if(cnt[i]==0) {mex=i;break;}
+        ll a=0,b=facts[sm];
+        trav(x,A){
+            a = (a+x-1)%MOD;
+            b = (b*x)%MOD;
         }
-        put(rec(mex-1,mex,cnt,dp));
+        put2(a,b);
 
+        
     }
 
     return 0;
 }
+
+// 1
+// 0
+// 10
+// 11
+// 00
+// 01
+// 100
+// 101
+// 110
+// 111
+// 000
+// 001
+// 010
+// 011
+// 1000
+// 1001
+// 1010
+// 1011
+// 1100
+// 1101
+// 1110
+// 1111
+// 0000
+// 0001
+// 0010
+// 0011
+// 0100
+// 0101
+// 0110
+// 0111
+// 10000
+// 10001
+// 10010
+// 10011
+// 10100
+// 10101
+// 10110
+// 10111
+// 11000
+// 11001
+// 11010
+// 11011
+// 11100
+// 11101
+// 11110
+// 11111
+// 00000
+// 00001
+// 00010
+// 00011
+// 00100
+// 00101
+// 00110
+// 00111
+// 01000
+// 01001
+// 01010
+// 01011
+// 01100
+// 01101
+// 01110
+// 01111
+// 100000
+// 100001
+// 100010
+// 100011
+// 100100
+// 100101
+// 100110
+// 100111
+// 101000
+// 101001
+// 101010
+// 101011
+// 101100
+// 101101
+// 101110

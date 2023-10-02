@@ -72,15 +72,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-const int N = 1005;
-
-ll rec(int num,int mex,vi &cnt,vii &dp){
-    if(num<0 || mex==0) return 0;
-    if(dp[num][mex]!=-1) return dp[num][mex];
-    ll res = (cnt[num]-1)*mex + num + rec(num-1,num,cnt,dp);
-    if(num>0) res = min(res,rec(num-1,mex,cnt,dp));
-    return dp[num][mex]= res;
-}
 
 // driver code
 int main()
@@ -94,19 +85,23 @@ int main()
     while(T--){
         int n;
         cin >> n;
-        vi cnt(n+1);
-        vii dp(n+1,vi(n+1,-1));
+        ll mna = INF;
+        ll sa = 0;
+        ll mnb = INF;
+        ll sb = 0;
         rep(i,0,n){
-            int x;
+            ll x;
             cin >> x;
-            if(x<=n) cnt[x]++;
+            mna = min(mna,x);
+            sa +=x;
         }
-        int mex = 0;
-        rep(i,0,n+1){
-            if(cnt[i]==0) {mex=i;break;}
+        rep(i,0,n){
+            ll x;
+            cin >> x;
+            mnb = min(mnb,x);
+            sb +=x;
         }
-        put(rec(mex-1,mex,cnt,dp));
-
+        put(min(sa+mnb*n,sb+mna*n))
     }
 
     return 0;
