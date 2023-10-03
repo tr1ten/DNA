@@ -83,47 +83,38 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        ll n,k;
-        cin >> n >> k;
-        ll n2 = n/2;
-        if(3*n/2 > k || k>100000*n || abs(n2-(k-((k/n)*n)))%2==1) put(-1)
-        else {
-            ll base = (k/n);
-            ll nk = k-base*n;
-            vi ans(n,base);
-            rep(i,0,min(n2,nk)){
-                ans[i] +=1;
-            }
-            int left = abs(nk-n2);
-            assert((left)%2==0);
-            if(nk<n2){
-                rep(i,min(n2,nk),min(n2,nk)+left/2){
-                    ans[i] +=1;
-                }
-                rep(i,n-(left/2),n){
-                    ans[i] -=1;
-                }
-            }
-            else if(n2<nk){
-                rep(i,min(n2,nk),min(n2,nk)+left/2){
-                    ans[i] +=2;
-                }
-            }
-            int cnt[2] = {0,0};
-            ll sm = 0;
-            int f = 0;
+        ll n,c;
+        cin >> n >> c;
+        vi a(n);
+        vi b(n);
+        tkv(a,n);
+        tkv(b,n-1);
+        auto ok = [&](ll x){
+            ll cur = 0;
+            // debug(x);
             rep(i,0,n){
-                cnt[ans[i]&1]++;
-                sm += ans[i];
-                f |=(ans[i]>100000);
+                if(cur+a[i]*x>=c) return 1;
+                ll d = ceil((b[i]-cur)*1.0/a[i]) ;
+                if(d+1>x || i==n-1 || x==0 || (cur+a[i]*(x-1))<b[i]) return 0;
+                assert(d+1<=x);
+                x-=(d+1);
+                cur = cur+d*a[i]-b[i];
+                // debug(x,cur,d);
             }
-            if(f) {put(-1);continue;}
-            // debug(ans);
-            assert(cnt[0]==cnt[1]);
-            assert(sm==k);
-            pvc(ans);
-
+            return 0;
+        };
+        ll lo=1,hi=1e10;
+        ll ans = -1;
+        while (lo<=hi)
+        {   
+            ll mid = (lo+hi)/2;
+            if(ok(mid)){
+                ans = mid;
+                hi = mid-1;
+            }
+            else lo =mid+1;
         }
+        put(ans);
         
     }
 

@@ -72,7 +72,17 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
-
+const int N = 1e5 + 5;
+vector<vector<int>> divs(N+1);
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    for(int x=2;x<=N;x++){
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
+        }
+    }
+}
 // driver code
 int main()
 {
@@ -82,49 +92,30 @@ int main()
     // freopen("output.out","w",stdout);	  
     int T=1;
     cin>>T;
+    preprocess();
     while(T--){
-        ll n,k;
-        cin >> n >> k;
-        ll n2 = n/2;
-        if(3*n/2 > k || k>100000*n || abs(n2-(k-((k/n)*n)))%2==1) put(-1)
-        else {
-            ll base = (k/n);
-            ll nk = k-base*n;
-            vi ans(n,base);
-            rep(i,0,min(n2,nk)){
-                ans[i] +=1;
-            }
-            int left = abs(nk-n2);
-            assert((left)%2==0);
-            if(nk<n2){
-                rep(i,min(n2,nk),min(n2,nk)+left/2){
-                    ans[i] +=1;
-                }
-                rep(i,n-(left/2),n){
-                    ans[i] -=1;
-                }
-            }
-            else if(n2<nk){
-                rep(i,min(n2,nk),min(n2,nk)+left/2){
-                    ans[i] +=2;
-                }
-            }
-            int cnt[2] = {0,0};
-            ll sm = 0;
-            int f = 0;
-            rep(i,0,n){
-                cnt[ans[i]&1]++;
-                sm += ans[i];
-                f |=(ans[i]>100000);
-            }
-            if(f) {put(-1);continue;}
-            // debug(ans);
-            assert(cnt[0]==cnt[1]);
-            assert(sm==k);
-            pvc(ans);
-
+        int n;
+        cin >> n;
+        vi st;
+        rep(i,0,n){
+            int x;
+            cin >> x;
+            st.push_back(x);
         }
-        
+        sort(st.rbegin(), st.rend());
+        mll ans;
+        trav(x,st){
+            ans[1] = max(ans[1],1ll+ans[x]);
+            trav(f,divs[x]){
+                ans[f]=max(ans[f],1ll+ans[x]);
+            }
+        }
+        // debug(ans);
+        ll mx = 0;
+        trav(x,st){
+            mx = max(mx,ans[x]*x*1ll);
+        }
+        put(mx);
     }
 
     return 0;
