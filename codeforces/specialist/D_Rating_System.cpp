@@ -71,25 +71,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e18+5;
-const ll C = 149482000000149482;
-const int N = 1e5 + 5;
-ll mem[N][2];
-ll rec(int idx,int last,string &s){
-    if(s.size()==idx) return 0;
-    if(mem[idx][last]!=-1 ) return mem[idx][last];
-    int oc = 0;
-    int i =idx;
-    while(i<s.size() && s[i]=='1') {oc++;i++;}
-    int zc = 0;
-    while(i<s.size() && s[i]=='0') {zc++;i++;}
-    if(last==0){
-        return mem[idx][last]=min(oc==zc && zc==1 ? C + rec(i,1,s) : INF,min(oc*C + oc+rec(i,0,s),zc*C + zc+rec(i,1,s)));
-    }
-    else{
-        return mem[idx][last]=zc*C + zc + rec(i,1,s);
-    }
-}
+const ll INF = 1e10+5;
+
 // driver code
 int main()
 {
@@ -100,15 +83,32 @@ int main()
     int T=1;
     cin>>T;
     while(T--){
-        string s;
-        cin >> s;
-        memset(mem,-1,sizeof mem);
-        ll res = rec(0,0,s);
-        ll d = res/C;
-        ll nr = d*(1e12) + res%C;
-        put(nr);
-        
-    }   
+        int n;
+        cin >> n;
+        vi A(n);
+        tkv(A,n);
+        ll mx = 0;
+        ll sm = 0;
+        vi suff(n+1);
+        per(i,0,n){
+            sm +=A[i];
+            mx = max(sm,mx);
+            suff[i] = mx;
+        }
+        ll pref=0;
+        ll ans = mx;
+        ll k = 0;
+        rep(i,0,n){
+            pref+=A[i];
+            if(pref+suff[i+1]>ans){
+                ans = pref+suff[i+1];
+                k = pref;
+            }
+            // debug(i,pref+suff[i+1]);
+        }
+        // debug(ans);
+        put(k);
+    }
 
     return 0;
 }
