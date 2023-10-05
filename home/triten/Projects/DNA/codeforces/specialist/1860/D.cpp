@@ -1,8 +1,8 @@
-// Problem: G. Vlad and the Mountains
-// Contest: Codeforces - Codeforces Round 888 (Div. 3)
-// URL: https://codeforces.com/contest/1851/problem/G
+// Problem: D. Phoenix and Science
+// Contest: Codeforces - Codeforces Round 638 (Div. 2)
+// URL: https://codeforces.com/problemset/problem/1348/D
 // Memory Limit: 256 MB
-// Time Limit: 5000 ms
+// Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -101,80 +101,24 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-struct DSU
-{
-    vector<int> parent;
-    vector<int> size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n,1);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-
-struct Q{
-	int a;
-	int b;
-	int e;
-};
+void ans(int x) {put(x?"YES":"NO");}
 
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi A(n);
-    tkv(A,n);
-    vpi edges;
-    rep(i,0,m){
-    	int u,v;
-    	cin >> u >> v;
-    	--v;--u;
-    	edges.push_back({u,v});
-    }
-    sort(all(edges),[&](pi &a,pi &b){
-    	return max(A[a.first],A[a.second])<max(A[b.second],A[b.first]);
-    });
-    int q;
-    cin >> q;
-    vector<Q> qs(q);
-    rep(i,0,q){
-    	cin >> qs[i].a >> qs[i].b >> qs[i].e;
-    	qs[i].a--;
-    	qs[i].b--;
-    }
-	vi sis(q);
-	iota(all(sis),0);
-	sort(all(sis),[&](int i,int j){
-		return A[qs[i].a] + qs[i].e < A[qs[j].a] + qs[j].e;
-	});
-	vector<int> ans(q);
-	DSU ds(n);
-	int j = 0;
-	// debug(edges,sis);
-	trav(i,sis){
-		while(j<m && max(A[edges[j].first],A[edges[j].second])<=A[qs[i].a]+qs[i].e){
-			ds.unite(edges[j].first,edges[j].second);
-			j+=1;
-		}
-		if(ds.find(qs[i].a) == ds.find(qs[i].b)) ans[i] = 1;
-		else ans[i] = 0;
-	}
-	trav(x,ans){
-		put(x?"YES":"NO");
-	}
-	put("");
+    int n;
+    cin >> n;
+   	vector<int> ans{1};
+   	int mass=1;
+   	while(mass+2*ans.back()<=n) {
+   		mass +=2*ans.back();
+   		ans.push_back(2*ans.back());
+   	}
+   	if(mass!=n) ans.push_back(abs(n-mass));
+   	srv(ans);
+   	put(ans.size()-1);
+   	rep(i,1,ans.size()){
+   		cout << ans[i]-ans[i-1] << " " ;
+   	}
+	put("")
 }
 // driver code
 int main()

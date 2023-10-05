@@ -1,8 +1,8 @@
-// Problem: G. Vlad and the Mountains
-// Contest: Codeforces - Codeforces Round 888 (Div. 3)
-// URL: https://codeforces.com/contest/1851/problem/G
+// Problem: D. Balanced String
+// Contest: Codeforces - Educational Codeforces Round 153 (Rated for Div. 2)
+// URL: https://codeforces.com/contest/1860/problem/D
 // Memory Limit: 256 MB
-// Time Limit: 5000 ms
+// Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -95,86 +95,54 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const int INF = 1e9;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-struct DSU
-{
-    vector<int> parent;
-    vector<int> size;
-    DSU(int n){
-        parent.resize(n);
-        for(int i=0;i<n;i++) parent[i] = i; // oath compression
-        size.resize(n,1);
-    }
-    int find(int u){
-        if(parent[u]!=u) parent[u] = find(parent[u]);
-        return parent[u];
-    }
-    bool unite(int u,int v){
-        int ra = find(u);
-        int rb = find(v);
-        if(ra==rb) return 0;
-        if(size[ra]<size[rb]) swap(ra,rb); // merge smaller to bigger tree
-        size[ra] +=size[rb]; // union by rank
-        parent[rb] = ra;
-        return 1;
-    }
-};
-
-struct Q{
-	int a;
-	int b;
-	int e;
-};
-
+void ans(int x) {put(x?"YES":"NO");}
+ll	invs(string &s){
+	ll cnt = 0;
+	int zc = 0;
+	for(auto x:s){
+		if(x=='1') cnt += zc;
+		else zc++;
+	}
+	return cnt;
+}
+const int N = 105;
+int dp[N][N][(N*N)/2];
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi A(n);
-    tkv(A,n);
-    vpi edges;
-    rep(i,0,m){
-    	int u,v;
-    	cin >> u >> v;
-    	--v;--u;
-    	edges.push_back({u,v});
+    string s;
+    cin >> s;
+    int n = s.size();
+    int c0=0;
+    rep(i,0,n){
+    	c0 += s[i]=='0';
     }
-    sort(all(edges),[&](pi &a,pi &b){
-    	return max(A[a.first],A[a.second])<max(A[b.second],A[b.first]);
-    });
-    int q;
-    cin >> q;
-    vector<Q> qs(q);
-    rep(i,0,q){
-    	cin >> qs[i].a >> qs[i].b >> qs[i].e;
-    	qs[i].a--;
-    	qs[i].b--;
-    }
-	vi sis(q);
-	iota(all(sis),0);
-	sort(all(sis),[&](int i,int j){
-		return A[qs[i].a] + qs[i].e < A[qs[j].a] + qs[j].e;
-	});
-	vector<int> ans(q);
-	DSU ds(n);
-	int j = 0;
-	// debug(edges,sis);
-	trav(i,sis){
-		while(j<m && max(A[edges[j].first],A[edges[j].second])<=A[qs[i].a]+qs[i].e){
-			ds.unite(edges[j].first,edges[j].second);
-			j+=1;
+	int tar = (c0)*(n-c0)/2;
+	rep(i,0,n+1){
+		rep(j,0,n+1){
+			rep(k,0,n*n/2 + 1) {
+				dp[i][j][k] = INF;
+				}
+	}
+	}
+	dp[0][0][0] = 0;
+	rep(i,0,n){
+		rep(j,0,i+1){
+			rep(k,0,i*i/2 + 1){
+				if(dp[i][j][k]==INF) continue;
+				dp[i+1][j+1][k] = min(dp[i+1][j+1][k], dp[i][j][k] + (s[i]!='0'));
+				dp[i+1][j][k+j]= min(dp[i+1][j][k+j], dp[i][j][k]+ (s[i]!='1'));
+				
+				
+			}
 		}
-		if(ds.find(qs[i].a) == ds.find(qs[i].b)) ans[i] = 1;
-		else ans[i] = 0;
 	}
-	trav(x,ans){
-		put(x?"YES":"NO");
-	}
-	put("");
+	put(dp[n][c0][tar]/2);
+    
 }
 // driver code
 int main()
@@ -184,7 +152,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
