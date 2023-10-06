@@ -54,7 +54,32 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
+#include <vector>
 
+class BIT {
+private:
+    std::vector<int> nums;
+public:
+    BIT(int n) {
+        nums.resize(n+1);
+    }
+    void update(int i, int val) {
+        i += 1;
+        while (i < nums.size()) {
+            nums[i] += val;
+            i += (i & (-i));
+        }
+    }
+    int sum(int i) {
+        int r = 0;
+        // i += 1, not needed here since we need sum of rank less than i rank[0...i-1]
+        while (i > 0) {
+            r += nums[i];
+            i -= (i & (-i));
+        }
+        return r;
+    }
+};
 
 
 
