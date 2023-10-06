@@ -1,7 +1,5 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-
 
 const int N = 50;
 int dp[N+5][2];

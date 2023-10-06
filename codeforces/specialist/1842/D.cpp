@@ -1,6 +1,6 @@
-// Problem: D2. Half of Same
-// Contest: Codeforces - Codeforces Round 748 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1593/D2
+// Problem: D. Tenzing and His Animal Friends
+// Contest: Codeforces - CodeTON Round 5 (Div. 1 + Div. 2, Rated, Prizes!)
+// URL: https://codeforces.com/contest/1842/problem/D
 // Memory Limit: 256 MB
 // Time Limit: 1000 ms
 //
@@ -124,45 +124,75 @@ void _print(T t, V... v) {
 #define debug(x...)
 #endif
 const ll MOD = 1e9 + 7;
-const ll INF = 1e10 + 5;
+const ll INF = 1e17 + 5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x); }
 inline int clz(ll x) { return __builtin_clzll(x); }
 inline int pc(ll x) { return __builtin_popcount(x); }
 inline int hset(ll x) { return __lg(x); }
 void ans(int x) { put(x ? "YES" : "NO"); }
+void dfs(int u, vi &vis, vector<vector<pair<ll, int>>> &adj) {
+  vis[u] = 1;
+  trav(v, adj[u]) {
+    if (!vis[v.second]) dfs(v.second, vis, adj);
+  }
+}
 void testcase() {
-  int n;
-  cin >> n;
-  vi A;
-  map<int, int> c;
-  rep(i, 0, n) {
-    int x;
-    cin >> x;
-    A.push_back(x);
-    c[x]++;
+  ll n, m;
+  cin >> n >> m;
+  vector<vector<pair<ll, int>>> adj(n);
+  rep(i, 0, m) {
+    ll u, v, w;
+    cin >> u >> v >> w;
+    --u;
+    --v;
+    adj[u].push_back({w, v});
+    adj[v].push_back({w, u});
   }
-  // debug(n,A);
-  trav(x, c) {
-    if (x.second >= n / 2) {
-      // debug(n,x.first, x.second);
-      put(-1);
-      return;
+  vi vis(n);
+  dfs(0, vis, adj);
+  if (!vis[n - 1]) {
+    put("inf") return;
+  }
+  string S = "";
+  rep(i, 0, n) { S += "0"; }
+  S[0] = '1';
+  ll total = 0;
+  vector<pair<string, ll>> games;
+  while (S[n - 1] != '1') {
+    ll mins = INF;
+    rep(i, 0, n) {
+      if (S[i] == '1') {
+        trav(v, adj[i]) {
+          if (S[v.second] == '0') {
+            mins = min(v.first, mins);
+          }
+        }
+      }
     }
-  }
-  int mx = *max_element(all(A));
-  ll ans = -2;
-  rep(k, 1, 2*mx+2) {
-    unordered_map<int,int> cnt;
-    trav(x,A) {cnt[(k + x%k)%k]++;}
-    int f = 0;
-    trav(x,cnt) {
-    	if(x.second>=n/2) {f=1;break;}
+    if (mins == INF) break;
+    // assert(mins > 0);
+    total += mins;
+    if (mins > 0) games.push_back({S, mins});
+    string temp = S;
+    rep(i, 0, n) {
+      if (temp[i] == '1') {
+        for(int j=0;j<adj[i].size();j++) {
+        	adj[i][j].first -=mins;
+        	auto v = adj[i][j];
+        	if(v.first<=0) {
+        		S[v.second] = '1';
+        	}
+        }
+      }
     }
-    // debug(k,cnt);
-    if (f) ans = max(ans, (ll)k);
+    // debug(S, total, mins);
   }
-  put(ans);
+  put2(total, games.size());
+  trav(x, games) {
+  	put2(x.first, x.second); 
+}
+  // put(total);
 }
 // driver code
 int main() {
@@ -171,7 +201,7 @@ int main() {
   // freopen("input.in","r",stdin);
   // freopen("output.out","w",stdout);
   int T = 1;
-  cin >> T;
+  // cin>>T;
   while (T--) testcase();
 
   return 0;
