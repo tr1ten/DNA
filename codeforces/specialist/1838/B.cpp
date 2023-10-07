@@ -1,6 +1,6 @@
-// Problem: C. No Prime Differences
+// Problem: B. Minimize Permutation Subarrays
 // Contest: Codeforces - Codeforces Round 877 (Div. 2)
-// URL: https://codeforces.com/contest/1838/problem/C
+// URL: https://codeforces.com/contest/1838/problem/B
 // Memory Limit: 256 MB
 // Time Limit: 2000 ms
 // 
@@ -102,60 +102,21 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-int isPrime(int x){
-	 // debug(x);
-	 if(x==1) return 0;
-    if(x==2) return -1;
-    rep(i,2,sqrt(x) +1){
-        if((x%i)==0) return i;
-    }
-   
-    return -1;
-}
 void testcase(){
-  int n,m;
-  cin >> n >> m;
-  int sp=0;
-  if(m<n) {swap(n,m);sp = 1;}
-  int p = isPrime(m)==-1;
-  int last = 0;
-  vii mat(n,vi(m,-1));
-	set<int> st;
-  rep(i,0,n){
-  	int cnt =0;
-  	rep(j,0,m){
-  		
-  		if(p){
-  			if(i*m + i+1 +j <=(i+1)*m) mat[i][j] = i*m + i+1 +j;
-  			else mat[i][j] = i*m + (++cnt);
-  			 
-  		}
-  		else mat[i][j] = ++last;
-	  	}
-  	}
-  	if(sp) swap(n,m);
-  	rep(i,0,n){
-  		rep(j,0,m){
-  			// if(sp) swap()
-  			// if(p && i>0) 
-  			// {
-  				// // debug(i,j,mat[i][j] );
-  				// assert(isPrime(abs(mat[i-1][j]-mat[i][j]))!=-1 ) ;
-			// }
-  			// if(p && j>0) assert(isPrime(abs(mat[i][j-1]-mat[i][j]))!=-1);
-  			// debug(i,j,n,m);
-  			cout << (sp ? mat[j][i] : mat[i][j]) << " ";
-  			// st.insert(mat[i][j]);
-  			// if(mat[i][j]>n*m) {debug(n,m,i,j,mat[i][j]);}
-  			// assert(mat[i][j]<=n*m);
-  		}
-  		cout << '\n';
-  	}
-  	// assert(st.size()==n*m);
-    cout << '\n';
-  	
-}  
-
+ 	int n;
+ 	cin >> n;
+ 	int oi,ni,ti;
+ 	rep(i,0,n){
+ 		int x;
+ 		cin >> x;
+ 		if(x==1) oi = i;
+ 		if(x==2) ti = i;
+ 		if(x==n) ni = i;
+ 	}  
+ 	if((ni>oi && ni<ti) or (ni<oi && ni>ti)) put2(1,1) 
+ 	else if(abs(ti-ni)<abs(oi-ni)) put2(min(ti,ni)+1,max(ti,ni)+1)
+ 	else put2(min(oi,ni)+1,max(oi,ni)+1)
+}
 // driver code
 int main()
 {
