@@ -152,9 +152,9 @@ void testcase() {
   }
   int mx = *max_element(all(A));
   ll ans = -2;
-  rep(k, 1, 2*mx+2) {
+  rep(k, 1, mx + 2) {
     unordered_map<int,int> cnt;
-    trav(x,A) {cnt[(k + x%k)%k]++;}
+    trav(x,A) {cnt[abs(x)%k]++;}
     int f = 0;
     trav(x,cnt) {
     	if(x.second>=n/2) {f=1;break;}
