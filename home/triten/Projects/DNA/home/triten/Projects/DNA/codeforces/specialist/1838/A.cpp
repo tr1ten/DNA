@@ -1,3 +1,11 @@
+// Problem: A. Watermelon
+// Contest: Codeforces - Codeforces Beta Round 4 (Div. 2 Only)
+// URL: https://codeforces.com/problemset/problem/4/A
+// Memory Limit: 64 MB
+// Time Limit: 1000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -12,6 +20,22 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // find_by_order(k)  returns iterator to kth element starting from 0;
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
+const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
+struct chash {
+    int operator()(int x) const { return x ^ RANDOM; }
+};
+// gp_hash_table<int, int, chash> table;
+template <class K, class V>
+
+using ht = gp_hash_table<
+
+    K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
+
+    hash_standard_resize_policy<hash_exponential_size_policy<>,
+
+                                hash_load_check_resize_trigger<>, true>>;
+
+// ht<int, null_type> g;
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
@@ -73,67 +97,27 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-int dfs(int u,int p,vii &adj,vpi &dp){
-    
-    trav(v,adj[u]){
-        if(v==p) continue;
-        int res = dfs(v,u,adj,dp);
-        if(dp[u].first<res){
-            dp[u].second = dp[u].first;
-            dp[u].first = res;
-        }
-        else if(dp[u].second<res) dp[u].second = res;
-    }
-    return dp[u].first+1;
-}
-ll res;
-int n,k,c;
-
-void dfs2(int u,int p,ll op,vii &adj,vpi &dp){
-    trav(v,adj[u]){
-        if(v==p) continue;
-        if(dp[u].first!=dp[v].first+1) {
-            dp[v].second = dp[v].first;
-            dp[v].first = dp[u].first+1;
-        }
-        else if(dp[v].first<dp[u].second+1){
-            dp[v].second = dp[v].first;
-            dp[v].first = dp[u].second + 1;
-        }
-        else dp[v].second = max(dp[v].second,dp[u].second+1);
-        res = max(res,dp[v].first*k -(op+c));
-        dfs2(v,u,op+c,adj,dp);
-    }
+inline int ctz(ll x) { return __builtin_ctzll(x);}
+inline int clz(ll x) {return __builtin_clzll(x);}
+inline int pc(ll x) {return  __builtin_popcount(x);} 
+inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
+void testcase(){
+    int n;
+    cin >> n;
+    if(n>2 && n%2==0) put("YES")
+    else put("NO")
 }
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
-    while(T--){
-        cin >> n >> k >> c;
-        vii adj(n);
-        rep(i,0,n-1){
-            int u,v;
-            cin >> u >> v;
-            --u;--v;
-            adj[u].push_back(v);
-            adj[v].push_back(u);
-        }
-        vpi dp(n);
-        int root = 0;
-        dfs(root,-1,adj,dp);
-        res = dp[root].first*k;
-        dfs2(root,-1,0,adj,dp);
-        // debug(dp);
-        put(res);
-        
-
-    }
+    // cin>>T;
+    while(T--) testcase();
 
     return 0;
 }

@@ -1,6 +1,6 @@
 from typing import List
 
-def rec(a: float, b: float, c: float, races: int, v: float) -> float:
+def rec(a: , b: , c: , races: int, v: ) -> :
     res = c * races
     if a > 0:
         if b > 0:
@@ -18,5 +18,5 @@ def rec(a: float, b: float, c: float, races: int, v: float) -> float:
 if __name__ == "__main__":
     T = int(input())
     for _ in range(T):
-        c, m, p, v = map(float, input().split())
+        c, m, p, v = map(, input().split())
         print("{:.12f}".format(rec(c, m, p, 1, v)))

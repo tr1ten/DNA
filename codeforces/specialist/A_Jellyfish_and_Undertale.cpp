@@ -90,7 +90,7 @@ int main()
         int i = 0;
         srv(A);
         ll ans = 1;
-        while (i<n)
+        while (i<n)d
         {
             ll cur = A[i] + 1;
             i++;
