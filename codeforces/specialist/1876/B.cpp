@@ -1,6 +1,6 @@
-// Problem: D. The Best Vacation
-// Contest: Codeforces - Codeforces Round 645 (Div. 2)
-// URL: https://codeforces.com/problemset/problem/1358/D
+// Problem: B. Effects of Anti Pimples
+// Contest: Codeforces - Codeforces Round 902 (Div. 1, based on COMPFEST 15 - Final Round)
+// URL: https://codeforces.com/contest/1876/problem/B
 // Memory Limit: 256 MB
 // Time Limit: 2000 ms
 // 
@@ -102,38 +102,8 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-const int N = 1e6 + 5;
-ll a[2*N];
 void testcase(){
-	ll n,m;
-	cin >> n >> m;
-	rep(i,0,n) {
-		cin >> a[i];
-	}
-	rep(i,0,n) a[i+n] = a[i];
-	ll i =0;
-	ll cur = 0;
-	ll val = 0;
-	ll res = 0;
-	rep(j,0,2*n){
-		cur+=a[j];
-		val +=a[j]*(a[j]+1)/2;
-		while(cur>=m){
-			ll c = m-(cur-a[j]-a[i]);
-			ll x = a[i];
-			if(a[i]-c<0) x = c-a[j]; 
-			val = val-(a[i]*(a[i]+1)/2);
-			ll net = val - (a[j]*(a[j]+1)/2);
-			// debug(i,j,x,net,val);
-			res = max(res,(net + (a[i]-c)*x + c*(c+1)/2) );	
-			cur -=a[i];
-			i++;	
-		}
-		
-		
-	}
-	put(res);
-	
+    
 }
 // driver code
 int main()
@@ -143,7 +113,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

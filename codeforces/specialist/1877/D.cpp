@@ -1,6 +1,6 @@
-// Problem: D. Phoenix and Science
-// Contest: Codeforces - Codeforces Round 638 (Div. 2)
-// URL: https://codeforces.com/problemset/problem/1348/D
+// Problem: D. Effects of Anti Pimples
+// Contest: Codeforces - Codeforces Round 902 (Div. 2, based on COMPFEST 15 - Final Round)
+// URL: https://codeforces.com/contest/1877/problem/D
 // Memory Limit: 256 MB
 // Time Limit: 2000 ms
 // 
@@ -62,7 +62,7 @@ typedef unordered_map<ll,ll> mll;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
-#define mod(x) (x + MOD)%MOD
+#define mod(x) ((x + MOD)%MOD)
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
@@ -94,7 +94,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 998244353;
 const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -102,23 +102,58 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-
+const int N = 1e5 + 5;
+vector<vector<int>> divs(N+1);
+void preprocess(){
+    for(int x=2;x<=N;x++){
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
+        }
+    }
+}
+ll fast_pow(ll x,ll n,ll m=MOD){
+    x = x%m;
+    ll res = 1;
+    while (n>0)
+    {
+        if(n%2==1) res = (res*x)%m; 
+        x = x*x%m;
+        n /=2;
+    }
+    return res;
+}
 void testcase(){
     int n;
     cin >> n;
-   	vector<int> ans{1};
-   	int mass=1;
-   	while(mass+2*ans.back()<=n) {
-   		mass +=2*ans.back();
-   		ans.push_back(2*ans.back());
-   	}
-   	if(mass!=n) ans.push_back(abs(n-mass));
-   	srv(ans);
-   	put(ans.size()-1);
-   	rep(i,1,ans.size()){
-   		cout << ans[i]-ans[i-1] << " " ;
-   	}
-	put("")
+    vi a(n);
+	tkv(a,n);
+	vector<bool> vis(n+1,0);
+	vi inds(n);
+	iota(all(inds),0);
+	sort(all(inds),[&](int i,int j){
+		return a[i]>a[j];
+	});
+	ll res = 0;
+	ll left = n;
+	ll total=0;
+	trav(i,inds){
+		if(vis[i+1]) continue;
+		ll cnt = 0;
+		if(!vis[1]){ cnt++;vis[1]=1;}
+		trav(d,divs[i+1] ){
+			cnt+=(!vis[d]);
+			vis[d] = 1;
+		}
+		ll ex=mod(fast_pow(2,left) - fast_pow(2,left-cnt)+MOD);
+		// debug(i,a[i],ex);
+		
+		total += ex;
+		res = mod(res+mod(a[i]*ex));
+		left -=cnt;
+		// if	(left==0)  break;
+	}
+	// debug(total,1<<n,inds);
+	put(res);
 }
 // driver code
 int main()
@@ -128,7 +163,8 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    preprocess();
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

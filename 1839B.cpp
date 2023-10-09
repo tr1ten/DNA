@@ -95,7 +95,25 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
-    
+    int n;
+    cin >> n;
+    map<int,priority_queue<int,vector<int>>> cnt;
+    rep(i,0,n){
+        int a,b;
+        cin >> a >> b;
+        cnt[a].push(b);
+    }
+    ll ans = 0;
+    trav(x,cnt){
+        int sz = x.first;
+        while (sz-- && x.second.size())
+        {
+            ans +=x.second.top();
+            x.second.pop();
+        }
+        debug(ans,x.first);
+    }
+    put(ans);
 }
 // driver code
 int main()

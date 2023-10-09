@@ -1,8 +1,8 @@
-// Problem: A. Team
-// Contest: Codeforces - Codeforces Round 143 (Div. 2)
-// URL: https://codeforces.com/problemset/problem/231/A
+// Problem: B. Helmets in Night Light
+// Contest: Codeforces - Codeforces Round 902 (Div. 2, based on COMPFEST 15 - Final Round)
+// URL: https://codeforces.com/contest/1877/problem/B
 // Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -102,16 +102,42 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
+ll n,p;
+vector<ll> a;
+vector<ll> b;
+vector<ll> inds;
+
 void testcase(){
-    int n;
-    cin >> n;
-    int cnt = 0;
-    for(int i=0;i<n;i++){
-    	int a,b,c;
-    	cin >> a >> b >> c;
-    	cnt += (a+b+c)>=2;
-    }
-    put(cnt);
+    cin >> n >> p;
+    a.resize(n);
+    b.resize(n);
+    tkv(a,n);
+    tkv(b,n);
+    inds.resize(n);
+    iota(all(inds),0);
+    sort(all(inds),[&](int i,int j){
+    	return b[i]==b[j] ? a[i]>a[j] : b[i] < b[j];
+    });
+    vi pref{0};
+	ll total = 0;
+	ll res = p;
+	// debug(a,b,inds);
+	rep(i,0,n){
+		if(b[inds[i]]>p) {
+			res += (n-1-total)*p;
+			break;
+		}
+		else{
+			ll d = min(n-1-total,a[inds[i]]);
+			total +=d;
+			res +=d*b[inds[i]];
+			
+		}
+		if(total==n-1) break;
+	}
+    
+    put(res);
+    
 }
 // driver code
 int main()
@@ -121,7 +147,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

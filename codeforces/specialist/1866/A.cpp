@@ -1,8 +1,8 @@
-// Problem: D. Zigzags
-// Contest: Codeforces - Educational Codeforces Round 94 (Rated for Div. 2)
-// URL: https://codeforces.com/problemset/problem/1400/D
+// Problem: A. Ambitious Kid
+// Contest: Codeforces - COMPFEST 15 - Preliminary Online Mirror (Unrated, ICPC Rules, Teams Preferred)
+// URL: https://codeforces.com/contest/1866/problem/A
 // Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -105,22 +105,13 @@ void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-	unordered_map<int,int> ii;
-	vi A;
-	vii b(n+1);
-	rep(i,0,n){
-		int x;
-		cin >> x;
-		b[x].push_back(i);
-		A.push_back(x);
-	}
-	ll res = 0;
-	rep(j,0,n){
-		rep(k,j+1,n-1){
-			res += (lower_bound(all(b[A[k]]) , j)-b[A[k]].begin())*( b[A[j]].end() - upper_bound(all(b[A[j]]) , k) );
-		}
-	}
-	put(res);
+    int mn = INT_MAX;
+    rep(i,0,n){
+    	int x;
+    	cin >> x;
+    	mn =min( abs(x),mn);
+    }
+    put(mn);
 }
 // driver code
 int main()
@@ -130,7 +121,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

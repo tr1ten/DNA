@@ -1,6 +1,6 @@
 import java.util.*;
 
-class Solution {
+Zclass Solution {
     public static int solve(int[][] mat, int size) {
         Map<Integer, Set<Integer>> d = new HashMap<>();
 

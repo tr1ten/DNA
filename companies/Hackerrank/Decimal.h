@@ -1,0 +1,1 @@
+string solve(string s);

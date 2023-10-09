@@ -1,3 +1,11 @@
+// Problem: C. Joyboard
+// Contest: Codeforces - Codeforces Round 902 (Div. 2, based on COMPFEST 15 - Final Round)
+// URL: https://codeforces.com/contest/1877/problem/C
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -94,22 +102,25 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-void testcase(){
-    
+int f(int n,int m,int k){
+	if(k>3) return 0;
+	if(n>=m){
+		if(k==1) return 1;
+		if(k==2) return m;
+		return 0;
+	}
+	else{
+		if(k==1)return 1;
+		if(k==2) return f(n,n,k) + m/n - 1;
+		if(k==3) return m-n-(m/n - 1);
+		return 0;
+	}
 }
-class Solution {
-public:
-    int integerBreak(int n) {
-        int ans = 0;
-        for(int i=2;i<=n;i++){
-            int c = n/i;
-            int c2 = n%i;
-            ans = max((int)pow(c,i-c2)*pow(c+1,c2) , ans);
-            
-        }
-        return ans;
-    }
-};
+void testcase(){
+    int n,m,k;
+    cin >> n >> m >> k;
+    put(f(n,m,k));
+}
 // driver code
 int main()
 {
@@ -117,9 +128,9 @@ int main()
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
-    // int T=1;
-    // cin>>T;
-    // while(T--) testcase();
+    int T=1;
+    cin>>T;
+    while(T--) testcase();
 
     return 0;
 }

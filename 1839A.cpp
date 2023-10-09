@@ -1,11 +1,3 @@
-// Problem: A. Polycarp and Coins
-// Contest: Codeforces - Codeforces Round 734 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1551/A
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
-// 
-// Powered by CP Editor (https://cpeditor.org)
-
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -103,13 +95,23 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
-    int n;
-    cin >> n;
-    int a = n/3;
-    int b = n-2*a;
-    if((n-a)%2==0) put2(a,(n-a)/2)
-    else put2(b,a);
-		
+    int n,k;
+    cin >> n >> k;
+    string res;
+    rep(i,0,n) res +="0";
+    int pref= 0 ;
+    rep(i,1,n+1){
+        pref +=(res[i-1]=='1');
+        if(pref<ceil(i*1.0/k)) {res[i-1] ='1';pref++;}
+    }
+    pref = 0;
+    per(i,1,n+1){
+        pref +=(res[i-1]=='1');
+        if(pref<ceil((n-i*1.0+1.0)/k)) {res[i-1] ='1';pref++;}
+    }
+    put(count(all(res),'1'));
+    
+
 }
 // driver code
 int main()
