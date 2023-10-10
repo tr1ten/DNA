@@ -98,9 +98,29 @@ void testcase(){
     int n;
     cin >> n;
     vi ans;
+    set<int> z,o;
+        int x;
     rep(i,0,n){
-
+        cin >> x;
+        if(!x) z.insert(i);
+        else o.insert(i);
     }
+    if(x){
+        put("NO");
+        return;
+    }
+    while (z.size())
+    {
+        auto it = *z.begin();
+        int cnt = 0;
+        z.erase(it);
+        while(o.size() && (*o.begin()) < it) {cnt++;z.insert(*o.begin());o.erase(o.begin());}
+        ans.push_back(cnt);
+    }
+    reverse(all(ans));
+    put("YES")
+    pvc(ans);
+    
 }
 // driver code
 int main()
