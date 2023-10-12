@@ -94,35 +94,26 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-vi dp;
-vi id;
-void dfs(int u,int p, vector<vector<pair<int,int>>>  &adj){
-    trav(v,adj[u]){
-        if(v.first==p) continue;
-        dp[v.first]=dp[u] + (v.second<id[u]);
-        id[v.first] = v.second;
-        dfs(v.first,u,adj);
-    }
-}
-void testcase(){
+void testcase(){  
     int n;
     cin >> n;
-    vi a(n);
-    dp.resize(n,0);
-    id.resize(n,-1);
-    vector<vector<pair<int,int>>> adj(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back({v,i});
-        adj[v].push_back({u,i});
+    string s,t;
+    cin >> s >> t;
+    int x = 0;
+    int pos =1;
+    int zc = count(all(s),'0');
+    int oc = n-zc;
+    per(i,0,n){
+        if((x^(s[i]-'0'))!=(t[i]-'0')){
+            if(zc!=oc) {pos=0;break;}
+            x ^=1;
+        }
+        zc -= (s[i]=='0');
+        oc -= (s[i]=='1');
     }
-    dp[0] = 1;
-    id[0] = -1;
-    dfs(0,-1,adj);
-    // debug(dp,id);
-    put(*max_element(all(dp)));
+    if(pos) put("YES")
+    else put("NO")
+    
 }
 // driver code
 int main()

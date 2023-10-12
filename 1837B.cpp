@@ -94,35 +94,23 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-vi dp;
-vi id;
-void dfs(int u,int p, vector<vector<pair<int,int>>>  &adj){
-    trav(v,adj[u]){
-        if(v.first==p) continue;
-        dp[v.first]=dp[u] + (v.second<id[u]);
-        id[v.first] = v.second;
-        dfs(v.first,u,adj);
-    }
-}
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    dp.resize(n,0);
-    id.resize(n,-1);
-    vector<vector<pair<int,int>>> adj(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back({v,i});
-        adj[v].push_back({u,i});
+    string s;
+    cin >> s;
+    int res=  0;
+    int i=0;
+    rep(j,0,n){
+        while (s[i]!=s[j])
+        {
+            i++;
+        }
+        res = max(res,j-i+1);
+        
     }
-    dp[0] = 1;
-    id[0] = -1;
-    dfs(0,-1,adj);
-    // debug(dp,id);
-    put(*max_element(all(dp)));
+    put(res+1);
+
 }
 // driver code
 int main()

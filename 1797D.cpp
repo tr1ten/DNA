@@ -95,34 +95,57 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 vi dp;
-vi id;
-void dfs(int u,int p, vector<vector<pair<int,int>>>  &adj){
+vector<set<pi>> childs;
+vi sizes;
+vi par;
+void dfs(int u,int p,vii &adj){
+    if(p!=-1) par[u] = p;
+    sizes[u] = 1;
     trav(v,adj[u]){
-        if(v.first==p) continue;
-        dp[v.first]=dp[u] + (v.second<id[u]);
-        id[v.first] = v.second;
-        dfs(v.first,u,adj);
+        if(v==p) continue;
+        dfs(v,u,adj);
+        dp[u] +=dp[v];
+        par[v]=u;
+        sizes[u]+=sizes[v];
+        childs[u].insert({sizes[v],v});
     }
 }
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    dp.resize(n,0);
-    id.resize(n,-1);
-    vector<vector<pair<int,int>>> adj(n);
+    int n,m;
+    cin >> n >> m;
+    sizes.resize(n);
+    dp.resize(n);
+    childs.resize(n);
+    tkv(dp,n);
+    vii adj(n);
+    par.resize(n);
     rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back({v,i});
-        adj[v].push_back({u,i});
+        int x,y;
+        cin >> x >> y;
+        --x;--y;
+        adj[x].push_back(y);
+        adj[y].push_back(x);
     }
-    dp[0] = 1;
-    id[0] = -1;
-    dfs(0,-1,adj);
-    // debug(dp,id);
-    put(*max_element(all(dp)));
+    rep(i,0,m){
+        int t;
+        cin >> t;
+        if(t==1){
+            int x;
+            cin >> x;
+            --x;
+            put(dp[x]);
+        }
+        else{
+            int x;
+            cin>> x;
+            --x;
+            ll temp = dp[x];
+            dp[x] -= dp[par[u]];
+        }
+    }
+
+
+
 }
 // driver code
 int main()

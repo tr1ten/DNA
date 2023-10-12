@@ -93,36 +93,25 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
-vi dp;
-vi id;
-void dfs(int u,int p, vector<vector<pair<int,int>>>  &adj){
-    trav(v,adj[u]){
-        if(v.first==p) continue;
-        dp[v.first]=dp[u] + (v.second<id[u]);
-        id[v.first] = v.second;
-        dfs(v.first,u,adj);
+void ans(int x) {put(x?"Yes":"No");}
+void testcase(){    
+    int n,x;
+    cin >> n >> x;
+    int cnt[2] ={0,0};
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        cnt[x&1]++;
     }
-}
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    dp.resize(n,0);
-    id.resize(n,-1);
-    vector<vector<pair<int,int>>> adj(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back({v,i});
-        adj[v].push_back({u,i});
+    // x - odd 
+    //  -> select odd 1 and even 0
+    // x - even
+    // -> select odd 1 and odd 0
+    int a = 0;
+    for(int c=1;c<=min(cnt[1],x);c+=2){
+        if(cnt[0]>=x-c) {a =1;break;}
     }
-    dp[0] = 1;
-    id[0] = -1;
-    dfs(0,-1,adj);
-    // debug(dp,id);
-    put(*max_element(all(dp)));
+    (ans(a));
 }
 // driver code
 int main()

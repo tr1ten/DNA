@@ -154,6 +154,7 @@ void testcase(){
 	}
 	// debug(total,1<<n,inds);
 	put(res);
+	
 }
 // driver code
 int main()
