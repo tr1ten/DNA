@@ -94,73 +94,67 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-vi dp;
-vector<set<pi>> childs;
-vi sizes;
-vi par;
-
-void dfs(int u,int p,vii &adj){
-    sizes[u] = 1;
+void dfs(int u,int p,vii &adj,vpi &dp){
     trav(v,adj[u]){
         if(v==p) continue;
-        dfs(v,u,adj);
-        dp[u] +=dp[v];
-        par[v]=u;
-        sizes[u]+=sizes[v];
-        childs[u].insert({sizes[v],-v});
+        dfs(v,u,adj,dp);
+        ll cur = (dp[v].first+1);
+        if(dp[u].first<cur) {
+            dp[u].second = dp[u].first;
+            dp[u].first = cur;
+        }
+        else if(dp[u].second<cur) dp[u].second = cur;
+    }
+    
+}
+void dfs2(int u,int p,vii &adj,vpi &dp){
+    trav(v,adj[u]){
+        if(v==p) continue;
+        // dp[v] = max(dp[v],dp[u]+1);
+        ll cur;
+        if(dp[u].first==dp[v].first+1) {
+             cur = dp[u].second+1;
+                    }
+        else{
+            cur = dp[u].first + 1;
+        }
+        if(dp[v].first<cur) {
+                dp[v].second = dp[v].first;
+                dp[v].first = cur;
+            }
+            else if(dp[v].second<cur) dp[v].second = cur;
+
+        dfs2(v,u,adj,dp);
     }
 }
-
 void testcase(){
-    ll n,m;
-    cin >> n >> m;
-    sizes.resize(n);
-    dp.resize(n);
-    childs.resize(n);
-    tkv(dp,n);
+    int n,k;
+    cin >> n >> k;
+    vi marked(n);
+    vpi dp(n,{-INF,-INF});
     vii adj(n);
-    par.resize(n);
+    rep(i,0,k){
+        int x;
+        cin>> x;
+        --x;
+        dp[x].first= 0;
+    }
     rep(i,0,n-1){
-        int x,y;
-        cin >> x >> y;
-        --x;--y;
-        adj[x].push_back(y);
-        adj[y].push_back(x);
+        int u,v;
+        cin >> u >> v;
+        --u ;--v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-    dfs(0,-1,adj);
-    rep(i,0,m){
-        int t;
-        cin >> t;
-        if(t==1){
-            int x;
-            cin >> x;
-            --x;
-            put(dp[x]);
-        }
-        else{
-            int x;
-            cin>> x;
-            --x;
-            if(childs[x].size()==0) continue;
-            
-            auto it=prev(childs[x].end());
-            ll sx=-(*it).second;
-            dp[x] -= dp[sx];
-            dp[sx]+=dp[x];
-            int fx= par[x];
-            childs[fx].erase(childs[fx].find({sizes[x],-x}));
-            sizes[x] -= sizes[sx];
-            sizes[sx] +=sizes[x];
-            childs[fx].insert({sizes[sx],-sx});
-            childs[x].erase(it);
-            childs[sx].insert({sizes[x],-x});
-            par[x] =sx;
-            par[sx] = fx;
-        }
+    dfs(0,-1,adj,dp);
+    debug(dp);
+    
+    dfs2(0,-1,adj,dp);
+    ll mx = INF;
+    trav(x,dp){
+        mx = min(x.first,mx);
     }
-
-
-
+    put(mx);
 }
 // driver code
 int main()
@@ -170,7 +164,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

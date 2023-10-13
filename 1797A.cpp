@@ -94,17 +94,15 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-int n,m;
-int f(int x,int y){
-    int up = y>1;
-    int down = y<n;
-    int r = x<m;
-    int l = x>1 ;
-    return l+r+up+down - (l && r && n==1) - (up && down && m==1);
+ll n,m;
+int f(ll x,ll y){
+    if((y==n || y==1) && (x==m || x==1)) return 2;
+    if(y==n || y==1 || x==1 || x==m) return 3;
+    return 4;
 } 
 void testcase(){
-    cin >> n  >> m;
-    int x1,x2,y1,y2;
+    cin >> m >> n; // wtf?
+    ll x1,x2,y1,y2;
     cin >> x1 >> y1 >> x2 >> y2;
     put(min(f(x1,y1),f(x2,y2)));
 }

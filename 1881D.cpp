@@ -94,73 +94,37 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-vi dp;
-vector<set<pi>> childs;
-vi sizes;
-vi par;
-
-void dfs(int u,int p,vii &adj){
-    sizes[u] = 1;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        dfs(v,u,adj);
-        dp[u] +=dp[v];
-        par[v]=u;
-        sizes[u]+=sizes[v];
-        childs[u].insert({sizes[v],-v});
+mll factors(ll x){
+    mll res ;
+    if(x==1) return res;
+    for(int i=2;i<sqrt(x)+1;i++){
+        while (x%i==0)
+        {
+            res[i]++;
+            x /=i;
+        }
+        
     }
+    if(x>1) res[x]++;
+    return res;
 }
-
 void testcase(){
-    ll n,m;
-    cin >> n >> m;
-    sizes.resize(n);
-    dp.resize(n);
-    childs.resize(n);
-    tkv(dp,n);
-    vii adj(n);
-    par.resize(n);
-    rep(i,0,n-1){
-        int x,y;
-        cin >> x >> y;
-        --x;--y;
-        adj[x].push_back(y);
-        adj[y].push_back(x);
-    }
-    dfs(0,-1,adj);
-    rep(i,0,m){
-        int t;
-        cin >> t;
-        if(t==1){
-            int x;
-            cin >> x;
-            --x;
-            put(dp[x]);
-        }
-        else{
-            int x;
-            cin>> x;
-            --x;
-            if(childs[x].size()==0) continue;
-            
-            auto it=prev(childs[x].end());
-            ll sx=-(*it).second;
-            dp[x] -= dp[sx];
-            dp[sx]+=dp[x];
-            int fx= par[x];
-            childs[fx].erase(childs[fx].find({sizes[x],-x}));
-            sizes[x] -= sizes[sx];
-            sizes[sx] +=sizes[x];
-            childs[fx].insert({sizes[sx],-sx});
-            childs[x].erase(it);
-            childs[sx].insert({sizes[x],-x});
-            par[x] =sx;
-            par[sx] = fx;
+    int n;
+    cin >>n;
+    mll cnt;
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        trav(f,factors(x)){
+            cnt[f.first]+=f.second;
         }
     }
-
-
-
+    int pos =1;
+    trav(x,cnt){
+        if((x.second%n)!=0){ pos=0;break;}
+    }
+    // debug(cnt);
+    ans(pos);
 }
 // driver code
 int main()
@@ -170,7 +134,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
