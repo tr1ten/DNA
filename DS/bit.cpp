@@ -26,7 +26,7 @@ public:
         }
         return r;
     }
-    // max index where sum A[0...ind] < x
+    // max index where sum A[0...ind] < x,return index of first number greator than or equal to x
     int lower(int x){
         ll pref = 0;
         int ind = 0;
