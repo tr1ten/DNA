@@ -12,22 +12,6 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // find_by_order(k)  returns iterator to kth element starting from 0;
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
-const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
-struct chash {
-    int operator()(int x) const { return x ^ RANDOM; }
-};
-// gp_hash_table<int, int, chash> table;
-template <class K, class V>
-
-using ht = gp_hash_table<
-
-    K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
-
-    hash_standard_resize_policy<hash_exponential_size_policy<>,
-
-                                hash_load_check_resize_trigger<>, true>>;
-
-// ht<int, null_type> g;
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
@@ -89,50 +73,20 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
-inline int ctz(ll x) { return __builtin_ctzll(x);}
-inline int clz(ll x) {return __builtin_clzll(x);}
-inline int pc(ll x) {return  __builtin_popcount(x);} 
-inline int hset(ll x) {return __lg(x);}
-
-void ans(int x) {put(x?"YES":"NO");}
-
-void testcase(){
-    ll n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    ll res = n * (n - 1) * (n + 1) / 6;
-    // rep(l,1,n+1){
-    //     res += (l-1)*(n-l+1);
-    // }
-    vii mm(n+1,vi(n+1,INF));
-    rep(i,0,n){
-        rep(j,i+1,n+1){
-            mm[i][j] = min(mm[i][j-1],a[j-1]);
-        }
-    }
-    rep(m,1,n){
-        int r =n;
-        ll mx = -INF;
-        per(l,0,m){
-            mx = max(a[l],mx);   
-            while (mm[m][r]<mx) r--;
-            res -=(r-m);
-        }
-    }
-    put(res);
-    
-}
 // driver code
 int main()
 {
     ios_base::sync_with_stdio(false);
-	cin.tie(nullptr);
+    cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
+    // freopen("output.out","w",stdout);	  
     int T=1;
     cin>>T;
-    while(T--) testcase();
+    while(T--){
+        int n;
+        cin >> n;
+        
+    }
 
     return 0;
 }

@@ -93,35 +93,20 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-
 void ans(int x) {put(x?"YES":"NO");}
-
 void testcase(){
-    ll n;
+    int n;
     cin >> n;
     vi a(n);
     tkv(a,n);
-    ll res = n * (n - 1) * (n + 1) / 6;
-    // rep(l,1,n+1){
-    //     res += (l-1)*(n-l+1);
-    // }
-    vii mm(n+1,vi(n+1,INF));
+    srv(a);
+    ll res = 1;
     rep(i,0,n){
-        rep(j,i+1,n+1){
-            mm[i][j] = min(mm[i][j-1],a[j-1]);
-        }
+        res *= a[i];
     }
-    rep(m,1,n){
-        int r =n;
-        ll mx = -INF;
-        per(l,0,m){
-            mx = max(a[l],mx);   
-            while (mm[m][r]<mx) r--;
-            res -=(r-m);
-        }
-    }
-    put(res);
+    put(2022*(res + n-1));
     
+
 }
 // driver code
 int main()

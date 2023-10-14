@@ -93,35 +93,51 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-
 void ans(int x) {put(x?"YES":"NO");}
-
 void testcase(){
-    ll n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    ll res = n * (n - 1) * (n + 1) / 6;
-    // rep(l,1,n+1){
-    //     res += (l-1)*(n-l+1);
-    // }
-    vii mm(n+1,vi(n+1,INF));
-    rep(i,0,n){
-        rep(j,i+1,n+1){
-            mm[i][j] = min(mm[i][j-1],a[j-1]);
+        int n,m;
+        cin >> n >> m;
+        vii mat(n,vi(m));
+        rep(i,0,n){
+            rep(j,0,m){
+                cin >> mat[i][j];
+            }
         }
-    }
-    rep(m,1,n){
-        int r =n;
-        ll mx = -INF;
-        per(l,0,m){
-            mx = max(a[l],mx);   
-            while (mm[m][r]<mx) r--;
-            res -=(r-m);
+        auto gs = [](int r1,int c1,int r2,int c2, vii &ps){
+            return  ps[r1][c1]-(ps[r1][c2+1] + ps[r2+1][c1]) + ps[r2+1][c2+1];
+        };
+        
+        auto ok=[&](int x){
+            vii pref(n+1,vi(m+1));
+            per(i,0,n){
+                per(j,0,m){
+                pref[i][j] = (mat[i][j]>=x) + pref[i+1][j] + pref[i][j+1] - pref[i+1][j+1];
+                }
+            }
+            rep(i,0,n-x+1){
+                rep(j,0,m-x+1){
+                    if(gs(i,j,i+x-1,j+x-1,pref)==x*x) return 1;
+                }
+            }
+            return 0;
+        };
+        assert(n<=m);
+        int lo=1,hi=n;
+        int ans = -1;
+        while (lo<=hi)
+        {
+            int mid=(lo+hi)/2;
+            if(ok(mid)){
+                ans = mid;
+                lo = mid+1;
+            }
+            else{
+                hi = mid-1;
+            } 
         }
-    }
-    put(res);
-    
+        put(ans);
+        
+        
 }
 // driver code
 int main()

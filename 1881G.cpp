@@ -93,35 +93,112 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-
 void ans(int x) {put(x?"YES":"NO");}
 
-void testcase(){
-    ll n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    ll res = n * (n - 1) * (n + 1) / 6;
-    // rep(l,1,n+1){
-    //     res += (l-1)*(n-l+1);
-    // }
-    vii mm(n+1,vi(n+1,INF));
-    rep(i,0,n){
-        rep(j,i+1,n+1){
-            mm[i][j] = min(mm[i][j-1],a[j-1]);
-        }
+const int N = 2*(1e5) + 5;
+int n;
+struct Segment{
+    ll sum,lazy;
+} segm[2*N]; // 0 index
+
+
+void propogate(int node,int left,int right){
+    segm[node].sum += (right-left+1)*segm[node].lazy;
+    if(left<right){
+        segm[2*node+1].lazy += segm[node].lazy;
+        segm[2*node+2].lazy += segm[node].lazy;
     }
-    rep(m,1,n){
-        int r =n;
-        ll mx = -INF;
-        per(l,0,m){
-            mx = max(a[l],mx);   
-            while (mm[m][r]<mx) r--;
-            res -=(r-m);
+    segm[node].lazy =0;
+}
+// child- 2*x+1,2*x+2 (0 coz index)
+// add x to [l...r]
+void update(int node,int left,int right,int l,int r,ll value){
+    propogate(node,left,right); // main funda update only when called
+    if(left>=l && right<=r) {
+        segm[node].lazy += value;
         }
+    else{
+        int mid = (left+right)/2;
+        if(l<=mid) update(2*node+1,left,mid,l,r,value);
+        if(r>mid) update(2*node+2,mid+1,right,l,r,value);
+        propogate(2*node+1,left,mid); // since we need to use thier value they must be updated
+        propogate(2*node+2,mid+1,right);
+        segm[node].sum = segm[2*node+1].sum + segm[2*node+2].sum;
+
     }
-    put(res);
     
+}
+
+ll query(int node,int left,int right,int l,int r){
+    propogate(node,left,right);
+    if(left>=l && right<=r) return segm[node].sum;
+    int mid = (left+right)/2;
+    ll res= 0;
+    if(l<=mid) res +=query(2*node+1,left,mid,l,r);
+    if(r>mid) res +=query(2*node+2,mid+1,right,l,r);
+    return res%26;
+
+}
+// everything is zero indexed
+void update(int l,int r,ll x){
+    update(0,0,n-1,l,r,x);
+}
+ll query(int l,int r){
+    return query(0,0,n-1,l,r);
+}
+void testcase(){
+    int m;
+    cin >> n>> m;
+    memset(segm,0,sizeof(Segment)*(2*n+5));
+    string s;
+    cin >> s;
+    rep(i,0,n){
+        update(i,i,s[i]-'a');
+    }
+    set<int> tw; // store end points of valid palindromes
+    set<int> thr;
+    rep(i,1,n){
+        if(s[i-1]==s[i]) {
+            tw.insert(i);
+        }
+        if(i-2>=0 && s[i-2]==s[i]){
+            thr.insert(i);
+        }
+    }
+    rep(i,0,m){
+        int t;
+        cin >> t;
+        if(t==1){
+            int l,r,x;
+            cin >> l >> r >> x;
+            --l;--r;
+            if(l-1>=0 && query(l-1,l-1)==query(l,l)) tw.erase(tw.find(l));
+            if(l-2>=0 && query(l-2,l-2)==query(l,l)) thr.erase(thr.find(l));
+            if(l-1>=0 && l+1<=r && query(l-1,l-1)==query(l+1,l+1)) thr.erase(thr.find(l+1));
+            if(l!=r && r+1<n && query(r,r)==query(r+1,r+1)) tw.erase(tw.find(r+1));
+            if(l!=r && r+2<n && query(r+2,r+2)==query(r,r)) thr.erase(thr.find(r+2));
+            if(l!=r && r+1<n && r-1>=l && query(r-1,r-1)==query(r+1,r+1)) thr.erase(thr.find(r+1));
+            update(l,r,x%26);
+            if(l-1>=0 && query(l-1,l-1)==query(l,l)) tw.insert((l));
+            if(l-2>=0 && query(l-2,l-2)==query(l,l)) thr.insert((l));
+            if(l-1>=0 && l+1<=r && query(l-1,l-1)==query(l+1,l+1)) thr.insert((l+1));
+            if(l!=r && r+1<n && query(r,r)==query(r+1,r+1)) tw.insert((r+1));
+            if(l!=r && r+2<n && query(r+2,r+2)==query(r,r)) thr.insert((r+2));
+            if(l!=r && r+1<n && r-1>=l && query(r-1,r-1)==query(r+1,r+1)) thr.insert((r+1));
+
+        }
+        else{
+            int l,r;
+            cin >> l >> r;
+            --l;--r;
+            int f = 0;
+            auto it2 = tw.lower_bound(l+1);
+            auto it = thr.lower_bound(l+2);
+            // debug(tw,thr);
+            if((it2==tw.end() || *it2>r)&& (it==thr.end() || *it>r)) f=1;
+            ans(f);
+        }
+    }
 }
 // driver code
 int main()

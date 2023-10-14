@@ -93,35 +93,29 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-
 void ans(int x) {put(x?"YES":"NO");}
-
 void testcase(){
     ll n;
     cin >> n;
     vi a(n);
     tkv(a,n);
-    ll res = n * (n - 1) * (n + 1) / 6;
-    // rep(l,1,n+1){
-    //     res += (l-1)*(n-l+1);
-    // }
-    vii mm(n+1,vi(n+1,INF));
-    rep(i,0,n){
-        rep(j,i+1,n+1){
-            mm[i][j] = min(mm[i][j-1],a[j-1]);
+    int lb = ceil( log2(n));
+    ll ans = 0;
+    ll N = 1ll << (lb+1);
+    for(ll k=0;k*k<=N;k++){
+        vi cnt(N+2);
+        ll pref = 0;
+        cnt[0]++;
+        rep(i,0,n){
+            pref ^=a[i];
+            if((pref^(k*k))<=N) ans += cnt[pref^(k*k)];
+            // assert(pref<=N);
+            if(pref<=N) cnt[pref]++;
+            
         }
     }
-    rep(m,1,n){
-        int r =n;
-        ll mx = -INF;
-        per(l,0,m){
-            mx = max(a[l],mx);   
-            while (mm[m][r]<mx) r--;
-            res -=(r-m);
-        }
-    }
-    put(res);
-    
+    // assert(ans<=(n*(n+1)/2));
+    put((n*(n+1)/2) - ans);
 }
 // driver code
 int main()
