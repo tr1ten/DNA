@@ -107,16 +107,22 @@ void testcase(){
         if(n==2){
             int sk = atoi(s.c_str());
             int m = sk%8;
-            if(m+(sk%10) >= 10) put(sk-m)
-            else put(sk+m)
+            if(m!=0){
+            if((sk%10)-m >= 0) s.back() = '0'+((sk%10)-m);
+            else s.back() = '0'+((sk%10)+8-m);
+            }
         }
         else{
             int sk = atoi(s.substr(s.size()-3,3).c_str());
             int m = sk%8;
-            string left = s.substr(0,s.size()-3) + (s[s.size()-3]=='0' ? "0" : "");
-            if(m+(sk%10) >= 10) put(left+to_string(sk-m))
-            else put(left  + to_string(sk+m))
+            if(m!=0) {
+
+            if((sk%10) - m >= 0) s.back() = '0'+((sk%10) - m);
+            else  s.back() = '0'+((sk%10) +8- m);
+            }
         }
+        assert(s.size()==n);
+        put(s);
         }
 
 }
