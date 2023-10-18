@@ -97,7 +97,21 @@ void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    
+    vi a(n);
+    tkv(a,n);
+    ll ans = 0;
+    vi suff{-INF};
+    per(i,0,n){
+        suff.push_back(max(suff.back(),a[i]-i));
+    }
+    reverse(all(suff));
+    ll pref=a[0];
+    rep(i,1,n-1){
+        ans = max(ans,pref+suff[i+1]+a[i]);
+        pref = max(pref,a[i]+i);
+
+    }
+    put(ans);
 }
 // driver code
 int main()
@@ -109,6 +123,5 @@ int main()
     int T=1;
     cin>>T;
     while(T--) testcase();
-
     return 0;
 }
