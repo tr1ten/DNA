@@ -97,9 +97,23 @@ void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
+    vi a(n),b(n);
+    ll lc=2,gc=9;
+    ll ans = 0;
     rep(i,0,n){
-        
+        ll x,y;
+        cin >>x >> y;
+        gc =gcd(gc,x*y);
+        lc =lcm(lc,y);
+
+        if(gc%lc!=0 ){
+            ans++;
+            gc = x*y;
+            lc = y;
+        }
     }
+    put(ans);
+    
 }
 // driver code
 int main()
