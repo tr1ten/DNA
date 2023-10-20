@@ -50,7 +50,7 @@ typedef unordered_map<ll,ll> mll;
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<""; cout<<endl;
+#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
@@ -93,34 +93,37 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);
-    tkv(b,n);
-    set<pi> sa;
-    set<pi> sb;
-    rep(i,0,n){
-        sa.insert({a[i],i});
-        sb.insert({b[i],i});
+void ans(int x) {put(x?"YES":"NO");}
+int sub(string &s){
+    int n =s.size();
+    vii dp(n+1,vi(3,0));
+    for(int i=0;i<n;i++){
+        dp[i+1][0] = dp[i][0] + (s[i]=='1');
+        dp[i+1][1] = min(dp[i][0],dp[i][1])+(s[i]=='0');
+        dp[i+1][2] = min({dp[i][0],dp[i][1],dp[i][2]}) + (s[i]=='1');
     }
-    vector<int> vis(n);
-    function<void(int)> dfs = [&](int i){
-        if(vis[i]) return;
-        else{
-            sa.erase(sa.find({a[i],i}));
-            sb.erase(sb.find({b[i],i}));
+    return *min_element(all(dp[n]));
+}
+void testcase(){
+    int n,k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
+    int ans = n;
+    int total = count(all(s),'1');
+    rep(i,0,k){
+        string t;
+        int cur = 0;
+        for(int j=i;j<n;j+=k){
+            t +=s[j];
+            cur +=(s[j]=='1');
         }
-        vis[i]=1;
-        auto nxt = sa.lower_bound({a[i],i});
-        if(nxt!=sa.end()) dfs((*nxt).second);
-        nxt = sb.lower_bound({b[i],i});
-        if(nxt!=sb.end()) dfs((*nxt).second);
-    };
-    dfs((*sa.rbegin()).second);
-    pvc(vis);
+        ans = min(ans,sub(t) + (total-cur));
+        debug(t,sub(t));
+    }
+    put(ans);
+    
+
 }
 // driver code
 int main()

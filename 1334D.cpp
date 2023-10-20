@@ -50,7 +50,7 @@ typedef unordered_map<ll,ll> mll;
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<""; cout<<endl;
+#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
@@ -93,35 +93,41 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);
-    tkv(b,n);
-    set<pi> sa;
-    set<pi> sb;
-    rep(i,0,n){
-        sa.insert({a[i],i});
-        sb.insert({b[i],i});
-    }
-    vector<int> vis(n);
-    function<void(int)> dfs = [&](int i){
-        if(vis[i]) return;
-        else{
-            sa.erase(sa.find({a[i],i}));
-            sb.erase(sb.find({b[i],i}));
+        ll n,l,r;
+        cin >> n >> l >> r;
+        ll c=1;
+        ll cur=0;
+        while(c<n && cur+(2*(n-c)) < l){
+            cur +=2*(n-c);
+            c++;
         }
-        vis[i]=1;
-        auto nxt = sa.lower_bound({a[i],i});
-        if(nxt!=sa.end()) dfs((*nxt).second);
-        nxt = sb.lower_bound({b[i],i});
-        if(nxt!=sb.end()) dfs((*nxt).second);
-    };
-    dfs((*sa.rbegin()).second);
-    pvc(vis);
+        // debug(c,cur,l,r);
+        ll t = c + 1 + ((l-cur-1)/2);
+        vi ans;
+        if(c<n){
+            ans.push_back(c);
+            ans.push_back(t);
+        }
+        ll up = (n*(n-1)) + 1;
+        bool ex = up==r;
+        bool f2 = r%2==1;
+        if(!ex && f2) r++;
+        if(ex) r--;
+        while(ans.size()<r-l+1){
+            int a=ans.back(),b=*prev(prev(ans.end()));
+            if(a+1<=n) a++;
+            else {b++;a=b+1;}
+            ans.push_back(b);
+            ans.push_back(a);
+        }
+        if(l%2==0) ans.erase(ans.begin());
+        if(!ex && f2) ans.erase(prev(ans.end()));
+        if(ex) ans.push_back(1);
+        pvc(ans);
 }
+
 // driver code
 int main()
 {

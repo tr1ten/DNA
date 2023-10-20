@@ -50,7 +50,7 @@ typedef unordered_map<ll,ll> mll;
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<""; cout<<endl;
+#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
@@ -93,34 +93,56 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
+bool dfs(int i,int j,vii &mat,vi &row,vi &col,int color){
+    if(i==mat.size()) return true;
+    if(j==mat.size()) return dfs(i+1,0,mat,row,col,color);
+    int res = 0;
+    if(row[i]==-1){
+        int r=row[i],c=col[j];
+        row[i] = color;
+        col[j] = color^mat[i][j];
+        res = dfs(i,j+1,mat,row,col,color) || dfs(i,j+1,mat,row,col,1^color);
+        row[i] =r;
+        col[j] =c;
+        
+    }
+    if(!res && col[j]==-1){
+        int r=row[i],c=col[j];
+        col[j] = color;
+        row[i] = color^mat[i][j];
+        res = dfs(i,j+1,mat,row,col,color) || dfs(i,j+1,mat,row,col,1^color);
+        row[i] =r;
+        col[j] =c;
+    }
+    return res;
+
+}
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);
-    tkv(b,n);
-    set<pi> sa;
-    set<pi> sb;
+    vi row(n,-1);
+    vi col(n,-1);
+    mk_mat(mat,n,n,0);
     rep(i,0,n){
-        sa.insert({a[i],i});
-        sb.insert({b[i],i});
-    }
-    vector<int> vis(n);
-    function<void(int)> dfs = [&](int i){
-        if(vis[i]) return;
-        else{
-            sa.erase(sa.find({a[i],i}));
-            sb.erase(sb.find({b[i],i}));
+        string s;
+        cin >> s;
+        rep(j,0,n){
+            mat[i][j] = s[j]-'0';
         }
-        vis[i]=1;
-        auto nxt = sa.lower_bound({a[i],i});
-        if(nxt!=sa.end()) dfs((*nxt).second);
-        nxt = sb.lower_bound({b[i],i});
-        if(nxt!=sb.end()) dfs((*nxt).second);
-    };
-    dfs((*sa.rbegin()).second);
-    pvc(vis);
+    }
+    mk_mat(tar,n,n,0);
+    rep(i,0,n){
+        string s;
+        cin >> s;
+        rep(j,0,n){
+            tar[i][j] = s[j]-'0';
+            mat[i][j] = tar[i][j]!=mat[i][j];
+        }
+    }
+    ans(dfs(0,0,mat,row,col,0) or dfs(0,0,mat,row,col,1));
+    
+
 }
 // driver code
 int main()

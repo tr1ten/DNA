@@ -50,7 +50,7 @@ typedef unordered_map<ll,ll> mll;
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<""; cout<<endl;
+#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
@@ -93,34 +93,35 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
     vi a(n);
-    vi b(n);
     tkv(a,n);
-    tkv(b,n);
-    set<pi> sa;
-    set<pi> sb;
+    vector<int> cnt(n+1);
     rep(i,0,n){
-        sa.insert({a[i],i});
-        sb.insert({b[i],i});
+        cnt[(a[i])]++;
     }
-    vector<int> vis(n);
-    function<void(int)> dfs = [&](int i){
-        if(vis[i]) return;
-        else{
-            sa.erase(sa.find({a[i],i}));
-            sb.erase(sb.find({b[i],i}));
+    int nxt = 1;
+    int i=0,j=n-1;
+    string ans(n,'0');
+    while(nxt<n){
+        if(cnt[nxt]!=1) {
+            break;
         }
-        vis[i]=1;
-        auto nxt = sa.lower_bound({a[i],i});
-        if(nxt!=sa.end()) dfs((*nxt).second);
-        nxt = sb.lower_bound({b[i],i});
-        if(nxt!=sb.end()) dfs((*nxt).second);
-    };
-    dfs((*sa.rbegin()).second);
-    pvc(vis);
+        if((a[i])==nxt){
+            i++;
+        }
+        else if((a[j])==nxt){
+            j--;
+        }
+        else {break;}
+        ans[n-(nxt++)]++;
+    }
+    if(cnt[nxt]) ans[n-nxt]='1'; 
+    if(find(next(cnt.begin()),cnt.end(),0)==cnt.end()) ans[0]='1'; // edge last k=1
+    put(ans);
 }
 // driver code
 int main()

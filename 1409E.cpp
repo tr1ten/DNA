@@ -50,7 +50,7 @@ typedef unordered_map<ll,ll> mll;
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<""; cout<<endl;
+#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
@@ -93,34 +93,25 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);
-    tkv(b,n);
-    set<pi> sa;
-    set<pi> sb;
-    rep(i,0,n){
-        sa.insert({a[i],i});
-        sb.insert({b[i],i});
+    int n,k;
+    cin >> n >> k;
+    vi x(n);
+    vi y(n);
+    tkv(x,n);
+    tkv(y,n);
+    vi dp(n);
+    srv(x);
+    ll i=0;
+    ll ans = 0;
+    // debug(x);
+    rep(j,0,n){
+        while(x[j]-x[i]>k) i++;
+        ans = max(ans,(j-i+1) + (i-1>=0 ? dp[i-1] : 0ll) ) ;
+        dp[j] = max(j-1>=0 ? dp[j-1] : 0,j-i+1);
     }
-    vector<int> vis(n);
-    function<void(int)> dfs = [&](int i){
-        if(vis[i]) return;
-        else{
-            sa.erase(sa.find({a[i],i}));
-            sb.erase(sb.find({b[i],i}));
-        }
-        vis[i]=1;
-        auto nxt = sa.lower_bound({a[i],i});
-        if(nxt!=sa.end()) dfs((*nxt).second);
-        nxt = sb.lower_bound({b[i],i});
-        if(nxt!=sb.end()) dfs((*nxt).second);
-    };
-    dfs((*sa.rbegin()).second);
-    pvc(vis);
+    put(ans);
 }
 // driver code
 int main()
