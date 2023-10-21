@@ -94,46 +94,22 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-int n;
-bool check(int c,vii &mat){
-    vi row(n,-1);
-    vi col(n,-1);
-    col[0] = c;
-    rep(i,0,n){ 
-        row[i] = mat[i][0]^col[0];
-    }
-    rep(j,0,n){ 
-        col[j] = mat[0][j]^row[0];
-    }
-    rep(i,0,n){
-        rep(j,0,n){
-           if(mat[i][j]!=row[i]^col[j]) return 0; 
-        }
-    }
-    return 1;
-
-}
 void testcase(){
-    cin >> n;
-    
-    mk_mat(mat,n,n,0);
+    int n,m,p;
+    cin >> n >> m >> p;
+    int a=-1;
+    int b=-1;
     rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            mat[i][j] = s[j]-'0';
-        }
+        int x;
+        cin >> x;
+        if(a==-1 && gcd(x,p)==1) a =i; 
     }
-    mk_mat(tar,n,n,0);
-    rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            tar[i][j] = s[j]-'0';
-            mat[i][j] = tar[i][j]!=mat[i][j];
-        }
+    rep(i,0,m){
+        int x;
+        cin >> x;
+        if(b==-1 && gcd(x,p)==1)  b=i; 
     }
-    ans(check(0,mat) || check(1,mat));
+    put(a+b);
     
 
 }
@@ -145,7 +121,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

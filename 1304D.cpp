@@ -94,48 +94,40 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-int n;
-bool check(int c,vii &mat){
-    vi row(n,-1);
-    vi col(n,-1);
-    col[0] = c;
-    rep(i,0,n){ 
-        row[i] = mat[i][0]^col[0];
-    }
-    rep(j,0,n){ 
-        col[j] = mat[0][j]^row[0];
-    }
-    rep(i,0,n){
-        rep(j,0,n){
-           if(mat[i][j]!=row[i]^col[j]) return 0; 
-        }
-    }
-    return 1;
-
-}
 void testcase(){
+    int n;
     cin >> n;
-    
-    mk_mat(mat,n,n,0);
-    rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            mat[i][j] = s[j]-'0';
+    string s;
+    cin >> s;
+    vi mn;
+    vi mx;
+    per(i,1,n+1) mn.push_back(i);
+    rep(i,1,n+1) mx.push_back(i);
+    int i=0;
+    while(i<s.size()){
+        if(s[i]=='>') {i++;continue;}
+        int cnt = 0;
+        while(i+cnt<n-1 && s[i+cnt]=='<'){
+            cnt++;
         }
+        reverse(mn.begin()+i,mn.begin()+i+cnt+1);
+        i+=cnt;
     }
-    mk_mat(tar,n,n,0);
-    rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            tar[i][j] = s[j]-'0';
-            mat[i][j] = tar[i][j]!=mat[i][j];
+    i = 0;
+    while(i<s.size()){
+        if(s[i]=='<') {i++;continue;}
+        int cnt = 0;
+        while(i+cnt<n-1 && s[i+cnt]=='>'){
+            cnt++;
         }
-    }
-    ans(check(0,mat) || check(1,mat));
-    
+        reverse(mx.begin()+i,mx.begin()+i+cnt+1);
+        i+=cnt;
 
+    }
+    pvc(mn);
+    pvc(mx);
+
+    
 }
 // driver code
 int main()
