@@ -94,42 +94,24 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-const int N = 1e5 + 4;
-vector<vector<int>> divs(N+1,{1});
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-
-    for(int x=2;x<=N;x++){
-        for(int u=x;u<=N;u +=x){
-            divs[u].push_back(x);   
-        }
-    }
-    for(int x=1;x<=N;x++){
-        reverse(all(divs[x]));
-
-    }
-}
-int vis[N];
 void testcase(){
-    preprocess();
-    int n;
-    cin >> n;
-    ll res =0;
+    int n,k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
+    vi cnt(26);
     rep(i,0,n){
-        int x;
-        cin >> x;
-        int f =0;
-        trav(y,divs[x]){
-            if(vis[y] && !f) {
-                res +=y;
-                f =1;
-            }
-            vis[y] = 1;
-        }
+        cnt[s[i]-'a']++;
     }
-    put(res);   
-    
+    int oc =0;
+    rep(i,0,26){
+        if(cnt[i]%2!=0) oc++;
+    }
+    if(oc-((n-k)%2)>k) ans(0);
+    else {
+        k -= (oc-(n-k)%2);
+        ans(k%2==0);
+    }
 }
 // driver code
 int main()
@@ -139,7 +121,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
