@@ -113,9 +113,6 @@ void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
     int y;
     cin >> y;
-    int c=0;
-    while(c*(c+1)<2*y) c++;
-    put(c+ ((c*(c+1)/2-y)==1 ) );
     
 }
 // driver code

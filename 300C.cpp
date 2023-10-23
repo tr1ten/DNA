@@ -110,13 +110,47 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
+const int N = 1e6 + 5;
+long long fact[N];
+long long inv[N];
+long long finv[N];
+
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
+    }
+    inv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
+    }
+    finv[0] = finv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        finv[i] = (inv[i]*finv[i-1])%MOD;
+    }
+}
+
+long long nCk(int n,int k) {
+    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
+}
+
 void testcase(){
-    int y;
-    cin >> y;
-    int c=0;
-    while(c*(c+1)<2*y) c++;
-    put(c+ ((c*(c+1)/2-y)==1 ) );
-    
+    pre();
+    ll a,b,n;
+    cin >> a >> b >> n;
+    if(a>b) swap(a,b);
+    ll res=  0;
+    rep(c,a*n,b*n + 1){
+        string s=to_string(c);
+        if(count(all(s),a + '0') + count(all(s),b + '0') == s.size()){
+            if(((c-a*n)%(b-a))!=0) continue;
+            ll y = (c-a*n)/(b-a);
+            res = mod(res+nCk(n,y));
+        } 
+    }
+    put(res);
+
 }
 // driver code
 int main()
@@ -126,7 +160,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

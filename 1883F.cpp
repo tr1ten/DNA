@@ -99,7 +99,7 @@ void testcase(){
     cin >> n;
     vi a(n);
     tkv(a,n);
-    unordered_map<ll,ll> cnt;
+    map<ll,ll> cnt;
     trav(x,a){
         cnt[x]++;
     }

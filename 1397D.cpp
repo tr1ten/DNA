@@ -108,14 +108,20 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
+void ans(int x) {put(x?"T":"HL");}
 // do not use unordered map use mll
 void testcase(){
-    int y;
-    cin >> y;
-    int c=0;
-    while(c*(c+1)<2*y) c++;
-    put(c+ ((c*(c+1)/2-y)==1 ) );
+    int n;
+    cin >> n;
+    ll sm = 0;
+    int mx=0;
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        mx = max(x,mx);
+        sm +=x;
+    }
+    ans(n==1 ||  (mx>(sm-mx)) || (sm%2));
     
 }
 // driver code

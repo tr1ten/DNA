@@ -111,12 +111,20 @@ inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int y;
-    cin >> y;
-    int c=0;
-    while(c*(c+1)<2*y) c++;
-    put(c+ ((c*(c+1)/2-y)==1 ) );
-    
+    ll n,y;
+    cin >> n >> y;
+    vi a(n);
+    ll mx = 0;
+    ll cur = 0;
+    ll sm=0;
+    rep(i,0,n){
+        ll x;
+        cin >> x;
+        sm +=x;
+        cur = max(cur+((x^y) - x),0ll);
+        mx = max(mx,cur);
+    }
+    put(sm + mx);
 }
 // driver code
 int main()

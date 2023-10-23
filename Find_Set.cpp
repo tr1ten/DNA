@@ -110,12 +110,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+bool cmp(string &s,string &t) {
+    return s.size()<t.size();
+}
+
+
 void testcase(){
-    int y;
-    cin >> y;
-    int c=0;
-    while(c*(c+1)<2*y) c++;
-    put(c+ ((c*(c+1)/2-y)==1 ) );
+    int n;
+    cin >> n;
+    vector<string> ss;
+    rep(i,0,n){
+        string s;
+        cin >>s ;
+        ss.push_back(s);
+    }
+    sort(ss.begin(),ss.end(),cmp);
+    vector<string> ts;
+    trav(s,ss){
+        int f = 0;
+        for(auto t:ts){
+            if(s.find(t)!=string::npos){
+                f=1;break;
+            }
+        }
+        if(!f) ts.push_back(s);
+    }
+    put(ts.size());
     
 }
 // driver code
@@ -126,7 +146,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

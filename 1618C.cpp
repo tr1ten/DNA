@@ -110,12 +110,28 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
 void testcase(){
-    int y;
-    cin >> y;
-    int c=0;
-    while(c*(c+1)<2*y) c++;
-    put(c+ ((c*(c+1)/2-y)==1 ) );
+    ll n;
+    cin >> n;
+    ll g1=0;
+    ll g2=0;
+    vi a(n);
+    tkv(a,n);
+    for(int i=0;i<n;i++){
+        if(i%2==0) g1 = gcd(g1,a[i]);
+        if(i%2==1) g2 = gcd(g2,a[i]);
+    }
+    // debug(g1,g2);
+    int pos1 = 1;
+    int pos2 = 1;
+    for(int i=0;i<n;i++){
+        if(i%2==1 && a[i]%g1==0) {pos1=0;}
+        if(i%2==0 && a[i]%g2==0) {pos2=0;}
+    }
+    if(pos1) put(g1)
+    else if(pos2) put(g2)
+    else put(0);
     
 }
 // driver code
