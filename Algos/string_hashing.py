@@ -15,6 +15,7 @@ class HashedString:
         return (self.hashes[j+1]-(self.hashes[i]*self.ppow[j-i+1])%M )%M
     
             
-s = "abababab"
-hs = HashedString(s)
-print(hs.get_hash(0,1),hs.get_hash(2,3),hs.get_hash(4,5),hs.get_hash(1,2))
+s = "aa"
+t = HashedString(s)
+hs = HashedString(s+s)
+print(hs.get_hash(1,2)==t.get_hash(0,len(s)-1))
