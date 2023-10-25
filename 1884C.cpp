@@ -109,55 +109,39 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-ll num_inv(vector<ll>& arr, int first, int last)
-{
-    if(first >= last)
-        return 0;
-    int mid = (first + last)/2;
-    ll num1 = num_inv(arr, first, mid);
-    ll num2 = num_inv(arr, mid+1, last);
-    ll ans = num1 + num2;
-    vector<int> tmp_arr(last-first+1);
-    int i = first, j = mid+1, k = 0;
-    while(i <= mid && j <= last)
-    {
-        if(arr[i] > arr[j])
-        {
-            ans += (mid-i+1);
-            tmp_arr[k++] = arr[j++];
-        }
-        else
-        {
-            tmp_arr[k++] = arr[i++];
-        }
-    }
-    while(i <= mid)
-        tmp_arr[k++] = arr[i++];
-    while(j <= last)
-        tmp_arr[k++] = arr[j++];
-    for(i = first;i <= last;i++)
-        arr[i] = tmp_arr[i-first];
-    return ans;
-}
- 
 // do not use unordered map use mll
-
 void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    map<char,set<int>> st; 
-    per(i,0,n){
-        st[s[i]].insert(n-i-1);
-    }
-    vi p(n);
+    int n,m;
+    cin >> n >> m;
+    map<int,int> cnt1;
+    map<int,int> cnt2;
+    cnt1[1]=cnt1[m]=cnt2[1]=cnt2[m]=0;
     rep(i,0,n){
-        p[i] = *st[s[i]].begin();
-        st[s[i]].erase(st[s[i]].begin()); 
+        int l,r;
+        cin >> l >> r;
+        if(l!=1){
+            cnt1[l]++;
+            cnt1[r+1]--;
+        }
+        if(r<m){
+            cnt2[l]++;
+            cnt2[r+1]--;
+        }
     }
-    debug(p);
-    put(num_inv(p,0,n-1));
+    int mx1 = 0;
+    int sm = 0;
+    trav(x,cnt1){
+        sm += x.second;
+        mx1 = max(sm,mx1);
+    }
+    int mx2 = 0;
+    sm = 0;
+    trav(x,cnt2){
+        sm += x.second;
+        mx2 = max(sm,mx2);
+    }
+    // debug(mx1,mx2);
+    put(max(mx1,mx2));
 }
 // driver code
 int main()
@@ -167,7 +151,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

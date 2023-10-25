@@ -109,55 +109,27 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-ll num_inv(vector<ll>& arr, int first, int last)
-{
-    if(first >= last)
-        return 0;
-    int mid = (first + last)/2;
-    ll num1 = num_inv(arr, first, mid);
-    ll num2 = num_inv(arr, mid+1, last);
-    ll ans = num1 + num2;
-    vector<int> tmp_arr(last-first+1);
-    int i = first, j = mid+1, k = 0;
-    while(i <= mid && j <= last)
-    {
-        if(arr[i] > arr[j])
-        {
-            ans += (mid-i+1);
-            tmp_arr[k++] = arr[j++];
-        }
-        else
-        {
-            tmp_arr[k++] = arr[i++];
-        }
-    }
-    while(i <= mid)
-        tmp_arr[k++] = arr[i++];
-    while(j <= last)
-        tmp_arr[k++] = arr[j++];
-    for(i = first;i <= last;i++)
-        arr[i] = tmp_arr[i-first];
-    return ans;
-}
- 
 // do not use unordered map use mll
-
 void testcase(){
-    int n;
+    ll n;
     cin >> n;
     string s;
     cin >> s;
-    map<char,set<int>> st; 
-    per(i,0,n){
-        st[s[i]].insert(n-i-1);
+    set<ll> st;
+    rep(i,0,n) {
+        if(s[i]=='0') st.insert(i);
     }
-    vi p(n);
-    rep(i,0,n){
-        p[i] = *st[s[i]].begin();
-        st[s[i]].erase(st[s[i]].begin()); 
+    ll last = 0;
+    per(i,1,n+1){
+        if(st.size()==0) cout << "-1 ";
+        else {
+            last +=(i-1-(*st.rbegin()));
+            assert(last>=0);
+            st.erase(prev(st.end()));
+            cout << last << " ";
+        }
     }
-    debug(p);
-    put(num_inv(p,0,n-1));
+    put("");
 }
 // driver code
 int main()
@@ -167,7 +139,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

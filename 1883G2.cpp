@@ -27,28 +27,13 @@ using ht = gp_hash_table<
 
                                 hash_load_check_resize_trigger<>, true>>;
 
-struct custom_hash {
-    static uint64_t splitmix64(uint64_t x) {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
 // ht<int, null_type> g;
-
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll,custom_hash> mll;
+typedef unordered_map<ll,ll> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -109,55 +94,30 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-ll num_inv(vector<ll>& arr, int first, int last)
-{
-    if(first >= last)
-        return 0;
-    int mid = (first + last)/2;
-    ll num1 = num_inv(arr, first, mid);
-    ll num2 = num_inv(arr, mid+1, last);
-    ll ans = num1 + num2;
-    vector<int> tmp_arr(last-first+1);
-    int i = first, j = mid+1, k = 0;
-    while(i <= mid && j <= last)
-    {
-        if(arr[i] > arr[j])
-        {
-            ans += (mid-i+1);
-            tmp_arr[k++] = arr[j++];
-        }
-        else
-        {
-            tmp_arr[k++] = arr[i++];
-        }
-    }
-    while(i <= mid)
-        tmp_arr[k++] = arr[i++];
-    while(j <= last)
-        tmp_arr[k++] = arr[j++];
-    for(i = first;i <= last;i++)
-        arr[i] = tmp_arr[i-first];
-    return ans;
-}
- 
-// do not use unordered map use mll
-
 void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    map<char,set<int>> st; 
-    per(i,0,n){
-        st[s[i]].insert(n-i-1);
+    ll n,m;
+    cin >> n >> m;
+    vi a(n-1);
+    tkv(a,n-1);
+    vi b(n);
+    tkv(b,n);
+    srv(a);
+    srv(b);
+    int k=0;
+    int i=0;
+    while(i<n-k-1){
+        while(i<n-k-1 && a[i]>=b[i+k+1]){
+            k++;
+        }
+        i++;
     }
-    vi p(n);
-    rep(i,0,n){
-        p[i] = *st[s[i]].begin();
-        st[s[i]].erase(st[s[i]].begin()); 
-    }
-    debug(p);
-    put(num_inv(p,0,n-1));
+    debug(k);
+    ll ans = 0;
+    i = 0;
+    while(i<n-k-1 && a[i]<b[k+i]) i++;
+    debug(i);
+    assert(k+i<n);
+    put(m*k + max(0ll,m-b[k+i] + 1));
 }
 // driver code
 int main()
@@ -167,7 +127,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
