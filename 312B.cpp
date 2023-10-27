@@ -109,63 +109,14 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-#include <iostream>
-#include <utility>
-#include <array>
-
-// All done during compile time -------------------------------------------------------------------
-constexpr bool isPrime(size_t n) noexcept {
-    if (n <= 1) return false;
-    for (size_t i = 2; i*i <= n; i++)   if (n % i == 0) return false;
-    return true;
-}
-constexpr unsigned int primeAtIndex(size_t i) noexcept {
-    size_t k{3};
-    for  (size_t counter{}; counter < i; ++k)
-        if (isPrime(k)) ++counter;
-    return k-1;
-}
-// Some helper to create a constexpr std::array initilized by a generator function
-template <typename Generator, size_t ... Indices>
-constexpr auto generateArrayHelper(Generator generator, std::index_sequence<Indices...>) {
-    return std::array<decltype(std::declval<Generator>()(size_t{})), sizeof...(Indices) > { generator(Indices)... };
-}
-template <size_t Size, typename Generator>
-constexpr auto generateArray(Generator generator) {
-    return  generateArrayHelper(generator, std::make_index_sequence<Size>());
-}
-
-// This is the definition of a std::array<unsigned int, 100> with prime numbers in it
-constexpr auto Primes = generateArray<14>(primeAtIndex);
-// End of: All done during compile time -----------------------------------------------------------
-
-ll n,m;     
-ll check(int idx,vi &primes,ll x){
-    if(idx==primes.size()) return x;
-    ll res = check(idx+1,primes,x);
-    while(x*primes[idx] <=m){
-        res = max(res,check(idx+1,primes,x*primes[idx]));
-        x *=primes[idx];
-    }
-    return res;
-}
 // do not use unordered map use mll
 void testcase(){
-    cin >> n >> m;
-    vi A(n);                                                                                
-    tkv(A,n);
-    vi B=A;
-    rep(i,1,n){
-        ll cur = A[i-1]/A[i];
-        ll lmt = m/A[i];
-        while(lmt>0){
-            if(gcd(lmt,cur)==1) break;
-            lmt--; 
-        }
-        B[i] = A[i]*lmt;
-        assert(gcd(A[i-1],B[i])==A[i]);
-    }
-    pvc(B);
+    double a,b,c,d;
+    cin>> a >> b >> c >> d;
+    long double cc = (1-(c/d))*(1-(a/b));
+    long double p = a/b;
+    debug(p,cc);
+    cout << fixed<< setprecision(7) << p/(1-cc) << endl;
 }
 // driver code
 int main()
@@ -175,7 +126,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
