@@ -43,7 +43,7 @@ struct custom_hash {
 };
 // ht<int, null_type> g;
 
-typedef unsigned long long ll; 
+typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -110,30 +110,42 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int q;
-    cin >> q;
-    rep(i,0,q){
-        ll l,r;
-        cin >> l >>r;
-        ll ans = 0;
-        rep(y,2,60){
-            if(r<pow(2ll,y)) continue;
-            ll nxt_l = min(r+1,(ll)pow(2ll,y+1));
-            ll pp =1;
-            ll k = 0;
-            while(pp<nxt_l){
-                    if(l<=nxt_l && pp*y>=l){
-                        ans = mod(ans +  mod(k*(min(pp*y,nxt_l)-l)) );      
-                        l = min(nxt_l,pp*y);
-                    }
-                    pp = pp*y;
-                    assert(pp>0);
-                    k++;
-            }
+vii adj;
+vi dfs(int u,int p){
+    vi res;
+    trav(v,adj[u]){
+        if(v==p) continue;
+        vi other = dfs(v,u);
+        vi nres(res.size()+other.size());
+        rep(i,0,res.size()){
+            nres[i] +=res[i];
+            if(nres.size()-res.size()-i+1<nres.size()) nres[nres.size()-res.size()-i+1] -= res[i];
         }
-        put(ans);
+        rep(i,0,other.size()){
+            nres[i] +=other[i];
+            if(nres.size()-other.size()-i+1<nres.size()) nres[nres.size()-other.size()-i+1] -= other[i];
+        }
+        rep(i,1,nres.size()){nres[i] +=nres[i-1];}
+        debug(u,other,res,nres);
+        res = nres;
     }
+    res.insert(res.begin(),1);
+    return res;
+}
+void testcase(){
+    int n;
+    cin >> n;
+    adj.clear();
+    adj.resize(n);
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    pvc(dfs(0,-1));
+    
 }
 // driver code
 int main()
@@ -143,7 +155,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

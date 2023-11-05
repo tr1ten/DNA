@@ -43,7 +43,7 @@ struct custom_hash {
 };
 // ht<int, null_type> g;
 
-typedef unsigned long long ll; 
+typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -111,28 +111,22 @@ inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int q;
-    cin >> q;
-    rep(i,0,q){
-        ll l,r;
-        cin >> l >>r;
-        ll ans = 0;
-        rep(y,2,60){
-            if(r<pow(2ll,y)) continue;
-            ll nxt_l = min(r+1,(ll)pow(2ll,y+1));
-            ll pp =1;
-            ll k = 0;
-            while(pp<nxt_l){
-                    if(l<=nxt_l && pp*y>=l){
-                        ans = mod(ans +  mod(k*(min(pp*y,nxt_l)-l)) );      
-                        l = min(nxt_l,pp*y);
-                    }
-                    pp = pp*y;
-                    assert(pp>0);
-                    k++;
-            }
+    int n;
+    cin >> n;
+    vi a(2*n);
+    tkv(a,2*n);
+    srv(a);
+    vpi aa;
+    ll ans = 0;
+    rep(i,0,n){
+        if(aa.size()){
+            ans += (abs(aa.back().first-a[i]) + abs(aa.back().second-a[i+n]));
         }
-        put(ans);
+        aa.push_back({a[i],a[i+n]});
+    }
+    put(ans);
+    for(int i=0;i<n;i++){
+        put2(aa[i].first,aa[i].second);
     }
 }
 // driver code
@@ -143,7 +137,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

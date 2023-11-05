@@ -43,7 +43,7 @@ struct custom_hash {
 };
 // ht<int, null_type> g;
 
-typedef unsigned long long ll; 
+typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -109,31 +109,45 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
+int ss(string s){
+    int res= 0;
+    for(char x:s){
+        res +=x-'0';
+    }
+    return res;
+}
 // do not use unordered map use mll
 void testcase(){
-    int q;
-    cin >> q;
-    rep(i,0,q){
-        ll l,r;
-        cin >> l >>r;
-        ll ans = 0;
-        rep(y,2,60){
-            if(r<pow(2ll,y)) continue;
-            ll nxt_l = min(r+1,(ll)pow(2ll,y+1));
-            ll pp =1;
-            ll k = 0;
-            while(pp<nxt_l){
-                    if(l<=nxt_l && pp*y>=l){
-                        ans = mod(ans +  mod(k*(min(pp*y,nxt_l)-l)) );      
-                        l = min(nxt_l,pp*y);
-                    }
-                    pp = pp*y;
-                    assert(pp>0);
-                    k++;
-            }
-        }
-        put(ans);
+    ll ans = 0;
+    int n;
+    cin >> n;
+    vector<string> a(n);
+    rep(i,0,n){
+        cin >> a[i];
     }
+    sort(all(a),[](string s,string t){
+        return s.size()<t.size();
+    });
+    vector<mll> dp(6,mll());
+    rep(i,0,n){
+        int ts = ss(a[i]);
+        int last = 0;
+        int siz = a[i].size();
+        rep(j,0,a[i].size()){
+            if(siz-2*j<=0) break;
+            ans += dp[siz-2*j][ts-2*last];
+            last+=a[i][j]-'0';
+        }
+        last = 0;
+        rep(j,0,a[i].size()){
+            if(siz-2*j<=0) break;
+            ans += dp[siz-2*j][ts-2*last];
+            last+=a[i][siz-j-1]-'0';
+        }
+        dp[siz][ts]++;
+        // debug(i,a[i],ans);
+    }
+    put(ans+n);
 }
 // driver code
 int main()
