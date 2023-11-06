@@ -110,47 +110,41 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii adj;
-vi levels;
-vi childs;
-void dfs(int u,int p,int d){
-    levels[u]=d;
-    childs[u] = 1;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        dfs(v,u,d+1);
-        childs[u]+=childs[v];
+bool isPrime(ll x){
+    for(ll i=2;i*i<=x;i++){
+        if(x%i==0) return 0;
     }
+    return 1;
+}
+pair<int,int> goldman(int x){
+    assert(x%2==0);
+    rep(i,2,x-1){
+        if(isPrime(i) && isPrime(x-i)){
+            return {i,x-i};
+        }
+    }
+    return {-1,-1};
 }
 void testcase(){
-    int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        ind[v]++;
+    ll x;
+    cin >> x;
+    ll cur = x-2;
+    if(isPrime(x)){
+        put(1);
+        put(x);
+        return;
     }
-    levels.clear();
-    childs.clear();
-    levels.resize(n);
-    childs.resize(n);
-    int root= find(all(ind),0) - ind.begin();
-    dfs(root,-1,0);
-    vi res(n);
-    rep(i,0,n){
-        res[levels[i]] +=1;
-        if(n-childs[i]+1<n) res[n-childs[i]+1] -=1;
+    while(!isPrime(cur)) cur--;
+    if(x-cur==2){
+        put(2);
+        put2(cur,x-cur);
     }
-    // debug(root, levels,childs);
-    rep(i,1,n) {
-        res[i] +=res[i-1];
+    else{
+        put(3);
+        debug(cur,x);
+        auto p = goldman(x-cur);
+        put3(cur,p.first,p.second);
     }
-    pvc(res);
     
 }
 // driver code
@@ -161,7 +155,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

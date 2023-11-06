@@ -109,49 +109,47 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-vii adj;
-vi levels;
-vi childs;
-void dfs(int u,int p,int d){
-    levels[u]=d;
-    childs[u] = 1;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        dfs(v,u,d+1);
-        childs[u]+=childs[v];
+typedef long double dll;
+const int N = 1005;
+dll dp[N][105];
+int m, n, k, s;
+dll a[N], b[N], c[2*N];
+dll rec(int idx,int j){
+    if(idx==m+n) return 0;
+    if(dp[idx][j]!=-1) return dp[idx][j];
+    dll res = INF;
+    if(j==k) return res;
+    dll sqa=0;
+    dll sa=0;
+    rep(i,idx,m+n){
+        sqa += c[i]*c[i];
+        sa += c[i];
+        dll l = (i-idx+1);
+        dll a = sa/l;
+        dll cost = sqa + l*a*a - 2*a*sa;
+        res = min(res,cost + rec(i+1,j+1)); 
     }
+    return dp[idx][j] = res;
 }
+// do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        ind[v]++;
+    cin>>m>>n>>k>>s;
+    memset(dp,-1,sizeof dp);
+    for(int i=0; i<m; i++)
+    {
+        cin>>a[i];
+        c[i] = a[i];
     }
-    levels.clear();
-    childs.clear();
-    levels.resize(n);
-    childs.resize(n);
-    int root= find(all(ind),0) - ind.begin();
-    dfs(root,-1,0);
-    vi res(n);
-    rep(i,0,n){
-        res[levels[i]] +=1;
-        if(n-childs[i]+1<n) res[n-childs[i]+1] -=1;
+    for(int i=0; i<n; i++)
+    {
+        cin>>b[i];
+        c[m+i] = b[i];
     }
-    // debug(root, levels,childs);
-    rep(i,1,n) {
-        res[i] +=res[i-1];
-    }
-    pvc(res);
-    
+    sort(c,c+m+n);
+    dll ya = (1.000*s*m)/(m+n);
+    dll ay = m*(s-ya)*(s-ya) + n*(ya*ya);
+    dll ax = rec(0,0);
+    put(ax+ay);
 }
 // driver code
 int main()
@@ -161,7 +159,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

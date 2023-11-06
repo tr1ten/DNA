@@ -110,47 +110,36 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii adj;
-vi levels;
-vi childs;
-void dfs(int u,int p,int d){
-    levels[u]=d;
-    childs[u] = 1;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        dfs(v,u,d+1);
-        childs[u]+=childs[v];
-    }
-}
+struct Node {
+    Node* childs[26];
+    bool marked;
+};
+
 void testcase(){
-    int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        ind[v]++;
-    }
-    levels.clear();
-    childs.clear();
-    levels.resize(n);
-    childs.resize(n);
-    int root= find(all(ind),0) - ind.begin();
-    dfs(root,-1,0);
-    vi res(n);
+    string s;
+    cin >> s;
+    string ss;
+    cin >> ss;
+    int k;
+    cin >> k;
+    int n= s.size();
+    Node *root = new Node();
+    int ans = 0;
     rep(i,0,n){
-        res[levels[i]] +=1;
-        if(n-childs[i]+1<n) res[n-childs[i]+1] -=1;
+        Node *cur = root;
+        int bad = 0;
+        rep(j,i,n){
+            if(ss[s[j]-'a']=='0') bad++;
+            int idx = s[j]-'a';
+            if(cur->childs[idx]==nullptr) cur->childs[idx] = new Node();
+            cur =cur->childs[idx];
+            
+            if(bad<=k && ((cur->marked)==0)) {cur->marked=1;ans++;}
+        }
     }
-    // debug(root, levels,childs);
-    rep(i,1,n) {
-        res[i] +=res[i-1];
-    }
-    pvc(res);
+    // debug(ans);
+    put(ans);
+
     
 }
 // driver code
@@ -161,7 +150,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

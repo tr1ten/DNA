@@ -110,48 +110,43 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii adj;
-vi levels;
-vi childs;
-void dfs(int u,int p,int d){
-    levels[u]=d;
-    childs[u] = 1;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        dfs(v,u,d+1);
-        childs[u]+=childs[v];
-    }
-}
 void testcase(){
     int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        ind[v]++;
+    cin>>n;
+    int arr[n];
+    for(int i=0; i<n; i++)
+    {
+        cin>>arr[i];
     }
-    levels.clear();
-    childs.clear();
-    levels.resize(n);
-    childs.resize(n);
-    int root= find(all(ind),0) - ind.begin();
-    dfs(root,-1,0);
-    vi res(n);
-    rep(i,0,n){
-        res[levels[i]] +=1;
-        if(n-childs[i]+1<n) res[n-childs[i]+1] -=1;
+    int pref[n], suff[n];
+    pref[0] = arr[0];
+    for(int i=1; i<n; i++)
+    {
+        pref[i] = max(pref[i-1], arr[i]);
     }
-    // debug(root, levels,childs);
-    rep(i,1,n) {
-        res[i] +=res[i-1];
+    suff[n-1] = arr[n-1];
+    for(int i=n-2; i>=0; i--)
+    {
+        suff[i] = min(suff[i+1], arr[i]);
     }
-    pvc(res);
-    
+    vector<int> ans;
+    for(int i=0; i<n; i++)
+    {
+        if(arr[i]>=pref[i] && arr[i]<=suff[i])
+        {
+            ans.push_back(arr[i]);
+        }
+    }
+    cout<<ans.size()<<" ";
+    if(ans.size()>100)
+    {
+        ans.resize(100);
+    }
+    for(auto stuff:ans)
+    {
+        cout<<stuff<<" ";
+    }
+    cout<<endl;
 }
 // driver code
 int main()
@@ -161,7 +156,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    //cin>>T;
     while(T--) testcase();
 
     return 0;
