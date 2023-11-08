@@ -108,59 +108,51 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    ll n,x;
-    cin >> n >> x;
-    vi a(n);
-    tkv(a,n);
-    if(x>0){
-        ll mx = 0;
-        ll cur = 0;
-        trav(y,a){
-            cur = max(y,cur+y);
-            mx = max(mx,cur);
-        }
-        put(max(mx,mx*x));
-    }
-    else {
-        vi pref(n);
-        vi suff(n);
-        ll mx = 0;
-        ll cur = 0;
-        rep(i,0,n){
-            cur = max(a[i],cur+a[i]);
-            pref[i]=max(0ll,cur);
-        }
-        cur = 0;
-        per(i,0,n){
-            cur = max(a[i],cur+a[i]);
-            suff[i]=max(0ll,cur);
-        }
-        if(x==0){
-            ll res = 0;
-            ll mx = 0;
-            rep(i,0,n){
-                res = max(suff[i]+mx,res);
-                mx = max(pref[i],mx);
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int ta=0;
+    int tb =0;
+    rep(x,1,n+1){
+        rep(y,1,n+1){
+            int ca = 0;
+            int cb = 0;
+            int wa = 0;
+            int wb = 0;
+            trav(t,s){
+                ca +=t=='A';
+                cb +=t=='B';
+                if(ca==x){
+                    ca =0;
+                    cb=0;
+                    wa++;
+                }
+                else if(cb==x){
+                    cb = 0;
+                    ca = 0;
+                    wb++;
+                }
             }
-            put(res);
-            return;
-        }
-        mx = 0;
-        cur = 0;
-        ll res =0 ;
-        rep(j,0,n){
-            cur +=a[j];
-            if(mx<=(pref[j]-cur*x)){
-                mx = (pref[j]-cur*x);
+            if(ca!=0 || cb!=0) continue;
+            if(wa==y && wb<y){
+                ta++;
             }
-            ll sf = j+1<n ? suff[j+1] : 0;
-            res = max(res,x*cur + mx + sf);
+            if(wb==y && wa<y){
+                debug(x,y,tb);
+                tb++;
+            }
         }
-        put(res);
-        
     }
+    debug(ta,tb);
+    if(ta==0 && tb==0){
+        put('?')
+        return;
+    }
+    put(tb==0  ?  'A' : 'B' )
 }
 // driver code
 int main()
@@ -170,7 +162,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

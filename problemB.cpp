@@ -184,7 +184,7 @@ void testcase()
     }
     tkv(c,m+n);
     sort(c, c + m + n);
-    dll ya = (1.000 * s * m) / (dll)(m + n);
+    dll ya = s/2;
     dll ay = m * (s - ya) * (s - ya) + n * (ya * ya);
     dll ax = rec(0, 0);
     debug(ax>=0);

@@ -101,7 +101,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 998244353;
 const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -109,58 +109,58 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 // do not use unordered map use mll
+
+const int N = 5*(1e5)+5;
+ll facts[N+1];
+ll invs[N+1];
+ll fast_pow(ll x,ll n,ll m){
+    x = x%m;
+    ll res = 1;
+    while (n>0)
+    {
+        if(n%2==1) res = (res*x)%m; 
+        x = x*x%m;
+        n /=2;
+    }
+    return res;
+}
+void factorials(){
+    facts[0] = 1;
+    for(int i=1;i<=N;i++) facts[i] = facts[i-1]*i%MOD;
+}
+
+
+void inverses(){
+    invs[N] = fast_pow(facts[N],MOD-2,MOD);
+    for(int i=N-1;i>=0;i--) invs[i] = invs[i+1]*(i+1)%MOD;
+}
+
+ll ncr(int n,int r){
+    return (((facts[n]*invs[n-r])%MOD)*invs[r])%MOD;
+}
+
+void preprocess(){
+    factorials();
+    inverses();
+}
 void testcase(){
-    ll n,x;
-    cin >> n >> x;
-    vi a(n);
-    tkv(a,n);
-    if(x>0){
-        ll mx = 0;
-        ll cur = 0;
-        trav(y,a){
-            cur = max(y,cur+y);
-            mx = max(mx,cur);
-        }
-        put(max(mx,mx*x));
+    ll n;
+    cin >> n;
+    vi a(2*n);
+    tkv(a,2*n);
+    srv(a);
+    ll ans = 0;
+    rep(i,0,n){
+        ans += abs(a[i+n]-a[i]);
+        ans %=MOD;
     }
-    else {
-        vi pref(n);
-        vi suff(n);
-        ll mx = 0;
-        ll cur = 0;
-        rep(i,0,n){
-            cur = max(a[i],cur+a[i]);
-            pref[i]=max(0ll,cur);
-        }
-        cur = 0;
-        per(i,0,n){
-            cur = max(a[i],cur+a[i]);
-            suff[i]=max(0ll,cur);
-        }
-        if(x==0){
-            ll res = 0;
-            ll mx = 0;
-            rep(i,0,n){
-                res = max(suff[i]+mx,res);
-                mx = max(pref[i],mx);
-            }
-            put(res);
-            return;
-        }
-        mx = 0;
-        cur = 0;
-        ll res =0 ;
-        rep(j,0,n){
-            cur +=a[j];
-            if(mx<=(pref[j]-cur*x)){
-                mx = (pref[j]-cur*x);
-            }
-            ll sf = j+1<n ? suff[j+1] : 0;
-            res = max(res,x*cur + mx + sf);
-        }
-        put(res);
-        
-    }
+    assert(ans>=0);
+    ll cr = ncr(2*n,n)%MOD;
+    assert(cr>=0);
+    ll res = ans*cr%MOD;
+    put(res);
+    
+    
 }
 // driver code
 int main()
@@ -170,6 +170,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    preprocess();
     // cin>>T;
     while(T--) testcase();
 
