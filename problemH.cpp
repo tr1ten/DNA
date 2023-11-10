@@ -95,7 +95,6 @@ void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ 
 void _print() {cerr << "]\n";}
 template <typename T, typename... V>
 void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
-
 #ifndef ONLINE_JUDGE
 #define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
 #else
@@ -109,18 +108,89 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-void testcase(){
-    int n,m;
-    cin >> n >> m;
-    ll ans = 0;
-    if(m>n) swap(n,m);
-    if(m==1) ans = n;
-    else if(m==2) ans=2*((n/4)*2 + min(n%4,2));
+#include <bits/stdc++.h>
+using namespace std;
+// battle tested
+typedef long long ll;
+const int N = 2*(1e5) + 5;
+int n;
+struct Segment{
+    int sum=0,
+    pref1=0,
+    suff0=0;
+} segm[4*N]; // 0 index
+
+Segment combine(const Segment &left,const Segment &right){
+    Segment res;
+    res.sum = (left.sum + right.sum);
+    int d = min(left.suff0,right.pref1);
+    res.pref1 = left.pref1 + right.pref1-d;
+    res.suff0 = right.suff0 + left.suff0-d;
+    res.sum +=d;
+    // debug(left,right,res);
+    return res;
+}
+// child- 2*x+1,2*x+2 (0 coz index)
+// add x to [l...r]
+void update(int node,int left,int right,int i,ll value){
+    if(left==i && right==i) {
+            if(value) segm[node].pref1 = 1;
+            else segm[node].suff0 = 1;
+        }
     else{
-        ans = (m*n+1)/2;
-    }  
-    put(ans);
+        int mid = (left+right)/2;
+        if(i<=mid) update(2*node+1,left,mid,i,value);
+        else update(2*node+2,mid+1,right,i,value);
+        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
+
+    }
+    
+}
+
+Segment query(int node,int left,int right,int l,int r){
+    if(left>=l && right<=r) {return segm[node];}
+    int mid = (left+right)/2;
+    Segment lf,rf;
+    if(l<=mid) lf = query(2*node+1,left,mid,l,r);
+    if(r>mid) rf = query(2*node+2,mid+1,right,l,r);
+
+    return combine(lf,rf);
+}
+// everything is zero indexed
+void update(int i,ll x){
+    update(0,0,n-1,i,x);
+}
+Segment query(int l,int r){
+    return query(0,0,n-1,l,r);
+}
+void testcase(){
+    string s;
+    cin >> s;
+    n = s.size();
+    rep(i,0,n){
+        update(i,s[i]-'0');
+    }
+    int q;
+    cin >> q;
+    rep(i,0,q){
+        int k;
+        cin >> k;
+        if(k==1){
+            int x;
+            cin >> x;
+            --x;
+            if(s[x]=='1') s[x] = '0';
+            else s[x] = '1';
+            update(i,s[x]-'0');
+        }
+        else{
+            int l,r;
+            cin >> l >> r;
+            --r;--l;
+            put(r-l+1 - 2*query(l,r).sum);
+        }
+    }
+    
 }
 // driver code
 int main()
