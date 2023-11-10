@@ -113,10 +113,35 @@ void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    if(count(all(s),'A')>count(all(s),'B')) put('A')
-    else put('B')
+    vi a(n);
+    mll cnt;
+    unordered_map<int,vector<int>> c;
+    rep(i,0,n){
+        int x;
+        cin>> x;
+        cnt[x]++;
+        a[i] = x;
+    }
+    rep(i,0,n){
+        if(cnt[a[i]]>1) c[a[i]].push_back(i);
+    }
+    if(c.size()<2){
+        put(-1)
+        return;
+    }
+    vi b(n,1);
+    int base = 1;
+    trav(x,c){
+        int bit = 0;
+        trav(v,x.second){
+            b[v] = bit + base;
+            bit ^=1;
+        }
+        if(base==1) base=2;
+        else base = 1;
+    }
+    pvc(b);
+
 }
 // driver code
 int main()

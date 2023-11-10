@@ -108,15 +108,22 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
+void ans(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    if(count(all(s),'A')>count(all(s),'B')) put('A')
-    else put('B')
+    int n,k;
+    cin >> n >> k;
+    vi a(n);
+    tkv(a,n);
+    set<int> vis;
+    int cur = n-1;
+    int pos = 1;
+    while(vis.count(cur)==0 && k--){
+        vis.insert(cur);
+        if(a[cur]>n) {pos=0;break;}
+        cur = (cur-a[cur]+n)%n;
+    }
+    ans(pos);
 }
 // driver code
 int main()
