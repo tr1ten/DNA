@@ -65,7 +65,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
+#define pvc(vec) trav(x,vec) cout<<x<<":"; cout<<"-";
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
@@ -102,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,25 +110,37 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >>n ;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);
-    tkv(b,n);
-    int i=0;
-    int j=n-1;
-    while(a[i]==b[i]) i++;
-    while(a[j]==b[j]) j--;
-    int min = *min_element(a.begin()+i,a.begin()+j+1);
-    int mx = *max_element(a.begin()+i,a.begin()+j+1);
-    // debug(i,j,min,mx);
-    i--;j++;
-    while(i>=0 && a[i]<=min) {min = a[i--];}
-    while(j<n && a[j]>=mx) {mx = a[j++];}
-    put2(i+2,j);
-
+void testcase(int t){
+    ll n,k;
+    cin >> n >> k;
+    vi l(n);
+    vi r(n);
+    tkv(l,n);
+    tkv(r,n);
+    ll res = INF;
+    int i =0;
+    ll j = i;
+    ll cur = k;
+    while(cur>0 && j<n){
+        cur -=(r[j]-l[j]+1);
+        j++;
+    }
+    j--;
+    debug(cur,j);
+    if(cur<=0){
+        assert(abs(cur)<=r[j]-l[j]+1);
+        res = 2*(j+1) + r[j] + cur;
+    }
+    rep(i,j,n){
+        if(r[j]-l[j]+1>=k){
+            res = min(res,l[i]+k+2);
+        }
+    }
+    if(res>=INF){
+        put(-1);
+    }
+    else put(res)
+    
 }
 // driver code
 int main()
@@ -139,7 +151,7 @@ int main()
     // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
-    while(T--) testcase();
+    rep(t,0,T) testcase(t);
 
     return 0;
 }

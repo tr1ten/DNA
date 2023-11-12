@@ -108,27 +108,40 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+int test(string s,char x){
+    int level=0;
+    while(1){
+        int cnt =0;
+        int i=0;
+        string ns;
+        while(i<s.size()){
+            if(s[i]!=x){
+                if(i+1<s.size()) ns += s[i+1];
+                i+=2;
+                cnt++;
+            }
+            else{
+                ns +=x;
+                i++;
+            }
+        }
+        if(!cnt) break;
+        s = ns;
+        level++;
+        // debug(ns,s,x);
+    }
+    return level;
+}
 void testcase(){
-    int n;
-    cin >>n ;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);
-    tkv(b,n);
-    int i=0;
-    int j=n-1;
-    while(a[i]==b[i]) i++;
-    while(a[j]==b[j]) j--;
-    int min = *min_element(a.begin()+i,a.begin()+j+1);
-    int mx = *max_element(a.begin()+i,a.begin()+j+1);
-    // debug(i,j,min,mx);
-    i--;j++;
-    while(i>=0 && a[i]<=min) {min = a[i--];}
-    while(j<n && a[j]>=mx) {mx = a[j++];}
-    put2(i+2,j);
-
+    string s;
+    cin >> s;
+    int ans = s.size();
+    rep(i,0,26){
+        ans = min(ans,test(s,'a'+i));
+    }
+    put(ans);
+    
 }
 // driver code
 int main()
