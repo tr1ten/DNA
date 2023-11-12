@@ -118,22 +118,20 @@ void testcase(int t){
     tkv(l,n);
     tkv(r,n);
     ll res = INF;
-    int i =0;
-    ll j = i;
-    ll cur = k;
-    while(cur>0 && j<n){
-        cur -=(r[j]-l[j]+1);
-        j++;
-    }
-    j--;
-    debug(cur,j);
-    if(cur<=0){
-        assert(abs(cur)<=r[j]-l[j]+1);
-        res = 2*(j+1) + r[j] + cur;
-    }
-    rep(i,j,n){
-        if(r[j]-l[j]+1>=k){
-            res = min(res,l[i]+k+2);
+    ll m = k; // current colored
+    ll rem = 0; // number of 1 size cells 
+    ll op = 0; // shift operations 
+    rep(i,0,n){
+        if(r[i]-l[i]+1>=m){
+            res = min(res,2ll + op + (l[i]+m-1));
+        }
+        else if(r[i]-l[i]+1+rem>=m){
+            res = min(res,op + 2ll + r[i] + (m-(r[i]-l[i]+1))*2);
+        }
+        if(r[i]==l[i]) rem++;
+        else{
+            op +=2;
+            m -= (r[i]-l[i]+1);
         }
     }
     if(res>=INF){
