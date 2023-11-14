@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
 using namespace __gnu_pbds;
-#define endl '\n';
 template<class T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
 template<typename T> 
@@ -69,7 +69,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
-#define mod(x) (x + MOD)%MOD
+#define mod(x) ((x + MOD)%MOD)
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
@@ -108,38 +108,33 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    set<pi> st;
+    ll n,x;
+    cin >> n >> x;
+    string s;
+    cin >> s;
+    priority_queue<ll> pq;
+    int cnt=0;
+    int res= 0 ;
     rep(i,0,n){
-        st.insert({a[i],i});
-    }
-    vpi ans;
-    rep(i,0,n-1){
-        int x = a[i];
-        auto [y,j] = *st.begin();
-        assert(st.count({x,i}));
-        st.erase(st.find({x,i}));
-        if(x==y) {
-            continue;
+        if(s[i]=='1') {res++;pq.push(cnt);cnt=0;}
+        else {
+            cnt++;
         }
-        st.erase(st.begin());
-        st.insert({x,j});
-        a[i] = a[j];
-        a[j] = x;
-        ans.push_back({j,i});
-        ans.push_back({i,j});
-        ans.push_back({j,i});
     }
-    put(ans.size());
-    assert(ans.size()<=4*n);
-    trav(x,ans){
-        put2(x.first+1,x.second+1);
+    pq.push(cnt);
+    while (!pq.empty())
+    {
+        int d=min((x-1)/2,pq.top());
+        pq.pop();
+        x -=(2*d + 1);
+        res += d;
+        if(x<=1) break;
     }
+    put(res);
+    
 }
 // driver code
 int main()

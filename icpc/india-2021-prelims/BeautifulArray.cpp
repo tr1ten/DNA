@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
 using namespace __gnu_pbds;
-#define endl '\n';
 template<class T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
 template<typename T> 
@@ -108,38 +108,59 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    set<pi> st;
-    rep(i,0,n){
-        st.insert({a[i],i});
-    }
-    vpi ans;
-    rep(i,0,n-1){
-        int x = a[i];
-        auto [y,j] = *st.begin();
-        assert(st.count({x,i}));
-        st.erase(st.find({x,i}));
-        if(x==y) {
-            continue;
+    vi A(n);
+    tkv(A,n);
+    if(n<6){
+        if(n==2) {put(0);return;}
+        if(n==3){
+            put(A[0]!=A[2]);
+            return;
         }
-        st.erase(st.begin());
-        st.insert({x,j});
-        a[i] = a[j];
-        a[j] = x;
-        ans.push_back({j,i});
-        ans.push_back({i,j});
-        ans.push_back({j,i});
+        if(n==4){
+            int res = (A[0]!=A[3])  + (A[1]==A[3]);
+            rep(i,0,n){
+                rep(j,i,n){
+                    swap(A[i],A[j]);
+                    res = min(res,1 + (A[0]!=A[3])  + (A[1]==A[3]) );
+                    swap(A[i],A[j]);
+                }
+            }
+            put(res);
+            return;
+        }
+        assert(n!=5);
+
     }
-    put(ans.size());
-    assert(ans.size()<=4*n);
-    trav(x,ans){
-        put2(x.first+1,x.second+1);
+    int res = n;
+    for(int a=1;a<=n;a++){
+        for(int b=1;b<=n;b++){
+            for(int c=1;c<=n;c++){
+                int cost=  0;
+                for(int i=0;i<n;i+=2){
+                    int cur = (A[i]!=a) + (i+1<n ? A[i+1]!=b : 0) + (i+2<n ? A[i+2]!=c : 0); 
+                    if(i+1<n && A[i+1]==a && A[i]==b){
+                        cur = min(cur,1+(i+2<n ? A[i+2]!=c : 0));
+                    }
+                    if(i+2<n){
+                        if(A[i+2]==a && A[i]==c){
+                        cur = min(cur,1+(i+2<n ? A[i+2]!=c : 0));
+                        }
+                        if(A[i+1]==c && A[i+2]==b){
+                        cur = min(cur,1+(i+2<n ? A[i+2]!=c : 0));
+                        }
+                    }
+                    cost+=cur; 
+                }
+                res= min(cost,res);
+            }
+        }
     }
+    put(res);
 }
 // driver code
 int main()

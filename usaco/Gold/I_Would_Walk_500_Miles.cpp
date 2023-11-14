@@ -101,7 +101,7 @@ ll A = 2019201913;
         
 ll f(int a,int b){
     a++;b++;
-    return (A*a + B*b)%C;c
+    return (A*a + B*b)%C;
 }
 // driver code
 int main()

@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
 using namespace __gnu_pbds;
-#define endl '\n';
 template<class T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
 template<typename T> 
@@ -108,39 +108,82 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    set<pi> st;
-    rep(i,0,n){
-        st.insert({a[i],i});
-    }
-    vpi ans;
-    rep(i,0,n-1){
-        int x = a[i];
-        auto [y,j] = *st.begin();
-        assert(st.count({x,i}));
-        st.erase(st.find({x,i}));
-        if(x==y) {
-            continue;
+vi st;
+vii adj;
+vector<bool> vis;
+int sq;
+vector<int> dp;
+int dfs2(int u){
+    vis[u] = 1;
+    int res = 0; 
+    for(auto v:adj[u]){
+        if(!vis[v]){
+            res = max(res,dfs2(v));
         }
-        st.erase(st.begin());
-        st.insert({x,j});
-        a[i] = a[j];
-        a[j] = x;
-        ans.push_back({j,i});
-        ans.push_back({i,j});
-        ans.push_back({j,i});
     }
-    put(ans.size());
-    assert(ans.size()<=4*n);
-    trav(x,ans){
-        put2(x.first+1,x.second+1);
+    dp[u] =res;
+    if(res>=sq){
+        st.push_back(u+1);
+        return 0;
     }
+    return res+1;
+    
 }
+// int dfs(int u,int d){
+//     vis[u] = 1;
+//     int res = sq+1;
+//     if(d==0){
+//         d = sq+1;
+//         st.push_back(u+1);
+//         res=0;
+//     }
+//     int mxd = d;
+//     sort(all(adj[u]),[&](int i,int j){
+//         return dp[i]>dp[j];
+//     });
+//     for(auto v:adj[u]){
+//         if(!vis[v]){
+//             int m = dfs(v,mxd-1);
+//             mxd = max(mxd,sq+1-m);
+//             res= min(res,m);
+//         }
+//     }
+//     return res+1;
+// }
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    adj.clear();
+    vis.clear();
+    dp.clear();
+    dp.resize(n);
+    adj.resize(n);
+    vis.resize(n);
+    rep(i,0,m){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    st.clear();
+    sq = (int)ceil(sqrt(n*1.0));
+    dfs2(0);
+    if(st.empty() || st.back()!=1) st.push_back(1);
+    vis.clear();vis.resize(n);
+    debug(dp);
+    // dfs(0,0);
+    if(st.size()>sq){
+        assert(0);
+        put(-1);
+        return;
+    }
+    put(st.size());
+    pvc(st);
+}
+
 // driver code
 int main()
 {

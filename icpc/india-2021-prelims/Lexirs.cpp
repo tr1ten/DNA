@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
 using namespace __gnu_pbds;
-#define endl '\n';
 template<class T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
 template<typename T> 
@@ -108,38 +108,36 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
     int n;
     cin >> n;
+    string s;
+    cin >> s;
     vi a(n);
     tkv(a,n);
-    set<pi> st;
+    vi dp(n);
+    vpi b;
     rep(i,0,n){
-        st.insert({a[i],i});
-    }
-    vpi ans;
-    rep(i,0,n-1){
-        int x = a[i];
-        auto [y,j] = *st.begin();
-        assert(st.count({x,i}));
-        st.erase(st.find({x,i}));
-        if(x==y) {
-            continue;
+        rep(j,i,n){
+            b.push_back({i,j});
         }
-        st.erase(st.begin());
-        st.insert({x,j});
-        a[i] = a[j];
-        a[j] = x;
-        ans.push_back({j,i});
-        ans.push_back({i,j});
-        ans.push_back({j,i});
     }
-    put(ans.size());
-    assert(ans.size()<=4*n);
-    trav(x,ans){
-        put2(x.first+1,x.second+1);
+    sort(all(b),[&s](pi &x,pi &y ){
+        rep(i,0,min(x.second-x.first+1,y.second-y.first+1)){
+            if(s[x.first+i] == s[y.first+i]) continue;
+            return s[x.first+i]<s[y.first+i];
+        }
+        return (x.second-x.first+1==y.second-y.first+1) ? y.first<x.first : x.second-x.first+1<y.second-y.first+1;
+    });
+    for(auto p:b){
+        ll res = 0;
+        for(int i=0;i<p.first;i++) res = max(dp[i],res);
+        for(int i=p.first;i<p.second;i++) dp[p.second] = max(dp[p.second],dp[i]);
+        dp[p.second] = max(dp[p.second],res+a[p.second-p.first]);
     }
+    put(dp.back());
 }
 // driver code
 int main()

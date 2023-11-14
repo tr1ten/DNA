@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
 using namespace __gnu_pbds;
-#define endl '\n';
 template<class T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
 template<typename T> 
@@ -108,38 +108,32 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
+void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    set<pi> st;
+    string s;
+    cin >> s;
+    vector<int> d(n);
+    tkv(d,n);
+    int cur = -1;
+    int mx = -1;
+    int res = 0;
     rep(i,0,n){
-        st.insert({a[i],i});
-    }
-    vpi ans;
-    rep(i,0,n-1){
-        int x = a[i];
-        auto [y,j] = *st.begin();
-        assert(st.count({x,i}));
-        st.erase(st.find({x,i}));
-        if(x==y) {
-            continue;
+        if(s[i]=='B'){
+            if(mx<i) {put(-1);return;}
+            if(cur<i){
+                cur = mx;
+                res++;
+            }
         }
-        st.erase(st.begin());
-        st.insert({x,j});
-        a[i] = a[j];
-        a[j] = x;
-        ans.push_back({j,i});
-        ans.push_back({i,j});
-        ans.push_back({j,i});
+        debug(mx,cur);
+        mx = max(mx,i+d[i]);
     }
-    put(ans.size());
-    assert(ans.size()<=4*n);
-    trav(x,ans){
-        put2(x.first+1,x.second+1);
-    }
+    put(res);
+
 }
 // driver code
 int main()

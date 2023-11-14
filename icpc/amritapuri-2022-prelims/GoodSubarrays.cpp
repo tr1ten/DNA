@@ -1,10 +1,10 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
 using namespace __gnu_pbds;
-#define endl '\n';
 template<class T>
 using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
 template<typename T> 
@@ -109,37 +109,69 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 // do not use unordered map use mll
+const int MX = 30;
+// ll f(vi &a){
+//     ll res= 0;
+//     ll total = 0;
+//     rep(j,0,MX){
+//         int cnt = 0;
+//         ll sms = 0;
+//         rep(i,0,a.size()){
+//             if(a[i]&(1<<j)) cnt=0;
+//             else cnt++;
+//             sms += cnt;
+//         }
+//         res += (a.size()*(a.size()+1)/2 - sms)*(1<<j);
+//     }
+//     return res;
+
+// }
+// status: WA
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    set<pi> st;
-    rep(i,0,n){
-        st.insert({a[i],i});
-    }
-    vpi ans;
-    rep(i,0,n-1){
-        int x = a[i];
-        auto [y,j] = *st.begin();
-        assert(st.count({x,i}));
-        st.erase(st.find({x,i}));
-        if(x==y) {
-            continue;
+    ll n,k;
+    cin >> n >> k;
+    vi a(n+1);
+    rep(i,1,n+1) cin >> a[i];
+    vector<vpi> gp(MX,vpi(n+2));
+    vector<vpi> gs(MX,vpi(n+2));
+    // pre compute - number of zeros subaray upto i and suff of zeros upto i
+    rep(j,0,MX){
+        rep(i,1,n+1){
+            int x = ((a[i]&(1<<j))>0);
+            if(x) gp[j][i].second = 0;
+            else gp[j][i].second=gp[j][i-1].second+1;
+            gp[j][i].first = (gp[j][i-1].first) + gp[j][i].second;
         }
-        st.erase(st.begin());
-        st.insert({x,j});
-        a[i] = a[j];
-        a[j] = x;
-        ans.push_back({j,i});
-        ans.push_back({i,j});
-        ans.push_back({j,i});
     }
-    put(ans.size());
-    assert(ans.size()<=4*n);
-    trav(x,ans){
-        put2(x.first+1,x.second+1);
+    rep(j,0,MX){
+        per(i,1,n+1){
+            int x = ((a[i]&(1<<j))>0);
+            if(x) gs[j][i].second = 0;
+            else gs[j][i].second=gs[j][i+1].second+1;
+            gs[j][i].first = (gs[j][i+1].first) + gs[j][i].second;
+        }
     }
+    auto f = [&](int l,int r){ // l,r are not included
+        ll cost = 0;
+        ll m = n-(r-l-1);
+        ll total = (m*(m+1)/2);
+        rep(i,0,MX){
+            cost += (total-(gp[i][l].first + gs[i][r].first + gp[i][l].second*gs[i][r].second))*(1<<i);
+        }
+        return cost;
+    };
+    // find answer for each l...r
+    ll res=  0;
+    rep(l,0,n+1){
+        int r=l+1;
+        while(r<=n+1 && f(l,r)>k) r++;
+        debug(l,r);
+        if(r<=n+1){
+            res += (l+1)*(n-r+1+1) - 1;
+        }
+    }   
+    put(res + 1); // removing all elements
+
 }
 // driver code
 int main()
