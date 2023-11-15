@@ -110,43 +110,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// status : WA
+long long fast_pow(long long a,long long b,long long MOD){
+    if(b==0) return 1;
+    if(b==1) return a;
+    long long res = fast_pow(a,b/2,MOD);
+    if(b%2==0) return (res*res)%MOD;
+    return (((res*res)%MOD)*a)%MOD;
+}
 void testcase(){
-    int n;
-    cin >> n;
-    vi A(n);
-    tkv(A,n);
-    unordered_map<int,int> cnt[3];
-    rep(i,0,n){
-        cnt[i%3][A[i]]++;
+    ll k,d0,d1;
+    cin >> k >> d0 >> d1;
+    ll p = 0;
+    ll cc = (d0+d1)%10;
+    k-=2;
+    if(k>=1){
+        p +=cc;
+        k--;
     }
-    if(n<5){
-        if(n<=2) {put(0);return;}
-        if(n==3){
-            put(A[0]==A[2]);
-            return;
-        }
-        if(n==4){
-            if(A[0]==A[3] && A[0]!=2 && A[1]!=A[3]) put(0)
-            else if(*min_element(all(A))==*max_element(all(A))) put(2)
-            else put(1);
-        }
-        return;
-    }
-    int res = n;
-    for(int a=1;a<=n;a++){
-        for(int b=1;b<=n;b++){
-            for(int c=1;c<=n;c++){
-                if(a==b || b==c || a==c) continue;
-                res = min(res,n-(cnt[0][a]  + cnt[1][b] + cnt[2][c] + min(cnt[0][b],cnt[1][a]) + min(cnt[0][c],cnt[2][a]) + min(cnt[1][c],cnt[2][b]) 
-                    + min(cnt[0][c],min(cnt[1][a],cnt[2][b]))
-                    + min(cnt[1][c],min(cnt[2][a],cnt[0][b]))
-                )
-                );
-            }
-        }
-    }
-    put(res);
+    int a = (2*cc)%10,b=4*cc%10,c=8*cc%10,d=6*cc%10;
+    p += (a+b+c+d)*(k/4);
+    if(k%4==1) p+=a;
+    else if(k%4==2) p+=a+b;
+    else if(k%4==3) p+=a+b+c;
+    debug(p);
+    p %=3;
+    // p is sum of all digits >2 modulo 3
+    ans(((d0+d1) +p)%3==0);
 }
 // driver code
 int main()

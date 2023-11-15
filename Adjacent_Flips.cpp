@@ -108,45 +108,26 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
+void ans(int x) {put(x?"Yes":"No"   );}
 // do not use unordered map use mll
-// status : WA
+bool f(int x,string &s){
+    stack<int> st;
+    rep(i,0,s.size()){
+        int c= s[i]-'0';
+        if(c==x) continue;
+        if(!st.empty() && (i-st.top()-1)%2==0){
+            st.pop();
+        }
+        else st.push(i);
+    }
+    return st.empty();
+}
 void testcase(){
     int n;
+    string s;
     cin >> n;
-    vi A(n);
-    tkv(A,n);
-    unordered_map<int,int> cnt[3];
-    rep(i,0,n){
-        cnt[i%3][A[i]]++;
-    }
-    if(n<5){
-        if(n<=2) {put(0);return;}
-        if(n==3){
-            put(A[0]==A[2]);
-            return;
-        }
-        if(n==4){
-            if(A[0]==A[3] && A[0]!=2 && A[1]!=A[3]) put(0)
-            else if(*min_element(all(A))==*max_element(all(A))) put(2)
-            else put(1);
-        }
-        return;
-    }
-    int res = n;
-    for(int a=1;a<=n;a++){
-        for(int b=1;b<=n;b++){
-            for(int c=1;c<=n;c++){
-                if(a==b || b==c || a==c) continue;
-                res = min(res,n-(cnt[0][a]  + cnt[1][b] + cnt[2][c] + min(cnt[0][b],cnt[1][a]) + min(cnt[0][c],cnt[2][a]) + min(cnt[1][c],cnt[2][b]) 
-                    + min(cnt[0][c],min(cnt[1][a],cnt[2][b]))
-                    + min(cnt[1][c],min(cnt[2][a],cnt[0][b]))
-                )
-                );
-            }
-        }
-    }
-    put(res);
+    cin >> s;
+    ans(f(0,s) |f(1,s));
 }
 // driver code
 int main()
