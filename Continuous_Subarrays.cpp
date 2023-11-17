@@ -110,39 +110,58 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int n;
+
 void testcase(){
+    int n;
     cin >> n;
-    unordered_set<int> left;
-    rep(i,2,n*n+1){
-        left.insert(i);
+    vi A(n);
+    tkv(A,n);
+    vector<vector<int>> diffs(n+1,vector<int>());
+    unordered_map<int,int> starts;
+    unordered_map<int,int> ends;
+    int i=0;
+    rep(i,0,n-1){
+        if(abs(A[i]-A[i+1])<=n) diffs[abs(A[i]-A[i+1])].push_back(i);
     }
-    vector<vector<int>> b(n,vector<int>(n,-1));
-    int cur = 1;
-    int flip = 0;
-    rep(i,0,n){
-        if(i%2==0){
-            rep(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
-        else{
-            per(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
+    multiset<int> lens;
+    ll sm =0;
+    while(i<n){
+        int s = i;
+        while(i+1<n && abs(A[i+1]-A[i])==0) i++;
+        starts[s] = i-s+1;
+        ends[i] = i-s+1;
+        lens.insert(i-s+1);
+        sm += i-s+1;
+        i++;
     }
-    rep(i,0,n){
-        rep(j,0,n){
-            cout << b[i][j] <<" ";
+    ll res = 0;
+    rep(L,1,n+1){
+        trav(i,diffs[L]){
+            int l1 = ends[i];
+            int l2 = starts[i+1];
+            lens.erase(lens.find(l1));
+            lens.erase(lens.find(l2));
+            lens.insert(l1+l2);
+            starts[i-l1+1] = l1+l2;
+            ends[i+1+l2-1] = l1+l2;
         }
-        cout << "\n";
+        // debug(lens,sm);
+        if(lens.size()==0) continue;
+        auto rt = lens.end();
+        rt--;
+        while (*rt>=L)
+        {
+            res += *rt - L+1;
+            if(rt==lens.begin()) break;
+            --rt;
+        }
+        
     }
-}   
+    put(res);
+    
+    
+    
+}
 // driver code
 int main()
 {

@@ -102,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll INF = 1e17+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,39 +110,30 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int n;
 void testcase(){
+    int n;
     cin >> n;
-    unordered_set<int> left;
-    rep(i,2,n*n+1){
-        left.insert(i);
-    }
-    vector<vector<int>> b(n,vector<int>(n,-1));
-    int cur = 1;
-    int flip = 0;
+    vi a(n);
+    tkv(a,n);
+    ll res =INF;
     rep(i,0,n){
-        if(i%2==0){
-            rep(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
+        ll cur =0;
+        ll last = 0;
+        per(j,0,i){
+            ll d = abs(last)/a[j];
+            cur+=d+1;
+            last = -1*(d+1)*a[j];
         }
-        else{
-            per(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
+        last=0;
+        rep(j,i+1,n){
+            ll d = abs(last)/a[j];
+            cur+=d+1;
+            last = (d+1)*a[j];
         }
+        res = min(res,cur);
     }
-    rep(i,0,n){
-        rep(j,0,n){
-            cout << b[i][j] <<" ";
-        }
-        cout << "\n";
-    }
-}   
+    put(res);
+}
 // driver code
 int main()
 {
@@ -151,7 +142,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

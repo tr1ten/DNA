@@ -110,39 +110,36 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int n;
 void testcase(){
+    int n;
     cin >> n;
-    unordered_set<int> left;
-    rep(i,2,n*n+1){
-        left.insert(i);
+    vi last(n+1,n);
+    vi a(n);
+    tkv(a,n);
+    vi res(n+1,0);
+    per(i,0,n){
+        ll nn = last[a[i]]-i-1;
+        if(last[a[i]]!=n) res[a[i]] = max(res[a[i]],(ll)ceil(1.0*nn/2));
+        else res[a[i]] = max(res[a[i]],nn);
+        last[a[i]] = i;
     }
-    vector<vector<int>> b(n,vector<int>(n,-1));
-    int cur = 1;
-    int flip = 0;
+    // debug(res);
+    vi pre(n+1,-1);
     rep(i,0,n){
-        if(i%2==0){
-            rep(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
-        else{
-            per(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
+        ll nn = i-pre[a[i]]-1;
+        if(pre[a[i]]!=-1) res[a[i]] = max(res[a[i]],(ll)ceil(1.0*nn/2));
+        else res[a[i]] = max(res[a[i]],nn);
+        pre[a[i]] = i;
     }
-    rep(i,0,n){
-        rep(j,0,n){
-            cout << b[i][j] <<" ";
-        }
-        cout << "\n";
+    res[0] = n+2;
+    // debug(res);
+    auto mn = min_element(all(res));
+    pi r ={n+2,n};
+    rep(i,1,n+1){
+        if(last[i]!=n) r = min(r,{res[i],i});
     }
-}   
+    put2(r.second,r.first);
+}
 // driver code
 int main()
 {

@@ -110,39 +110,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int n;
+int lengthOfLIS(vi& nums) {
+        multiset<ll> st;
+        for(int i=0;i<nums.size();i++){
+            ll x = nums[i];
+            if(x<0) continue;
+            if(!st.empty()){
+                auto it = st.upper_bound(x);
+                if(it!=st.end()) st.erase(it);
+            }
+            st.insert(x);
+            if(i==nums.size()-1) return distance(st.begin(),st.upper_bound(x));
+
+        }
+        return st.size();
+    }
 void testcase(){
+    int n;
     cin >> n;
-    unordered_set<int> left;
-    rep(i,2,n*n+1){
-        left.insert(i);
-    }
-    vector<vector<int>> b(n,vector<int>(n,-1));
-    int cur = 1;
-    int flip = 0;
-    rep(i,0,n){
-        if(i%2==0){
-            rep(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
-        else{
-            per(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
-    }
-    rep(i,0,n){
-        rep(j,0,n){
-            cout << b[i][j] <<" ";
-        }
-        cout << "\n";
-    }
-}   
+    vi a(n);
+    tkv(a,n);
+    rep(i,1,n) a[i]+=a[i-1];
+    if(a.back()<0) {put(-1);return;}
+    // debug(a);
+    put(n-lengthOfLIS(a)); // elements that need to operate on = total - need not to operate (must include last element since we cannot [erform operation on that])
+
+}
 // driver code
 int main()
 {

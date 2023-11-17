@@ -110,39 +110,31 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int n;
 void testcase(){
+    int n;
     cin >> n;
-    unordered_set<int> left;
-    rep(i,2,n*n+1){
-        left.insert(i);
-    }
-    vector<vector<int>> b(n,vector<int>(n,-1));
-    int cur = 1;
-    int flip = 0;
+    string s;
+    cin >> s;
+    int cnt = count(all(s),'?');
+    ll sm=0;
     rep(i,0,n){
-        if(i%2==0){
-            rep(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
-        else{
-            per(j,0,n){
-                if(!flip) b[i][j] = cur;
-                else {b[i][j] = n*n - (cur-1);cur++;}
-                flip ^=1;
-            }
-        }
+        if(s[i]!='?') sm += s[i]-'0';
+        sm %=9;
     }
-    rep(i,0,n){
-        rep(j,0,n){
-            cout << b[i][j] <<" ";
+    if(s[0]=='?'){
+        cout << "1";
+        rep(i,0,cnt-1){
+            cout << "0";
         }
-        cout << "\n";
+        cout << '\n';
     }
-}   
+    else{
+        rep(i,0,cnt-1){
+        cout << "1";
+        }
+        cout << (sm==0 ? 2 : 1) << "\n";
+    }
+}
 // driver code
 int main()
 {
