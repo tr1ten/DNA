@@ -111,18 +111,8 @@ inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi A(n);
-    tkv(A,n);
-    ll res = 0;
-    per(i,0,n-1){
-        ll k = ceil(A[i]*1.0/A[i+1]) - 1;
-        res += k;
-        A[i] = A[i]/(k+1);
-    }
-    // debug(A);
-    put(res);
+    int p;
+    cin >> p;
 }
 // driver code
 int main()
