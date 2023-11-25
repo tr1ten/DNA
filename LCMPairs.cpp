@@ -1,3 +1,4 @@
+
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -110,13 +111,33 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 1e5+5;
+vector<vector<int>> divs(N+1,{1});
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    for(int x=2;x<=N;x++){
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
+        }
+    }
+}
 void testcase(){
     int n;
     cin >> n;
     vi a(n);
-    vi b(n);
     tkv(a,n);
-    tkv(b,n);
+    srv(a);
+    ll res= 0;
+    mll cnt;
+    for(auto x:a){
+        for(auto d:divs[x]){
+            res += cnt[d];
+        }
+        cnt[x]++;
+    }
+    put(res);
+    
     
 }
 // driver code
@@ -127,7 +148,8 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    preprocess();
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
