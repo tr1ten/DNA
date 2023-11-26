@@ -117,7 +117,30 @@ void testcase(){
     vi b(n);
     tkv(a,n);
     tkv(b,n);
-    
+    ll  res = 0;
+    ll mna=INF;
+    ll mxa=-INF;
+    ll mnb=INF;
+    ll mxb=-INF;
+
+    rep(i,0,n){
+        if(b[i]>mxb){
+            mxb = b[i];
+            mxa = a[i];
+        }    
+        if(b[i]<mnb){
+            mnb = b[i];
+            mna = a[i];
+        }
+        res += abs(a[i]-b[i]);
+    }
+
+    ll mx = res;
+    rep(i,0,n){
+        mx = max(mx,max(res - (abs(a[i]-b[i]) + abs(mna-mnb)) + (abs(a[i]-mnb) + abs(mna-b[i])), res - (abs(a[i]-b[i]) + abs(mxa-mxb)) + (abs(a[i]-mxb) + abs(mxa-b[i])))  );
+    }
+    put(mx);
+
 }
 // driver code
 int main()
