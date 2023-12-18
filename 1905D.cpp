@@ -113,40 +113,38 @@ void ans(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    deque<char> st;
+    vi a(n);
+    map<ll,ll> cnt;
+    set<ll> st;
+    rep(i,0,n+1) st.insert(i);
+    ll cur = 0;
     rep(i,0,n){
-        while (st.size() && st.back() < s[i])
+        ll x;
+        cin >> x;
+        a[i] = x;
+        st.erase(x);
+        cnt[*st.begin()]++;
+        cur += *st.begin();
+    }
+    ll res = cur;
+    rep(i,0,n){
+        auto it =cnt.lower_bound(a[i]);
+        ll c = 0;
+        while (it!=prev(cnt.end()))
         {
-            st.pop_back();
+            c += (*it).second;
+            cur -= (*it).second*(*it).first;
+            auto nxt = next(it);
+            cnt.erase(it);
+            it = nxt;
         }
-        st.push_back(s[i]);
-        
+        c++;
+        cur +=a[i]*c;
+        cnt[a[i]] +=c;
+        res = max(cur,res);
     }
-    int cnt = count(all(s),st.front());
-    string t = s;
-    sort(all(t));
-    int res = 0;
-    // debug(s,t);
-    rep(i,0,n){
-        if(s[i]==t[i]) {
-            if(st.size()  && s[i]==st.front()) {
-                st.pop_front();
-                res+=1;
-            }
-            continue;
-        }
-        if(s[i]!=st.front()) {
-            put(-1);
-            return;
-        }
-        else{
-            res+=1;
-            st.pop_front();
-        }
-    }
-    put(res-cnt);
+    put(res);
+
 }
 // driver code
 int main()
