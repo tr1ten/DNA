@@ -101,8 +101,8 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll MOD = 1e18+7;
+const ll INF = 1e18+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -111,30 +111,36 @@ inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
+    int n,k;
+    cin >> n >> k;
     vi a(n);
     tkv(a,n);
-    vi inds(n);
-    iota(all(inds),0);
-    sort(all(inds), [&](int i,int j){
-        return a[i] < a[j];
-    });
-    vi res(n);
-    ll pref = 0;
-    vi iis;
-    rep(i,0,n){
-        if(pref<a[inds[i]]) {
-            iis.push_back(i);
+    srv(a);
+    if(k>2){
+        put(0);
+        return;
+    }
+    ll res = a[0];
+        rep(i,1,n){
+            res = min(res,a[i]-a[i-1]);
         }
-        pref += a[inds[i]];
+    if(k==2){
+        rep(i,0,n){
+            rep(j,i+1,n){
+                ll d =a[j]-a[i];
+                auto it = lower_bound(all(a),d);
+                if(it!=a.end()) {
+                    res = min(res,*it - d);
+                }
+                if(it!=a.begin()){
+                    --it;
+                    res = min(res,d-*it );
+                }
+            }
+        }
     }
-    // debug(iis);
-    iis.push_back(n);
-    rep(i,0,n){
-        res[inds[i]] = *upper_bound(all(iis),i) - 1;
-    }
-    pvc(res);
+    put(res);
+
 }
 // driver code
 int main()

@@ -114,27 +114,60 @@ void testcase(){
     int n;
     cin >> n;
     vi a(n);
+    vi b(n);
     tkv(a,n);
-    vi inds(n);
-    iota(all(inds),0);
-    sort(all(inds), [&](int i,int j){
-        return a[i] < a[j];
-    });
-    vi res(n);
-    ll pref = 0;
-    vi iis;
-    rep(i,0,n){
-        if(pref<a[inds[i]]) {
-            iis.push_back(i);
+    tkv(b,n);
+    vi nxt(n,n);
+    vi pp(n,-1);
+    stack<int> st;
+    per(i,0,n){
+        while (st.size() && a[st.top()] <= a[i])
+        {
+            st.pop();
         }
-        pref += a[inds[i]];
+        if(st.size()) nxt[i] = st.top();
+        st.push(i);
     }
-    // debug(iis);
-    iis.push_back(n);
+    while(st.size()) st.pop();
     rep(i,0,n){
-        res[inds[i]] = *upper_bound(all(iis),i) - 1;
+        while (st.size() && a[st.top()] <= a[i])
+        {
+            st.pop();
+        }
+        if(st.size()) pp[i] = st.top();
+        st.push(i);
     }
-    pvc(res);
+    int i =0;
+    debug(pp,nxt);
+    while (i<n)
+    {
+        if(a[i]==b[i]) {i++;continue;}
+        if(a[i]>b[i]) {
+            ans(0);
+            return;
+        }
+        if(pp[i]>=0 && a[pp[i]]==b[i] && a[pp[i]]<=b[i-1] || i>0 && b[i-1]==b[i] ) {
+            i++;
+            continue;
+        }
+        if(nxt[i]<n && b[i]==a[nxt[i]]){
+            int j = i;
+            while (j<nxt[i])
+            {
+                if(b[j]!=b[i]) {ans(0);return;}
+                j++; 
+            }
+            i = j;
+        }
+        else{
+            // debug(i,n);
+            ans(0);
+            return;
+        }
+    }
+    ans(1);
+    
+
 }
 // driver code
 int main()
@@ -149,3 +182,4 @@ int main()
 
     return 0;
 }
+
