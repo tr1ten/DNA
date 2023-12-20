@@ -109,91 +109,15 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void ans(int x) {put(x?"YES":"NO");}
-const int K = 25;
-const int N = 5*(1e5) + 5;
-ll sp1[N][K+1];
-ll sp2[N][K+1];
-ll merge(ll x,ll y){
-    return max(x,y);
-}
-int log2_floor(unsigned long long i) {
-    return i ? __builtin_clzll(1) - __builtin_clzll(i) : -1;
-}
-void build(vector<ll> A,ll st[N][K+1]){
-    int K = log2_floor(A.size());
-    for(int i =0;i<A.size();i++) st[i][0] = A[i];
-    for(int k=1;k<=K;k++){
-        for(int i=0;i<A.size();i++){
-            st[i][k] = merge(st[i][k-1],st[i+(1ll<<(k-1))][k-1] );
-        }
-    }
-}
-// pre C++20
-
-ll query(int l,int r,ll st[N][K+1]){
-    if(r-l+1==0) return 0;
-    int k = log2_floor(r-l+1);
-    return merge(st[l][k],st[r-(1ll<<k) +1][k] );
-}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);
-    tkv(b,n);
-    vi nxt(n,n);
-    vi pp(n,-1);
-    stack<int> st;
-    per(i,0,n){
-        while (st.size() && a[st.top()] <= a[i])
-        {
-            st.pop();
-        }
-        if(st.size()) nxt[i] = st.top();
-        st.push(i);
-    }
-    while(st.size()) st.pop();
-    rep(i,0,n){
-        while (st.size() && a[st.top()] <= a[i])
-        {
-            st.pop();
-        }
-        if(st.size()) pp[i] = st.top();
-        st.push(i);
-    }
-    int i =0;
-    map<int,set<int>> inds;
-    rep(i,0,n){
-        inds[a[i]].insert(i);
-    }
-    build(a,sp1);
-    vi a2;
-    rep(i,0,n) {a2.push_back(-b[i]);}
-    build(a2,sp2);
-    rep(i,0,n){
-        if(a[i] > b[i]) {ans(0);return;}
-        auto it = inds[b[i]].lower_bound(i);
-        int j;
-        if(it!=inds[b[i]].end()){
-            j = *it;
-            if(query(i,j,sp1) <= b[i] && -query(i,j,sp2)>=b[i]){
-                continue;
-            }
-        }
-        if(it!=inds[b[i]].begin()){
-            --it;
-            j = *it;
-            if(query(j,i,sp1) <= b[i] && -query(j,i,sp2)>=b[i]){
-                continue;
-            }
-        }
-        ans(0);
-        return;
-    }
-    ans(1);
-
+    string s;
+    cin >> s;
+    int i =1;
+    while(i<s.size() && s[i]=='0') i++;
+    // debug(i,s);
+    if(i==s.size() || atoi(s.substr(0,i).c_str())>=atoi(s.substr(i).c_str())) put(-1)
+    else put2(s.substr(0,i),s.substr(i));
 }
 // driver code
 int main()
@@ -208,4 +132,3 @@ int main()
 
     return 0;
 }
-
