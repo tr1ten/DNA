@@ -111,34 +111,39 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
+    ll n,k;
+    cin >> n >> k;
     vi a(n);
-    vi b(n);
-    vi c(n);
     tkv(a,n);
-    tkv(b,n);
-    tkv(c,n);
+    int allneg = 1;
+    int eq = 1;
+    rep(i,0,n){
+        allneg &= (a[i]<k);
+        eq &=a[i]==a[0];
+    }
+    if(eq){
+        put(0);
+        return;
+    }
+    ll g=abs(a[0]-k);
+    rep(i,0,n){
+        if(a[i]-k==0 || (!allneg && a[i]<k)) {
+            put(-1);
+            return;
+        }
+        g = gcd(abs(a[i]-k),g);
+    }
+    if(g==0){
+        put(-1);
+        return;
+    }
     ll res = 0;
-    srv(c);
-    reverse(all(c));
-    vi diff;
-    vpi d;
     rep(i,0,n){
-        d.push_back({a[i],-1});
-        d.push_back({b[i],1});
-    }
-    srv(d);
-    stack<ll> st;
-    rep(i,0,2*n){
-        if(d[i].second<0) st.push(d[i].first);
-        else {diff.push_back(d[i].first-st.top());st.pop();}
-    }
-    srv(diff);
-    rep(i,0,n){
-        res += diff[i]*c[i];
+        res += (abs(a[i]-k))/g - 1;
     }
     put(res);
+
+ 
 }
 // driver code
 int main()
