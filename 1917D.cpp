@@ -101,9 +101,9 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll MOD = 998244353; // change me for god sake look at problem mod
 const ll INF = 1e10+5;
-#define int long long
+
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
@@ -111,36 +111,9 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k,d;
-    cin >> n >> k >> d;
-    vi a(n);
-    vi b(k);
-    tkv(a,n);
-    tkv(b,k);
-    auto F = [&](int x){
-        vi diff(n+1);
-        rep(i,0,min(x,k)){
-            diff[0] += x/(i+1);
-            diff[b[i]] -= x/(i+1);
-        }
-        rep(i,1,n) diff[i] += diff[i-1];
-        int res = 0;
-        rep(i,0,n){
-            if((diff[i] + a[i]) == i+1) res++;
-        }
-        return res + (d-x-1)/2;
-    };
-    int res = F(0);
-
-    rep(i,0,min(2*n+1,d)){
-        res = max(F(i),res);
-    }
-    put(res);
-    
-
 }
 // driver code
-int32_t main()
+int main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
