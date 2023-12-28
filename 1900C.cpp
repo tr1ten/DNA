@@ -110,15 +110,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    if(s.find("...")!=string::npos){
-        put(2);
+
+int n;
+string s;
+vi lf;
+vi rg;
+int res;
+void dfs(int u,int cur){
+    // debug(u,cur,res);
+    if(lf[u]==0 && rg[u]==0) {
+        res = min(cur,res);
+        return;
     }
-    else put(count(all(s),'.'));
+    if(lf[u]!=0) {dfs(lf[u]-1,cur + (s[u]!='L'));}
+    if(rg[u]!=0) {dfs(rg[u]-1,cur + (s[u]!='R'));} 
+}
+void testcase(){
+    cin >> n;
+    cin >> s;
+    lf.resize(n);
+    rg.resize(n);
+    rep(i,0,n){
+        cin >> lf[i] >> rg[i];
+    }
+    res = n;
+    dfs(0,0);
+    put(res);
 }
 // driver code
 int main()

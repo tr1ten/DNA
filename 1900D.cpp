@@ -109,16 +109,39 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+const int N = 1e5+5;
+vector<vector<int>> divs(N+1,{1});
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    for(int x=2;x<=N;x++){
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
+        }
+    }
+    rep(i,0,N){ reverse(all(divs[i]));}
+}
 // do not use unordered map use mll
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    if(s.find("...")!=string::npos){
-        put(2);
+    vi a(n);
+    tkv(a,n);
+    srv(a);
+    mll cnt;
+    ll res = 0;
+    int mx = *max_element(all(a));
+    rep(i,0,n){
+        trav(d,divs[a[i]]){
+            ll c = cnt[d];
+            int j=2;
+            while(j*d<=mx) c-=cnt[(j++)*d];
+            // debug(i,d,c);
+            res += (n-i-1)*d*c;
+            cnt[d]++;
+        }
     }
-    else put(count(all(s),'.'));
+    put(res);
 }
 // driver code
 int main()
@@ -126,7 +149,8 @@ int main()
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
+    // freopen("output.out","w",stdout); 
+    preprocess();     
     int T=1;
     cin>>T;
     while(T--) testcase();

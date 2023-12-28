@@ -111,14 +111,9 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    if(s.find("...")!=string::npos){
-        put(2);
-    }
-    else put(count(all(s),'.'));
+    int a,b,c;
+    cin >> a >> b >> c;
+    put3(abs(c-b)%2==0,abs(a-c)%2==0,abs(a-b)%2==0)
 }
 // driver code
 int main()
