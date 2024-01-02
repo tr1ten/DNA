@@ -110,99 +110,29 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-class BIT {
-private:
-    std::vector<int> nums;
-    int LOG;
-public:
-    BIT(int n) {
-    	LOG = (int)log2(n)+1;
-        nums.resize((1ll<<LOG) + 1);
-    }
-    void update(int i, int val) {
-        i += 1;
-        while (i < nums.size()) {
-            nums[i] += val;
-            i += (i & (-i));
-        }
-    }
-    int sum(int i) {
-        int r = 0;
-        // i += 1, not needed here since we need sum of rank less than i rank[0...i-1]
-        while (i > 0) {
-            r += nums[i];
-            i -= (i & (-i));
-        }
-        return r;
-    }
-    // max index where sum A[0...ind] < x,return index of first number greator than or equal to x
-    int lower(int x){
-        ll pref = 0;
-        int ind = 0;
-        for(int i=LOG;i>=0;i--){
-            if(nums[ind + (1ll<<i)] + pref<x){
-                pref += nums[ind + (1ll<<i)];
-                ind += 1ll<<i;
-            }
-        }
-        return ind; // 0  based
-    }
-    
-};
-
 void testcase(){
-    int n,q;
-    cin >> n >> q;
-    vi a(n);
-    tkv(a,n);
-    set<int> st;
-    ll sm = 0;
-    BIT bs(n);
+    int n;
+    cin >> n;
+    map<pi,ll> cnt;
     rep(i,0,n){
-        if(a[i]==1) st.insert(i);
-        sm +=a[i];
-        bs.update(i,a[i]);
-    }
-    
-    rep(i,0,q){
-        int x;
-        cin>> x;
-        if(x==1){
-            int y;
-            cin >> y;
-            if(st.size()==0 || y>sm) {
-                pyn(y%2==0 && y<=sm);
-                continue;
-            }
-            int j = *st.begin();
-            int left = bs.sum(j);
-            int right = sm -left-1;
-            if(y<=left+1 || y<=right+1 || ((sm-y)%2==0)) {pyn(1);}
-            else{
-                int d = sm -y;
-                int d_m = d - min(d^1,left);
-                int l = bs.lower(sm-d);
-                int r = bs.lower(sm-d_m);
-                int lsm = bs.sum(l+1);
-                int rsm = bs.sum(r+1);
-                if(lsm==sm-d || sm-d_m==rsm) {pyn(1);continue;}
-                auto it = st.lower_bound(l);
-                pyn(it!=st.end() && *it<r);
-
-            }
+        ll x;
+        cin >> x;
+        ll p = 0;
+        ll pro = 1;
+        do{
+            pro *=2;
+            p++;
         }
-        else{
-            int i,x;
-            cin >> i >> x;
-            i--;
-            if(a[i]==x) continue;
-            bs.update(i,x-a[i]);
-            if(a[i]==1){st.erase(i);}
-            else st.insert(i);
-            sm += x -a[i];
-            a[i] = x;
-        }
+        while(x%pro==0);
+        pro /=2;
+        p--;
+        cnt[{x-p,x/pro}]++;
     }
+    ll res =0;
+    trav(x,cnt){
+        res += x.second*(x.second-1)/2;
+    }
+    put(res);
 }
 // driver code
 int main()
