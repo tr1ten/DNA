@@ -113,77 +113,37 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
     vi a(n);
     tkv(a,n);
-    vi inds(n,0);
-    vector<unordered_set<int>> pre(n);
-    rep(i,0,n){
-        inds[a[i]-1]++;
-        pre[a[i]-1].insert(i);
-    }
-    vector<bool> vis(n,0);
-    queue<int> q;
-    rep(i,0,n){
-        if(inds[i]==0) q.push(i);
-    }
-    vi res;
-    while (q.size())
-    {
-        int u=q.front();
-        q.pop();
-        vis[u] = 1;
-        inds[a[u]-1]--;
-        pre[a[u]-1].erase(u);
-        if(inds[a[u]-1]==0) q.push(a[u]-1);
-        if(s[u]=='0') continue;
-        s[u] = '0';
-        s[a[u]-1] = s[a[u]-1]=='1' ? '0' : '1'; 
-        res.push_back(1+u);
-    }
-    // debug(s,res);
-    vi temp;
-    int cost = 2*n;
-    rep(t,0,2){
-        int skip = t==1;
-        vi r1;
-        vector<bool> vist = vis;
-        string st = s;
-        rep(i,0,n){
-            if(vist[i] || st[i]=='0' ) continue;
-            if(skip){
-                skip = false;
-                continue;
+    ll res = n+1;
+    rep(j,0,2){
+        int b=-1,c=-1;
+        ll cost = 0;
+        if(j==0) b = a[0];
+        else c = a[0];
+        rep(i,1,n){
+            if(b==-1 || b>=a[i]){
+                if(c==-1 || c>=a[i]){
+                    if(c!=-1 && (b==-1 || c<b)) {c = a[i];continue;}
+                }
+                b = a[i];
             }
-            int cur= i;
-            vist[cur] = 1;
-            while (!vist[a[cur]-1] && st[cur]=='1')
-            {
-                st[cur] = '0';
-                st[a[cur]-1] = st[a[cur]-1]=='1' ? '0' : '1'; 
-                r1.push_back(1+cur);
-                cur = a[cur]-1;
-                vist[cur] = 1;
+            else if(c==-1 || c>=a[i]) {
+                c = a[i];
             }
-        }
-        // debug(st,r1,cost);
-        if(st.find('1')==string::npos){
-            if(r1.size()<cost){
-                cost = r1.size();
-                temp = r1;
-            }
-        }
-    }
-    // debug(s,res);
-    if(cost==2*n) put(-1)
-    else {
-        put(res.size() + temp.size());
-        res.insert(res.end(),temp.begin(),temp.end());
-        pvc(res);
-    }
-    
+            else{
+                if(b>c){
+                    c = a[i];
+                }
+                else b = a[i];
+                cost++;
 
+            }
+        }
+        res = min(cost,res);
+        debug(cost);
+    }
+    put(res);
 }
 // driver code
 int main()
