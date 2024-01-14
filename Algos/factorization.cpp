@@ -4,6 +4,8 @@ typedef long long u64;
 
 using namespace std;
 // show sqrt n simple method
+// can find prime factorization of number in sqrt(n)/logn if we have all primes precall
+
 int factors(int x){
     int res  = 0;
     if(x==1) return res;
