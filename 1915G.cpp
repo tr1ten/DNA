@@ -113,24 +113,30 @@ void pyn(int x) {put(x?"YES":"NO");}
 vector<vector<pi>> adj;
 vi b;
 int n,m;
-vi dijsktra(int S){
-    vi dist(n,INF);
+ll dijsktra(int S){
+    unordered_map<ll,mll> dist;
     priority_queue<pair<ll,pi>,vector<pair<ll,pi>>,greater<pair<ll,pi>>> pq;
-    pq.push(make_pair(0LL,make_pair(b[S],S)));
-    dist[S] = 0;
+    pq.push(make_pair(b[S],make_pair(0LL,S)));
+    dist[b[S]][S] = 0;
     while (!pq.empty())
     {   
         auto u = pq.top();
         pq.pop();
-        if(u.first>dist[u.second.second]) continue;
+        if(dist[u.first].count(u.second.second) && u.second.first>dist[u.first][u.second.second]) continue;
         for(auto &v:adj[u.second.second]){
-            if(dist[v.first]>dist[u.second.second] + u.second.first*v.second){
-                dist[v.first] = dist[u.second.second] +u.second.first*v.second;
-                pq.push(make_pair(dist[v.first],make_pair(min(b[v.first],u.second.first),v.first)));
+            if(dist[u.first].count(v.first)==0 ||  dist[u.first][v.first]>u.second.first + u.first*v.second){
+                dist[u.first][v.first] = u.second.first +u.first*v.second;
+                pq.push(make_pair(min(b[v.first] ,u.first),make_pair(dist[u.first][v.first],v.first)));
             }
         }
     }
-    return dist;
+    ll res = INF;
+    trav(x,dist){
+        if(x.second.count(n-1)){
+            res = min(res,x.second[n-1]);
+        }
+    }
+    return res;
 }
 void testcase(){
     cin >> n >> m;
@@ -148,7 +154,7 @@ void testcase(){
     ll res = INF;
     vi dist(n);
     auto dist0 = dijsktra(0);
-    put(dist0[n]);
+    put(dist0);
     
 }
 // driver code
