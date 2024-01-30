@@ -115,20 +115,32 @@ void testcase(){
     cin >> n >> k >> m;
     string s;
     cin >> s;
-    string res;
-    map<char,int> cnt;
-    map<int,int> cc;
+    string res = "";
+    vi masks(n);
+    ll fm = (1<<k)  - 1;
     rep(i,0,m){
-        if(cnt[s[i]]==int(res.size())-1){
-            res[cnt[s[i]]] = s[i];
-            cc[cnt[s[i]]]++;
+        masks[res.size()] |= 1<<(s[i]-'a');
+        if(masks[res.size()] == fm){
+            res += s[i];
         }
-        else if(cc[cnt[s[i]]])
-        cnt[s[i]]++;
+        if(res.size()==n) {
+            pyn(1);
+            return;
+        }
     }
-    trav(x,cnt){
-        if(x.second<)
+    // debug(fm,res,masks);
+    pyn(0);
+    rep(i,0,k){
+        if((masks[res.size()]&(1<<i))==0){
+            res +='a' + i;
+            break;
+        }
     }
+    while (res.size()<n)
+    {
+        res +='a';
+    }
+    put(res);
 }
 // driver code
 int main()
