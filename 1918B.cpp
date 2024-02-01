@@ -110,13 +110,59 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n,m;
-    cin >> n >> m;
-    if(m==1){
-        put(-1);
+ll num_inv(vector<ll>& arr, int first, int last)
+{
+    if(first >= last)
+        return 0;
+    int mid = (first + last)/2;
+    ll num1 = num_inv(arr, first, mid);
+    ll num2 = num_inv(arr, mid+1, last);
+    ll ans = num1 + num2;
+    vector<int> tmp_arr(last-first+1);
+    int i = first, j = mid+1, k = 0;
+    while(i <= mid && j <= last)
+    {
+        if(arr[i] > arr[j])
+        {
+            ans += (mid-i+1);
+            tmp_arr[k++] = arr[j++];
+        }
+        else
+        {
+            tmp_arr[k++] = arr[i++];
+        }
     }
-    put(n*(m/2));
+    while(i <= mid)
+        tmp_arr[k++] = arr[i++];
+    while(j <= last)
+        tmp_arr[k++] = arr[j++];
+    for(i = first;i <= last;i++)
+        arr[i] = tmp_arr[i-first];
+    return ans;
+}
+void testcase(){
+    int n;
+    cin >> n;
+    vpi a(n);
+    vi b(n);
+    rep(i,0,n){
+        cin >> a[i].first;
+        a[i].second = i;
+    }
+    tkv(b,n);
+    srv(a);
+    vi ra(n);
+    vi rb(n);
+    rep(i,0,n){
+        ra[i] = a[i].first;
+        rb[i] = b[a[i].second];
+    }
+    
+    pvc(ra);
+    pvc(rb);
+    // debug(num_inv(rb,0,n-1));
+    
+    
 }
 // driver code
 int main()

@@ -110,13 +110,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int MX = 63;
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    if(m==1){
-        put(-1);
+    ll a,b,r;
+    cin >> a >> b >> r;
+    int big = 0;
+    ll x = 0;
+    per(i,0,MX){
+        ll mask = 1ll<<i;
+        if((mask&a)==(mask&b)){
+            continue;
+        }
+        if(big){
+            if(big==1){
+                if((b&(mask)) > (a&mask)) continue;
+                if((x|mask)<=r){
+                    x |=mask;
+                }
+            }
+            else{
+                if((a&(mask)) > (b&mask)) continue;
+                if((x|mask)<=r){
+                    x |=mask;
+                }
+            }
+        }
+        else{
+            if((mask&a)>(mask&b)){
+                big = 1;
+            }
+            else {big=2;}
+        }
     }
-    put(n*(m/2));
+    debug(x);
+    put(abs((a^x) - (b^x)))
 }
 // driver code
 int main()
