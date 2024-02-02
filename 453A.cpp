@@ -102,104 +102,15 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e15+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-
-// battle tested
-// https://judge.yosupo.jp/submission/170986
-typedef long long ll;
-const int N = (1e5) + 5;
-int n;
-struct Segment{
-    ll val=INF;
-} segm[4*N]; // 0 index
-Segment combine(Segment left,Segment right){
-    Segment res;
-    res.val = min(left.val,right.val);
-    return res;
-}
-
-// child- 2*x+1,2*x+2 (0 coz index)
-// add x to [l...r]
-void update(int node,int left,int right,int i,ll value){
-    if(left==i && right==i) {
-            segm[node].val = value;
-        }
-    else{
-        int mid = (left+right)/2;
-        if(i<=mid) update(2*node+1,left,mid,i,value);
-        else update(2*node+2,mid+1,right,i,value);
-        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
-    }
-    
-}
-
-Segment query(int node,int left,int right,int l,int r){
-    if(left>=l && right<=r) {return segm[node];}
-    int mid = (left+right)/2;
-    Segment res;
-    if(l<=mid) res = combine(res,query(2*node+1,left,mid,l,r));
-    if(r>mid) res = combine(res,query(2*node+2,mid+1,right,l,r));
-
-    return res;
-}
-// everything is zero indexed
-void update(int i,ll x){
-    update(0,0,n-1,i,x);
-}
-Segment query(int l,int r){
-    return query(0,0,n-1,l,r);
-}
-
 // do not use unordered map use mll
 void testcase(){
-    int nn;
-    cin >> nn;
-    vi a(nn);
-    tkv(a,nn);
-    a.push_back(0);
-    nn++;
-    n = nn;
-    n +=1;
-    vi pref(nn+1);
-    rep(i,0,nn){
-        pref[i+1] = pref[i] + a[i];
-    }
-    // debug(pref);
-    auto f = [&](ll x){
-        vi dp(nn+1,INF);// dp[i] - min sum of blocked el st valid and ith element is blocked
-        dp[0] = 0;
-        rep(i,0,n){
-            update(i,dp[i]);
-        }
-        rep(i,1,nn+1){
-            int j = lower_bound(all(pref),pref[i-1]-x)-pref.begin();
-            dp[i] = query(j,i-1).val + a[i-1];
-            update(i,dp[i]);
-            // debug(i,dp[i]);
-        }
-        return dp.back() <= x;
-    };
-    ll lo = 0,hi = 1e15;
-    ll ans = 0;
-    while (lo<=hi)
-    {
-        ll mid = (lo+hi)/2;
-        if(f(mid)){
-            ans = mid;
-            hi = mid-1;
-        }
-        else{
-            lo = mid+1;
-        }
-    }
-    put(ans);
-    
 }
 // driver code
 int main()
