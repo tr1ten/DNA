@@ -66,7 +66,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
-#define put(x) cout << fixed << setprecision(5)  <<(x)<<endl;
+#define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
 #define mod(x) (x + MOD)%MOD
@@ -109,18 +109,21 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-typedef long double dll;
 // do not use unordered map use mll
 void testcase(){
-    ll m,n;
-    cin >> m >> n;
-    dll res = 0;
-    rep(i,1,m+1){
-        dll a = pow(i*1.0/m,n);
-        dll b = pow((i*1.0-1.0)/m,n);
-        res += i*(a-b);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    rep(i,0,n){
+        long double res = 1;
+        rep(j,0,n){
+            if(j!=i){
+                res += a[j]*1.0/(1.0*(a[i] + a[j]));
+            }
+        }
+        cout << setprecision(9) << fixed << res << " ";
     }
-    put(res);
 }
 // driver code
 int main()
@@ -130,7 +133,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
