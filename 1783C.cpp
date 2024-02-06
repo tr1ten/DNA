@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <bits/stdc++.h>
-
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
@@ -14,15 +13,12 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // useful defs
 const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
 struct chash {
-    int operator()(int x) const { return x ^ RANDOM; }
+        int operator()(int x) const { return x ^ RANDOM; }
 };
 // gp_hash_table<int, int, chash> table;
 template <class K, class V>
-
 using ht = gp_hash_table<
-
     K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
-
     hash_standard_resize_policy<hash_exponential_size_policy<>,
 
                                 hash_load_check_resize_trigger<>, true>>;
@@ -110,38 +106,34 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-long long fast_pow(long long a,long long b,long long MOD){
-    if(b==0) return 1;
-    long long res = fast_pow(a,b/2,MOD);
-    if(b%2==0) return (res*res)%MOD;
-    return (((res*res)%MOD)*a)%MOD;
-}
 void testcase(){
-    int n,m;
+    ll n,m;
     cin >> n >> m;
-    vi a(n);    
-    tkv(a,n);
-    map<ll,int> cnt;
+    vpi a(n);
+    vector<bool> take(n,false);
     rep(i,0,n){
-        cnt[a[i]]++;
+        cin >> a[i].first;
+        a[i].second = i;
     }
-    set<ll> aa;
-    ll prod = 1;
-    ll res = 0;
-    trav(x,cnt){
-        prod = mod(prod*x.second);
-        aa.insert(x.first);
-        while (x.first - (*aa.begin())>=m)
-        {
-            prod = mod(prod*fast_pow(cnt[*aa.begin()],MOD-2,MOD));
-            aa.erase(aa.begin());
-        }
-        if(aa.size()==m){
-            res = mod(res+prod);
-        }
-        
+    vpi b = a;
+    srv(a);
+    ll cur = 0;
+    int i =0;
+    while (i<n && cur+a[i].first<=m)
+    {   
+        cur +=a[i].first;
+        take[a[i].second] = true;
+        i++;
     }
-    put(res);
+    debug(i);
+    if(i<n && i>0 && (take[i] || cur-a[i-1].first+b[i].first<=m)){
+        put(n-i);
+    }
+    else{
+        put(n-i+1);
+    }
+    
+    
 
 }
 // driver code
