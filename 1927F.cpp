@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <bits/stdc++.h>
-
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
@@ -19,7 +18,6 @@ struct chash
 };
 // gp_hash_table<int, int, chash> table;
 template <class K, class V>
-
 using ht = gp_hash_table<
 
     K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
@@ -159,7 +157,7 @@ public:
             this->par[i] = i;
             this->sz[i] = 1;
         }
-         cnt= n;
+        cnt = n;
     }
     int find(int x)
     {
@@ -189,6 +187,21 @@ public:
         cnt--;
     }
 };
+bool dfs(int u, vi &cycle, vii &adj,vector<bool> &vis, int nv)
+{
+    cycle.push_back(u + 1);
+    vis[u] = true;
+    if (nv == u)
+    {
+        return true;
+    }
+    trav(v, adj[u])
+    {
+        if (!vis[v] && dfs(v, cycle, adj,vis, nv)) {return true;}
+    }
+    cycle.pop_back();
+    return false;
+}
 
 // do not use unordered map use mll
 void testcase()
@@ -196,33 +209,39 @@ void testcase()
     int n, m;
     cin >> n >> m;
     vector<pair<ll, pi>> edges;
+    vii adj(n);
     rep(i, 0, m)
     {
         ll x;
         int u, v;
         cin >> u >> v >> x;
-        --u;--v;
-        edges.push_back({x,{u,v}});
+        --u;
+        --v;
+        edges.push_back({x, {u, v}});
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
     srv(edges);
     reverse(all(edges));
     DSU dsu(n);
-    pi res = {INF,0};
-    rep(i,0,m){
-        if(dsu.find(edges[i].second.first) == dsu.find(edges[i].second.second)){
-            res= min(res,{edges[i].first, dsu.find(edges[i].second.first)});
+    pi res = {INF, 0};
+    rep(i, 0, m)
+    {
+        if (dsu.find(edges[i].second.first) == dsu.find(edges[i].second.second))
+        {
+            res = min(res, {edges[i].first, i});
         }
-        dsu.connect(edges[i].second.first,edges[i].second.second);
+        dsu.connect(edges[i].second.first, edges[i].second.second);
     }
-    vi vvs;
-    rep(i,0,n){
-        if(dsu.find(i)==res.second){
-            vvs.push_back(i+1);
-        }
-    }
-    put2(res.first,vvs.size());
-    pvc(vvs);
-
+    int u = edges[res.second].second.second;
+    int v = edges[res.second].second.first;
+    adj[u].erase(find(all(adj[u]),v));
+    adj[v].erase(find(all(adj[v]),u));
+    vi order;
+    vector<bool> vis(n);
+    dfs(u, order, adj,vis, v);
+    put2(res.first,order.size());
+    pvc(order);
 }
 // driver code
 int main()
