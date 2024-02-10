@@ -196,18 +196,32 @@ void testcase()
     int n, m;
     cin >> n >> m;
     vector<pair<ll, pi>> edges;
-    rep(i, 0, n)
+    rep(i, 0, m)
     {
         ll x;
         int u, v;
-        cin >> u >> v;
+        cin >> u >> v >> x;
+        --u;--v;
         edges.push_back({x,{u,v}});
     }
     srv(edges);
+    reverse(all(edges));
     DSU dsu(n);
-    rep(i,0,n){
-        
+    pi res = {INF,0};
+    rep(i,0,m){
+        if(dsu.find(edges[i].second.first) == dsu.find(edges[i].second.second)){
+            res= min(res,{edges[i].first, dsu.find(edges[i].second.first)});
+        }
+        dsu.connect(edges[i].second.first,edges[i].second.second);
     }
+    vi vvs;
+    rep(i,0,n){
+        if(dsu.find(i)==res.second){
+            vvs.push_back(i+1);
+        }
+    }
+    put2(res.first,vvs.size());
+    pvc(vvs);
 
 }
 // driver code
