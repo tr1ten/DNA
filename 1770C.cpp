@@ -102,51 +102,74 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-vector<vector<pi>> adj;
-vi val;
-bool dfs(ll u,ll cur){
-    val[u] = cur;
-    trav(v,adj[u]){
-        if(val[v.first]!=INF){
-            if(val[v.first]!=cur+v.second) return false;
-        }
-        else{
-            if(!dfs(v.first,cur+v.second)) return false;
-        }
-    }
+typedef short u16;
+typedef long long u64;
+
+constexpr bool isPrime(size_t n) noexcept {
+    if (n <= 1) return false;
+    for (size_t i = 2; i*i <= n; i++)   if (n % i == 0) return false;
     return true;
 }
+constexpr unsigned int primeAtIndex(size_t i) noexcept {
+    size_t k{3};
+    for  (size_t counter{}; counter < i; ++k)
+        if (isPrime(k)) ++counter;
+    return k-1;
+}
+// Some helper to create a constexpr std::array initilized by a generator function
+template <typename Generator, size_t ... Indices>
+constexpr auto generateArrayHelper(Generator generator, std::index_sequence<Indices...>) {
+    return std::array<decltype(std::declval<Generator>()(size_t{})), sizeof...(Indices) > { generator(Indices)... };
+}
+template <size_t Size, typename Generator>
+constexpr auto generateArray(Generator generator) {
+    return  generateArrayHelper(generator, std::make_index_sequence<Size>());
+}
+
+// This is the definition of a std::array<unsigned int, 100> with prime numbers in it
+constexpr auto Primes = generateArray<100>(primeAtIndex);
+
+// do not use unordered map use mll
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    adj.clear();
-    adj.resize(n);
-    rep(i,0,m){
-        int v,u,d;
-        cin >> v >> u >> d;
-        u--;v--;
-        adj[u].push_back({v,d});
-        adj[v].push_back({u,-d});
-    }
-    val.clear();
-    val.resize(n,INF); 
-    int f = 1;
-    rep(i,0,n){
-        if(val[i]==INF){
-            f &=dfs(i,0);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    mll cc;
+    trav(x,a){
+        cc[x]++;
+        if(cc[x]>=2){
+            pyn(0);
+            return;
         }
     }
-    pyn(f);
-
-
+    int flag = 1;
+    unordered_map<ll,mll> cnt;
+    trav(p,Primes){
+        trav(x,a){
+            cnt[p][x%p]++;
+        }
+    }
+    trav(p,Primes){
+        int flag=cnt[p].size()<p;
+        trav(c,cnt[p]){
+            if(c.second<2){
+                flag = 1;
+            }
+        }
+        if(!flag){
+            pyn(0);
+            return;
+        }
+    }
+    pyn(1);
 }
 // driver code
 int main()

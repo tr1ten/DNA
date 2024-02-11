@@ -102,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,43 +110,28 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vector<vector<pi>> adj;
-vi val;
-bool dfs(ll u,ll cur){
-    val[u] = cur;
-    trav(v,adj[u]){
-        if(val[v.first]!=INF){
-            if(val[v.first]!=cur+v.second) return false;
-        }
-        else{
-            if(!dfs(v.first,cur+v.second)) return false;
-        }
-    }
-    return true;
-}
+const int MX = 201;
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    adj.clear();
-    adj.resize(n);
-    rep(i,0,m){
-        int v,u,d;
-        cin >> v >> u >> d;
-        u--;v--;
-        adj[u].push_back({v,d});
-        adj[v].push_back({u,-d});
-    }
-    val.clear();
-    val.resize(n,INF); 
-    int f = 1;
+    int n;
+    cin >> n;
+    vpi dp(MX,{0,-1});
+    ll ans = 0;
     rep(i,0,n){
-        if(val[i]==INF){
-            f &=dfs(i,0);
+        int x;
+        cin >> x;
+        ll res = 1;
+        rep(j,0,MX){
+            if(dp[j].second!=-1 && ((i^j) < (dp[j].second^x) )){
+                res = max(res,dp[j].first+1);
+            }
         }
+        debug(i,x,dp[x]);
+        if(dp[x].first<res){
+            dp[x] ={res,i};
+        }
+        ans = max(res,ans);
     }
-    pyn(f);
-
-
+    put(ans);
 }
 // driver code
 int main()

@@ -102,51 +102,73 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+typedef short u16;
+typedef long long u64;
+
+using namespace std;
+// fast method 
+const int N = (1 << 10);
+
+struct Precalc {
+    u16 primes[1024]; // # of primes under N=2^16
+
+    constexpr Precalc() : primes{} {
+        bool marked[N] = {};
+        int n_primes = 0;
+
+        for (int i = 2; i < N; i++) {
+            if (!marked[i]) {
+                primes[n_primes++] = i;
+                for (int j = 2 * i; j < N; j += i)
+                    marked[j] = true;
+            }
+        }
+    }
+};
+
+constexpr Precalc P{};
+
 // do not use unordered map use mll
-vector<vector<pi>> adj;
-vi val;
-bool dfs(ll u,ll cur){
-    val[u] = cur;
-    trav(v,adj[u]){
-        if(val[v.first]!=INF){
-            if(val[v.first]!=cur+v.second) return false;
-        }
-        else{
-            if(!dfs(v.first,cur+v.second)) return false;
-        }
-    }
-    return true;
-}
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    adj.clear();
-    adj.resize(n);
-    rep(i,0,m){
-        int v,u,d;
-        cin >> v >> u >> d;
-        u--;v--;
-        adj[u].push_back({v,d});
-        adj[v].push_back({u,-d});
-    }
-    val.clear();
-    val.resize(n,INF); 
-    int f = 1;
-    rep(i,0,n){
-        if(val[i]==INF){
-            f &=dfs(i,0);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    mll cc;
+    trav(x,a){
+        cc[x]++;
+        if(cc[x]>=2){
+            pyn(0);
+            return;
         }
     }
-    pyn(f);
-
-
+    // int flag = 1;
+    // unordered_map<ll,mll> cnt;
+    // trav(p,P.primes){
+    //     trav(x,a){
+    //         cnt[p][x%p]++;
+    //     }
+    // }
+    // trav(p,P.primes){
+    //     int flag=cnt[p].size()<p;
+    //     trav(c,cnt[p]){
+    //         if(c.second<2){
+    //             flag = 1;
+    //         }
+    //     }
+    //     if(!flag){
+    //         pyn(0);
+    //         return;
+    //     }
+    // }
+    pyn(1);
 }
 // driver code
 int main()

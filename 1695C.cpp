@@ -102,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,42 +110,35 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vector<vector<pi>> adj;
-vi val;
-bool dfs(ll u,ll cur){
-    val[u] = cur;
-    trav(v,adj[u]){
-        if(val[v.first]!=INF){
-            if(val[v.first]!=cur+v.second) return false;
-        }
-        else{
-            if(!dfs(v.first,cur+v.second)) return false;
-        }
-    }
-    return true;
-}
 void testcase(){
     int n,m;
     cin >> n >> m;
-    adj.clear();
-    adj.resize(n);
-    rep(i,0,m){
-        int v,u,d;
-        cin >> v >> u >> d;
-        u--;v--;
-        adj[u].push_back({v,d});
-        adj[v].push_back({u,-d});
-    }
-    val.clear();
-    val.resize(n,INF); 
-    int f = 1;
+    ll mat[n][m];
     rep(i,0,n){
-        if(val[i]==INF){
-            f &=dfs(i,0);
+        rep(j,0,m){
+            cin >> mat[i][j];
         }
     }
-    pyn(f);
-
+    vector<vector<pi>> dp(n,vpi(m,{INF,-INF}));
+    dp[0][0] =  {mat[0][0],mat[0][0]};
+    rep(i,0,m-1){
+        dp[0][i+1] = {dp[0][i].first + mat[0][i+1],dp[0][i].second + mat[0][i+1] }; 
+    }
+    rep(i,0,n-1){
+        dp[i+1][0] = {dp[i][0].first + mat[i+1][0],dp[i][0].second + mat[i+1][0] }; 
+    }
+    rep(i,1,n){
+        rep(j,1,m){
+            if(i-1>=0){
+                dp[i][j] = {dp[i-1][j].first+mat[i][j],dp[i-1][j].second+mat[i][j]};
+            }
+            if(j-1>=0){
+                dp[i][j] = {min(dp[i][j-1].first+mat[i][j],dp[i][j].first),max(dp[i][j-1].second+mat[i][j],dp[i][j].second)};
+            }
+        }
+    }
+    debug(dp[n-1][m-1]);
+    pyn(dp[n-1][m-1].first<=0 && dp[n-1][m-1].second>=0 && (abs(dp[n-1][m-1].first)%2==0 ||abs(dp[n-1][m-1].second)%2==0) );
 
 }
 // driver code

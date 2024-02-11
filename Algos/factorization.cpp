@@ -21,10 +21,10 @@ int factors(int x){
     return res;
 }
 // fast method 
-const int N = (1 << 16);
+const int N = (1 << 2);
 
 struct Precalc {
-    u16 primes[6542]; // # of primes under N=2^16
+    u16 primes[4]; // # of primes under N=2^16
 
     constexpr Precalc() : primes{} {
         bool marked[N] = {};
@@ -50,6 +50,7 @@ u64 find_factor(u64 n) {
 }
 // can make it even more fast by not calling find factor again ang again
 int factorize(int n) {
+    
     if(n==1) return 0;
     int res = 0;
     int d;
@@ -59,4 +60,13 @@ int factorize(int n) {
         n /= d;
     } while (d != 1 && n>1);
     return res;
+}
+int main(int argc, char const *argv[])
+{
+    long long pp=1;
+    for(auto x:P.primes){
+        pp *=x;
+        cout << pp << "\n";
+    }
+    return 0;
 }

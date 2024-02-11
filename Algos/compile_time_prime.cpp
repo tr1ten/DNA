@@ -25,7 +25,7 @@ constexpr auto generateArray(Generator generator) {
 }
 
 // This is the definition of a std::array<unsigned int, 100> with prime numbers in it
-constexpr auto Primes = generateArray<10000>(primeAtIndex);
+constexpr auto Primes = generateArray<100>(primeAtIndex);
 // End of: All done during compile time -----------------------------------------------------------
 
 

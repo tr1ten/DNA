@@ -102,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,42 +110,49 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vector<vector<pi>> adj;
-vi val;
-bool dfs(ll u,ll cur){
-    val[u] = cur;
+vii adj;
+map<pi,int> re;
+vi cuts;
+int dfs(int u,int p){
+    int c=0;
     trav(v,adj[u]){
-        if(val[v.first]!=INF){
-            if(val[v.first]!=cur+v.second) return false;
+        if(v==p) continue;
+        int cur = dfs(v,u);
+        if(cur==3){
+            cuts.push_back(re[{u,v}]);
         }
         else{
-            if(!dfs(v.first,cur+v.second)) return false;
+            c +=cur;
         }
     }
-    return true;
+    return c+1;
 }
 void testcase(){
-    int n,m;
-    cin >> n >> m;
+    int n;
+    cin >> n;
+    re.clear();
     adj.clear();
     adj.resize(n);
-    rep(i,0,m){
-        int v,u,d;
-        cin >> v >> u >> d;
-        u--;v--;
-        adj[u].push_back({v,d});
-        adj[v].push_back({u,-d});
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        re[{u,v}] = i+1;
+        re[{v,u}] = i+1;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-    val.clear();
-    val.resize(n,INF); 
-    int f = 1;
-    rep(i,0,n){
-        if(val[i]==INF){
-            f &=dfs(i,0);
-        }
+    if(n%3!=0){
+        put(-1);
+        return;
     }
-    pyn(f);
-
+    cuts.clear();
+    if(dfs(0,-1)!=3 || cuts.size()!=(n/3)-1){
+        put(-1);
+        return;
+    }
+    put(cuts.size());
+    pvc(cuts);
 
 }
 // driver code
