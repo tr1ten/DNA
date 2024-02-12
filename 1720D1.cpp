@@ -110,28 +110,20 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int MX = 201;
 void testcase(){
     int n;
     cin >> n;
-    vpi dp(MX,{0,-1});
-    ll ans = 0;
+    vi dp(n,1);
+    vi a(n);
+    tkv(a,n);
     rep(i,0,n){
-        int x;
-        cin >> x;
-        ll res = 1;
-        rep(j,0,MX){
-            if(dp[j].second!=-1 && ((i^j) < (dp[j].second^x) )){
-                res = max(res,dp[j].first+1);
+        per(j,max(0,i-512),i){
+            if( (i^a[j]) < (a[i]^j)){
+                dp[i] = max(dp[i],dp[j] + 1);
             }
         }
-        debug(i,x,dp[x]);
-        if(dp[x].first<res){
-            dp[x] ={res,i};
-        }
-        ans = max(res,ans);
     }
-    put(ans);
+    put(*max_element(all(dp)));
 }
 // driver code
 int main()
