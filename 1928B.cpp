@@ -116,25 +116,20 @@ void testcase(){
     vi a(n);
     tkv(a,n);
     srv(a);
-    ll cnt = 1;
+    a.erase( unique( a.begin(), a.end() ), a.end() );
+    ll j = 0;
     ll res = 1;
     ll sz = 0;
-    rep(i,1,n){
-        ll d= (a[i]-a[i-1]);
-        
-        if(sz + d < n){
-            if(d>0){
-            cnt++;
-            }
-            sz +=d;
+    rep(i,1,a.size()){
+        sz += (a[i]-a[i-1]);
+        while (sz>=n)
+        {
+            sz -= (a[j+1]-a[j]);
+            j++;
         }
-        else{
-            sz =d;
-            if(sz>=n) continue;
-            cnt = 2;
-        }
+        res = max(res,i-j+1);
         
-        res = max(res,cnt);
+        
     }
     put(res);
 }
