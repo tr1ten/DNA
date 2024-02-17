@@ -116,15 +116,14 @@ void testcase(){
     vi a(n);
     tkv(a,n);
     int i=x-1,j=x+1;
-    ll lmx = a[x-1],rmx = 0;
-    ll lc=a[x-1],rc=0;
-    int iter=0;
+    ll sm= a[x-1];
     while (i>0 && j<=n)
     {
+        ll lmx = sm,rmx = sm;
         // debug(lc,rc,lmx,rmx,i,j);
-        while (i>0 && lc+a[i-1]>=0)
+        while (i>0 && sm+a[i-1]>=0)
         {
-            lc +=a[i-1];
+            sm +=a[i-1];
             lmx = max(lmx,lc);
             i--;
         }
