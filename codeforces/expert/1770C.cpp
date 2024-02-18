@@ -112,28 +112,29 @@ void pyn(int x) {put(x?"YES":"NO");}
 typedef short u16;
 typedef long long u64;
 
-using namespace std;
-// fast method 
-const int N = (1 << 10);
+constexpr bool isPrime(size_t n) noexcept {
+    if (n <= 1) return false;
+    for (size_t i = 2; i*i <= n; i++)   if (n % i == 0) return false;
+    return true;
+}
+constexpr unsigned int primeAtIndex(size_t i) noexcept {
+    size_t k{3};
+    for  (size_t counter{}; counter < i; ++k)
+        if (isPrime(k)) ++counter;
+    return k-1;
+}
+// Some helper to create a constexpr std::array initilized by a generator function
+template <typename Generator, size_t ... Indices>
+constexpr auto generateArrayHelper(Generator generator, std::index_sequence<Indices...>) {
+    return std::array<decltype(std::declval<Generator>()(size_t{})), sizeof...(Indices) > { generator(Indices)... };
+}
+template <size_t Size, typename Generator>
+constexpr auto generateArray(Generator generator) {
+    return  generateArrayHelper(generator, std::make_index_sequence<Size>());
+}
 
-struct Precalc {
-    u16 primes[1024]; // # of primes under N=2^16
-
-    constexpr Precalc() : primes{} {
-        bool marked[N] = {};
-        int n_primes = 0;
-
-        for (int i = 2; i < N; i++) {
-            if (!marked[i]) {
-                primes[n_primes++] = i;
-                for (int j = 2 * i; j < N; j += i)
-                    marked[j] = true;
-            }
-        }
-    }
-};
-
-constexpr Precalc P{};
+// This is the definition of a std::array<unsigned int, 100> with prime numbers in it
+constexpr auto Primes = generateArray<100>(primeAtIndex);
 
 // do not use unordered map use mll
 void testcase(){
@@ -149,25 +150,25 @@ void testcase(){
             return;
         }
     }
-    // int flag = 1;
-    // unordered_map<ll,mll> cnt;
-    // trav(p,P.primes){
-    //     trav(x,a){
-    //         cnt[p][x%p]++;
-    //     }
-    // }
-    // trav(p,P.primes){
-    //     int flag=cnt[p].size()<p;
-    //     trav(c,cnt[p]){
-    //         if(c.second<2){
-    //             flag = 1;
-    //         }
-    //     }
-    //     if(!flag){
-    //         pyn(0);
-    //         return;
-    //     }
-    // }
+    int flag = 1;
+    unordered_map<ll,mll> cnt;
+    trav(p,Primes){
+        trav(x,a){
+            cnt[p][x%p]++;
+        }
+    }
+    trav(p,Primes){
+        int flag=cnt[p].size()<p;
+        trav(c,cnt[p]){
+            if(c.second<2){
+                flag = 1;
+            }
+        }
+        if(!flag){
+            pyn(0);
+            return;
+        }
+    }
     pyn(1);
 }
 // driver code

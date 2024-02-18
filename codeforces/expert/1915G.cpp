@@ -102,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e10+5;
+const ll INF = 1e15+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,49 +113,48 @@ void pyn(int x) {put(x?"YES":"NO");}
 vector<vector<pi>> adj;
 vi b;
 int n,m;
-vi dijsktra(int S){
-    vi dist(n,INF);
+ll dijsktra(int S){
+    unordered_map<ll,mll> dist;
     priority_queue<pair<ll,pi>,vector<pair<ll,pi>>,greater<pair<ll,pi>>> pq;
-    pq.push(make_pair(0LL,make_pair(b[S],S)));
+    pq.push(make_pair(b[S],make_pair(0LL,S)));
+    dist[b[S]][S] = 0;
     while (!pq.empty())
     {   
         auto u = pq.top();
         pq.pop();
-        if(u.first>dist[u.second.second]) continue;
+        if(dist[u.first].count(u.second.second) && u.second.first>dist[u.first][u.second.second]) continue;
         for(auto &v:adj[u.second.second]){
-            if(dist[v.first]>dist[u.second.second] + u.second.first*v.second){
-                dist[v.first] = dist[u.second.second] +u.second.first*v.second;
-                pq.push(make_pair(dist[v.first],make_pair(min(b[v.first],u.second.first),v.first)));
+            if(dist[u.first].count(v.first)==0 ||  dist[u.first][v.first]>u.second.first + u.first*v.second){
+                dist[u.first][v.first] = u.second.first +u.first*v.second;
+                pq.push(make_pair(min(b[v.first] ,u.first),make_pair(dist[u.first][v.first],v.first)));
             }
         }
     }
-    b.clear();
-    b.resize(n);
-    return dist;
+    ll res = INF;
+    trav(x,dist){
+        if(x.second.count(n-1)){
+            res = min(res,x.second[n-1]);
+        }
+    }
+    return res;
 }
 void testcase(){
     cin >> n >> m;
     adj.clear();
     adj.resize(n);
-    rep(i,0,n){
+    rep(i,0,m){
         int u,v,w;
         cin >> u >> v >> w;
-        u--;--v;
+        --u;--v;
         adj[u].push_back({v,w});
         adj[v].push_back({u,w});
     }
+    b.resize(n);
+    tkv(b,n);
     ll res = INF;
     vi dist(n);
     auto dist0 = dijsktra(0);
-    rep(i,0,n){
-        dist[i] = dijsktra(i)[n-1];
-    }
-    rep(i,0,n){
-        rep(k,i,n){
-            res = min(res,dist0[k] + dist[k]);
-        }
-    }
-    put(res);
+    put(dist0);
     
 }
 // driver code
