@@ -113,22 +113,46 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    string s,t;
-    cin >> s >> t;
-    vi ans;
+    vi a(n);
+    tkv(a,n);
+    vi pref(n+1,0);
     rep(i,0,n){
-        int c = s[i]-'A';
-        int cnt = 0;
-        while (c!=(t[i]-'A'))
-        {
-            c = (c+3)%26;
-            cnt++;
-        }
-        ans.push_back(cnt);
+        pref[i+1] = pref[i] ^ a[i];
     }
-
-
-    pvc(ans);
+    vi suff(n+1,0);
+    per(i,0,n){
+        suff[i] = suff[i+1] ^ a[i];
+    }
+    ll res = pref.back();
+    rep(i,0,n){
+        ll b = pref[i]^suff[i+1];
+        ll c= a[i];
+        ll cur = b^c;
+        ll waste = 0;
+        per(j,0,60){
+            ll mask = 1LL << j;
+            waste = 2*waste;
+            if(cur&mask) {
+                continue;
+            }
+            if(c&mask){
+                waste++;
+                cur ^=mask;
+            }
+            else{
+                if(waste){
+                    cur ^=mask;
+                    waste--;
+                }
+            }
+        }
+        if(waste%2==1){
+            cur ^=1;
+        }
+        res = max(res,cur);
+    }
+    put(res);
+    
 }
 // driver code
 int main()

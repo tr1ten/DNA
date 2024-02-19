@@ -110,25 +110,44 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 1e6+5;
+vector<int> divs(N+1,1);
+// find prime <sqrt(MAX)
+// O(LlogL)
+
+
+const int L =   3*(1e5);
+bool sieve[L+1];
+// find prime <sqrt(MAX)
+// O(LlogL)
+vi primes;
+void preprocess(){
+    sieve[0] = 1;
+    sieve[1] = 1;
+    for(int x=2;x*x<=L;x++){
+        if(sieve[x]!=0) continue; 
+        for(int u=2*x;u<=L;u +=x){
+            sieve[u] = 1;
+        }
+    }
+    rep(i,2,L+1){
+        if(sieve[i]==0) {
+            primes.push_back(i);
+        }
+    }
+}
+
+
 void testcase(){
     int n;
     cin >> n;
-    string s,t;
-    cin >> s >> t;
-    vi ans;
-    rep(i,0,n){
-        int c = s[i]-'A';
-        int cnt = 0;
-        while (c!=(t[i]-'A'))
-        {
-            c = (c+3)%26;
-            cnt++;
-        }
-        ans.push_back(cnt);
+    vi res = vector<ll>(primes.begin(),primes.begin()+n/2);
+    res.insert(res.end(),res.begin(),res.end());
+    if(n%2==1){
+        res.push_back(1);
     }
-
-
-    pvc(ans);
+    pvc(res);
+    
 }
 // driver code
 int main()
@@ -136,7 +155,8 @@ int main()
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
+    // freopen("output.out","w",stdout);     
+    preprocess(); 
     int T=1;
     cin>>T;
     while(T--) testcase();

@@ -113,22 +113,14 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    string s,t;
-    cin >> s >> t;
-    vi ans;
-    rep(i,0,n){
-        int c = s[i]-'A';
-        int cnt = 0;
-        while (c!=(t[i]-'A'))
-        {
-            c = (c+3)%26;
-            cnt++;
-        }
-        ans.push_back(cnt);
+    vi a(n);
+    tkv(a,n);
+    if(n==1){pyn(1);}
+    else if(n==2){
+        pyn(a[0]<=a[1]);
     }
-
-
-    pvc(ans);
+    else if(n==3) {pyn((a[0]<=a[1] && a[1]<=a[2]) || a[2]<=a[1] && a[1]<=a[0]);}
+    else pyn(1);
 }
 // driver code
 int main()
