@@ -113,55 +113,32 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    char c;
-    cin >> c;
-    unordered_map<char,vector<string>> cc;
-    rep(i,0,2*n){
-        string x;
-        cin >> x;
-        cc[x[1]].push_back(x);
+    string s;
+    cin >> s;
+    vi pref{0};
+    rep(i,0,n){
+        pref.push_back(pref.back() + (s[i]-'0'));
     }
-    // debug(cc[c]);
-    int sm = 0;
-    trav(x,cc) {sm +=((x.second.size())&1);}
-    int cs = cc[c].size();
-    if(cs<sm-(cs&1)){
-        put("IMPOSSIBLE");
-        return;
+    ll car = 0;
+    string res;
+    per(i,1,n+1){
+        ll now = (pref[i] + car);
+        res += '0' + (now%10);
+        car = now/10;
     }
-    vector<string> left;
-    trav(x,cc){
-        srv(x.second);
-        if(x.first==c){
-            continue;
-        }   
-        while (x.second.size()>=2)
-        {
-            put2(x.second[x.second.size()-2],x.second.back());
-            x.second.pop_back();
-            x.second.pop_back();
-        }
-        if(x.second.size()){
-            left.push_back(x.second.back());
-            x.second.pop_back();
-        }
-
+    // debug(pref);
+    if(car){
+    string cs = to_string(car);
+    reverse(all(cs));
+    res += cs;
     }
-    while (left.size() && cc[c].size())
+    while (res.size() && res.back()=='0')
     {
-        put2(left.back(),cc[c].back());
-        left.pop_back();
-        cc[c].pop_back();
-    }
-    while (cc[c].size()>=2)
-    {
-        put2(cc[c][cc[c].size()-2],cc[c].back());
-        cc[c].pop_back();
-        cc[c].pop_back();
+        res.pop_back();
     }
     
-
-
+    reverse(all(res));
+    put(res);
 }
 // driver code
 int main()

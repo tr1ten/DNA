@@ -109,58 +109,40 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+// battle tested
+// https://judge.yosupo.jp/submission/170986
+
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    char c;
-    cin >> c;
-    unordered_map<char,vector<string>> cc;
-    rep(i,0,2*n){
-        string x;
+    int n,m;
+    cin >> n >> m;
+    vi pref{0};
+    vi pref1{0};
+    rep(i,0,n){
+        int x;
         cin >> x;
-        cc[x[1]].push_back(x);
+        pref.push_back(pref.back() + x);
+        pref1.push_back(pref1.back() + (x==1));
     }
-    // debug(cc[c]);
-    int sm = 0;
-    trav(x,cc) {sm +=((x.second.size())&1);}
-    int cs = cc[c].size();
-    if(cs<sm-(cs&1)){
-        put("IMPOSSIBLE");
-        return;
-    }
-    vector<string> left;
-    trav(x,cc){
-        srv(x.second);
-        if(x.first==c){
+    rep(i,0,m){
+        int l,r;
+        cin >> l >> r;
+        l--;r--;
+        int c = r-l+1;
+        ll sm = pref[r+1] - pref[l];
+        int nm = pref1[r+1] - pref1[l];
+        if(c==1){
+            pyn(0);
             continue;
-        }   
-        while (x.second.size()>=2)
-        {
-            put2(x.second[x.second.size()-2],x.second.back());
-            x.second.pop_back();
-            x.second.pop_back();
         }
-        if(x.second.size()){
-            left.push_back(x.second.back());
-            x.second.pop_back();
+        if(nm<=c/2){
+            pyn(1);
+            continue;
         }
-
+        int ex = nm - (c-nm);
+        ll exsm = sm - (c-nm)*2 -  nm;
+        pyn(ex<=exsm);
     }
-    while (left.size() && cc[c].size())
-    {
-        put2(left.back(),cc[c].back());
-        left.pop_back();
-        cc[c].pop_back();
-    }
-    while (cc[c].size()>=2)
-    {
-        put2(cc[c][cc[c].size()-2],cc[c].back());
-        cc[c].pop_back();
-        cc[c].pop_back();
-    }
-    
-
 
 }
 // driver code

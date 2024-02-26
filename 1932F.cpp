@@ -109,59 +109,40 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+
+
+const int N = (1e6) + 5;
+
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    char c;
-    cin >> c;
-    unordered_map<char,vector<string>> cc;
-    rep(i,0,2*n){
-        string x;
-        cin >> x;
-        cc[x[1]].push_back(x);
+    int n,m;
+    cin >> n >> m;
+    vpi a(m);   
+    vi cnt(n+2);
+    rep(i,0,m){
+        cin >> a[i].first >> a[i].second;
+        cnt[a[i].first]++;
+        cnt[a[i].second+1]--;
     }
-    // debug(cc[c]);
-    int sm = 0;
-    trav(x,cc) {sm +=((x.second.size())&1);}
-    int cs = cc[c].size();
-    if(cs<sm-(cs&1)){
-        put("IMPOSSIBLE");
-        return;
+    rep(i,1,n+2){
+        cnt[i] +=cnt[i-1];
     }
-    vector<string> left;
-    trav(x,cc){
-        srv(x.second);
-        if(x.first==c){
-            continue;
-        }   
-        while (x.second.size()>=2)
+    vi dp(n+1);
+    srv(a);
+    int i = 0;
+    vi prev(n+1);
+    // debug(a);
+    rep(j,1,n+1){
+        while (i<m &&  a[i].second<j)
         {
-            put2(x.second[x.second.size()-2],x.second.back());
-            x.second.pop_back();
-            x.second.pop_back();
+            i++;
         }
-        if(x.second.size()){
-            left.push_back(x.second.back());
-            x.second.pop_back();
-        }
+        // debug(i,j);
+        if(i==m) dp[j] = dp[j-1];
+        else dp[j] = max(dp[j-1],dp[a[i].first-1] + cnt[j]);
 
     }
-    while (left.size() && cc[c].size())
-    {
-        put2(left.back(),cc[c].back());
-        left.pop_back();
-        cc[c].pop_back();
-    }
-    while (cc[c].size()>=2)
-    {
-        put2(cc[c][cc[c].size()-2],cc[c].back());
-        cc[c].pop_back();
-        cc[c].pop_back();
-    }
-    
-
-
+    put(dp.back());
 }
 // driver code
 int main()
