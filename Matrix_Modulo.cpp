@@ -109,53 +109,90 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+
+
+
+const int N = 1000 + 5;
+long long fact[N];
+
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
+    }
+}
+
+
 // do not use unordered map use mll
-vii adj;
-const int MAXN = 3e5+5;
-const int LOG = 25; // ceil(log2(10^9))
-vi ans;
-vi ret;
-int n,k;
-int dfs(int u,int p,int d){
-    int c=0;
-    ll mx = 0;
-    int ddm = n+2;
-    trav(v,adj[u]){
-        if(v==p) continue;
-        c++;
-        int dm = dfs(v,u,d+1);
-        debug(u,v,dm);
-        ddm = min(dm,ddm);
-        ll add = 0;
-        if(dm-d<=k) add = ret[v];
-        mx = max(mx,ans[v] - add);
-        ret[u] +=add;
+int n;
+int dg;
+int lf;
+int check(vii &mat){
+    set<int> used;
+    int mn = n*(n+1)/2;
+    rep(i,0,n){
+        rep(j,i,n){
+            if(used.find(mat[i][j])!=used.end()) return 0;
+            if(mat[i][j]==0 && mat[j][i]==0) continue;
+            if(mat[i][j] && mat[j][i] && abs(mat[i][j] - mat[j][i])%mn!=0 ){
+                debug(i,j,mat);
+                return 0;
+            }
+            if(i==j){
+                used.insert(mat[i][j]);
+                dg--;
+                continue;
+            }
+            int tar;
+            if(mat[i][j]){
+                tar = (mn+mat[i][j]) > n*n ? mat[i][j] - mn : mat[i][j] + mn;
+                mat[j][i] = tar;
+                used.insert(mat[i][j]);
+            }
+            else{
+                tar = (mn+mat[j][i]) > n*n ? mat[j][i] - mn : mat[j][i] + mn;
+                mat[i][j] = tar;
+                used.insert(mat[j][i]);
+
+            }
+            if(tar>0 && tar<=n*n && used.find(tar)==used.end()) {
+                used.insert(tar);
+            }
+            else {debug(i,j,mat); return 0;}
+        }
     }
-    if(c==0){
-        ret[u] = 1;
-        return d;
-    }
-    ans[u] = mx + ret[u];
-    return ddm;
+   
+    lf = n*n -used.size();
+    return 1;
+}
+long long fast_pow(long long a,long long b,long long MOD){
+    if(b==0) return 1;
+    long long res = fast_pow(a,b/2,MOD);
+    if(b%2==0) return (res*res)%MOD;
+    return (((res*res)%MOD)*a)%MOD;
 }
 void testcase(){
-    cin >> n >> k;
-    adj.clear();
-    adj.resize(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    } 
-    ans.clear();
-    ret.clear();
-    ans.resize(n);
-    ret.resize(n);
-    dfs(0,-1,0);
-    put(ans[0]);
-    
+    cin >> n;
+    vii a(n,vi(n));
+    rep(i,0,n){
+        rep(j,0,n){
+            cin >> a[i][j];
+        }
+    }
+
+    dg = n;
+    lf = 0;
+    debug(a);
+    if(!check(a)) {put(0);}
+    else{   
+        assert((lf-dg)%2==0);
+        int prs = (lf-dg)/2;
+        debug(dg,prs);
+        assert(prs>=0 && dg>=0);
+        ll a1 = fact[dg];
+        ll a2 =mod(fast_pow(2,prs,MOD)*(fact[prs]));
+        put(mod(a1*a2));
+    }
 
 }
 // driver code
@@ -163,6 +200,7 @@ int main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
+    pre();
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
