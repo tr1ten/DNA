@@ -27,28 +27,13 @@ using ht = gp_hash_table<
 
                                 hash_load_check_resize_trigger<>, true>>;
 
-struct custom_hash {
-    static uint64_t splitmix64(uint64_t x) {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
 // ht<int, null_type> g;
-
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll,custom_hash> mll;
+typedef unordered_map<ll,ll> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -101,34 +86,37 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll MOD = 1e9+7;
 const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
+void ans(int x) {put(x?"YES":"NO");}
+char ask(int a,int b,int c,int d){
+    cout << "? " << a << " " << b << " " << c << " " << d << endl;
+    cout.flush();
+    char x;
+    cin >> x;
+    return x;
+}
+void tell(int x,int y){
+    cout << "! " << x << " " << y << endl;
+    cout.flush();
+}
 void testcase(){
     int n;
     cin >> n;
-    vector<string> g(2);
-    cin >> g[0];
-    cin >> g[1];   
-    int ind = n-1;
-    rep(i,0,n-1){
-        if(g[1][i]<g[0][i+1]){
-            ind = i;
-            break;
-        }
+    int i=0; // min
+    int j=0; // mx
+    rep(k,1,n){
+        if(ask(i,i,k,k)=='<') i=k;
     }
-    string rs1 = g[0].substr(0,ind+1);
-    rs1 += g[1].substr(ind);
-    int j = n-1;
-    while(j>=0 && rs1[j+1]==g[1][j]) j--;
-    put(rs1);
-    put(ind-j)
+    rep(k,1,n){
+        if(ask(j,j,k,k)=='>') j=k;
+    }
+    tell(i,j);
     
 
 }

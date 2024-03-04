@@ -113,24 +113,10 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    vector<string> g(2);
-    cin >> g[0];
-    cin >> g[1];   
-    int ind = n-1;
-    rep(i,0,n-1){
-        if(g[1][i]<g[0][i+1]){
-            ind = i;
-            break;
-        }
-    }
-    string rs1 = g[0].substr(0,ind+1);
-    rs1 += g[1].substr(ind);
-    int j = n-1;
-    while(j>=0 && rs1[j+1]==g[1][j]) j--;
-    put(rs1);
-    put(ind-j)
-    
-
+    vi a(n);
+    tkv(a,n);
+    srv(a);
+    put(2*(a[n-1]-a[0] + a[n-2]-a[1]));
 }
 // driver code
 int main()
