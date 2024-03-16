@@ -111,43 +111,31 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m,k;
-    cin >> n >> m >> k;
-    vi a(n);
-    tkv(a,n);
-    vi b(m),c(k);
-    tkv(b,m);
-    tkv(c,k);
-    srv((a));
-    int s = 0;
-    ll re = 0;
-    ll sre = 0;
-    rep(i,0,n-1){
-        if(a[i+1]-a[i]>re){
-            sre = re;
-            re = a[i+1] - a[i];
-            s = i;
-        }
-        else if(a[i+1]-a[i]>sre){
-            sre = a[i+1] - a[i];
+    string s;
+    cin >> s;
+    int n = s.size();
+    per(len,1,n/2 + 1){
+        int m = 0;
+        int i=0;
+        while (i<n-2*len+1)
+        {
+            int last = -1;
+            rep(j,m,len){
+                if(s[i+j]==s[i+j+len] || s[i+j]=='?' || s[i+j+len]=='?') m++;
+                else{
+                    last = j;
+                }
+            }
+            if(last==-1) {
+                put(2*len);
+                return;
+            }
+            i += last+1;
+            debug(last,i,m,len);
         }
     }
-    srv(b);
-    srv(c);
-    ll mid = (a[s+1]+a[s])/2;
-    ll res = re;
-    rep(i,0,m){
-        auto it = lower_bound(all(c),mid-b[i]);
-        if(it!=c.end()){
-            res = min(res,max(a[s+1] - *it - b[i],-a[s] + *it + b[i]));
-        }
-        if(it!=c.begin()){
-            it--;
-            res = min(res,max(a[s+1] - *it - b[i],-a[s] + *it + b[i]));
-        }
-        
-    }
-    put(max(res,sre));
+    put(0);
+    
 }
 // driver code
 int main()

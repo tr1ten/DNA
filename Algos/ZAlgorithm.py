@@ -26,11 +26,12 @@ def zfunc(s:str):
 def match(s,pat):
     temp = pat+"#"+s
     z = zfunc(temp) # longest substring at ith index that also a prefix except first
+    print(z)
     for i in range(len(temp)):
         if(z[i]==len(pat)): 
             print(i-z[i]-1)
             break
 
 # match("aaaaaaa","bc")
-print(zfunc("abcabca"))
+print(zfunc("aaaaaa"))
 

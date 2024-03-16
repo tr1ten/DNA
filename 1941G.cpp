@@ -102,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e10+5;
+const ll INF = 1e15+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,44 +110,49 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+int dijsktra(ll S,vector<vector<pi>> &adj,map<int,unordered_set<int>> &lines,int d){
+    int n = adj.size();
+    vector<bool> vis(n,0);
+    vis[S] = 1;
+    queue<pair<int,int>> pq;
+    pq.push(make_pair(0,S));
+    while(!pq.empty()){
+        auto u = pq.front();
+        if(u.second==d) return u.first;
+        pq.pop();
+        for(auto &v:adj[u.second]){
+            if(vis[v.first]) continue;
+            ll dd = u.first + 1;
+            for(auto g:lines[v.second]){
+                if(vis[g]) continue;
+                vis[g] = 1;
+                auto a = make_pair(dd,g);
+                pq.push(a);
+            }
+        }
+    }
+    return -1; // or dist according to needs
+}
 void testcase(){
-    int n,m,k;
-    cin >> n >> m >> k;
-    vi a(n);
-    tkv(a,n);
-    vi b(m),c(k);
-    tkv(b,m);
-    tkv(c,k);
-    srv((a));
-    int s = 0;
-    ll re = 0;
-    ll sre = 0;
-    rep(i,0,n-1){
-        if(a[i+1]-a[i]>re){
-            sre = re;
-            re = a[i+1] - a[i];
-            s = i;
-        }
-        else if(a[i+1]-a[i]>sre){
-            sre = a[i+1] - a[i];
-        }
-    }
-    srv(b);
-    srv(c);
-    ll mid = (a[s+1]+a[s])/2;
-    ll res = re;
+    int n,m;
+    cin >> n >> m;
+    vector<vector<pi>> adj(n);
+    map<int,unordered_set<int>> lines;
     rep(i,0,m){
-        auto it = lower_bound(all(c),mid-b[i]);
-        if(it!=c.end()){
-            res = min(res,max(a[s+1] - *it - b[i],-a[s] + *it + b[i]));
-        }
-        if(it!=c.begin()){
-            it--;
-            res = min(res,max(a[s+1] - *it - b[i],-a[s] + *it + b[i]));
-        }
-        
+        int u,v,e;
+        cin >> u >> v >> e;
+        --u;--v;
+        adj[u].push_back({v,e});
+        adj[v].push_back({u,e});
+        lines[e].insert(u);
+        lines[e].insert(v);
     }
-    put(max(res,sre));
+    int s,d;
+    cin >> s >> d;
+    --s;--d;
+    auto dist = dijsktra(s,adj,lines,d);
+    put(dist);
+    
 }
 // driver code
 int main()
