@@ -43,7 +43,7 @@ struct custom_hash {
 };
 // ht<int, null_type> g;
 
-typedef long long ll; 
+typedef int ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -109,33 +109,93 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-void testcase(){
-    string s;
-    cin >> s;
-    int n = s.size();
-    per(len,1,n/2 + 1){
-        int m = 0;
-        int i=0;
-        while (i<n-2*len+1)
-        {
-            int last = -1;
-            rep(j,m,len){
-                if(s[i+j]==s[i+j+len] || s[i+j]=='?' || s[i+j+len]=='?') m++;
-                else{
-                    last = j;
-                    m=0;
-                }
-            }
-            if(last==-1) {
-                put(2*len);
-                return;
-            }
-            i += last+1;
-            debug(last,i,m,len);
+const int N = 3*(1e5)+5;
+int sieve[N+1];
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    sieve[0] = 1;
+    sieve[1] = 1;
+    for(int x=2;x<=N;x++){
+        if(sieve[x]!=0) continue; 
+        sieve[x] = x;
+        for(int u=2*x;u<=N;u +=x){
+            sieve[u] = x;
         }
     }
-    put(0);
+}
+
+vector<int> factors(int x){
+    vector<int> res;
+    while(x>1){
+        int f = sieve[x];
+        if(x%f==0) res.push_back(f);
+        while(x%f==0) x/=f;
+    }
+    return res;
+}
+
+
+// do not use unordered map use mll
+void testcase(){
+    int n;
+    cin >> n;
+    unordered_map<int,vi> dd;
+    vi a(n);
+    tkv(a,n);
+    unordered_map<int,vi> divs;
+    trav(x,a){
+        if(divs[x].size()==0){
+        divs[x] = factors(x);
+        }
+        debug(x,divs[x]);
+    }
+    int s,t;
+    
+    cin >> s >> t;
+    s--;t--;
+    
+    rep(i,0,n){
+        trav(v,divs[a[i]]){
+            dd[v].push_back(i);
+        } 
+    }
+    queue<pi> q;
+    q.push({s,1});
+    vi par(n,-2);
+    par[s] = -1;
+    while (q.size())
+    {
+        pi u = q.front();
+        q.pop();
+        debug(u);
+        if(u.first==t){
+            put(u.second);
+            debug(par);
+            int cur = t;
+            vi r;
+            while (par[cur]!=-1)
+            {
+                r.push_back(cur+1);
+                cur = par[cur];
+            }
+            r.push_back(cur+1);
+            reverse(all(r));
+            pvc(r);
+            return;
+        }
+        trav(x,divs[a[u.first]]){
+            trav(v,dd[x]){
+                if(par[v]==-2) {
+                    q.push({v,u.second+1});
+                    par[v] = u.first;
+                }
+            }
+            dd[x].clear();
+        }
+    }
+    put(-1);
+    
     
 }
 // driver code
@@ -144,9 +204,10 @@ int main()
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
+    // freopen("output.out","w",stdout);       
     int T=1;
-    cin>>T;
+    preprocess();
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

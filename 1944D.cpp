@@ -110,32 +110,86 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    string s;
-    cin >> s;
+// similar to z array
+vi manchers_odd(string &s){
     int n = s.size();
-    per(len,1,n/2 + 1){
-        int m = 0;
-        int i=0;
-        while (i<n-2*len+1)
-        {
-            int last = -1;
-            rep(j,m,len){
-                if(s[i+j]==s[i+j+len] || s[i+j]=='?' || s[i+j+len]=='?') m++;
-                else{
-                    last = j;
-                    m=0;
-                }
-            }
-            if(last==-1) {
-                put(2*len);
-                return;
-            }
-            i += last+1;
-            debug(last,i,m,len);
+    vi pi(n,0); // pi[i] length of largest pali at center i including self
+    int l=0,r=0; // this are exclusive for conviences
+    rep(i,0,n){
+        pi[i] = max(0LL,min((ll)r-i,pi[l+r-i]));
+        while(i-pi[i]-1>=0 && i+pi[i]+1<n && s[i-pi[i]-1]==s[i+pi[i]+1]) pi[i]++;
+        if(i+pi[i]>r){
+            l = i-pi[i];
+            r = i+pi[i];
         }
     }
-    put(0);
+    return pi;
+}
+const int S = 500; // block size
+struct Q {
+    int l;
+    int r;
+    int idx;
+};
+bool cmp(Q A, Q B)
+{
+  if (A.l / S != B.l / S) return A.l< B.l;
+  return (A.r < B.r)^(A.l/S%2); // change direction after each block change due to q.l
+}
+const int N = 2e6 + 3;
+unordered_map<ll,ll> cnt; // DS to get & update res 
+ll res=0; // running ans of each query
+int ri= -1;
+void add(int j,vi &a,Q &q){
+
+}
+void del(int j,vi &a,Q &q){
+}
+
+void testcase(){
+    int m,q;
+    cin >> m >> q;
+    string s;
+    cin >> s;
+
+    string ns;
+    trav(c,s) {
+        ns += string("#") + c;
+    }
+    ns +='#';
+    vi pi = manchers_odd(ns);
+    vector<Q> ques;
+        rep(i,0,q){
+            int l,r;
+            cin >> l >> r;
+            ques.push_back({l-1,r-1,i}); // 0 index
+        }
+        sort(all(ques),cmp);
+        int curL = 0;
+        int curR = -1;
+        vi ans(q);
+        rep(i,0,q){
+            auto q =ques[i];
+            while(curL>q.l){ // add
+                curL--;
+                add(curL,pi,q);
+            }
+            while(curL<q.l){ // remove 
+                del(curL,pi,q);
+                curL++;
+            }
+            while(curR>q.r){    // rempve
+                del(curR,pi,q);
+                curR--;
+            }
+            while(curR<q.r){ // add
+                curR++;
+                add(curR,pi,q);
+            }
+            ans[q.idx] = res;
+        }
+        trav(x,ans) put(x);
+    
     
 }
 // driver code

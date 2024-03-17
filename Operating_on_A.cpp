@@ -12,14 +12,43 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // find_by_order(k)  returns iterator to kth element starting from 0;
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
+const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
+struct chash {
+    int operator()(int x) const { return x ^ RANDOM; }
+};
+// gp_hash_table<int, int, chash> table;
+template <class K, class V>
+
+using ht = gp_hash_table<
+
+    K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
+
+    hash_standard_resize_policy<hash_exponential_size_policy<>,
+
+                                hash_load_check_resize_trigger<>, true>>;
+
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+// ht<int, null_type> g;
+
 typedef long long ll; 
-typedef short u16;
-typedef long long u64;
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll> mll;
+typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -37,7 +66,7 @@ typedef unordered_map<ll,ll> mll;
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
-#define put(x) printf("%s\n",x);
+#define put(x) cout<<(x)<<endl;
 #define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
 #define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
 #define mod(x) (x + MOD)%MOD
@@ -72,85 +101,54 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e10+5;
-int factors(int x){
-    int res  = 0;
-    if(x==1) return res;
-    for(int i=2;i<sqrt(x)+1;i++){
-        while (x%i==0)
-        {
-            res++;
-            x /=i;
-        }
-        
+
+inline int ctz(ll x) { return __builtin_ctzll(x);}
+inline int clz(ll x) {return __builtin_clzll(x);}
+inline int pc(ll x) {return  __builtin_popcount(x);} 
+inline int hset(ll x) {return __lg(x);}
+void pyn(int x) {put(x?"YES":"NO");}
+// do not use unordered map use mll
+void testcase(){
+    int n;
+    cin >> n;
+    vi a(n),b(n);
+    tkv(a,n);   
+    tkv(b,n);
+    if(accumulate(all(a),0LL)!=accumulate(all(b),0LL)){
+        pyn(0);
+        return;
     }
-    if(x>1) res++;
-    return res;
-}
-
-const int N = (1 << 16);
-
-struct Precalc {
-    u16 primes[6542]; // # of primes under N=2^16
-
-    constexpr Precalc() : primes{} {
-        bool marked[N] = {};
-        int n_primes = 0;
-
-        for (int i = 2; i < N; i++) {
-            if (!marked[i]) {
-                primes[n_primes++] = i;
-                for (int j = 2 * i; j < N; j += i)
-                    marked[j] = true;
+    mll cnt[2];
+    cnt[0][a[0]]++;
+    cnt[0][b[0]]--;
+    rep(i,1,n){
+        a[i] += a[i-1];
+        b[i] += b[i-1];
+        cnt[i%2][a[i]]++;
+        cnt[i%2][b[i]]--;
+    }
+    rep(i,0,2){
+        trav(x,cnt[i]){
+            if(x.second!=0){
+                pyn(0);
+                return;
             }
         }
     }
-};
-
-constexpr Precalc P{};
-
-u64 find_factor(u64 n) {
-    for (u16 p : P.primes)
-        if (n % p == 0)
-            return p;
-    return 1;
-}
-
-
-
-int factorize(int n) {
-    if(n==1) return 0;
-    int res = 0;
-    int d;
-    do {
-        d = find_factor(n);
-        res++;
-        n /= d;
-    } while (d != 1 && n>1);
-    return res;
+    pyn(1);
 }
 // driver code
 int main()
 {
-    // ios_base::sync_with_stdio(false);
-    // cin.tie(nullptr);
+    ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
-    while(T--){
-        int a,b,k;
-        scanf("%d%d%d",&a,&b,&k);
-        int gc = gcd(a,b);
-        int mv = (a!=gc) + (b!=gc);
-        if(k<mv) {put("NO") continue;}
-        auto mxv = factorize(gc);
-        auto az = factorize(a/gc);
-        auto bz = factorize(b/gc);
-        if(k>2*mxv+az+bz || (mv!=1 && k==1)) {put("NO");continue;}
-        else put("YES");
-    }
+    while(T--) testcase();
 
     return 0;
 }
