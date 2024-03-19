@@ -111,77 +111,86 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 // similar to z array
- class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 7;
-	static const long long B = 9973;
- 
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
- 
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
- 
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
- 
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
-		}
-	}
- 
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
-	}
+vi manchers_odd(string &s){
+    int n = s.size();
+    vi pi(n,0); // pi[i] length of largest pali at center i including self
+    int l=0,r=0; // this are exclusive for conviences
+    rep(i,0,n){
+        pi[i] = max(0LL,min((ll)r-i,pi[l+r-i]));
+        while(i-pi[i]-1>=0 && i+pi[i]+1<n && s[i-pi[i]-1]==s[i+pi[i]+1]) pi[i]++;
+        if(i+pi[i]>r){
+            l = i-pi[i];
+            r = i+pi[i];
+        }
+    }
+    return pi;
+}
+const int S = 500; // block size
+struct Q {
+    int l;
+    int r;
+    int idx;
 };
-vector<long long> HashedString::pow = {1};
+bool cmp(Q A, Q B)
+{
+  if (A.l / S != B.l / S) return A.l< B.l;
+  return (A.r < B.r)^(A.l/S%2); // change direction after each block change due to q.l
+}
+const int N = 2e6 + 3;
+unordered_map<ll,ll> cnt; // DS to get & update res 
+ll res=0; // running ans of each query
+int ri= -1;
+void add(int j,vi &a,Q &q){
+
+}
+void del(int j,vi &a,Q &q){
+}
+
 void testcase(){
-    ll m,q;
+    int m,q;
     cin >> m >> q;
     string s;
     cin >> s;
-    HashedString hs(s);
-    reverse(all(s));
-    HashedString rhs(s);
-    reverse(all(s));
-    rep(i,0,q){
-        int l,r;
-        cin >> l >> r;
-        r--;l--;
-        ll n = r-l+1;
-        if(n==1){
-            put(0);
-        }
-        else if(n==2){
-            put(s[l]==s[r] ? 0 : 2);
-        }
-        else{
-            ll lr=m-1-l,nr=m-1-r;
-            // check same 
-            ll mm[4] = {0,0,0,0};
-            rep(j,0,min(4,r-l+1)){
-                int f = 1;
-                int nn = n-j;
-                rep(k,l,l+j+1){
-                    f &= hs.getHash(k,k+nn-1) == rhs.getHash(m-1-(k+nn-1),m-1-k);
-                }
-                mm[j] = f;
-                debug(l,r,j,mm[j]);
-            }
-            if(mm[0] && mm[1]) {put(0);}
-            else if((mm[0] && mm[2]) || (mm[1] && mm[3])) put((n/2)*(n/2 + 1))
-            else {
-                put(n*(n+1)/2 - 1 - (mm[0] ? n : 0));
-            }
 
-        }
+    string ns;
+    trav(c,s) {
+        ns += string("#") + c;
     }
-
+    ns +='#';
+    vi pi = manchers_odd(ns);
+    vector<Q> ques;
+        rep(i,0,q){
+            int l,r;
+            cin >> l >> r;
+            ques.push_back({l-1,r-1,i}); // 0 index
+        }
+        sort(all(ques),cmp);
+        int curL = 0;
+        int curR = -1;
+        vi ans(q);
+        rep(i,0,q){
+            auto q =ques[i];
+            while(curL>q.l){ // add
+                curL--;
+                add(curL,pi,q);
+            }
+            while(curL<q.l){ // remove 
+                del(curL,pi,q);
+                curL++;
+            }
+            while(curR>q.r){    // rempve
+                del(curR,pi,q);
+                curR--;
+            }
+            while(curR<q.r){ // add
+                curR++;
+                add(curR,pi,q);
+            }
+            ans[q.idx] = res;
+        }
+        trav(x,ans) put(x);
+    
+    
 }
 // driver code
 int main()

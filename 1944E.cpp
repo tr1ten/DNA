@@ -110,78 +110,62 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// similar to z array
- class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 7;
-	static const long long B = 9973;
- 
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
- 
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
- 
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
- 
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
-		}
-	}
- 
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
-	}
-};
-vector<long long> HashedString::pow = {1};
-void testcase(){
-    ll m,q;
-    cin >> m >> q;
-    string s;
-    cin >> s;
-    HashedString hs(s);
-    reverse(all(s));
-    HashedString rhs(s);
-    reverse(all(s));
-    rep(i,0,q){
-        int l,r;
-        cin >> l >> r;
-        r--;l--;
-        ll n = r-l+1;
-        if(n==1){
-            put(0);
+const int N = 2000 + 5;
+int dp1[N];
+int dp2[N];
+vii adj;
+void dfs1(int u,int p){
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs1(v,u);
+        if(dp1[v]+1>dp1[u]){
+            dp2[u] = dp1[u];
+            dp1[u] = dp1[v]+1;
         }
-        else if(n==2){
-            put(s[l]==s[r] ? 0 : 2);
-        }
-        else{
-            ll lr=m-1-l,nr=m-1-r;
-            // check same 
-            ll mm[4] = {0,0,0,0};
-            rep(j,0,min(4,r-l+1)){
-                int f = 1;
-                int nn = n-j;
-                rep(k,l,l+j+1){
-                    f &= hs.getHash(k,k+nn-1) == rhs.getHash(m-1-(k+nn-1),m-1-k);
-                }
-                mm[j] = f;
-                debug(l,r,j,mm[j]);
-            }
-            if(mm[0] && mm[1]) {put(0);}
-            else if((mm[0] && mm[2]) || (mm[1] && mm[3])) put((n/2)*(n/2 + 1))
-            else {
-                put(n*(n+1)/2 - 1 - (mm[0] ? n : 0));
-            }
-
+        else if(dp1[v]+1>dp2[u]){
+            dp2[u] = dp1[v] + 1;
         }
     }
-
+}
+void dfs2(int u,int p,int ans){
+    if(ans+1>dp1[u]){
+        dp2[u] = dp1[u];
+        dp1[u] = ans+1;
+    }
+    else if(ans+1>dp2[u]){
+        dp2[u] = ans + 1;
+    }
+    trav(v,adj[u]){
+        if(v==p) continue;
+        if(dp1[v]+1==dp1[u]) dfs2(v,u,dp2[u]);
+        else  dfs2(v,u,dp1[u]);
+    }
+}
+void testcase(){
+    int n;
+    cin >> n;
+    adj.clear();
+    adj.resize(n);
+    memset(dp1,0,sizeof dp1);
+    memset(dp2,0,sizeof dp2);
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    dfs1(0,-1);
+    dfs2(0,-1,-1);
+    int start = 0;
+    rep(i,0,n){
+        if(dp1[start] > dp1[i]) start = i;
+    }
+    put(dp1[start]+1);
+    debug(start,dp1[start]);
+    rep(i,0,dp1[start]+1){
+        put2(start+1,i);
+    }
 }
 // driver code
 int main()
