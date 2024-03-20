@@ -110,75 +110,35 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2000 + 5;
-vii adj;
-vi longest_tp(int S){
-    int n = adj.size();
-    vi dist(n,INF);
-    vi par(n);
-    queue<int> q;
-    dist[S] = 0;
-    q.push(S);
-    par[S] = -1;
-    while (q.size())
-    {
-        int u = q.front();
-        q.pop();
-        trav(v,adj[u]){
-            if(dist[v]==INF){
-                q.push(v);
-                dist[v] = dist[u]  + 1;
-                par[v] = u;
-            }
-        }
-    }
-    int v = max_element(all(dist)) - dist.begin();
-    int cur = v;
-    vi path;
-    while (par[cur]!=-1)
-    {
-        path.push_back(cur);
-        cur = par[cur];
-    }
-    path.push_back(cur);
-    reverse(all(path));
-    return path;
-    
-    
-}
+const int N = 45;
+int a[N];
+int c[N];
 void testcase(){
-    int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int v = longest_tp(0).back();
-    auto path= longest_tp(v);
-    debug(v,path);
-    if(path.size()%2==1){
-        int c = path[path.size()/2];
-        put((path.size()+1)/2);
-        rep(i,0,(path.size()+1)/2){ 
-            put2(c+1,i);
+    int n,k;
+    cin >> n >> k;
+    int cn = 0;
+    for(int i=0;i<n;i+=k){
+        int m = min(n-i,k);
+        int mid = (m+1)/2 - 1;
+        int j = 0;
+        cn++;
+        while (j<m)
+        {
+            a[i+(mid+j)%m] = (cn-1)*k + j+1;
+            c[i+(mid+j)%m] = cn;
+            j++;
         }
     }
-    else{
-        int c1 = path[path.size()/2-1];
-        int c2 = path[path.size()/2];
-        put((int)(path.size())/2 + (path.size()%4==2 ? 1 : 0));
-        rep(i,1,path.size()/2 + 1){
-            if(i%2==0) continue;
-            put2(c1+1,i);
-            put2(c2+1,i);
-        }
+    rep(i,0,n){
+        cout <<  a[i] << ' ';
     }
-
+    cout << endl;
+    put(cn);
+    rep(i,0,n){
+        cout <<  c[i] << ' ';
+    }
+    cout << endl;
+    
 }
 // driver code
 int main()
