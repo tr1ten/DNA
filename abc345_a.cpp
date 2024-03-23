@@ -1,8 +1,8 @@
-// Problem: B. Fireworks
-// Contest: Codeforces - Codeforces Round 935 (Div. 3)
-// URL: https://codeforces.com/contest/1945/problem/B
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
+// Problem: A - Leftrightarrow
+// Contest: AtCoder - Monoxer Programming Contest 2024（AtCoder Beginner Contest 345）
+// URL: https://atcoder.jp/contests/abc345/tasks/abc345_a
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -93,7 +93,7 @@ void __print(double x) {cerr << x;}
 void __print(long double x) {cerr << x;}
 void __print(char x) {cerr << '\'' << x << '\'';}
 void __print(const char *x) {cerr << '\"' << x << '\"';}
-void __print(const string &x) {cerr << '\"' << x << '\"';}		
+void __print(const string &x) {cerr << '\"' << x << '\"';}
 void __print(bool x) {cerr << (x ? "true" : "false");}
 
 template<typename T, typename V>
@@ -116,12 +116,13 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
 void testcase(){
-	ll a,b,m;
-	cin >> a >> b >> m;
-	put(m/a + m/b + 2);
+	string s;
+	cin >> s;
+	int c=count(all(s),'=');
+	pyn(s[0]=='<' && s.back()=='>' && c==(int)s.size()-2);
 }
 // driver code
 int main()
@@ -131,7 +132,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

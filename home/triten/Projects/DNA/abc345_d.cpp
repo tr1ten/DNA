@@ -1,8 +1,8 @@
-// Problem: B. Fireworks
-// Contest: Codeforces - Codeforces Round 935 (Div. 3)
-// URL: https://codeforces.com/contest/1945/problem/B
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
+// Problem: D - Tiling
+// Contest: AtCoder - Monoxer Programming Contest 2024（AtCoder Beginner Contest 345）
+// URL: https://atcoder.jp/contests/abc345/tasks/abc345_d
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -93,7 +93,7 @@ void __print(double x) {cerr << x;}
 void __print(long double x) {cerr << x;}
 void __print(char x) {cerr << '\'' << x << '\'';}
 void __print(const char *x) {cerr << '\"' << x << '\"';}
-void __print(const string &x) {cerr << '\"' << x << '\"';}		
+void __print(const string &x) {cerr << '\"' << x << '\"';}
 void __print(bool x) {cerr << (x ? "true" : "false");}
 
 template<typename T, typename V>
@@ -116,12 +116,60 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
+int n,h,w;
+vpi a;
+bool dfs(){
+	int mat[h][w];
+	memset(mat,0, sizeof(mat[0][0]) * h * w);
+	int k =0;
+	rep(i,0,h){
+		rep(j,0,w){
+			if(mat[i][j]) continue;
+			if(k==n) return false;
+			int b=a[k].first,c=a[k].second;
+			rep(y,i,i+b){
+				rep(x,j,j+c){
+					if(y>=h || x>=w || mat[y][x]) return false;
+					mat[y][x] = 1;
+				}
+			
+			}
+			k++;
+		}
+	}
+	return true;
+}
+bool flip(){
+	rep(mask,0,1<<n) {
+		rep(i,0,n){
+			if(mask&(1<<i)) {
+				swap(a[i].first,a[i].second);
+			}
+		}
+		if(dfs()) return true;
+		rep(i,0,n){
+			if(mask&(1<<i)) {
+				swap(a[i].first,a[i].second);
+			}
+		}
+	}
+	return false;
+}
 void testcase(){
-	ll a,b,m;
-	cin >> a >> b >> m;
-	put(m/a + m/b + 2);
+	cin >> n >> h >> w;
+	a.resize(n);
+	rep(i,0,n){
+		cin >> a[i].first >> a[i].second;
+	}
+	do {
+			if(flip()) {pyn(1);return;}
+	} while(next_permutation(all(a)));
+	pyn(0);
+	
+	
+	
 }
 // driver code
 int main()
@@ -131,7 +179,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

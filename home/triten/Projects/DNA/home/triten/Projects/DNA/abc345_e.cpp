@@ -1,8 +1,8 @@
-// Problem: B. Fireworks
-// Contest: Codeforces - Codeforces Round 935 (Div. 3)
-// URL: https://codeforces.com/contest/1945/problem/B
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
+// Problem: E - Colorful Subsequence
+// Contest: AtCoder - Monoxer Programming Contest 2024（AtCoder Beginner Contest 345）
+// URL: https://atcoder.jp/contests/abc345/tasks/abc345_e
+// Memory Limit: 1024 MB
+// Time Limit: 5000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -93,7 +93,7 @@ void __print(double x) {cerr << x;}
 void __print(long double x) {cerr << x;}
 void __print(char x) {cerr << '\'' << x << '\'';}
 void __print(const char *x) {cerr << '\"' << x << '\"';}
-void __print(const string &x) {cerr << '\"' << x << '\"';}		
+void __print(const string &x) {cerr << '\"' << x << '\"';}
 void __print(bool x) {cerr << (x ? "true" : "false");}
 
 template<typename T, typename V>
@@ -118,10 +118,45 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N=2*(1e5) + 5;
+const int K=505;
+ll dp[N][K];
+ll c[N],	v[N];
 void testcase(){
-	ll a,b,m;
-	cin >> a >> b >> m;
-	put(m/a + m/b + 2);
+	int n,k;
+	cin >> n >> k;
+	rep(i,0,n){
+		cin>>c[i] >> v[i];
+	}
+	rep(i,0,n+1){
+		rep(j,0,k+1){
+			dp[i][j] = -INF;
+		}
+	}
+	dp[0][0] = 0;  
+	vpi px1(n+1);
+	rep(j,0,k+1){
+		vpi mx1(n+1);
+		vpi mx2(n+1);
+		rep(i,1,n+1){
+				ll val = v[i-1];
+				// not removing
+				mx1[i] = mx1[i-1];
+				mx2[i] = mx2[i-1]; 
+				if(mx1[i-1].second!=c[i-1]) {
+					dp[i][j] = max(mx1[i-1].first + val,dp[i][j]);
+					if(dp[i][j]>mx1[i].first) {mx2[i] = mx1[i-1]; mx1[i] = {dp[i][j],c[i-1]};}
+					else if(mx2[i].first<=dp[i][j] && c[i-1]!=mx1[i].second) mx2[i] = {dp[i][j],c[i-1]};
+				}
+				else dp[i][j] = max(mx2[i-1].first + val,dp[i][j]);
+				// removing
+				if(j) dp[i][j] = max(dp[i-1][j-1],dp[i][j]);
+				debug(i,j,dp[i][j]);
+ 		}
+		
+	}
+	put(dp[n][k]);
+	
 }
 // driver code
 int main()
@@ -131,7 +166,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
