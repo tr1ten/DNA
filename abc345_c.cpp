@@ -1,8 +1,8 @@
-// Problem: A. Polycarp and Coins
-// Contest: Codeforces - Codeforces Round 734 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1551/A
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
+// Problem: C - One Time Swap
+// Contest: AtCoder - Monoxer Programming Contest 2024（AtCoder Beginner Contest 345）
+// URL: https://atcoder.jp/contests/abc345/tasks/abc345_c
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -35,13 +35,28 @@ using ht = gp_hash_table<
 
                                 hash_load_check_resize_trigger<>, true>>;
 
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 // ht<int, null_type> g;
+
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll> mll;
+typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -94,22 +109,31 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"YES":"NO");}
+// do not use unordered map use mll
+int c[26];
 void testcase(){
-    int n;
-    cin >> n;
-    int a = n/3;
-    int b = n-2*a;
-    if((n-a)%2==0) put2(a,(n-a)/2)
-    else put2(b,a);
-		
+	string s;
+	cin >> s;
+	ll res = 0;
+	int ex =0 ;
+	rep(i,0,(int)s.size()){
+		rep(j,0,26){
+			if(j==s[i]-'a') {
+				if(c[j]) ex=1;
+			}
+			else res += c[j];
+		}
+		c[s[i]-'a']++;
+	}
+	put(res+ex);
 }
 // driver code
 int main()
@@ -119,7 +143,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

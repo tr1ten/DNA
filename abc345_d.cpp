@@ -1,8 +1,8 @@
-// Problem: A. Next Round
-// Contest: Codeforces - VK Cup 2012 Qualification Round 1
-// URL: https://codeforces.com/problemset/problem/158/A
-// Memory Limit: 256 MB
-// Time Limit: 3000 ms
+// Problem: D - Tiling
+// Contest: AtCoder - Monoxer Programming Contest 2024（AtCoder Beginner Contest 345）
+// URL: https://atcoder.jp/contests/abc345/tasks/abc345_d
+// Memory Limit: 1024 MB
+// Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -35,13 +35,28 @@ using ht = gp_hash_table<
 
                                 hash_load_check_resize_trigger<>, true>>;
 
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 // ht<int, null_type> g;
+
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll> mll;
+typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -94,24 +109,67 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
+// do not use unordered map use mll
+int n,h,w;
+vpi a;
+bool dfs(){
+	int mat[h][w];
+	memset(mat,0, sizeof(mat[0][0]) * h * w);
+	int k =0;
+	rep(i,0,h){
+		rep(j,0,w){
+			if(mat[i][j]) continue;
+			if(k==n) return false;
+			int b=a[k].first,c=a[k].second;
+			rep(y,i,i+b){
+				rep(x,j,j+c){
+					if(y>=h || x>=w || mat[y][x]) return false;
+					mat[y][x] = 1;
+				}
+			
+			}
+			k++;
+		}
+	}
+	return true;
+}
+bool flip(){
+	rep(mask,0,1<<n) {
+		rep(i,0,n){
+			if(mask&(1<<i)) {
+				swap(a[i].first,a[i].second);
+			}
+		}
+		if(dfs()) return true;
+		rep(i,0,n){
+			if(mask&(1<<i)) {
+				swap(a[i].first,a[i].second);
+			}
+		}
+	}
+	return false;
+}
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi A(n);
-    tkv(A,n);
-    int p = k-1;
-    while(p<n && A[p]>0 && A[p]==A[k-1]) p++;
-    while(p>=0 && A[p]==0) p--;
-    put(max(0,p));
-    
+	cin >> n >> h >> w;
+	a.resize(n);
+	rep(i,0,n){
+		cin >> a[i].first >> a[i].second;
+	}
+	do {
+			if(flip()) {pyn(1);return;}
+	} while(next_permutation(all(a)));
+	pyn(0);
+	
+	
+	
 }
 // driver code
 int main()

@@ -1,7 +1,7 @@
-// Problem: A. Team
-// Contest: Codeforces - Codeforces Round 143 (Div. 2)
-// URL: https://codeforces.com/problemset/problem/231/A
-// Memory Limit: 256 MB
+// Problem: B - Integer Division Returns
+// Contest: AtCoder - Monoxer Programming Contest 2024（AtCoder Beginner Contest 345）
+// URL: https://atcoder.jp/contests/abc345/tasks/abc345_b
+// Memory Limit: 1024 MB
 // Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
@@ -35,13 +35,28 @@ using ht = gp_hash_table<
 
                                 hash_load_check_resize_trigger<>, true>>;
 
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 // ht<int, null_type> g;
+
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll> mll;
+typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -94,24 +109,22 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"YES":"NO");}
+// do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    int cnt = 0;
-    for(int i=0;i<n;i++){
-    	int a,b,c;
-    	cin >> a >> b >> c;
-    	cnt += (a+b+c)>=2;
-    }
-    put(cnt);
+	ll n;
+	cin >> n;
+	if(n<0) {
+		put(-(-n/10));
+	}
+	else put((n+9)/10)
 }
 // driver code
 int main()

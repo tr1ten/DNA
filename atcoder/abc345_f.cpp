@@ -1,7 +1,7 @@
-// Problem: D. Phoenix and Science
-// Contest: Codeforces - Codeforces Round 638 (Div. 2)
-// URL: https://codeforces.com/problemset/problem/1348/D
-// Memory Limit: 256 MB
+// Problem: F - Many Lamps
+// Contest: AtCoder - Monoxer Programming Contest 2024（AtCoder Beginner Contest 345）
+// URL: https://atcoder.jp/contests/abc345/tasks/abc345_f
+// Memory Limit: 1024 MB
 // Time Limit: 2000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
@@ -35,13 +35,28 @@ using ht = gp_hash_table<
 
                                 hash_load_check_resize_trigger<>, true>>;
 
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 // ht<int, null_type> g;
+
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll> mll;
+typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -94,31 +109,77 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
-
+void pyn(int x) {put(x?"YES":"NO");}
+// do not use unordered map use mll
+const int N = 2*(1e5) + 5;
+int dp[N];
+vector<vector<pi>> adj;
+vi res;
+int lft;
+void dfs(int u){
+	if(lft==0) {
+		dp[u] = 0;
+		return;
+	}
+	dp[u] = 0;
+	int t = 0;
+	trav(v,adj[u]){
+		if(lft==0) break;
+		if(dp[v.first]!=-1)  continue;
+	dfs(v.first);
+		if(dp[v.first]==1){
+			t++;
+			if(t%2==1) lft--;
+			else lft++;
+			res.push_back(v.second+1);
+		}
+	}
+	if((t%2==0) && lft>0){
+		lft--;
+		dp[u] = 1;
+	}
+	// debug(lft,u,t,dp[u]);
+	// dp[u] = !(t%2) && (lft>0);
+}	
 void testcase(){
-    int n;
-    cin >> n;
-   	vector<int> ans{1};
-   	int mass=1;
-   	while(mass+2*ans.back()<=n) {
-   		mass +=2*ans.back();
-   		ans.push_back(2*ans.back());
-   	}
-   	if(mass!=n) ans.push_back(abs(n-mass));
-   	srv(ans);
-   	put(ans.size()-1);
-   	rep(i,1,ans.size()){
-   		cout << ans[i]-ans[i-1] << " " ;
-   	}
-	put("")
+	int n,m,k;
+	cin >> n >> m >> k;
+	if(k%2==1 ){
+		put("No");
+		return;
+	}
+	memset(dp,-1,sizeof dp);
+	adj.clear();
+	adj.resize(n);
+	rep(i,0,m){
+		int u,v;
+		cin >> u >> v;
+		--u;--v;
+		adj[u].push_back({v,i});
+		adj[v].push_back({u,i});
+	}
+	lft = k;
+	rep(i,0,n){
+		if(dp[i]==-1){
+			dfs(i);
+			lft += dp[i];
+			// debug("increasing ",i,dp[i],lft);
+		}
+	}
+	if(lft>0){
+		put("No");
+		return;
+	}
+	put("Yes");
+	put(res.size());
+	pvc(res);
 }
 // driver code
 int main()
@@ -128,7 +189,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

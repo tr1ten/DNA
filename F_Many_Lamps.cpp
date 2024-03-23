@@ -1,11 +1,3 @@
-// Problem: D. The Best Vacation
-// Contest: Codeforces - Codeforces Round 645 (Div. 2)
-// URL: https://codeforces.com/problemset/problem/1358/D
-// Memory Limit: 256 MB
-// Time Limit: 2000 ms
-// 
-// Powered by CP Editor (https://cpeditor.org)
-
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -35,13 +27,28 @@ using ht = gp_hash_table<
 
                                 hash_load_check_resize_trigger<>, true>>;
 
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
 // ht<int, null_type> g;
+
 typedef long long ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll> mll;
+typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -94,46 +101,16 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void ans(int x) {put(x?"YES":"NO");}
-const int N = 1e6 + 5;
-ll a[2*N];
+void pyn(int x) {put(x?"YES":"NO");}
+// do not use unordered map use mll
 void testcase(){
-	ll n,m;
-	cin >> n >> m;
-	rep(i,0,n) {
-		cin >> a[i];
-	}
-	rep(i,0,n) a[i+n] = a[i];
-	ll i =0;
-	ll cur = 0;
-	ll val = 0;
-	ll res = 0;
-	rep(j,0,2*n){
-		cur+=a[j];
-		val +=a[j]*(a[j]+1)/2;
-		while(cur>=m){
-			ll c = m-(cur-a[j]-a[i]);
-			ll x = a[i];
-			if(a[i]-c<0) x = c-a[j]; 
-			val = val-(a[i]*(a[i]+1)/2);
-			ll net = val - (a[j]*(a[j]+1)/2);
-			// debug(i,j,x,net,val);
-			res = max(res,(net + (a[i]-c)*x + c*(c+1)/2) );	
-			cur -=a[i];
-			i++;	
-		}
-		
-		
-	}
-	put(res);
-	
 }
 // driver code
 int main()
@@ -143,7 +120,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
