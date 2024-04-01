@@ -127,9 +127,11 @@ void testcase(){
 	ll res = x+y-2;
 	ll ty = y;
 	ll ex = 0;
+	vpi dd;
 	rep(i,1,x) {
 		ll sp = a[i] - a[i-1] - 1;
 		if(sp==0) continue;
+		dd.pb({!(sp%2)} );
 		ll d = min((sp+1)/2 - (sp%2),y);
 		y -=d;
 		ex +=d+(sp%2 && d==((sp+1)/2-1));
