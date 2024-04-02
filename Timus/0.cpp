@@ -1,3 +1,11 @@
+// Problem: 1000. A+B Problem
+// Contest: Timus Online Judge
+// URL: https://acm.timus.ru/problem.aspx?space=1&num=1000
+// Memory Limit: 64 MB
+// Time Limit: 1000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -102,7 +110,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e10+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,78 +118,10 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// similar to z array
- class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 7;
-	static const long long B = 9973;
- 
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
- 
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
- 
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
- 
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
-		}
-	}
- 
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
-	}
-};
-vector<long long> HashedString::pow = {1};
 void testcase(){
-    ll m,q;
-    cin >> m >> q;
-    string s;
-    cin >> s;
-    HashedString hs(s);
-    reverse(all(s));
-    HashedString rhs(s);
-    reverse(all(s));
-    rep(i,0,q){
-        int l,r;
-        cin >> l >> r;
-        r--;l--;
-        ll n = r-l+1;
-        if(n==1){
-            put(0);
-        }
-        else if(n==2){
-            put(s[l]==s[r] ? 0 : 2);
-        }
-        else{
-            ll lr=m-1-l,nr=m-1-r;
-            // check same 
-            ll mm[4] = {0,0,0,0};
-            rep(j,0,min(4,r-l+1)){
-                int f = 1;
-                int nn = n-j;
-                rep(k,l,l+j+1){
-                    f &= hs.getHash(k,k+nn-1) == rhs.getHash(m-1-(k+nn-1),m-1-k);
-                }
-                mm[j] = f;
-                debug(l,r,j,mm[j]);
-            }
-            if(mm[0] && mm[1]) {put(0);}
-            else if((mm[0] && mm[2]) || (mm[1] && mm[3])) put((n/2)*(n/2 + 1))
-            else {
-                put(n*(n+1)/2 - 1 - (mm[0] ? n : 0));
-            }
-
-        }
-    }
-
+	int	a,b;
+	cin >> a >> b;
+	put(a+b);
 }
 // driver code
 int main()
@@ -191,7 +131,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

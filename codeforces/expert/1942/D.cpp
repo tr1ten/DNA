@@ -1,3 +1,11 @@
+// Problem: D. Learning to Paint
+// Contest: Codeforces - CodeTON Round 8 (Div. 1 + Div. 2, Rated, Prizes!)
+// URL: https://codeforces.com/contest/1942/problem/D
+// Memory Limit: 512 MB
+// Time Limit: 4500 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -102,7 +110,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e10+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -110,78 +118,68 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// similar to z array
- class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 7;
-	static const long long B = 9973;
- 
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
- 
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
- 
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
- 
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
+struct P {
+	multiset<ll>::iterator it;
+	ll b;
+	multiset<ll>::iterator end;
+};
+void testcase(){
+	int n,k;
+	cin >> n >> k;
+	vii a(n,vi(n));
+	rep(i,0,n) {
+		rep(j,i,n) {
+			cin >> a[i][j];
 		}
 	}
- 
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
+	vector<multiset<ll,greater<ll>>> dp(n+1);
+	vector<multiset<ll,greater<ll>>> dp2(n+1);
+	dp2[0].insert(0);
+	 auto customComparator 
+        = [](const P&a,const P& b) { 
+			return (*a.it) + a.b > (*b.it) + b.b;
+	}; 
+	multiset<P, decltype(customComparator)> ms(customComparator); 
+		
+	rep(r,1,n+1) {
+		ms.clear();
+		trav(x,dp[r-1]) {
+			if(dp2[r].size()==k) {
+				if((*dp2[r].rbegin()) < x) dp2[r].erase(prev(dp2[r].end()));
+				else break;
+			}
+			dp2[r].insert(x);
+		}	
+		trav(x,dp2[r-1]) {
+			if(dp2[r].size()==k) {
+				if((*dp2[r].rbegin()) < x) dp2[r].erase(prev(dp2[r].end()));
+				else break;
+			}
+			dp2[r].insert(x);
+		}	
+		rep(l,1,r+1) {
+			ms.insert(P{dp2[l-1].begin(),a[l-1][r-1],dp2[l-1].end()});
+		}
+		while (dp[r].size()<k && ms.size())
+		{
+			auto p = ms.begin();
+			ms.erase(p);
+			auto pt = *p;
+			dp[r].insert((*pt.it + pt.b));
+			pt.it++;
+			if(pt.it!=pt.end) ms.insert(pt);
+		}
+		// debug(r,dp[r],dp2[r]);
+		
 	}
-};
-vector<long long> HashedString::pow = {1};
-void testcase(){
-    ll m,q;
-    cin >> m >> q;
-    string s;
-    cin >> s;
-    HashedString hs(s);
-    reverse(all(s));
-    HashedString rhs(s);
-    reverse(all(s));
-    rep(i,0,q){
-        int l,r;
-        cin >> l >> r;
-        r--;l--;
-        ll n = r-l+1;
-        if(n==1){
-            put(0);
-        }
-        else if(n==2){
-            put(s[l]==s[r] ? 0 : 2);
-        }
-        else{
-            ll lr=m-1-l,nr=m-1-r;
-            // check same 
-            ll mm[4] = {0,0,0,0};
-            rep(j,0,min(4,r-l+1)){
-                int f = 1;
-                int nn = n-j;
-                rep(k,l,l+j+1){
-                    f &= hs.getHash(k,k+nn-1) == rhs.getHash(m-1-(k+nn-1),m-1-k);
-                }
-                mm[j] = f;
-                debug(l,r,j,mm[j]);
-            }
-            if(mm[0] && mm[1]) {put(0);}
-            else if((mm[0] && mm[2]) || (mm[1] && mm[3])) put((n/2)*(n/2 + 1))
-            else {
-                put(n*(n+1)/2 - 1 - (mm[0] ? n : 0));
-            }
-
-        }
-    }
-
+	trav(x,dp2[n]) {
+			dp[n].insert(x);
+		}		
+		while(dp[n].size()>k) {
+			dp[n].erase(prev(dp[n].end()));
+		}
+		pvc(dp.back());
+	// pvc(dp.back());
 }
 // driver code
 int main()

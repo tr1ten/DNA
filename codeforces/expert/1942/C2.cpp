@@ -131,14 +131,17 @@ void testcase(){
 	rep(i,1,x) {
 		ll sp = a[i] - a[i-1] - 1;
 		if(sp==0) continue;
-		dd.pb({!(sp%2)} );
-		ll d = min((sp+1)/2 - (sp%2),y);
-		y -=d;
-		ex +=d+(sp%2 && d==((sp+1)/2-1));
+		dd.pb({!(sp%2),sp} );
+		
 	}
 	
 	ll sp = a[0] - a.back() - 1 + n;
 	if(sp>=1){
+		dd.pb({!(sp%2),sp} );
+	}
+	srv(dd);
+	trav(x,dd) {
+		ll sp = x.second;
 		ll d = min((sp+1)/2 - (sp%2),y);
 		y -=d;
 		ex +=d+(sp%2 && d==((sp+1)/2-1));
