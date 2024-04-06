@@ -1,8 +1,8 @@
-// Problem: D. River Locks
-// Contest: Codeforces - Codeforces Round 802 (Div. 2)
-// URL: https://codeforces.com/problemset/problem/1700/D
-// Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Problem: D1. Hot Start Up (easy version)
+// Contest: Codeforces - Codeforces Round 854 by cybercats (Div. 1 + Div. 2)
+// URL: https://codeforces.com/problemset/problem/1799/D1
+// Memory Limit: 512 MB
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -118,40 +118,41 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-	int n;
-	cin >>n;
-	vi a(n);
-	tkv(a,n);
-	ll sm = accumulate(all(a),0LL);
-	int q;
-	cin >> q;
-	vi dp(n+1);
-	dp[0] = INF;
-	dp[1] = a[0];
-	ll pref = a[0];
-	rep(i,2,n+1) {
-		pref += a[i-1];
-		dp[i] = max(dp[i-1],(pref+i-1)/i);
-		
+	vi a;
+	vi hot;
+	vi cold;
+ll dfs(int i,int j,vii &dp) {
+	if(i==dp.size()-1) return 0;
+	if(dp[i][j]!=-1) return dp[i][j];
+	ll res = INF;
+	if(j==a[i]) {
+		res = hot[a[i]-1] + dfs(i+1,i-1>=0 ? a[i-1] : 0,dp) ;
 	}
-	debug(dp);
-	rep(i,0,q){
-		ll t;
-		cin >> t;
-		int lo=1,hi=n;
-		int res = -1;
-		while(lo<=hi){
-			ll mid = (lo+hi)/2;
-			if(t>=dp[mid] && t*mid>=sm) {
-				res = mid;
-				hi = mid-1;
-			}
-			else lo = mid+1;
-		}
-		put(res);
+	else {
+		 res = cold[a[i]-1] + dfs(i+1,i-1>=0 ? a[i-1] : 0,dp);
 	}
+	if( (i-1>=0 && a[i-1]==a[i])) {
+		res = min(res,hot[a[i]-1] + dfs(i+1,j,dp));
+	}
+	else{
+		res = min(res,cold[a[i]-1] + dfs(i+1,j,dp));
+	}
+	// debug(res,i,j);
+	return dp[i][j] = res;
 }
+void testcase(){
+	int n,k;
+	cin >> n >> k;
+	a.resize(n);
+	hot.resize(k);
+	cold.resize(k);
+	tkv(a,n);
+	
+	tkv(cold,k);
+	tkv(hot,k);
+	vii dp(n+1,vi(k+1,-1));
+	put(dfs(0,0,dp));
+}	
 // driver code
 int main()
 {
@@ -160,7 +161,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
