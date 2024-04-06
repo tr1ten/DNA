@@ -1,8 +1,8 @@
-// Problem: A. Farmer John's Challenge
-// Contest: Codeforces - CodeTON Round 8 (Div. 1 + Div. 2, Rated, Prizes!)
-// URL: https://codeforces.com/contest/1942/problem/0
+// Problem: D. Paths on the Tree
+// Contest: Codeforces - Codeforces Global Round 23
+// URL: https://codeforces.com/problemset/problem/1746/D
 // Memory Limit: 256 MB
-// Time Limit: 1000 ms
+// Time Limit: 3000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -118,22 +118,62 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+vii adj;
+vector<vector<pi>> dp;
+vi a;
+ll dfs(int u,int p,int c) {
+	for(auto [k,v]:dp[u]) {
+		if(k==c) return v;
+	}
+	int childs = adj[u].size();
+	ll ans = a[u]*c;
+	if(childs==0) {
+		return ans;
+	}
+	if(c%childs==0) {
+		trav(v,adj[u]) {
+			ans += dfs(v,u,c/childs);
+		}
+	} 
+	else{
+		vi dp1(childs),dp2(childs);
+		rep(i,0,childs) {
+			dp1[i] = dfs(adj[u][i],u,c/childs);
+			dp2[i] = dfs(adj[u][i],u,c/childs + 1);
+		}
+		vi diff(childs);
+		rep(i,0,childs) {
+			ans += dp1[i];
+			diff[i] = dp2[i] - dp1[i];
+		}
+		sort(all(diff),greater<ll>());
+		rep(i,0,c%childs){
+			ans += diff[i];
+		}
+	}
+	dp[u].pb({c,ans});
+	return ans;
+}
+
+
 void testcase(){
 	int n,k;
 	cin >> n >> k;
-	if(k==n) {
-		rep(i,0,n) {
-			cout << 1 << " ";
-		}
-		cout << endl;
+	adj.clear();
+	adj.resize(n);
+	rep(i,1,n){
+		int v;
+		cin >> v;
+		v--;
+		adj[v].pb(i);
 	}
-	else if(k==1) {
-		rep(i,0,n) {
-			cout << i +1 << " ";
-		}
-		cout << endl;
-	}
-	else put(-1);
+	a.clear();
+	a.resize(n);
+	dp.clear();
+	dp.resize(n);
+	tkv(a,n);
+	put(dfs(0,-1,k));
+	
 }
 // driver code
 int main()
