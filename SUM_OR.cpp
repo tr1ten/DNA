@@ -1,11 +1,3 @@
-// Problem: G2. Teleporters (Hard Version)
-// Contest: Codeforces - Codeforces Round 849 (Div. 4)
-// URL: https://codeforces.com/problemset/problem/1791/G2
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
-// 
-// Powered by CP Editor (https://cpeditor.org)
-
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -119,47 +111,6 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-	int n,k;
-	cin >> n >> k;
-	vi a(n);
-	vpi s1;
-	rep(i,0,n) {
-		ll x;
-		cin >> x;
-		a[i] = x;
-		s1.pb({x+min(n-i,i+1), x+i+1} ) ;
-	}
-	srv((s1));
-	vi pref(n+1);
-	rep(i,1,n+1){
-		pref[i] = pref[i-1] + s1[i-1].first;
-	}
-	int ans = 0;
-	rep(i,0,n) {
-		if(s1[i].first>k) break;
-		int c = k-s1[i].second;
-		int lo=0,hi=n;
-		int mx = 0;
-		while(lo<=hi) {
-			int mid = (lo+hi)/2;
-			ll price = pref[mid];
-			int now = mid+1;
-			if(mid>i) {
-				price -= s1[i].first;
-				now-=1;
-			}
-			if(price<=c) {
-				mx = max(now,mx);
-				lo = mid+1;
-			}
-			else hi = mid-1;
-		}
-		debug(i,mx);
-		ans = max(mx,ans);
-		
-	}
-	put(ans);
-	
 }
 // driver code
 int main()

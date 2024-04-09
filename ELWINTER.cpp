@@ -139,27 +139,29 @@ void testcase(){
 		ll a,b;
 		cin >> a >> b;
 		if(a==2) {
-			t +=b;continue;
+			t +=b;
 		}
-		if(a==1) {if(dist[b-1]==INF) {dist[b-1] =t;ss.insert({t,b-1});}}
-		else{ qs.pb({t,b-1});}	
-	}
-	// debug(dist,ss);
-	while(ss.size()) {
-		auto p = *ss.begin();
-		ss.erase(ss.begin());
-		if(p.first>dist[p.second]) continue;
-		trav(v,adj[p.second]) {
-			if(dist[v]>p.first+1) {
-				dist[v] = p.first+1;
-				ss.insert({dist[v],v});
+		else if(a==1) {if(dist[b-1]==INF) {dist[b-1] =t;ss.insert({t,b-1});}}
+		else{pyn(dist[b-1]<=t);}	
+		
+		while(ss.size() && (*ss.begin()).first<t) {
+			auto p = *ss.begin();
+			ss.erase(ss.begin());
+			if(p.first>dist[p.second]) continue;
+			trav(v,adj[p.second]) {
+				if(dist[v]>p.first+1) {
+					dist[v] = p.first+1;
+					ss.insert({dist[v],v});
+				}
 			}
 		}
 	}
+	// debug(dist,ss);
+	
 	// debug(dist);
-	trav(x,qs) {
-		pyn(dist[x.second]<=x.first);
-	}
+	// trav(x,qs) {
+		// pyn(dist[x.second]<=x.first);
+	// }
 	
 	
 	
