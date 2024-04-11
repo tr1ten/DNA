@@ -1,8 +1,8 @@
-// Problem: Pasha and Good Ones
-// Contest: CodeChef - COOK144
-// URL: https://www.codechef.com/problems/PASHA
+// Problem: Ballon d Or
+// Contest: CodeChef - START129B
+// URL: https://www.codechef.com/START129B/problems/BLNDOR
 // Memory Limit: 256 MB
-// Time Limit: 3000 ms
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -57,10 +57,6 @@ typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
-#define CAST(X) std::bitset<sizeof(X)*8>
-#define ACCESS(X) *((std::bitset<sizeof(X)*8>*)&X)
-typedef std::pair<int,int> pii;
-std::unordered_map<CAST(pii),int> hashmap;
 #define pb push_back
 #define mp make_pair
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
@@ -123,30 +119,16 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-	int n,k;
-	cin >> n >> k;
-	string s;
-	cin >> s;
-	ll res = 0;
-	rep(j,0,26) {
-		int cnt =0;
-		unordered_map<int,int> d;
-		unordered_map<int,int> d2;
-		d[0] =1;
-		d2[0]= 1;
-		rep(i,1,n+1) {
-			int inc= (s[i-1]-'a')==j;	
-			if(inc) {
-				cnt++;
-				d2.clear();
-			}
-			res += d[2*cnt-i-k] - d2[2*cnt - i -k];
-			d[2*cnt-i]++;
-			d2[2*cnt - i]++;
-		}
+	int n;
+	cin >> n;
+	int c=0;
+	rep(i,0,n) {
+		int x;
+		cin >> x;
+		c +=(x==2);
 	}
-	put(res);
-
+	// debug(c);
+	pyn(c==0 || (c%8)==0);
 }
 // driver code
 int main()
@@ -154,7 +136,7 @@ int main()
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);     
+    // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
     while(T--) testcase();
