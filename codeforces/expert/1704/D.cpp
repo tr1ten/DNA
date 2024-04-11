@@ -1,6 +1,6 @@
-// Problem: D. Exam in MAC
-// Contest: Codeforces - Codeforces Round 932 (Div. 2)
-// URL: https://codeforces.com/contest/1935/problem/D
+// Problem: D. Magical Array
+// Contest: Codeforces - CodeTON Round 2 (Div. 1 + Div. 2, Rated, Prizes!)
+// URL: https://codeforces.com/problemset/problem/1704/D
 // Memory Limit: 256 MB
 // Time Limit: 2000 ms
 // 
@@ -119,6 +119,32 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
+	int n,m;
+	cin >> n >> m;
+	vi cms; // center of mass!
+	ll am=-1,ai=-1;
+	ll bm=-1,bi=-1;
+	for(int i=0;i<n;i++) {
+		ll cm=0;
+		for(int j=1;j<=m;j++) {
+			ll x;
+			cin >> x;
+			cm += x*j;
+		}
+		cms.pb(cm);
+		if(ai==-1){
+			ai = i;
+			am = cm;
+		}
+		else if(bi==-1 && am!=cm) {
+			bi = i;
+			bm = cm;
+		}
+	}
+	if(count(all(cms),am)!=1) swap(ai,bi);
+	// put(ai+1);
+	put2(ai+1,abs(am-bm));
+	
 }
 // driver code
 int main()

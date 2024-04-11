@@ -1,8 +1,8 @@
-// Problem: D. Exam in MAC
-// Contest: Codeforces - Codeforces Round 932 (Div. 2)
-// URL: https://codeforces.com/contest/1935/problem/D
+// Problem: C. Ping-pong
+// Contest: Codeforces - Educational Codeforces Round 99 (Rated for Div. 2)
+// URL: https://codeforces.com/contest/1455/problem/C
 // Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -119,6 +119,9 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
+	int n,m;
+	cin >> n >> m;
+	put2(n-1,m);
 }
 // driver code
 int main()

@@ -1,8 +1,8 @@
-// Problem: D. Exam in MAC
-// Contest: Codeforces - Codeforces Round 932 (Div. 2)
-// URL: https://codeforces.com/contest/1935/problem/D
-// Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Problem: D. Many Perfect Squares
+// Contest: Codeforces - VK Cup 2022 - Отборочный раунд (Engine)
+// URL: https://codeforces.com/contest/1781/problem/D
+// Memory Limit: 512 MB
+// Time Limit: 4000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -117,8 +117,55 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+const int N = 1e5+5;
+vector<long long> divisors(long long x){
+    vector<long long> cur;
+      for(int j=1;j*j<=x;j++)
+		{		
+			if(x%j==0)
+			{
+				cur.push_back(j);
+				if(j != x/j)
+					cur.push_back(x/j);
+            }
+        }
+    return cur;
+}
+bool isp(ll n) {
+    if (n < 0)
+        return false;
+    ll root(round(sqrt(n)));
+    return n == root * root;
+}
 // do not use unordered map use mll
 void testcase(){
+	int n;
+	cin >> n;
+	vi a(n);
+	tkv(a,n);
+	set<ll> xs;
+	srv(a);
+	rep(i,0,n) {
+		rep(j,i+1,n) {
+			ll tar = a[j]-a[i];
+			trav(c1,divisors(tar)){
+				ll c2 = tar/c1;
+				if((c1+c2)%2) continue;
+				xs.insert( ((c1+c2)/2)*((c1+c2)/2) - a[j]);
+			}
+		} 
+	}
+	ll ans = 1;
+	// debug(xs);
+	trav(x,xs){
+		if(x<0) continue;
+		ll cur = 0;
+		rep(i,0,n) {
+			if(isp(a[i]+x)) cur++;
+		}
+		ans = max(ans,cur);
+	} 
+	put(ans);
 }
 // driver code
 int main()

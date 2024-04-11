@@ -1,8 +1,8 @@
-// Problem: D. Exam in MAC
-// Contest: Codeforces - Codeforces Round 932 (Div. 2)
-// URL: https://codeforces.com/contest/1935/problem/D
+// Problem: Pasha and Good Ones
+// Contest: CodeChef - COOK144
+// URL: https://www.codechef.com/problems/PASHA
 // Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Time Limit: 3000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -119,6 +119,26 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
+	int n,k;
+	cin >> n >> k;
+	string s;
+	cin >> s;
+	mll d[26]; 
+	rep(i,0,26) {d[i][0]=1;}
+	vi cnt(26);
+	ll res = 0;
+	rep(i,1,n+1) {
+		cnt[s[i-1]-'a']++;
+		rep(j,0,26) {
+			if(cnt[j]) res += d[j][2*cnt[j]-i-k];
+			debug(res,i,j,d[j],cnt);
+			d[j][2*cnt[j]-i]++;
+		}
+		
+		
+	}
+	put(res);
+
 }
 // driver code
 int main()

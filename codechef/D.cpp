@@ -1,8 +1,8 @@
-// Problem: D. Exam in MAC
-// Contest: Codeforces - Codeforces Round 932 (Div. 2)
-// URL: https://codeforces.com/contest/1935/problem/D
+// Problem: Alice Potter And Dumbledore Army
+// Contest: CodeChef - COOK144
+// URL: https://www.codechef.com/problems/DUMBLEDORE
 // Memory Limit: 256 MB
-// Time Limit: 2000 ms
+// Time Limit: 3500 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
 
@@ -119,6 +119,17 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
+	int n,m;
+	cin >> n >> m;
+	ll last = 0;
+	mll cnt;
+	rep(i,0,m) {
+		int p,x;
+		cin >> p >>  x;
+		cnt[p]+=x;
+		last =last+cnt[p];
+		put(last);
+	}
 }
 // driver code
 int main()
@@ -128,7 +139,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
