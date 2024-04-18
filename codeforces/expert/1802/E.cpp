@@ -1,7 +1,7 @@
-// Problem: Counting Problem
-// Contest: CodeChef - START128B
-// URL: https://www.codechef.com/START128B/problems/CNTP
-// Memory Limit: 256 MB
+// Problem: E. Music Festival
+// Contest: Codeforces - Codeforces Round 857 (Div. 2)
+// URL: https://codeforces.com/contest/1802/problem/E
+// Memory Limit: 512 MB
 // Time Limit: 1000 ms
 // 
 // Powered by CP Editor (https://cpeditor.org)
@@ -118,66 +118,59 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-#include <iostream>
 
-
-const int N = 2*(1e5) + 5;
-long long fact[N];
-long long inv[N];
-long long finv[N];
-
-void pre() {
-    fact[0] = 1;
-    for (int i = 1; i <= N; i++) {
-        fact[i] = (fact[i-1]*i)%MOD;
-    }
-    inv[1] = 1;
-    for (int i = 2; i <= N; i++) {
-        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
-    }
-    finv[0] = finv[1] = 1;
-    for (int i = 2; i <= N; i++) {
-        finv[i] = (inv[i]*finv[i-1])%MOD;
-    }
-}
-
-long long nCk(int n,int k) {
-    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
-}
-
-typedef unsigned long long ull;
-ull modmul(ull a, ull b, ull M) {
-	ll ret = a * b - M * ull(1.L / M * a * b);
-	return ret + M * (ret < 0) - M * (ret >= (ll)M);
-}
-ull modpow(ull b, ull e, ull mod) {
-	ull ans = 1;
-	for (; e; b = modmul(b, b, mod), e /= 2)
-		if (e & 1) ans = modmul(ans, b, mod);
-	return ans;
-}
-ll modadd(ll a,ll b,ull MOD) {
-    b %= MOD;
-    a %=MOD;
-    return (a+b)%MOD;
-}
 void testcase(){
-	int n,m,k;
-	cin >> n >> m >> k;
-	ll res = modpow(m,n,MOD);
-	rep(i,0,n+1) {
-		ll ways = 0;
-		if(i<=k-1)ways = modmul(nCk(n,i),modmul(modpow(m-k,i,MOD),modpow(k-1,n-i,MOD),MOD),MOD);
-		else{
-			ways = modmul(nCk(n,i),modpow(m-k,k,MOD),MOD);
-			ways = modmul(ways,modpow(m-k+1,i-k,MOD),MOD);
-			ways = modmul(ways,modpow(k-1,n-i,MOD),MOD);
-		}	
+	int n;
+	cin >> n;
+	vi l;
+	vi r;
+	vi a;
+	rep(i,0,n) {
+		int k;
+		cin >>k;
+		int last = 0;
+		int first=0;
+		int v=  0;
+		vi starts;
+		rep(i,0,k) {
+			int x;
+			cin >> x;
+			if(x>last) {
+				if(last==0)  first=x;
+				last = x;
+				v++;
+				starts.pb(x);
+			}
+		}
+		rep(i,0,v){
+			l.pb(starts[i]);
+			r.pb(last);
+			a.pb(v-i);
+		}
 		
-		res -=ways;
-		res = (res+MOD)%MOD;
+	} 
+	int m = l.size();
+	vi ind(m);
+	iota(all(ind),0);
+	sort(all(ind),[&](int i,int j){
+		return l[i] < l[j];
+	});
+	set<pi> dp;
+	debug(l,r,a);
+	dp.insert({0,0});
+	debug(ind);
+	trav(i,ind){
+		auto low = *prev(dp.lower_bound({l[i],0}));
+		auto hi = dp.upper_bound({r[i],0});
+		hi--;
+		ll val = low.second + a[i];
+		if((*hi).second<val) {
+			if((*hi).first==r[i]) dp.erase(hi);
+			dp.insert({r[i],val});
+		}
+		debug(dp,val,low,a[i],i);
 	}
-	put(res);
+	put((*dp.rbegin()).second);
 }
 // driver code
 int main()
@@ -187,7 +180,6 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    pre();
     cin>>T;
     while(T--) testcase();
 

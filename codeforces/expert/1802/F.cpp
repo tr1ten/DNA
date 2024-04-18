@@ -51,6 +51,8 @@ typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
+#define ss second
+#define ff first
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -110,7 +112,90 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+ll n,m,p;
+const int N = 1000;
+ll a[N];
+vector<vector<pi>> adj;
+struct V {
+	ll shows,money; 
+};
+struct S {
+	V pv;
+	int u,best;
+};
+
+bool operator<(const V &a,const V &b) {
+	return a.shows == b.shows ? a.money > b.money : a.shows < b.shows;
+}
+bool operator>(const V &a,const V &b) {
+	return a.shows == b.shows ? a.money < b.money : a.shows > b.shows;
+}
+bool operator<(const S a,const S b) {
+	return a.pv < b.pv;
+}
+bool operator>(const S a,const S b) {
+	return a.pv > b.pv;
+}
+bool operator==(const V &a,const V &b) {
+	return tie(a.shows,a.money) == tie(b.shows,b.money);
+}
+bool operator!=(const V &a,const V &b) {
+	return !(a==b);
+}
+
 void testcase(){
+	cin >> n >> m >> p;
+	tkv(a,n);
+	adj.clear();
+	adj.resize(n);
+	rep(i,0,m) {
+		int u,v,s;
+		cin >> u >> v >> s;
+		--u;--v;
+		adj[u].pb({v,s});
+	}
+	vector<vector<V>> dp(n,vector<V>(n,{INF,0}));
+	priority_queue<S,vector<S>,greater<>> pq;
+	pq.push({
+		.pv={.shows=0,.money=p},.u=0,.best=0
+	});
+	 dp[0][0] = {0,p};
+	while(pq.size()) {
+		auto state = pq.top();
+		pq.pop();
+		if(state.pv!=dp[state.u][state.best]){
+			continue;
+		}
+		for(auto [v,w]:adj[state.u]) {
+			auto nS = state;
+			auto &pv = nS.pv;
+			
+			ll bm = a[state.best];
+				
+			if(pv.money<w) {
+				ll need = (w-pv.money+bm-1)/bm;
+				pv.shows += need;
+				pv.money = pv.money + need*bm ;
+			}
+			
+			pv.money -= w;
+			debug(v,pv.shows,pv.money);
+			nS.u = v;
+			if(a[v]>bm) {
+				nS.best = v;
+			}
+			if(pv<dp[nS.u][nS.best]) {
+				pq.push(nS);
+				dp[nS.u][nS.best] = pv;
+			}
+		}
+	}
+	ll res = INF;
+	rep(i,0,n) {
+		res = min(res,dp[n-1][i].shows );
+	}
+	if(res<INF) put(res)
+	else put(-1);
 }
 // driver code
 int main()

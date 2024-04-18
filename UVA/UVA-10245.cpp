@@ -1,3 +1,11 @@
+// Problem:  The Closest Pair Problem
+// Contest: Virtual Judge - UVA
+// URL: https://vjudge.net/problem/UVA-10245
+// Memory Limit: 1024 MB
+// Time Limit: 3000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -43,7 +51,7 @@ struct custom_hash {
 };
 // ht<int, null_type> g;
 
-typedef long long ll; 
+typedef double ll; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -107,10 +115,50 @@ const ll INF = 1e16+5;
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
-inline int hset(ll x) {return __lg(x);}
+// inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+ll euc(pi a,pi b){
+	return sqrt((a.first-b.first)*(a.first-b.first) + (a.second-b.second)*(a.second-b.second));
+}
+
+const ll inf = 1e4;
+
+ll combine(int l,int r,int mid,ll lval,ll rval,vpi &a) {
+	ll d = min(lval,rval);
+	ll mind = d;
+	ll midline = (a[mid].first+a[mid+1].first)/2;
+	for(int i=mid+1;i<=r && a[i].first<=midline+d;i++) {
+		for(int j=mid;j>=l && a[i].first>=midline-d;j--){
+			mind = min(mind,euc(a[i],a[j]));
+		}
+	}
+	return mind;
+}
+ll devide(int l,int r,vpi &a){
+	if(r-l+1<2) return 10000;
+	int mid = (l+r)/2;
+	ll left = devide(l,mid,a);
+	ll right = devide(mid+1,r,a);
+	return combine(l,r,mid,left,right,a);
+	
+}
+ll eps= 1e-6;
 void testcase(){
+	while(1){
+		int n;
+		cin >> n;
+		if(n==0) break;
+		vpi prs(n);
+		rep(i,0,n) {
+			cin >> prs[i].first >> prs[i].second;
+		}
+		srv(prs);
+		ll res = (devide(0,n-1,prs));
+		if(!(res<10000)) put("INFINITY")
+		else cout << setprecision(4) << fixed << res << endl;
+		
+	} 
 }
 // driver code
 int main()
@@ -120,7 +168,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

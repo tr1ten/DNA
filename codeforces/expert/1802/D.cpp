@@ -1,3 +1,11 @@
+// Problem: D. Buying gifts
+// Contest: Codeforces - Codeforces Round 857 (Div. 2)
+// URL: https://codeforces.com/contest/1802/problem/D
+// Memory Limit: 512 MB
+// Time Limit: 3000 ms
+// 
+// Powered by CP Editor (https://cpeditor.org)
+
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -111,6 +119,47 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
+	ll n;
+	cin >> n;	
+	vpi a(n);
+	multiset<ll> rig;
+	multiset<ll> lef;
+	 
+	rep(i,0,n) {
+		cin >> a[i].first >> a[i].second;
+		rig.insert(a[i].second);	
+	}
+	srv(a);
+	ll res = INF;
+	rep(i,0,n){
+		rig.erase(rig.find(a[i].second));
+		ll mx = -INF;
+		if(rig.size()) {
+			mx = *rig.rbegin();
+		}	
+		ll x= a[i].first;
+		ll y= a[i].second;
+		ll a=INF;
+		ll b= INF;
+		auto it = lef.lower_bound(x);
+		if(it!=lef.end()) {
+			a = *it;
+		}
+		if(lef.size() && it!=lef.begin()) {
+			it--;
+			b=*it;
+		}
+		ll mnd = min(abs(a-x),abs(b-x));
+		if(mnd<abs(mx-x)){
+			if(abs(a-x)<=abs(b-x)) mx = max(a,mx);
+			else mx = max(b,mx);
+			
+		}
+		res = min(res,abs(mx-x));
+		debug(x,mx);
+		lef.insert(y);
+	}
+	put(res);
 }
 // driver code
 int main()
