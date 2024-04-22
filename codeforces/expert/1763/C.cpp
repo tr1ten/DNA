@@ -1,11 +1,3 @@
-// Problem: Append Array
-// Contest: CodeChef - START130
-// URL: https://www.codechef.com/problems/DFGF?tab=statement
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
-// 
-// Powered by CP Editor (https://cpeditor.org)
-
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -59,6 +51,8 @@ typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
+#define ss second
+#define ff first
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -118,66 +112,31 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-const int N = 2*(1e6) + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
-
-int f(int x){
-	int res = 0;
-    while(x>1){
-        int f = sieve[x];
-        while(x%f==0) {x/=f;res++;}
-    }
-    return res;
-}
-
-
 void testcase(){
-	ll n,m,k;
-	cin >> n >> m >> k;
-	ll mx1 =0,mx2 = 0;
-	ll sm = 0;
-	rep(i,0,n) {
-		ll x;
-		cin >> x;
-		ll val = f(x);
-		if(val>mx1){mx2=mx1;mx1=val;}
-		else {
-		 	mx2 = max(mx2,val);
-		}
-		sm +=x;
+	int n;
+	cin >> n;
+	vi a(n);
+	tkv(a,n);
+	ll mx = *max_element(all(a));
+	if(n==2){
+		put(max(a[0]+a[1],2*abs(a[0]-a[1])));
+		return;
 	}
-	// debug(mx1,mx2);
-	ll res = sm - mx1 - mx2;
-	rep(i,max(1LL,m-(ll)log2(m)-1),m+1){
-		ll val = f(i);
-		ll crm1 = mx1,crm2 = mx2;
-		if(val>crm1) {
-			crm2 = crm1;
-			crm1 = val;
-			if(k>1) crm2 = crm1;
-		}
-		else{
-			crm2 = max(val,crm2);
-		}
-		res = max(res,sm+k*i-crm1 - crm2);
-		// debug(res,i,val);
+	else if(n==3) {
+				ll f = a[0];
+				ll s = a[2];
+				if(max(f,s)==mx) {
+					put(mx*n);
+					return;
+				}
+				if(f<s) swap(f,s);
+				ll d= mx-s;
+				ll res = max({f+s+mx,2*d+f,d + 2*abs(d-f),mx-f+2*abs((mx-f) -s)  , d*n,3*f} )  ;
+				put(res);
+				return;
 	}
+	ll res = n*mx;
 	put(res);
-	
 }
 // driver code
 int main()
@@ -187,8 +146,6 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    
-    preprocess(); // must call this
     cin>>T;
     while(T--) testcase();
 

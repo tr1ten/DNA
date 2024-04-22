@@ -1,6 +1,6 @@
-// Problem: Append Array
-// Contest: CodeChef - START130
-// URL: https://www.codechef.com/problems/DFGF?tab=statement
+// Problem: Costly Swapping
+// Contest: CodeChef - START130B
+// URL: https://www.codechef.com/START130B/problems/COSS
 // Memory Limit: 256 MB
 // Time Limit: 1000 ms
 // 
@@ -110,7 +110,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e17+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -118,66 +118,79 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-const int N = 2*(1e6) + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
-
-int f(int x){
-	int res = 0;
-    while(x>1){
-        int f = sieve[x];
-        while(x%f==0) {x/=f;res++;}
-    }
-    return res;
-}
-
-
 void testcase(){
-	ll n,m,k;
-	cin >> n >> m >> k;
-	ll mx1 =0,mx2 = 0;
+	ll n,c,S,M;
+	cin >> n >> c >> S >> M;
+	vi w(n);
+	tkv(w,n);
+	ll mns = 0;
+	ll mxs = 0;
+	ll f= 0;
+	ll s =0;
+	priority_queue<pi,vpi,greater<pi>> mnq;
+	priority_queue<pi> mxq;
 	ll sm = 0;
+	vi tak(n);
 	rep(i,0,n) {
-		ll x;
-		cin >> x;
-		ll val = f(x);
-		if(val>mx1){mx2=mx1;mx1=val;}
-		else {
-		 	mx2 = max(mx2,val);
-		}
-		sm +=x;
+		mnq.push({w[i],i});
+		sm += w[i];
 	}
-	// debug(mx1,mx2);
-	ll res = sm - mx1 - mx2;
-	rep(i,max(1LL,m-(ll)log2(m)-1),m+1){
-		ll val = f(i);
-		ll crm1 = mx1,crm2 = mx2;
-		if(val>crm1) {
-			crm2 = crm1;
-			crm1 = val;
-			if(k>1) crm2 = crm1;
+	
+	if(sm<=M) {
+		put(n*c);return;
+	}
+	ll res = n*c;
+	ll mxr = 0;
+	per(i,0,n) {
+		sm -= w[i];
+		mxq.push({w[i],i});
+		if(tak[i]) {
+			mns -= w[i];
+			f--;
+		}
+		
+		if(sm>M) {
+			res = min(res,(i-1)*c);
+			assert(i-1>=0);
 		}
 		else{
-			crm2 = max(val,crm2);
+			mxr = max(mxr,i*c);
+			while(f<s && mnq.size()){
+				auto p =mnq.top();
+				
+				mnq.pop();
+				if(p.second>=i) continue;
+				tak[p.second] = 1;
+				mns +=p.first;
+				f++;
+			}
+			if(f!=s) break;
+			ll drq = M-sm+1;
+			while(mxs-mns<drq && mxq.size() && mnq.size()) {
+				auto p2 = mnq.top();
+				mnq.pop();
+				if(p2.second>=i) continue;
+				auto p1 = mxq.top();
+				mxq.pop();
+				mns +=p2.first;
+				mxs  +=p1.first;
+				tak[p2.second] = 1;				
+				f++;
+				s++;
+			}
+			if(mxs-mns<drq) {
+				break;
+			}
+			else{
+				assert(f<=i);
+				assert(f==s);
+				assert(i-1>=0);
+				res = min(res,(i-1)*c + s*S);
+			}
 		}
-		res = max(res,sm+k*i-crm1 - crm2);
-		// debug(res,i,val);
 	}
-	put(res);
-	
+	assert(res>=0);
+	put(min(res,mxr));
 }
 // driver code
 int main()
@@ -187,8 +200,6 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    
-    preprocess(); // must call this
     cin>>T;
     while(T--) testcase();
 

@@ -1,11 +1,3 @@
-// Problem: Append Array
-// Contest: CodeChef - START130
-// URL: https://www.codechef.com/problems/DFGF?tab=statement
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
-// 
-// Powered by CP Editor (https://cpeditor.org)
-
 #include <cstdio>
 #include <bits/stdc++.h>
 
@@ -59,6 +51,8 @@ typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
+#define ss second
+#define ff first
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -118,66 +112,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-const int N = 2*(1e6) + 5;
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
-
-int f(int x){
-	int res = 0;
-    while(x>1){
-        int f = sieve[x];
-        while(x%f==0) {x/=f;res++;}
-    }
-    return res;
-}
-
-
+const int N = 2e5 + 5;
+int cnt[2*N];
+int last[2*N];
 void testcase(){
-	ll n,m,k;
-	cin >> n >> m >> k;
-	ll mx1 =0,mx2 = 0;
-	ll sm = 0;
-	rep(i,0,n) {
-		ll x;
-		cin >> x;
-		ll val = f(x);
-		if(val>mx1){mx2=mx1;mx1=val;}
-		else {
-		 	mx2 = max(mx2,val);
-		}
-		sm +=x;
-	}
-	// debug(mx1,mx2);
-	ll res = sm - mx1 - mx2;
-	rep(i,max(1LL,m-(ll)log2(m)-1),m+1){
-		ll val = f(i);
-		ll crm1 = mx1,crm2 = mx2;
-		if(val>crm1) {
-			crm2 = crm1;
-			crm1 = val;
-			if(k>1) crm2 = crm1;
-		}
-		else{
-			crm2 = max(val,crm2);
-		}
-		res = max(res,sm+k*i-crm1 - crm2);
-		// debug(res,i,val);
+	ll n,m;
+	cin >> n >> m;
+	memset(cnt,0,(sizeof (int))*(n+m+2));
+	memset(last,0,(sizeof (int))*(n+m+2));	
+	vi a(n);
+	tkv(a,n);
+	ll sm = 0,jsm=0;
+	ll res = 0;
+	rep(j,1,m+1) {
+		ll p,v;
+		cin >> p >> v;
+		--p;
+		sm -= cnt[a[p]];
+		jsm -= last[a[p]];
+		cnt[a[p]] += j-last[a[p]];
+		sm += cnt[v];
+		last[v] = j;
+		jsm +=j;
+		a[p] = v;
+		res += 1ll*j*(2*n) - (sm + n*j - jsm);
 	}
 	put(res);
-	
 }
 // driver code
 int main()
@@ -187,8 +147,6 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    
-    preprocess(); // must call this
     cin>>T;
     while(T--) testcase();
 
