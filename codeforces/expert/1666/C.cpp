@@ -113,19 +113,25 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-	int n;
-	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
+	vpi a(3);
+	vi xs;
+	vi ys;
+	rep(i,0,3) {
+		cin >> a[i].ff >> a[i].ss; 
+		xs.pb(a[i].ff);
+		ys.pb(a[i].ss);
+		
 	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
+	srv((xs));
+	srv((ys));
+	pi md = {xs[1],ys[1]};
+	int n = 3;
+	put(6);
+	rep(i,0,3){
+		cout << a[i].ff  << " " << a[i].ss << " " << a[i].ff << " " << md.ss << endl;
+		cout <<  a[i].ff << " " << md.ss << " " << md.ff << " " << md.ss << endl;
 	}
-	put(res);
+	
 }
 // driver code
 int main()
@@ -135,7 +141,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

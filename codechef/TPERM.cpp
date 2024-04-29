@@ -115,17 +115,11 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
 	int n;
 	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
+	if(n)
+	per(i,0,n) {
+		cout << i + 1 << ' ';
 	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
-	}
-	put(res);
+	cout << endl;
 }
 // driver code
 int main()

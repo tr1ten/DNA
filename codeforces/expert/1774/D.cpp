@@ -113,19 +113,58 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-	int n;
-	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
+	int n,m;
+	cin >> n >> m;
+	int cnt = 0;
+	vector<unordered_set<int>> c(n);
+	vector<string> s(n);
+	rep(i,0,n) {
+		rep(j,0,m) {
+			int x;
+			cin >> x;
+			if(x) c[i].insert(j);
+			s[i] += to_string(x);
+			cnt +=x;
+		}
 	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
+	if(cnt%n) {
+		put(-1);
+		return;
 	}
+	int tar = cnt/n;
+	int res = 0;
+	rep(i,0,n) {
+		res += abs((int)c[i].size()-tar);
+	}
+	res /=2;
+	vi inds(n);
+	iota(all(inds),0);
+	sort(all(inds),[&](int i,int j){
+		return c[i].size() < c[j].size();
+	});
 	put(res);
+	int i=0,j=n-1;
+	int k =0;
+	while(i<j) {
+		if(c[inds[i]].size()>=tar || c[inds[j]].size()<=tar) break;
+		while(k<m) {
+			if (!(s[inds[i]][k]=='1' || c[inds[j]].count(k)==0)) {
+				put3(inds[i]+1,inds[j]+1,k+1);
+				c[inds[i]].insert(k);
+				c[inds[j]].erase(k);
+			}
+			k++;
+			if(c[inds[i]].size()==tar || c[inds[j]].size()==tar) break;
+		}
+		assert(!(k==m && c[inds[i]].size()<tar));
+		if(c[inds[i]].size()==tar) {i++;k=0;}
+		if(c[inds[j]].size()==tar) j--;
+		
+	}
+	rep(i,0,n) {
+		assert(c[i].size()==tar);
+	}
+	
 }
 // driver code
 int main()

@@ -127,31 +127,38 @@ void pyn(int x) {put(x?"YES":"NO");}
 //  u => u + v
 // u + v => u + v + z
 // z&(u+v) = z
-const int N = 1e6;
-ll dp[N+2];
-int sieve[N+1];
-
+const int m = 31;
 void testcase(){
-	int n;
-	cin >> n;
-	put(dp[n]);
+	int u,v;
+	cin >> u >> v;
+	if(u==v) {
+		pyn(1);
+		return;
+	}
+	if(u>v) {
+		pyn(0);
+		return;
+	}
+	vi suf;
+	rep(i,0,m) {
+		if(u&(1<<i)) suf.pb(i);
+	}
+	per(i,0,m) {
+		
+		if(v&(1<<i)) {
+			if(suf.size()==0) {
+				pyn(0);
+				return;
+			}
+			suf.pop_back();
+		}
+		while(suf.size() && suf.back()>=i) suf.pop_back(); 
+	}
+	pyn(1);
+	
 }
 
-// find prime <sqrt(MAX)
-// O(LlogL)
-vi primes;
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        primes.pb(x);
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
+
 // driver code
 int main()
 {
@@ -159,26 +166,7 @@ int main()
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
-    preprocess();
-    
-    for(auto p:primes){
-    	int k = 1;
-    	while(k*p<=N){
-    		dp[k*p] += (-k)%p;
-    		dp[min((k+1)*p,(ll)N+1)] -=(-k)%p;
-    		k++;
-    	}
-    }
-    int p = 4;
-    int k  = 1;
-    while(k*p<=N){
-		dp[k*p] += (6*k)%p;
-		dp[min((int)(k+1)*p,N+1)] -=(6*k)%p;
-		k++;
-	}
-	rep(i,1,N+1){
-		dp[i] += dp[i-1];
-	}
+ 
     int T=1;
     cin>>T;
     while(T--) testcase();

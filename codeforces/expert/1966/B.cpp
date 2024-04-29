@@ -112,20 +112,55 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+// WWBW
+// BBWB
+// WWBB
+// BBBB
 void testcase(){
-	int n;
-	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
+	int n,m;
+	cin >> n >> m;
+	vector<string> s(n);
+	rep(i,0,n) {
+		cin >> s[i];
 	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
+	if(s[0][0]==s[n-1][m-1] || s[0][m-1]==s[n-1][0]) {
+		pyn(1);
+		return;
 	}
-	put(res);
+	if(m>1 ) {
+		if(s[0][0]!=s[0][m-1]){
+			rep(i,0,n) {
+				if(s[i][0]==s[0][m-1]) {
+					pyn(1);
+					return;
+				}
+		}
+		rep(i,0,n) {
+				if(s[i][m-1]==s[0][0]) {
+					pyn(1);
+					return;
+				}
+		}	
+		}
+		else{
+			rep(j,0,m) {
+				if(s[0][j]==s[n-1][0])  {
+					pyn(1);
+					return;
+				}
+			}
+			rep(j,0,m) {
+				if(s[n-1][j]==s[0][0])  {
+					pyn(1);
+					return;
+				}
+			}
+		}
+		
+	}
+	
+	pyn(0);return;
+	
 }
 // driver code
 int main()

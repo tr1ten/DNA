@@ -134,7 +134,7 @@ int sieve[N+1];
 void testcase(){
 	int n;
 	cin >> n;
-	put(dp[n]);
+	put(dp[n]);	
 }
 
 // find prime <sqrt(MAX)

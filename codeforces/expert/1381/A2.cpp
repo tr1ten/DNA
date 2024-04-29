@@ -115,17 +115,24 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
 	int n;
 	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
+	string a;
+	string b;
+	cin >> a >> b;
+	vi res;
+	rep(i,0,n-1){
+		if(a[i]!=a[i+1]) {
+			res.pb(i+1);
+		}
 	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
+	int last = a[n-1]-'0';
+	per(i,0,n) {
+		if(b[i]-'0'!=last){
+			res.pb(i+1);
+			last ^=1;
+		}
 	}
-	put(res);
+	res.insert(res.begin(),res.size());
+	pvc(res);
 }
 // driver code
 int main()

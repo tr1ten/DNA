@@ -113,19 +113,25 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-	int n;
-	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
+	int n,k;
+	cin >> n >> k;
+	vi a;
+	ll res = 0;
+	rep(i,0,n) {
 		int x;
 		cin >> x;
-		cnt[x] ++;
+		res +=x;
+		if(x==1) a.pb(5);
+		else if(x==2) a.pb(3);
+		else if(x==3) a.pb(1);
 	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
+	sort(all(a));
+	reverse(all(a));
+	rep(i,0,min((int)a.size(),k)) {
+		res +=a[i];
 	}
 	put(res);
+	
 }
 // driver code
 int main()

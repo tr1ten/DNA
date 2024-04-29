@@ -113,17 +113,22 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-	int n;
-	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
+	ll n,k;
+	cin >> n >> k;
+	vi a(n);
+	tkv(a,n);
+	ll mx = *max_element(all(a));
+	ll mn = mx;
+	vi b;
+	rep(i,0,n) {
+		ll d= (mx-a[i])/k;
+		ll val = a[i]+d*k;
+		b.pb(val);
 	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
+	srv(b);
+	ll res = b.back()-b[0];
+	rep(i,0,n-1) {
+		res=  min(res,b[i]+k-b[i+1]);	
 	}
 	put(res);
 }

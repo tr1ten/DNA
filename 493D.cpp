@@ -44,6 +44,7 @@ struct custom_hash {
 // ht<int, null_type> g;
 
 typedef long long ll; 
+typedef unsigned long long ull; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -113,19 +114,13 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-	int n;
-	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
-	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
-	}
-	put(res);
+    int n;
+    cin >> n;
+    if(n%2==0) {
+        put("white");
+        put2(1,2);
+    }
+    else put("black")
 }
 // driver code
 int main()
@@ -135,7 +130,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

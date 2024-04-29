@@ -53,7 +53,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define mp make_pair
 #define ss second
 #define ff first
-#define int long long
+#define int ll
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -113,31 +113,99 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+#define inf 0x3f3f
+ 
 
 const int N = 200000 + 5;
 int a[N];
-int n;
+struct node {
+	int sum, res, pre, suf;
+	node() {}
+	node(int val) {
+		sum = res = pre = suf = val;
+	}
+};
+int n, m, s, e;
+node seg[N * 4];
+
+node merge(node left, node right) {
+	node ret;
+	ret.sum = left.sum + right.sum;
+	ret.pre = max(left.pre, left.sum + right.pre);
+	ret.suf = max(right.suf, right.sum + left.suf);
+	ret.res = max(left.res, max(right.res, left.suf + right.pre));
+	return ret;
+}
+
+void build(int at, int l, int r) {
+	if(l == r) {
+		seg[at] = node(a[l]);
+		return;
+	}
+
+	int m = (l + r) / 2;
+	build(at * 2, l, m);
+	build(at * 2 + 1, m + 1, r);
+	seg[at] = merge(seg[at * 2], seg[at * 2 + 1]);
+}
+
+node get(int at, int l, int r) {
+	if(l > e || r < s)
+		return node(-10000000000);
+ 
+	if(l >= s && r <= e)
+		return seg[at];
+ 
+	int m = (l + r) / 2;
+	return merge(get(at * 2, l, m), get(at * 2 + 1, m + 1, r));
+}
 
 void testcase(){
 	cin >> n;
-	for(int i = 0; i < n; ++i) cin >> a[i];
-	vi suff(n);
-	vi pref(n);
-	ll mnf = 0;
-	ll sm =0;
-	rep(i,0,n) {
-		sm += a[i];
-		pref[i] = sm - mnf;
-		mnf = min(mnf,sm);
+	for(int i = 1; i <= n; ++i) cin >> a[i];
+	rep(i,0,4*n+1) {
+		node nd;
+		seg[i] = nd;
+		
 	}
-	mnf = 0;
-	sm =0;
+	build(1,1,n);
+	s=1,e=n;
+	stack<int> st;
+	vi suff(n,n);
 	per(i,0,n) {
-		sm += a[i];
-		suff[i] = sm - mnf;
-		mnf = min(mnf,sm);
+		while(st.size() && a[1+st.top()]<=a[i+1]) {
+			st.pop();
+		}
+		if(st.size()) suff[i] = st.top();
+		st.push(i);
 	}
-	
+	while(st.size()) st.pop();
+	vi pref(n+1);
+	rep(i,0,n) {
+		pref[i+1] = pref[i] + a[i+1];
+	}
+	rep(i,0,n) {
+		while(st.size() && a[1+st.top()]<=a[1+i]) {
+			st.pop();
+		}
+		int p = -1;
+		if(st.size()) p = st.top();
+		s=p+2,e=i+1;
+		ll mxl = max(pref[e]-pref[s-1],get(1,1,n).suf);
+		debug(s,e,mxl);
+		s=i+1,e=suff[i];
+		ll mxr =max( get(1,1,n).pre,pref[e]-pref[s-1]);
+		debug(s,e,mxr);
+		ll mx = mxl+mxr-a[i+1];
+		debug(i,mx,mxl,mxr,p);
+		if(mx>a[i+1]) {
+			// debug(i,s,e,mx);
+			pyn(0);
+			return;
+		}
+		st.push(i);
+	}
+	pyn(1);
 	
 }
 // driver code

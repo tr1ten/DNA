@@ -44,6 +44,7 @@ struct custom_hash {
 // ht<int, null_type> g;
 
 typedef long long ll; 
+typedef unsigned long long ull; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -112,20 +113,71 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int m = 64;
 void testcase(){
-	int n;
-	cin >> n;
-	mll cnt;
-	rep(i,0,n ) {
-		int x;
-		cin >> x;
-		cnt[x] ++;
-	}
-	ll res =0 ;
-	trav(x,cnt){
-		res += x.second/3;
-	}
-	put(res);
+    vi bits(64);
+    ll u,v;
+    cin >> u>> v;
+    if(u%2 != v%2 || (u>v)){
+        put(-1);
+        return;
+    }
+    ll val = 0;
+    rep(i,0,m){
+        ll um = (u&(1LL<<i))>0;
+        ll vm = (v&(1LL<<i))>0;
+        ll nval = 0;
+        if(um==vm){
+            if(!val && vm){
+                bits[i]++;
+            }
+            if(!vm && val) {
+                bits[i-1] +=2;
+                nval = 1;
+            }
+            if(vm && val) {
+                bits[i-1] +=2;
+                bits[i]++;
+                nval = 1;
+            }
+        }
+        else{
+            if(vm){ 
+                if(!val) { bits[i-1] +=2;}
+            }
+            else{
+                if(!val){
+                    bits[i-1] +=2;
+                    bits[i]++;
+                }
+                else bits[i]++;
+                nval = 1;
+            }
+        }
+        val = nval;
+    }
+    debug(bits);
+    vi res;
+    ll xr = 0;
+    ll sm = 0;
+    while(1){
+        ll aa=0;
+        rep(i,0,bits.size()){
+            if(bits[i]){
+                bits[i]--;
+                aa |=1LL<<i;
+            }
+        }
+        if(aa) res.pb(aa);
+        else break;
+        sm +=aa;
+        xr ^=aa;
+    }
+    debug(xr,sm);
+    assert(xr==u && v==sm);
+    put(res.size())
+    pvc(res);
+
 }
 // driver code
 int main()
@@ -135,7 +187,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
