@@ -113,71 +113,30 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int m = 64;
-void testcase(){
-    vi bits(64);
-    ll u,v;
-    cin >> u>> v;
-    if(u%2 != v%2 || (u>v)){
-        put(-1);
-        return;
-    }
-    ll val = 0;
-    rep(i,0,m){
-        ll um = (u&(1LL<<i))>0;
-        ll vm = (v&(1LL<<i))>0;
-        ll nval = 0;
-        if(um==vm){
-            if(!val && vm){
-                bits[i]++;
-            }
-            if(!vm && val) {
-                bits[i-1] +=2;
-                nval = 1;
-            }
-            if(vm && val) {
-                bits[i-1] +=2;
-                bits[i]++;
-                nval = 1;
-            }
-        }
-        else{
-            if(vm){ 
-                if(!val) { bits[i-1] +=2;}
-            }
-            else{
-                if(!val){
-                    bits[i-1] +=2;
-                    bits[i]++;
-                }
-                else bits[i]++;
-                nval = 1;
-            }
-        }
-        val = nval;
-    }
-    debug(bits);
-    vi res;
-    ll xr = 0;
-    ll sm = 0;
-    while(1){
-        ll aa=0;
-        rep(i,0,bits.size()){
-            if(bits[i]){
-                bits[i]--;
-                aa |=1LL<<i;
-            }
-        }
-        if(aa) res.pb(aa);
-        else break;
-        sm +=aa;
-        xr ^=aa;
-    }
-    debug(xr,sm);
-    assert(xr==u && v==sm);
-    put(res.size())
-    pvc(res);
 
+void testcase(){
+    int n,k;
+    cin >> n >> k;
+    vi a(n);
+    tkv(a,n);
+    vii dp(n+1,vi(k+1,0));
+    rep(i,1,n+1){
+        rep(j,1,min(k+1,i)){
+            ll mn = a[i-1]; 
+            ll sm = 0;
+            rep(g,0,j+1){
+                mn = min(mn,a[i-g-1]);
+                sm += a[i-g-1];
+                dp[i][j] = max(dp[i][j],dp[i-g-1][j-g] + sm-(g+1)*mn); 
+            } 
+        }
+    }
+    ll sm = accumulate(all(a),0LL);
+    ll res = sm;
+    rep(c,0,k+1){
+        res = min(res,sm-dp[n][c]);
+    }
+    put(res);
 }
 // driver code
 int main()
@@ -187,7 +146,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

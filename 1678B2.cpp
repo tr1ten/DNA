@@ -54,6 +54,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define mp make_pair
 #define ss second
 #define ff first
+#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -65,7 +66,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define srv(vec) sort(vec.begin(), vec.end())
 #define all(x) x.begin(), x.end()
 #define less(a,b) a<b
-#define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
+#define vsum(vec) accumulate(vec.begin(), vec.end(), 0LL);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
@@ -77,7 +78,6 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
-void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -113,81 +113,59 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int m = 64;
+
+// 0101
+
+
 void testcase(){
-    vi bits(64);
-    ll u,v;
-    cin >> u>> v;
-    if(u%2 != v%2 || (u>v)){
-        put(-1);
-        return;
-    }
-    ll val = 0;
-    rep(i,0,m){
-        ll um = (u&(1LL<<i))>0;
-        ll vm = (v&(1LL<<i))>0;
-        ll nval = 0;
-        if(um==vm){
-            if(!val && vm){
-                bits[i]++;
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int res = 0;
+    int cc = 0;
+    int v0=s[1]!=s[0],v1=s[1]!=s[0];
+    if(s[0]=='0') v0=1;
+    else v1 = 1;
+    res +=s[1]!=s[0];
+    cc +=1;
+    for(int i=3;i<=n;i+=2) {
+        int t0=0,t1=0;
+        if(s[i]==s[i-1]) {
+            if(s[i]=='1') {
+                if(!v1) {cc++;}
+                t1 =1;
             }
-            if(!vm && val) {
-                bits[i-1] +=2;
-                nval = 1;
+            else {
+                if(!v0){cc++;}
+                t0=1;
             }
-            if(vm && val) {
-                bits[i-1] +=2;
-                bits[i]++;
-                nval = 1;
-            }
+            debug(v0,v1,i,res,cc);
         }
         else{
-            if(vm){ 
-                if(!val) { bits[i-1] +=2;}
+            if(v0) {
+                t0 = 1;
             }
-            else{
-                if(!val){
-                    bits[i-1] +=2;
-                    bits[i]++;
-                }
-                else bits[i]++;
-                nval = 1;
+            if(v1) {
+                t1 = 1;
             }
+            res++;
         }
-        val = nval;
+        v0=t0;
+        v1=t1;
     }
-    debug(bits);
-    vi res;
-    ll xr = 0;
-    ll sm = 0;
-    while(1){
-        ll aa=0;
-        rep(i,0,bits.size()){
-            if(bits[i]){
-                bits[i]--;
-                aa |=1LL<<i;
-            }
-        }
-        if(aa) res.pb(aa);
-        else break;
-        sm +=aa;
-        xr ^=aa;
-    }
-    debug(xr,sm);
-    assert(xr==u && v==sm);
-    put(res.size())
-    pvc(res);
-
+    
+    put2(res,cc);
 }
 // driver code
-int main()
+int32_t main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

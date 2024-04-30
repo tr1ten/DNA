@@ -113,71 +113,41 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int m = 64;
 void testcase(){
-    vi bits(64);
-    ll u,v;
-    cin >> u>> v;
-    if(u%2 != v%2 || (u>v)){
-        put(-1);
-        return;
+    int n;
+    cin >> n;
+    map<int,int> cnt;
+    rep(i,0,n*n){
+        int x;
+        cin >> x;
+        cnt[x]++;
     }
-    ll val = 0;
-    rep(i,0,m){
-        ll um = (u&(1LL<<i))>0;
-        ll vm = (v&(1LL<<i))>0;
-        ll nval = 0;
-        if(um==vm){
-            if(!val && vm){
-                bits[i]++;
-            }
-            if(!vm && val) {
-                bits[i-1] +=2;
-                nval = 1;
-            }
-            if(vm && val) {
-                bits[i-1] +=2;
-                bits[i]++;
-                nval = 1;
-            }
-        }
-        else{
-            if(vm){ 
-                if(!val) { bits[i-1] +=2;}
-            }
-            else{
-                if(!val){
-                    bits[i-1] +=2;
-                    bits[i]++;
-                }
-                else bits[i]++;
-                nval = 1;
-            }
-        }
-        val = nval;
-    }
-    debug(bits);
+    auto it = cnt.rbegin();
     vi res;
-    ll xr = 0;
-    ll sm = 0;
-    while(1){
-        ll aa=0;
-        rep(i,0,bits.size()){
-            if(bits[i]){
-                bits[i]--;
-                aa |=1LL<<i;
-            }
+    while(it!=cnt.rend()){
+        auto p = *it;
+        ll dc=  0;
+        rep(i,0,res.size()){
+            if((res[i]%p.first)==0) dc++;
         }
-        if(aa) res.pb(aa);
-        else break;
-        sm +=aa;
-        xr ^=aa;
+        ll tot =0;
+        while (2*tot*dc + tot + tot*(tot-1) <p.second)
+        {
+            tot++;
+        }
+        debug(tot,p.first,p.second,dc);
+        assert((2*tot*dc + tot + tot*(tot-1))==p.second);
+        trav(x,res){
+            cnt[gcd(p.first,x)] -= 2*tot;
+        }
+        while (tot--)
+        {
+            res.pb(p.first);
+        }
+        it++;
     }
-    debug(xr,sm);
-    assert(xr==u && v==sm);
-    put(res.size())
+    assert(res.size()==n);
     pvc(res);
-
 }
 // driver code
 int main()

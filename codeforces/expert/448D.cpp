@@ -54,6 +54,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define mp make_pair
 #define ss second
 #define ff first
+#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -77,7 +78,6 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
-void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -113,74 +113,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int m = 64;
 void testcase(){
-    vi bits(64);
-    ll u,v;
-    cin >> u>> v;
-    if(u%2 != v%2 || (u>v)){
-        put(-1);
-        return;
-    }
-    ll val = 0;
-    rep(i,0,m){
-        ll um = (u&(1LL<<i))>0;
-        ll vm = (v&(1LL<<i))>0;
-        ll nval = 0;
-        if(um==vm){
-            if(!val && vm){
-                bits[i]++;
-            }
-            if(!vm && val) {
-                bits[i-1] +=2;
-                nval = 1;
-            }
-            if(vm && val) {
-                bits[i-1] +=2;
-                bits[i]++;
-                nval = 1;
-            }
+    int n,m,k;
+    cin >> n >> m >> k;
+    auto f = [&](int x) {
+        int c = 0;
+        rep(i,1,1+m){
+            c +=min(n,x/i);
         }
-        else{
-            if(vm){ 
-                if(!val) { bits[i-1] +=2;}
-            }
-            else{
-                if(!val){
-                    bits[i-1] +=2;
-                    bits[i]++;
-                }
-                else bits[i]++;
-                nval = 1;
-            }
+        return c;
+    };
+    int lo=1,hi=1e15;
+    int res = 0;
+    while (lo<=hi)
+    {
+        int mid = (lo+hi)/2;
+        if(f(mid) >= k) {
+            hi  =mid-1;
+            res = mid;
         }
-        val = nval;
+        else lo = mid+1;
     }
-    debug(bits);
-    vi res;
-    ll xr = 0;
-    ll sm = 0;
-    while(1){
-        ll aa=0;
-        rep(i,0,bits.size()){
-            if(bits[i]){
-                bits[i]--;
-                aa |=1LL<<i;
-            }
-        }
-        if(aa) res.pb(aa);
-        else break;
-        sm +=aa;
-        xr ^=aa;
-    }
-    debug(xr,sm);
-    assert(xr==u && v==sm);
-    put(res.size())
-    pvc(res);
-
+    put(res);
+    
 }
 // driver code
-int main()
+int32_t main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);

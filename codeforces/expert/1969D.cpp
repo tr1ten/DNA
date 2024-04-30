@@ -113,71 +113,39 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int m = 64;
 void testcase(){
-    vi bits(64);
-    ll u,v;
-    cin >> u>> v;
-    if(u%2 != v%2 || (u>v)){
-        put(-1);
-        return;
-    }
-    ll val = 0;
-    rep(i,0,m){
-        ll um = (u&(1LL<<i))>0;
-        ll vm = (v&(1LL<<i))>0;
-        ll nval = 0;
-        if(um==vm){
-            if(!val && vm){
-                bits[i]++;
-            }
-            if(!vm && val) {
-                bits[i-1] +=2;
-                nval = 1;
-            }
-            if(vm && val) {
-                bits[i-1] +=2;
-                bits[i]++;
-                nval = 1;
-            }
-        }
-        else{
-            if(vm){ 
-                if(!val) { bits[i-1] +=2;}
-            }
-            else{
-                if(!val){
-                    bits[i-1] +=2;
-                    bits[i]++;
-                }
-                else bits[i]++;
-                nval = 1;
-            }
-        }
-        val = nval;
-    }
-    debug(bits);
-    vi res;
-    ll xr = 0;
+    int n,k;
+    cin>> n >> k;
+    vi a(n);
+    vi b(n);
+    tkv(a,n);
+    tkv(b,n);
+    vi inds(n);
+    iota(all(inds),0);
+    sort(all(inds),[&](int i,int j){
+        return b[i]==b[j] ? a[i] < a[j] : b[i] > b[j];
+    });
+    priority_queue<ll> pq;
+    vi p(n+1,INF);
+    if(k==0) p[0] = 0;
     ll sm = 0;
-    while(1){
-        ll aa=0;
-        rep(i,0,bits.size()){
-            if(bits[i]){
-                bits[i]--;
-                aa |=1LL<<i;
-            }
+    rep(i,0,n) {
+        int j = inds[i];
+        if(pq.size()==k && k && pq.top()>a[j]) {
+            sm -= pq.top();
+            pq.pop();
         }
-        if(aa) res.pb(aa);
-        else break;
-        sm +=aa;
-        xr ^=aa;
+        if(pq.size() < k) {pq.push(a[j]);sm+=a[j];}
+        if(pq.size()==k) p[i+1] = sm;
     }
-    debug(xr,sm);
-    assert(xr==u && v==sm);
-    put(res.size())
-    pvc(res);
-
+    ll res= 0;
+    ll suf = 0;
+    per(i,0,n) {
+        int j = inds[i];
+        suf +=max(0LL,b[j]-a[j]);
+        res = max(suf-p[i],res);
+    }
+    put(res);
 }
 // driver code
 int main()
@@ -187,7 +155,7 @@ int main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
