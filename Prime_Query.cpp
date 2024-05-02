@@ -114,21 +114,44 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    string s;
-    cin >> s;
-    int ir = 0;
-    if(count(all(s),'1')==s.size()) {put(-1);return;}
-    rep(i,0,s.size()) {
-        int r;
-        if(s[i]=='1') r = (2*ir + 1)%3;
-        else r = (2*ir)%3;
-        ir = r;   
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    vi pref2(n+1);
+    vi pref1(n+1);
+    rep(i,0,n) {
+        pref2[i+1] += pref2[i] + (a[i]==2);
+        pref1[i+1] += pref1[i] + (a[i]==1);
     }
-    if(ir==0) {
-        put(0);
-        return;
+    int k;
+    cin >> k;
+    rep(i,0,k) {
+        int l,r,k;
+        cin >> l >> r >> k;
+        int m = r-l+1;
+        int a = pref1[r] -pref1[l-1];
+        int b = pref2[r] -pref2[l-1];
+        int c = min(k,m - (a+b));
+        debug(a,b,c);
+        k -= c;
+        if(a>b) swap(a,b);
+        int dc = min({c,b-a});
+        a +=dc;
+        c -=dc;
+        debug(dc,c);
+        a += (c+1)/2;
+        b += (c)/2;
+        int dd = (b-a);
+        int de = min(dd/2,k);
+        a +=de;
+        b -=de;
+        debug(k,l,r,a,b);
+        assert(a+b<=m);
+        int res = a*b;
+        put(res);
+        
     }
-    put(1);
 }
 // driver code
 int32_t main()

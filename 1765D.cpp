@@ -113,22 +113,39 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
+// a1 < a2 < a3
+// 
+
+
 void testcase(){
-    string s;
-    cin >> s;
-    int ir = 0;
-    if(count(all(s),'1')==s.size()) {put(-1);return;}
-    rep(i,0,s.size()) {
-        int r;
-        if(s[i]=='1') r = (2*ir + 1)%3;
-        else r = (2*ir)%3;
-        ir = r;   
+    int n,m;
+    cin >> n >> m;
+    vi a(n);
+    tkv(a,n);
+    int s = 0;
+    vi res;
+    srv(a);
+    int j =n-1;
+    rep(i,0,n){
+        while (i<j && a[j]+a[i]>m)
+        {
+            res.pb(a[j]);
+            j--;
+        }
+        if(i<j) res.pb(a[j--]);
+        if(i<=j) res.pb(a[i]);
+        
     }
-    if(ir==0) {
-        put(0);
-        return;
+    reverse(all(res));
+    assert(res.size()==n);
+    debug(res);
+    int ans =accumulate(all(a),0LL);
+    rep(i,1,n) {
+        if(res[i]+res[i-1] > m) ans++;
     }
-    put(1);
+    put(ans+1);
+    
 }
 // driver code
 int32_t main()
@@ -138,7 +155,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

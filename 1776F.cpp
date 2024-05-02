@@ -54,7 +54,6 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define mp make_pair
 #define ss second
 #define ff first
-#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -113,22 +112,88 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+#include <bits/stdc++.h>
+using namespace std;
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int cps;
+    DSU(int n)
+    {   
+        this->reset(n);
+    }
+    void reset(int n){
+        this->par = new int[n];
+        this->sz = new int[n];
+        this->cps = n;
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
+        }
+    }
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    void connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+        (this->cps)--;
+    }
+};
+
+
 void testcase(){
-    string s;
-    cin >> s;
-    int ir = 0;
-    if(count(all(s),'1')==s.size()) {put(-1);return;}
-    rep(i,0,s.size()) {
-        int r;
-        if(s[i]=='1') r = (2*ir + 1)%3;
-        else r = (2*ir)%3;
-        ir = r;   
+    int n,m;
+    cin >> n >> m;
+    vi inds(n);
+    vii edges(n);
+    rep(i,0,m) {
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        inds[u]++;
+        inds[v]++;
+        edges[u].pb(i);
+        edges[v].pb(i);
+
     }
-    if(ir==0) {
-        put(0);
-        return;
+    vi res(m,1);
+    if(count(all(inds),n-1)==n) {
+        put(3);
+        rep(i,0,edges[0].size()) res[edges[0][i]] =2;
+        res[edges[0][0]] = 3;
     }
-    put(1);
+    else{
+        int v= 0;
+        put(2);
+        rep(i,0,n) {
+            if(inds[i]!=n-1) {v=i;break;}
+        }
+        rep(i,0,edges[v].size()) res[edges[v][i]] = 2;
+    }
+    pvc(res);
 }
 // driver code
 int32_t main()

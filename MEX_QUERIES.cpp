@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e18+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -114,21 +114,40 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    string s;
-    cin >> s;
-    int ir = 0;
-    if(count(all(s),'1')==s.size()) {put(-1);return;}
-    rep(i,0,s.size()) {
-        int r;
-        if(s[i]=='1') r = (2*ir + 1)%3;
-        else r = (2*ir)%3;
-        ir = r;   
+    int n;
+    cin >> n;
+    vi c(n+1);
+    tkv(c,n);
+    int mex = find(all(c),0) - c.begin();
+    vi ac(n+2);
+    vi bb(n+1);
+    rep(i,0,n+1) {
+        if(c[i]!=0) {
+            ac[i+1] = ac[i];
+            continue;
+        }
+        int z = i >> 1LL;
+        int cost = 1;
+        while (z && c[z]-bb[z]<=1)
+        {
+            z >>=1LL;
+            cost++;
+        }
+        if(z==0) {
+            if(c[z]-bb[z]<=1) ac[i+1]=-INF;
+            else ac[i+1] = ac[i] + cost;
+            bb[z]++;
+            continue;
+        }
+        ac[i+1] = ac[i] + cost;
+        bb[z]++;
+           
     }
-    if(ir==0) {
-        put(0);
-        return;
+    vi res;
+    rep(i,0,n+1) {
+        res.pb(max(-1LL,ac[i] + c[i]));
     }
-    put(1);
+    pvc(res);
 }
 // driver code
 int32_t main()

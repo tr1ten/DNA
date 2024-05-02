@@ -113,22 +113,82 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
+
+// a1 a2 a3 | a4 a4 | a5 a6 a7
+// greedy: try making subarray asap since if >k we can merge last 
+// both x and y must be part of a
+// find l first by bs
+// then find l,r both using l
+
+
+// l1 => p-q = a
+// l2 => p-q = b
+// l1+l1 => p+q = a+b
+const int N=2e5+5;
+vi a;
+int n;
+vi max_subs(int lo,int hi) {
+    int sm = 0;
+    int k = 0;
+    int len=0;
+    vi cc;
+    vi lns;
+    rep(i,0,n) {
+        len++;
+        if(a[i]>=lo && a[i]<=hi) sm++;
+        if(sm>len-sm){ k++;cc.pb(sm-(len-sm));lns.pb(len);sm=0;len=0;}
+    }
+    if(len>0) {
+        int b = sm-(len-sm);
+        int sz = len;
+        while (b<=0 && cc.size())
+        {
+            b += cc.back();
+            cc.pop_back();
+            sz += lns.back();
+            lns.pop_back();
+            
+        }
+        if(b>0){lns.pb(sz); }
+    }
+    return lns;
+}
+
 void testcase(){
-    string s;
-    cin >> s;
-    int ir = 0;
-    if(count(all(s),'1')==s.size()) {put(-1);return;}
-    rep(i,0,s.size()) {
-        int r;
-        if(s[i]=='1') r = (2*ir + 1)%3;
-        else r = (2*ir)%3;
-        ir = r;   
+    int k;
+    cin >> n >> k;
+    a.resize(n);
+    tkv(a,n);
+    vi b=a;
+    srv(b);
+    int c = (k+n+1)/2;
+    debug(c);
+    pi res={0,n-1};
+    rep(i,c-1,n){
+        if(b[i]-b[i-c+1]<=b[res.second]-b[res.first]) {
+            res.first = i-c+1;
+            res.second = i;
+        }
+        debug(res,i,i-c+1);
     }
-    if(ir==0) {
-        put(0);
-        return;
+    int l=b[res.first];
+    int r =b[res.second];
+    put2(l,r);
+    vi lens = max_subs(l,r);
+    while (lens.size()>k)
+    {
+        int last = lens.back();
+        lens.pop_back();
+        lens.back() += last;
     }
-    put(1);
+    
+    int i=1;
+    trav(x,lens){
+        put2(i,i+x-1);
+        i +=x;
+    }
+    
 }
 // driver code
 int32_t main()

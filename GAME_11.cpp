@@ -114,21 +114,35 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    string s;
-    cin >> s;
-    int ir = 0;
-    if(count(all(s),'1')==s.size()) {put(-1);return;}
-    rep(i,0,s.size()) {
-        int r;
-        if(s[i]=='1') r = (2*ir + 1)%3;
-        else r = (2*ir)%3;
-        ir = r;   
+    int n,m;
+    cin >> n >> m;
+    vi a(n);
+    vi b(m);
+    tkv(a,n);tkv(b,m);
+    if((min(n,m) < 4) || ((n+m) < 11)) {put(-1);return;}
+    srv(a);
+    srv(b);
+    reverse(all(a));reverse(all(b));
+    int res = 0;
+    rep(i,0,4) res += a[i] + b[i];
+    priority_queue<int,vector<int> , greater<>> pq;
+    rep(i,4,n) {
+        if(pq.size()==3 && pq.top() < a[i]) {pq.pop();}
+        if(pq.size()<3) pq.push(a[i]);
     }
-    if(ir==0) {
-        put(0);
-        return;
+    rep(i,4,m) {
+        if(pq.size()==3 && pq.top() < b[i]) {pq.pop();}
+        if(pq.size()<3) pq.push(b[i]);
     }
-    put(1);
+    assert(pq.size()==3);
+    while (pq.size() > 0)
+    {
+        res += pq.top();
+        pq.pop();
+    }
+    put(res);
+    
+    
 }
 // driver code
 int32_t main()
