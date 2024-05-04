@@ -113,42 +113,38 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// prefix xor should be distinct not be same
-
-// odd wala m dikt ni
+const int N = 17;
+int r[N];
+int ww[N];
+int n,m;
+struct E{
+    int u,v,c;
+    void take() {
+        cin >> u >> v >> c;
+        --u;--v;
+    }
+};
+vector<E> edges;
+int brut(int mask,int node){
+    if(node==n){
+        return 1;
+    }
+    if(r[node]!=-1) {
+        
+    }
+    trav(e,edges){
+        
+    }
+    
+    
+}
 void testcase(){
-    int n;
-    cin >> n;   
-    vi a(n-1);
-    vi b{0};
-    int xr = 0;
-    int req=0;
-    rep(i,0,n-1) {
-        int x;
-        cin >> x;
-        a[i] = x;
-        b.pb(b.back()^x);
-        xr ^=b.back();
-        req ^=i;
+    cin >> n >> m;
+    edges.resize(m);
+    rep(i,0,m) {
+        edges[i].take();
     }
-    req ^=(n-1);
-    int tar =req^xr;
-    int  f=1;
-    rep(i,0,n) {
-        b[i] ^=tar;
-        f = f&(b[i]<n);
-    }
-    debug(req,xr,b);
-    if(!f && n%2==0) {
-        int hb = hset(n-1);
-        tar=  (1<<hb)-1;
-        rep(i,0,n) {
-            b[i] ^=tar;
-            f = f&(b.back()<n);
-        }
-    }
-    pvc(b);
-
+    brut(0,0);
 }
 // driver code
 int32_t main()
@@ -158,7 +154,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

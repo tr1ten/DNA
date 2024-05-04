@@ -113,42 +113,88 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// prefix xor should be distinct not be same
-
-// odd wala m dikt ni
-void testcase(){
-    int n;
-    cin >> n;   
-    vi a(n-1);
-    vi b{0};
-    int xr = 0;
-    int req=0;
-    rep(i,0,n-1) {
-        int x;
-        cin >> x;
-        a[i] = x;
-        b.pb(b.back()^x);
-        xr ^=b.back();
-        req ^=i;
-    }
-    req ^=(n-1);
-    int tar =req^xr;
-    int  f=1;
-    rep(i,0,n) {
-        b[i] ^=tar;
-        f = f&(b[i]<n);
-    }
-    debug(req,xr,b);
-    if(!f && n%2==0) {
-        int hb = hset(n-1);
-        tar=  (1<<hb)-1;
-        rep(i,0,n) {
-            b[i] ^=tar;
-            f = f&(b.back()<n);
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int c;
+    DSU(int n)
+    {
+        this->c = n;
+        this->par = new int[n];
+        this->sz = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
         }
     }
-    pvc(b);
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    int connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return 0;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+        c--;
+        return 1;
+    }
+};
+struct IN {
+    int k,c;
+    vi a;
+    void take() {
+        cin>> k >> c;
+        a.resize(k);
+        tkv(a,k);
+        rep(i,0,k) a[i] -=1;
+        srv(a); 
+    }
+};
+bool operator<(const IN &a,const IN &b){
+    return a.c==b.c ? a.k > b.k : a.c < b.c;
+}
 
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    DSU ds(n);
+    vector<IN> ins(m);
+    rep(i,0,m) {
+        ins[i].take();
+    }
+    sort(all(ins));
+    int res= 0 ;
+    trav(e,ins){
+        debug(e.a,e.c,e.k);
+        int cc =0;
+        rep(i,1,e.k){
+            if(ds.connect(e.a[i-1],e.a[i])){ cc++;}
+        }
+        res += cc*e.c;
+
+    }
+    if(ds.c>1) put(-1)
+    else put(res);
 }
 // driver code
 int32_t main()

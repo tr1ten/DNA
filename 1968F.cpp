@@ -113,42 +113,48 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// prefix xor should be distinct not be same
-
-// odd wala m dikt ni
 void testcase(){
-    int n;
-    cin >> n;   
-    vi a(n-1);
-    vi b{0};
-    int xr = 0;
-    int req=0;
-    rep(i,0,n-1) {
-        int x;
-        cin >> x;
-        a[i] = x;
-        b.pb(b.back()^x);
-        xr ^=b.back();
-        req ^=i;
+    int n,q;
+    cin >> n >> q;
+    vi a(n);
+    tkv(a,n);
+    vi pref(n+1);
+    map<int,vi> pp;
+    pp[0].pb(0);
+    rep(i,0,n){
+        pref[i+1] = pref[i]^a[i];
+        pp[pref[i+1]].pb(i+1);
     }
-    req ^=(n-1);
-    int tar =req^xr;
-    int  f=1;
-    rep(i,0,n) {
-        b[i] ^=tar;
-        f = f&(b[i]<n);
+    map<int,vi> sss;
+    vi suff(n+1);
+    int suf = 0;
+    per(i,1,n+1){
+        suf ^=a[i-1];
+        suff[i] = suf;
+        sss[suf].pb(i);
     }
-    debug(req,xr,b);
-    if(!f && n%2==0) {
-        int hb = hset(n-1);
-        tar=  (1<<hb)-1;
-        rep(i,0,n) {
-            b[i] ^=tar;
-            f = f&(b.back()<n);
+    trav(x,sss) {
+        srv(x.second);
+    }
+    rep(i,0,q){
+        int l,r;
+        cin >> l >>r;
+        int xr = (pref[r]^pref[l-1]);
+        if(xr==0) {
+            pyn(1);
+            continue;
         }
-    }
-    pvc(b);
+        int k,j;
+        auto it = (upper_bound(all(sss[suff[l]]), r));
+        if(it==sss[suff[l]].begin() || (*(--it))<=l) {pyn(0);continue;}
+        else j = *it;
 
+        it = (lower_bound(all(pp[pref[r]]), l));
+        if(it==pp[pref[r]].end() || (*(it))>=j) {pyn(0);continue;}
+        else k = *it;
+        pyn( (pref[j-1]^pref[k])==xr );
+    }
+    cout << endl;
 }
 // driver code
 int32_t main()
@@ -158,7 +164,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

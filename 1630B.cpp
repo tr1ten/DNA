@@ -164,7 +164,7 @@ void testcase(){
     srv(b);
     int c = (k+n+1)/2;
     debug(c);
-    pi res={0,n-1};
+    pi res={0,n};
     rep(i,c-1,n){
         if(b[i]-b[i-c+1]<=b[res.second]-b[res.first]) {
             res.first = i-c+1;

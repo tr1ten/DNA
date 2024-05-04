@@ -78,7 +78,6 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
-void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
 void __print(unsigned long x) {cerr << x;}
@@ -113,43 +112,63 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// prefix xor should be distinct not be same
-
-// odd wala m dikt ni
-void testcase(){
-    int n;
-    cin >> n;   
-    vi a(n-1);
-    vi b{0};
-    int xr = 0;
-    int req=0;
-    rep(i,0,n-1) {
-        int x;
-        cin >> x;
-        a[i] = x;
-        b.pb(b.back()^x);
-        xr ^=b.back();
-        req ^=i;
-    }
-    req ^=(n-1);
-    int tar =req^xr;
-    int  f=1;
-    rep(i,0,n) {
-        b[i] ^=tar;
-        f = f&(b[i]<n);
-    }
-    debug(req,xr,b);
-    if(!f && n%2==0) {
-        int hb = hset(n-1);
-        tar=  (1<<hb)-1;
-        rep(i,0,n) {
-            b[i] ^=tar;
-            f = f&(b.back()<n);
+int n,l,r;
+vi z;
+vector<int> z_function(string s) {
+    int n = s.size();
+    vector<int> z(n);
+    int l = 0, r = 0;
+    for(int i = 1; i < n; i++) {
+        if(i < r) {
+            z[i] = min(r - i, z[i - l]);
+        }
+        while(i + z[i] < n && s[z[i]] == s[i + z[i]]) {
+            z[i]++;
+        }
+        if(i + z[i] > r) {
+            l = i;
+            r = i + z[i];
         }
     }
-    pvc(b);
-
+    return z;
 }
+
+int count_subs(int x){
+    int subc=1;
+    int i = x;
+    while(i<n){
+        if(z[i]>=x) {i+=x;subc++;}
+        else i++;
+    }
+    debug(x,subc);
+    return subc;
+    
+    
+}
+void testcase(){
+    cin >> n >>l >> r;
+    int mx = n/l;
+    string s;
+    cin >> s;
+    z = z_function(s);
+    // rep(i,0,n){
+    //     debug(i,z[i]);
+    // }
+    int lo=1,hi=mx;
+    int ans = 0;
+    while (lo<=hi)
+    {
+        int mid = (lo+hi)/2;
+        if(count_subs(mid) >=l) {
+            ans = mid;
+            lo = mid+1;
+        }
+        else hi = mid-1;
+    }
+    put(ans);
+    
+}
+
 // driver code
 int32_t main()
 {
@@ -158,7 +177,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
