@@ -113,55 +113,27 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 17;
-int r[N];
-int ww[N];
-int n,m;
-struct E{
-    int u,v,c;
-};
-vector<E> edges[N*N];
-bool check(int i,int mask){
-    trav(e,edges[i]){
-        if(((r[e.v]!=-1 ) && (r[e.v]!=r[e.u] + e.c))  || mask&(1<<(r[e.u]+e.c))) return 0;
-    }
-    return 1;
-}
-int brut(int mask,int node){
-    if(node==n){
-        return 1;
-    }
-    if(r[node]!=-1) {
-        if(check(node,mask)) return brut(mask,node+1);
-        return 0;
-    }
-    ww[node] = 1;
-    rep(i,0,n) {
-        if(i&(1<<i)) {
-            r[node] = i;
-            if(!check(node,mask)) {r[node]=-1;continue;}
-             int nmask = mask | (1<<i);
-             trav(e,edges[node]){
-                r[e.v] = r[e.u] + e.c; 
-                mask |= 1<<r[e.v];   
-            }
-            ww[node] = ww[node]*brut(nmask,node+1);
-        }
-    }
-    return ww[node];
-}
 void testcase(){
-    cin >> n >> m;
-    rep(i,0,m) {
-        int u,v,c;
-        cin >> u >> v >> c;
-        --u;--v;
-        edges[u].pb({u,v,-c});
-        edges[v].pb({v,u,c});
-
-        
+    int n,k;
+    cin >> n >> k;
+    vi a(n);
+    
+    tkv(a,n);
+    if(n==k) {
+        rep(i,0,n) {
+            if(a[i]!=a[n-i-1]) {pyn(0);return;}
+        }   
     }
-    brut(0,0);
+    if(k%2 || n%2) {
+        pyn(1);
+        return;
+    }
+    
+    int sm = 0;
+    rep(i,0,(n)/2) {
+        sm += abs(a[i]-a[n-i-1]);
+    }
+    pyn((sm%2==0));
 }
 // driver code
 int32_t main()
