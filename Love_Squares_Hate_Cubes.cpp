@@ -114,51 +114,36 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 
-/**
- Let see
- 1,2,3...n
- m, 2m, 3m..
-    
+/*
+    1 8 27 64 125 
+    1 2 3  4   
 
+*/
 
-
-**/
 void testcase(){
-    int n,m,q;
-    cin >> n >> m >> q;
-    rep(i,0,q){
-        int s ;
-        cin >> s;
-        int te  =s;
-        int j= 1;
-        int d;
-        int sf = 0;
-        while (s>0)
-        {
-            d=min(m,s/j);
-            s -= d*j;
-            if(s==0) break;
-            if(d<m){
-                sf = j-s;
-                d++;
-                break;
-            }
-            j++;
+    int k;
+    cin >> k;
+    int lo=2,hi=1001111;
+    debug(hi*hi*hi);
+    int res = 0;
+    while (lo<=hi)
+    {
+        int y = (lo+hi)/2;
+        int req = (k+(y-1));
+        int ans = req*req;
+        int f = false;
+        if(ans<y*y*y) {
+            f = true;
         }
-        debug(sf,s);
-        assert(sf<=j);
-        put2(1,j);
-        int res = 0;
-        rep(i,1,j+1){
-            int c = (i==j ? d : (i==sf ? m-1 :m));
-            cout << c << " ";
-            res += c*i;
+        if(f) {
+            hi = y-1;
+            res = ans;
         }
-        assert(res==te);
-        cout << endl;
-
-        
+        else lo = y+1;
     }
+    put(res);
+
+     
 }
 // driver code
 int32_t main()
@@ -168,7 +153,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
