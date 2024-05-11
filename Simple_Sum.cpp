@@ -111,55 +111,74 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"Yes":"No");}
+void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N=1e7 + 10;
+int prime[N+1];/// containing ith prime in it .
+bool isprime[N+1];
+int mobius[N+1];/// containing mobius function of ith number
+int cnt;
 
-const int N = 1e6 + 5;
-int sieve[N+1];
-int cnt[N];
-int temp[N];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
+void genmobius()
+
+{
+	memset(isprime,true,sizeof(isprime));/// initialize all with true.
+	
+	mobius[1]=1;/// mobius function of one is 1 .
+	
+	for(int i=2;i<=N;i++){
+            
+		if(isprime[i]==true){/// means i is prime
+			prime[++cnt]=i;
+			 mobius[i] = - 1; /// if it is prime, a prime factor only, so mobius = - 1.
+		}
+    
+		for(int j=1;j<=cnt;j++)
+            
+            {
+                
+			if(prime[j]*i>N) break;/// greater than our range.
+			 
+		    isprime[prime[j]*i]=false;/// this number is not prime .
+        
+			if(i%prime[j]){
+				 mobius [i * prime [j]] = - mobius [i];/// (- 1) ^ k, k is the number of prime factors , so here prime[j] is added in new number .
+             /// so the mobius function will be reversed if -1 then it will be -(-1) = 1 ,if 0 ,then -(0)=0 i.e. square of a prime factor is inside new number (i*prime[j]), so no change .
+			}
+			
+			else {
+				 mobius [i * prime [j]] = 0; /// number (i*prime[j]) contains square of a prime factor
+				break;
+			}
+			
+		}
+	}
+}
+vector<long long> divisors(long long x){
+    vector<long long> cur;
+      for(int j=1;j*j<=x;j++)
+		{		
+			if(x%j==0)
+			{
+				cur.push_back(j);
+				if(j != x/j)
+					cur.push_back(x/j);
+            }
         }
-    }
+    return cur;
 }
-
-vector<int> factors(int x){
-    vector<int> res;
-    while(x>1){
-        int f = sieve[x];
-        if(x%f==0) res.push_back(f);
-        temp[f] =0;
-        while(x%f==0) {x/=f;temp[f]++;}
-    }
-    return res;
-}
-
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        trav(y,factors(x)){
-            cnt[y] = max(cnt[y],temp[y]);
+    int n;
+    cin >> n;
+    int res = 0;
+    trav(k,divisors(n)) {
+        int a = 0;
+        trav(d,divisors(n/k)){
+            a += mobius[d]*(n/(k*d));
         }
+        res += (n/k)*a;
     }
-    trav(x,factors(k)){
-        if(temp[x]>cnt[x]){
-            pyn(0);
-            return;
-        }
-    }
-    pyn(1);
+    put(res);
 }
 // driver code
 int32_t main()
@@ -168,9 +187,10 @@ int32_t main()
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
+    genmobius();
     int T=1;
-    preprocess();
-    // cin>>T;
+    cin>>T;
+
     while(T--) testcase();
 
     return 0;

@@ -111,55 +111,9 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"Yes":"No");}
+void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-const int N = 1e6 + 5;
-int sieve[N+1];
-int cnt[N];
-int temp[N];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
-
-vector<int> factors(int x){
-    vector<int> res;
-    while(x>1){
-        int f = sieve[x];
-        if(x%f==0) res.push_back(f);
-        temp[f] =0;
-        while(x%f==0) {x/=f;temp[f]++;}
-    }
-    return res;
-}
-
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        trav(y,factors(x)){
-            cnt[y] = max(cnt[y],temp[y]);
-        }
-    }
-    trav(x,factors(k)){
-        if(temp[x]>cnt[x]){
-            pyn(0);
-            return;
-        }
-    }
-    pyn(1);
 }
 // driver code
 int32_t main()
@@ -169,8 +123,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    preprocess();
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
