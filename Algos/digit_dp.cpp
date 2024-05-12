@@ -6,7 +6,7 @@ const int N = 20;
 int mem[N][2][2][2][10][10];
 // can save answer here 
 int r;
-unsigned long long ans;
+unsigned long long ans;	
 // index, upper flag,lower flag, non zero prefix
 // rest are states
 int dp(int i,bool f,bool f2,int ze,int mn,int mx) {
@@ -20,7 +20,7 @@ int dp(int i,bool f,bool f2,int ze,int mn,int mx) {
 	int l=s[i]-'0',r = t[i]-'0';
 	if(f) r=9;
 	if(f2) l=0;
-	int res = 10;
+	int res = 10	;
 	for(int d=l;d<r+1;d++) {
 		bool nf = f;
 		bool nf2 = f2;

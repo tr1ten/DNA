@@ -1,197 +1,63 @@
-#include <cstdio>
 #include <bits/stdc++.h>
-
-using namespace std;
-#include "ext/pb_ds/assoc_container.hpp"
-#include "ext/pb_ds/tree_policy.hpp"
-using namespace __gnu_pbds;
-template<class T>
-using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update> ;
-template<typename T> 
-using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order_statistics_node_update>;
-// find_by_order(k)  returns iterator to kth element starting from 0;
-// order_of_key(k) returns count of elements strictly smaller than k;
-// useful defs
-const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
-struct chash {
-    int operator()(int x) const { return x ^ RANDOM; }
-};
-// gp_hash_table<int, int, chash> table;
-template <class K, class V>
-
-using ht = gp_hash_table<
-
-    K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
-
-    hash_standard_resize_policy<hash_exponential_size_policy<>,
-
-                                hash_load_check_resize_trigger<>, true>>;
-
-struct custom_hash {
-    static uint64_t splitmix64(uint64_t x) {
-        // http://xorshift.di.unimi.it/splitmix64.c
-        x += 0x9e3779b97f4a7c15;
-        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
-        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
-        return x ^ (x >> 31);
-    }
-
-    size_t operator()(uint64_t x) const {
-        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
-        return splitmix64(x + FIXED_RANDOM);
-    }
-};
-// ht<int, null_type> g;
-
-typedef long long ll; 
-typedef unsigned long long ull; 
-typedef vector<ll> vi;
-typedef vector<vi> vii;
-typedef pair<ll,ll> pi;
-typedef vector<pi> vpi;
-typedef unordered_map<ll,ll,custom_hash> mll;
-#define pb push_back
-#define mp make_pair
-#define ss second
+// iostream is too mainstream
+#include <cstdio>
+// bitch please
+#include <iostream>
+#include <algorithm>
+#include <cstdlib>
+#include <vector>
+#include <set>
+#include <map>
+#include <queue>
+#include <stack>
+#include <list>
+#include <cmath>
+#include <iomanip>
+#include <time.h>
+#define dibs reserve
+#define OVER9000 1234567890
+#define ALL_THE(CAKE,LIE) for(auto LIE =CAKE.begin(); LIE != CAKE.end(); LIE++)
+#define tisic 47
+#define soclose 1e-8
+#define chocolate win
+// so much chocolate
+#define patkan 9
 #define ff first
-#define int long long
-#define rep(i,a,b) for (int i = (a); i < (b); i++)
-#define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
-#define trav(a,arr) for (auto& a: (arr))
-#define sz(x) (int)(x).size()
-#define mk_vec(name,sz,value) vi name(sz,value)
-#define mk_mat(name,n,m,value) vii name(n, vi(m, value))
-#define contains(x) find(x) != string::npos
-#define tkv(vec,sz) rep(i,0,sz) cin>>vec[i]
-#define srv(vec) sort(vec.begin(), vec.end())
-#define all(x) x.begin(), x.end()
-#define less(a,b) a<b
-#define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
-#define vmax(vec) *max_element(vec.begin(), vec.end());
-#define vmin(vec) *min_element(vec.begin(), vec.end());
-#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
-#define put(x) cout<<(x)<<endl;
-#define put2(x,y) cout<<(x)<<" "<<(y)<<endl;
-#define put3(x,y,z) cout<<(x)<<" "<<(y)<<" "<<(z)<<endl;
-#define mod(x) (x + MOD)%MOD
-// debugging
-#define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
+#define ss second
+#define abs(x) ((x < 0)?-(x):x)
+#define uint unsigned int
+#define dbl long double
+#define pi 3.14159265358979323846
+using namespace std;
+// mylittledoge
 
-
-void __print(long x) {cerr << x;}
-void __print(long long x) {cerr << x;}
-void __print(unsigned x) {cerr << x;}
-void __print(unsigned long x) {cerr << x;}
-void __print(unsigned long long x) {cerr << x;}
-void __print(float x) {cerr << x;}
-void __print(double x) {cerr << x;}
-void __print(long double x) {cerr << x;}
-void __print(char x) {cerr << '\'' << x << '\'';}
-void __print(const char *x) {cerr << '\"' << x << '\"';}
-void __print(const string &x) {cerr << '\"' << x << '\"';}
-void __print(bool x) {cerr << (x ? "true" : "false");}
-
-template<typename T, typename V>
-void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
-template<typename T>
-void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ ? "," : ""), __print(i); cerr << "}";}
-void _print() {cerr << "]\n";}
-template <typename T, typename... V>
-void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
-
-#ifndef ONLINE_JUDGE
-#define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
-#else
-#define debug(x...)
+#ifdef DONLINE_JUDGE
+	// palindromic tree is better than splay tree!
+	#define lld I64d
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
 
-inline int ctz(ll x) { return __builtin_ctzll(x);}
-inline int clz(ll x) {return __builtin_clzll(x);}
-inline int pc(ll x) {return  __builtin_popcount(x);} 
-inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-const int N=1e7 + 10;
-int prime[N+1];/// containing ith prime in it .
-bool isprime[N+1];
-int mobius[N+1];/// containing mobius function of ith number
-int cnt;
+int main() {
+	cin.sync_with_stdio(0);
+	cin.tie(0);
+	cout << fixed << setprecision(10);
+	int mx =10000000;
+	vector<int> minD(mx+tisic,0);
+	for(int i =2; i <= mx; i++) if(minD[i] == 0)
+		for(int j =1; j <= mx/i; j++) minD[i*j] =i;
+	int T;
+	scanf(" %d",&T);
+	for(int t =0; t < T; t++) {
+		int N;
+		long long ans =1;
+		scanf(" %d",&N);
+		while(N > 1) {
+			int p =minD[N], ppw =1;
+			while(N%p == 0) {
+				ppw *=p;
+				N /=p;}
+			ans *=1LL*ppw*ppw-(1LL*ppw*ppw-1)/(p+1);}
+		printf("%lld\n",ans);}
+	return 0;}
 
-void genmobius()
-
-{
-	memset(isprime,true,sizeof(isprime));/// initialize all with true.
-	
-	mobius[1]=1;/// mobius function of one is 1 .
-	
-	for(int i=2;i<=N;i++){
-            
-		if(isprime[i]==true){/// means i is prime
-			prime[++cnt]=i;
-			 mobius[i] = - 1; /// if it is prime, a prime factor only, so mobius = - 1.
-		}
-    
-		for(int j=1;j<=cnt;j++)
-            
-            {
-                
-			if(prime[j]*i>N) break;/// greater than our range.
-			 
-		    isprime[prime[j]*i]=false;/// this number is not prime .
-        
-			if(i%prime[j]){
-				 mobius [i * prime [j]] = - mobius [i];/// (- 1) ^ k, k is the number of prime factors , so here prime[j] is added in new number .
-             /// so the mobius function will be reversed if -1 then it will be -(-1) = 1 ,if 0 ,then -(0)=0 i.e. square of a prime factor is inside new number (i*prime[j]), so no change .
-			}
-			
-			else {
-				 mobius [i * prime [j]] = 0; /// number (i*prime[j]) contains square of a prime factor
-				break;
-			}
-			
-		}
-	}
-}
-vector<long long> divisors(long long x){
-    vector<long long> cur;
-      for(int j=1;j*j<=x;j++)
-		{		
-			if(x%j==0)
-			{
-				cur.push_back(j);
-				if(j != x/j)
-					cur.push_back(x/j);
-            }
-        }
-    return cur;
-}
-void testcase(){
-    int n;
-    cin >> n;
-    int res = 0;
-    trav(k,divisors(n)) {
-        int a = 0;
-        trav(d,divisors(n/k)){
-            a += mobius[d]*(n/(k*d));
-        }
-        res += (n/k)*a;
-    }
-    put(res);
-}
-// driver code
-int32_t main()
-{
-    ios_base::sync_with_stdio(false);
-	cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
-    genmobius();
-    int T=1;
-    cin>>T;
-
-    while(T--) testcase();
-
-    return 0;
-}
+// look at my code
+// my code is amazing
