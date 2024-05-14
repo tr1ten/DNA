@@ -113,49 +113,58 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 35;
+const int K=105;
+int mat[K][N][N];
+struct Q {
+    int t,i,j;
+};
 
 void testcase(){
-    string s;
-    cin >> s;
-    int t = -1;
-    int n = s.size();
-    rep(i,1,n){
-        if(s[i]!=s[0]) {
-            t = i;
-            break;
+    int n,m,k;
+    cin >> n >> m >> k;
+    rep(c,0,k+1){
+        rep(i,0,n){
+            string s;
+            cin >> s;
+            rep(j,0,m){
+                mat[c][i][j] = s[j] -'0';
+            }
         }
     }
-    string r = s;
-    reverse(all(r));
-    if(r!=s){
-        pyn(1);
-        put(1);
-        put(s);
-        return;
+    vi spc(k+1);
+    rep(c,0,k+1){
+        int cnt = 0;
+        rep(i,1,n-1){
+            rep(j,1,m-1){
+                int x =mat[c][i][j];
+                cnt +=(mat[c][i-1][j]!=x && mat[c][i][j-1]!=x && mat[c][i+1][j]!=x && mat[c][i][j+1]!=x);
+            }
+        }
+        spc[c] = cnt;
     }
-    if(t==-1) {
-        pyn(0);
-        return;
+    vi inds(k+1);
+    iota(all(inds),0);
+    sort(all(inds),[&](int i,int j){
+        return spc[i] > spc[j];
+    });
+    put(inds[0]+1);
+    vector<Q> res;
+    rep(c,1,k+1){
+        rep(i,0,n){
+            rep(j,0,m){
+                if(mat[inds[c]][i][j]!=mat[inds[c-1]][i][j]) {
+                    res.pb({1,i+1,j+1});
+                }
+            }
+        }
+        res.pb({2,inds[c]+1,0});
     }
-    string s1 = s.substr(t+1);
-    string s2 = s1;
-    reverse(all(s2));
-    if(s2!=s1){
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+1),s1);
-        return;
+    put(res.size());
+    trav(r,res){
+        if(r.t==1) put3(r.t,r.i,r.j)
+        else put2(r.t,r.i)
     }
-    if(t==1 || t==((n+1)/2 - 1)) {
-        pyn(0);
-    }
-    else{
-        // uwu owo uwu
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+2),s.substr(t+2));
-    }
-
 }
 // driver code
 int32_t main()
@@ -165,7 +174,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

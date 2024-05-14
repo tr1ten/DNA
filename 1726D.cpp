@@ -114,47 +114,107 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 
-void testcase(){
-    string s;
-    cin >> s;
-    int t = -1;
-    int n = s.size();
-    rep(i,1,n){
-        if(s[i]!=s[0]) {
-            t = i;
-            break;
+// c1 : red edges graph
+// c2 : blue edges graph
+
+// claim: greedily color edges st min edges are used to connect cmpts   
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int cnt;
+    DSU(int n)
+    {
+        this->par = new int[n];
+        this->sz = new int[n];
+        cnt = n;
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
         }
     }
-    string r = s;
-    reverse(all(r));
-    if(r!=s){
-        pyn(1);
-        put(1);
-        put(s);
-        return;
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
     }
-    if(t==-1) {
-        pyn(0);
-        return;
+    bool connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return false;
+        cnt--;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+        return true;
     }
-    string s1 = s.substr(t+1);
-    string s2 = s1;
-    reverse(all(s2));
-    if(s2!=s1){
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+1),s1);
-        return;
+};
+
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    DSU red(n);
+    DSU blue(n);
+    string res(m,'1');
+    vector<pi> edges;
+    vi bbs;
+    int w = -1;
+    rep(i,0,m){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        edges.pb({u,v});
+        if(!red.connect(u,v)){ 
+            if(!blue.connect(u,v)){
+                w = i;
+            }
+            else bbs.pb(i);
+        }
+        else res[i] = '0';
     }
-    if(t==1 || t==((n+1)/2 - 1)) {
-        pyn(0);
-    }
+
+    
+    if(w==-1) {put(res);}
     else{
-        // uwu owo uwu
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+2),s.substr(t+2));
+        red = DSU(n);
+        blue = DSU(n);
+        red.connect(edges[w].first,edges[w].ss);
+        trav(i,bbs){
+            blue.connect(edges[i].ff,edges[i].ss);
+        }
+        string res(m,'1');  
+        res[w] = '0';
+
+        rep(i,0,m){
+            if(i==w || find(all(bbs),i)!=bbs.end()) continue;
+            int u=edges[i].ff,v=edges[i].ss;
+            edges.pb({u,v});
+            if(!red.connect(u,v)){ 
+                if(!blue.connect(u,v)){
+                    w = 0;
+                }
+            }
+            else res[i] = '0';
+        }
+        assert(w);
+        put(res);
     }
+    
 
 }
 // driver code

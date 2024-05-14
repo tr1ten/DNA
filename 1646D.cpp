@@ -113,48 +113,66 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+vii adj;
+int n;
+const int N=2*(1e5) + 5;
+int dp[N][2];
+int dp2[N][2];
+int ans[N];
+void dfs(int u,int p){
+    dp[u][1] = 1;
+    dp[u][0]= 0;
+    dp2[u][1] = adj[u].size();
+    dp2[u][0] = 1;
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs(v,u);
+        dp[u][0] +=max(dp[v][1],dp[v][0]);
+        if(dp[v][0]>dp[v][1] || (dp[v][0]==dp[v][1] && dp2[v][0] < dp2[v][1])) {
+            dp2[u][0] += dp2[v][0];
+        } 
+        else dp2[u][0] +=dp2[v][1];
+        dp[u][1] += dp[v][0];
+        dp2[u][1] +=dp2[v][0];
+    }    
+    debug(dp[u][0],dp[u][1]);
+}
+int dfs2(int u,int p,int v){
+    int t = v;
+    if(v && ( dp[u][0]>dp[u][1] || (dp[u][0]==dp[u][1] && dp2[u][0]<dp2[u][1]) ) ) t=0;
+    if(t==1) ans[u] = adj[u].size();
+    else ans[u] = 1;
+    trav(v,adj[u]){
+        if(v==p) continue;
+        dfs2(v,u,!t);
+    }
+    return dp[u][t];
+}
 
 void testcase(){
-    string s;
-    cin >> s;
-    int t = -1;
-    int n = s.size();
-    rep(i,1,n){
-        if(s[i]!=s[0]) {
-            t = i;
-            break;
-        }
+    cin >> n;
+    adj.resize(n);
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
-    string r = s;
-    reverse(all(r));
-    if(r!=s){
-        pyn(1);
-        put(1);
-        put(s);
+    if(n==2){
+        put2(2,2);
+        put2(1,1);
         return;
     }
-    if(t==-1) {
-        pyn(0);
-        return;
+    dfs(0,-1);
+    int c = dfs2(0,-1,1);
+int sm = 0;
+    rep(i,0,n){
+        sm += ans[i];
     }
-    string s1 = s.substr(t+1);
-    string s2 = s1;
-    reverse(all(s2));
-    if(s2!=s1){
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+1),s1);
-        return;
-    }
-    if(t==1 || t==((n+1)/2 - 1)) {
-        pyn(0);
-    }
-    else{
-        // uwu owo uwu
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+2),s.substr(t+2));
-    }
+    put2(c,sm);
+    rep(i,0,n) cout << ans[i] << " ";
+    cout << endl;
 
 }
 // driver code
@@ -165,7 +183,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

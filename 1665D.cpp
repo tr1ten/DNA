@@ -113,49 +113,52 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+// int ansx =1021231;
+int ask(int a,int b){
+    
+    cout << "? " << a << " " << b << endl;
+    cout.flush();
+    int x;
+    cin >> x;
+    // int x  = gcd(ansx+a,ansx+b);
+    // cout << x << endl;
+    return x;
+}
+void tell(int x){
+    cout << "! " << x  << endl;
+    cout.flush();
+}
 
+const int MAXP=1LL<<30;
+const int MAXA = 2*(1e9);
 void testcase(){
-    string s;
-    cin >> s;
-    int t = -1;
-    int n = s.size();
-    rep(i,1,n){
-        if(s[i]!=s[0]) {
-            t = i;
-            break;
+    int c = 0;
+    int p = 2;
+    while (1)
+    {
+        int f = 1;
+        while (p<=MAXP && 2*p-c<=MAXA && (f=(ask(p-c,2*p-c)==p)))
+        {
+            p <<=1;
         }
-    }
-    string r = s;
-    reverse(all(r));
-    if(r!=s){
-        pyn(1);
-        put(1);
-        put(s);
-        return;
-    }
-    if(t==-1) {
-        pyn(0);
-        return;
-    }
-    string s1 = s.substr(t+1);
-    string s2 = s1;
-    reverse(all(s2));
-    if(s2!=s1){
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+1),s1);
-        return;
-    }
-    if(t==1 || t==((n+1)/2 - 1)) {
-        pyn(0);
-    }
-    else{
-        // uwu owo uwu
-        pyn(1);
-        put(2);
-        put2(s.substr(0,t+2),s.substr(t+2));
-    }
+        if(f) {
+            // last bit 29th annoying 
+            if(p<=MAXP && 2*p -c>MAXA){
+                int tc = c | (p>>1);
+                if(tc<=MAXA/2){
+                    int pp = MAXA/2 + 1;
+                    if(ask(pp-tc,2*pp-tc)==pp) {
+                        c = tc;
+                    }
+                }
+            }
+            break;
 
+        }
+        c |=(p>>1);
+        p<<=1;
+    }
+    tell(c);
 }
 // driver code
 int32_t main()
