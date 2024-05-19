@@ -114,45 +114,40 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int a,b,c,d;
-    cin >> a >> b>>c >> d;
-    int dx = c-a;
-    int r = ((a%4)+4)%4;
-    int dxx  = dx;
-    vi cc{3,3,1,1};
-    vi cc2{2,1,0,1};
-    if(abs(b)%2){
-            cc2.pop_back();
-            cc2.insert(cc2.begin(),1);
+    int n,m;
+    cin >> n >> m;
+    vi a(n);
+    tkv(a,n);
+    set<int> st;
+    int mn=INF;
+    rep(i,0,n){
+        if(a[i]<mn){
+            mn = a[i];
+            st.insert(i);
+        }
     }
-    debug(cc2);
-    int ox = 0;
-    rep(i,r,4){
-        if(dx==0) break;
-        ox += cc[i];
-        dx--;
+    debug(st);
+    rep(i,0,m){
+        int j,d;
+        cin >> j >> d;
+        j--;
+        int pp = INF;
+        auto it = st.lower_bound(j);
+        if(it!=st.begin()) {
+            pp = a[*prev(it)];
+        }
+        else pp = INF;
+        while (it!=st.end() && a[(*it)]>=a[j]-d)
+        {
+            st.erase((it++));
+        }
+        a[j] -=d;
+        if(pp>a[j]){
+            st.insert(j);
+        }
+        cout << st.size() << " ";
     }
-    int rx = dx%4;
-    rep(i,0,rx){
-        ox += cc[i];
-        dx--;
-    }
-    ox += (dx/4)*(8);
-    int oxx = 0;
-    rep(i,r,4){
-        if(dxx==0) break;
-        oxx += cc2[i];
-        dxx--;
-    }
-    int rx2 = dxx%4;
-    rep(i,0,rx2){
-        oxx += cc2[i];
-        dxx--;
-    }
-    oxx+= (dxx/4)*(4);
-    int dy = d-b;
-    debug(dy,dx,dxx,r,oxx,ox);
-    put(ox*(dy/2)+(dy%2)*oxx);
+    cout << endl;
 }
 // driver code
 int32_t main()
@@ -162,7 +157,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
