@@ -113,34 +113,97 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int sum(int l,int r){
-    l %=MOD,r%=MOD;
-    int s1 = ((l-1))*(l)/2;
-    s1 %=MOD;
-    int s2 = r*(r+1)/2;
-    s2 %=MOD;
-    return (s2-s1+MOD)%MOD;
-}
-int floor_sums(int n,int m){
-    int res = 0;
-    for(int l=1,r=1;l<=m && n/l;l=r+1){
-        r = min(m,n/(n/ l));
-        res += ((n/l)%MOD)*sum(l,r)%MOD;
-        assert(res>=0);
-        res %=MOD;
+int yl,yr;
+int xl,xr;
+map<int,set<int>> xy;
+map<int,set<int>> yx;
+int shrinkx(){
+    int dels = 0;
+    auto it = xy.begin();
+    while (it!=xy.end() && (*it).first<xl){
+        for(auto y:(*it).second){
+            yx[y].erase((*it).first);
+        }
+        dels += (*it).second.size();
+        xy.erase(it++);
+    } 
+    debug(xy.size());
+    auto rit = xy.rbegin();
+    while (rit!=xy.rend() &&  (*rit).first>xr){
+        for(auto y:(*rit).second){
+            assert(yx[y].find((*rit).first) !=yx[y].end());
+            yx[y].erase((*rit).first);
+        }
+        dels += (*rit).second.size();
+        rit = decltype(rit){ xy.erase(std::next(rit).base()) };
     }
-    return res;
+     
+    return dels;
+}
+int shrinky(){
+    int dels = 0;
+    auto it = yx.begin();
+    while (it!=yx.end() && (*it).first<yl){
+        for(auto y:(*it).second){
+            xy[y].erase((*it).first);
+        }
+        dels += (*it).second.size();
+
+        yx.erase(it++);
+    } 
+    auto rit = yx.rbegin();
+    while (rit!=yx.rend() && (*rit).first>yr){
+        for(auto y:(*rit).second){
+            xy[y].erase((*rit).first);
+        }
+        dels += (*rit).second.size();
+        rit = decltype(rit){ yx.erase(std::next(rit).base()) };
+    } 
+    return dels;
 }
 
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    int sub = floor_sums(n,m);
-    n%=MOD;
-    m %=MOD;
-    int res = n*m%MOD;
-    put((res-sub+MOD)%MOD);
+    int a,b,m,n;
+    cin >> a >> b >> n >> m;
+    xy.clear();
+    yx.clear();
+    rep(i,0,n){
+        int x,y;
+        cin >> x >> y;
+        xy[x].insert(y);
+        yx[y].insert(x);    
+    }
+    int scores[2] = {0,0};
+    xl = 1,xr=a,yl=1,yr=b;
+    rep(i,0,m){
+        char c;
+        int k;
+        cin >> c >> k;
+        switch (c)
+        {
+        case 'U':
+            xl +=k;
+            break;
+        case 'D':
+            xr -=k;
+            break;
+        case 'L':
+            yl +=k;
+            break;
+        case 'R':
+            yr -=k;
+            break;
+        default:
+            break;
+        }
+        debug(xl,xr,yl,yr);
+        assert(xr>=xl && yr>=yl);
+        scores[i&1] += shrinkx();
+        scores[i&1] += shrinky();
+        debug(scores[0],scores[1]);
 
+    }
+    put2(scores[0],scores[1]);
 }
 // driver code
 int32_t main()
@@ -150,6 +213,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

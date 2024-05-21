@@ -113,33 +113,45 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int sum(int l,int r){
-    l %=MOD,r%=MOD;
-    int s1 = ((l-1))*(l)/2;
-    s1 %=MOD;
-    int s2 = r*(r+1)/2;
-    s2 %=MOD;
-    return (s2-s1+MOD)%MOD;
-}
-int floor_sums(int n,int m){
-    int res = 0;
-    for(int l=1,r=1;l<=m && n/l;l=r+1){
-        r = min(m,n/(n/ l));
-        res += ((n/l)%MOD)*sum(l,r)%MOD;
-        assert(res>=0);
-        res %=MOD;
-    }
-    return res;
-}
 
+// 5 2
+
+// 2 1
+// 1 2
+// 3 5
+// 3 2
+// 3 2
+
+// 2 + 5 + 2
+const int M=54;
+const int H=1e5 + 5;
+pair<int,int> dp[M][H];
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    int sub = floor_sums(n,m);
-    n%=MOD;
-    m %=MOD;
-    int res = n*m%MOD;
-    put((res-sub+MOD)%MOD);
+    int m,x;
+    cin >> m >> x;
+    vpi a(m);
+    int hs=0;
+    rep(i,0,m){
+        cin >>a[i].ff >> a[i].ss;
+        hs += a[i].ss;
+    }
+    rep(i,0,m+1){
+        rep(j,0,hs+1) {
+            dp[i][j] = {0,0};
+        }
+    }
+    dp[0][0] = {1,0};
+    rep(i,0,m){
+        int c = a[i].ff,h=a[i].ss;
+        rep(j,0,hs-h+1){
+            if(dp[i][j].first==0) continue;
+            dp[i+1][j] = max(dp[i+1][j],{1,(dp[i][j].second+x)});
+            if((dp[i][j].ss)-c>=0) dp[i+1][j+h] = max(dp[i+1][j+h],{1,(dp[i][j].second - c +x)});
+        }
+    }
+    per(i,0,hs+1){
+        if(dp[m][i].first){ put(i);return;}
+    }
 
 }
 // driver code
@@ -150,6 +162,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

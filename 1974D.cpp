@@ -113,34 +113,45 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int sum(int l,int r){
-    l %=MOD,r%=MOD;
-    int s1 = ((l-1))*(l)/2;
-    s1 %=MOD;
-    int s2 = r*(r+1)/2;
-    s2 %=MOD;
-    return (s2-s1+MOD)%MOD;
-}
-int floor_sums(int n,int m){
-    int res = 0;
-    for(int l=1,r=1;l<=m && n/l;l=r+1){
-        r = min(m,n/(n/ l));
-        res += ((n/l)%MOD)*sum(l,r)%MOD;
-        assert(res>=0);
-        res %=MOD;
-    }
-    return res;
-}
-
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    int sub = floor_sums(n,m);
-    n%=MOD;
-    m %=MOD;
-    int res = n*m%MOD;
-    put((res-sub+MOD)%MOD);
-
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int x=0,y=0;
+    rep(i,0,n){
+        x += (s[i]=='E' ? 1 : s[i]=='W' ? -1 : 0);
+        y += (s[i]=='N' ? 1 : s[i]=='S' ? -1 : 0);
+    }
+    debug(x,y,s);
+    if(x%2 || y%2 || n%2) put("NO")
+    else{
+        int hx=0,hy=0;
+        int tx = x/2,ty=y/2;
+        string res(n,'R');
+        rep(i,0,n){
+            if(s[i]=='E' && tx>0 && hx<tx) {res[i]= 'H';hx+=1;}
+            if(s[i]=='W' && tx<0 && hx>tx) {res[i]= 'H';hx-=1;}
+            if(s[i]=='N' && ty>0 && hy<ty) {res[i]= 'H';hy+=1;}
+            if(s[i]=='S' && ty<0 && hy>ty) {res[i]= 'H';hy-=1;}
+        }
+        debug(res,tx,ty,hx,hy);
+        if(x==0 && y==0){
+            int N=-1,S=-1,E=-1,W=-1;
+            rep(i,0,n){
+                if(s[i]=='N') N=i;
+                else if(s[i]=='W') W=i;
+                else if(s[i]=='S') S=i;
+                else E=i;
+            }
+            if(N!=-1 && S!=-1) {res[N] = 'H',res[S]='H';}
+            else if(W!=-1 && E!=-1) {res[W] = 'H',res[E]='H';}
+        }
+        debug(res);
+        int c=count(all(res),'R');
+        if(c>0 && c<n)  put(res)
+        else put("NO")
+    }
 }
 // driver code
 int32_t main()
@@ -150,6 +161,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
