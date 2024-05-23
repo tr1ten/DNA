@@ -113,54 +113,20 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-struct RR {
-    int l,r,i;
-};
-
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    unordered_map<string,RR> seen;
-    rep(i,0,n){
-        string s;
-        cin >> s;
-        if(s.size()>=2) seen[(s.substr(0,2))] = {1,2,i+1};
-        rep(j,2,m){
-            seen[(s.substr(j-2,3))] = {j-1,j+1,i+1};
-            seen[(s.substr(j-1,2))] = {j,j+1,i+1};
-        }
-    }
-    vector<int> dp(m+1,0);
+    int n;
+    cin >> n;
     string s;
     cin >> s;
-    dp[0] = 1;
-    rep(i,1,m+1){
-        if(i>1) dp[i] = dp[i] | (dp[i-2] && ( seen.count(s.substr(i-2,2))));
-        if(i>2) dp[i] = dp[i] | (dp[i-3] && ( seen.count(s.substr(i-3,3))));
+    int i= 0;
+    int c = 0;
+    while(i<n){
+        int j = i;
+        while(j<n && s[j]==s[i]) j++;
+        c++;
+        i = j;
     }
-    vector<RR> res;
-    if(!dp[m]) {put(-1);return;}
-    else{
-        int i = m;
-        while (i>=2)
-        {
-            if(dp[i-2] && ( seen.count(s.substr(i-2,2)) )  ) {
-                res.push_back(seen[(s.substr(i-2,2))]);
-                i -=2;
-            }
-            else{
-                assert(seen.count(s.substr(i-3,3)));
-                res.push_back(seen[(s.substr(i-3,3))]);
-                i -=3;
-            }
-        }
-        assert(i==0);
-    }
-    put(res.size());
-    reverse(all(res));
-    trav(x,res){
-        put3(x.l,x.r,x.i);
-    }
+    put(c/2);
 }
 // driver code
 int32_t main()

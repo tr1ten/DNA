@@ -107,7 +107,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
-inline int ctz(ll x) { return __builtin_ctzll(x);}
+inline   int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
@@ -130,12 +130,13 @@ void testcase(){
         return a[i] < a[j];
     });
     vi b(n);
+    debug(mx);
     rep(i,0,n){
-        b[(i+mx)%n] = inds[i];
+        b[inds[(i+mx)%n]] = a[inds[i]];
     }
     debug(mx,inds,b);
     rep(i,0,n){
-        cout << a[b[i]] << " ";
+        cout << b[i] << " ";
     }
     cout << endl;
 }

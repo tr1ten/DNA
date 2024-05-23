@@ -113,7 +113,7 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
+void testcase(){ 
     int L,R;
     cin >> L >> R;
     __int128_t res = INF;

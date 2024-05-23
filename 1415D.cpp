@@ -113,54 +113,24 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-struct RR {
-    int l,r,i;
-};
-
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    unordered_map<string,RR> seen;
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    int res = n+1;
     rep(i,0,n){
-        string s;
-        cin >> s;
-        if(s.size()>=2) seen[(s.substr(0,2))] = {1,2,i+1};
-        rep(j,2,m){
-            seen[(s.substr(j-2,3))] = {j-1,j+1,i+1};
-            seen[(s.substr(j-1,2))] = {j,j+1,i+1};
+        int x = 0;
+        rep(j,i,n){
+            x ^=a[j];
+            if(i-1>=0 && a[i-1]>x) res = min(res,j-i+1);
+            if(j+1<n && a[j+1]<x) res = min(res,j-i+1);
+            debug(i,j,x);
         }
     }
-    vector<int> dp(m+1,0);
-    string s;
-    cin >> s;
-    dp[0] = 1;
-    rep(i,1,m+1){
-        if(i>1) dp[i] = dp[i] | (dp[i-2] && ( seen.count(s.substr(i-2,2))));
-        if(i>2) dp[i] = dp[i] | (dp[i-3] && ( seen.count(s.substr(i-3,3))));
-    }
-    vector<RR> res;
-    if(!dp[m]) {put(-1);return;}
-    else{
-        int i = m;
-        while (i>=2)
-        {
-            if(dp[i-2] && ( seen.count(s.substr(i-2,2)) )  ) {
-                res.push_back(seen[(s.substr(i-2,2))]);
-                i -=2;
-            }
-            else{
-                assert(seen.count(s.substr(i-3,3)));
-                res.push_back(seen[(s.substr(i-3,3))]);
-                i -=3;
-            }
-        }
-        assert(i==0);
-    }
-    put(res.size());
-    reverse(all(res));
-    trav(x,res){
-        put3(x.l,x.r,x.i);
-    }
+    if(res==n+1) put(-1)
+    else put(res-1);
+
 }
 // driver code
 int32_t main()
@@ -170,7 +140,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
