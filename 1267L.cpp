@@ -114,36 +114,33 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    rep(i,1,n-1){
-        int x = a[i]^a[i+1];
-        if(x<a[i-1]) {
-            put(1);
-            return;
+    int n,k,l;
+    cin >> n >> l >> k;
+    string a;
+    cin >>a;
+    sort(all(a));
+    int at = 0;
+    int i =0;
+    vector<string> res(n);
+    while (res[k-1].size()<l)
+    {  
+        int nxt=i;
+        while (i<k)
+        {
+            if(at>0 && a[at]!=a[at-1]) nxt = i; 
+            res[i++] += a[at++];
         }
-        
+        i = nxt;
     }
-    vi pref(n+1);
     rep(i,0,n){
-        pref[i+1] = pref[i]^a[i];
-    }
-    int res = n;
-    rep(l,0,n){
-        rep(m,l,n){
-            rep(r,m+1,n){
-                if((pref[m+1]^pref[l]) > (pref[r+1]^pref[m+1])){
-                    debug(l,r,m);
-                    res = min(res,r-l-1);
-                }
-            }
+        while (res[i].size()<l)
+        {
+            res[i] += a[at++];
         }
+        put(res[i]);
     }
-    if(res==n) put(-1)
-    else put(res);
-
+    
+    
 }
 // driver code
 int32_t main()
@@ -153,7 +150,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
     while(T--) testcase();
 
     return 0;

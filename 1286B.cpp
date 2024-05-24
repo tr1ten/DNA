@@ -113,37 +113,50 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    rep(i,1,n-1){
-        int x = a[i]^a[i+1];
-        if(x<a[i-1]) {
-            put(1);
-            return;
+int n ;
+const int N = 2005;
+vi adj[N];
+int c[N];
+int a[N];
+int f = 1;
+vi dfs(int u){
+    int siz = 0;
+    vi childs;
+    trav(v,adj[u]){
+        vi nc = dfs(v);
+        trav(child,nc){
+            a[child] +=siz;
+            childs.pb(child);
         }
-        
+        siz += nc.size();
     }
-    vi pref(n+1);
-    rep(i,0,n){
-        pref[i+1] = pref[i]^a[i];
-    }
-    int res = n;
-    rep(l,0,n){
-        rep(m,l,n){
-            rep(r,m+1,n){
-                if((pref[m+1]^pref[l]) > (pref[r+1]^pref[m+1])){
-                    debug(l,r,m);
-                    res = min(res,r-l-1);
-                }
-            }
-        }
-    }
-    if(res==n) put(-1)
-    else put(res);
+    if(c[u] > childs.size()) {f=0;}
+    if(f==0) return childs;
 
+    a[u] =  (c[u]==0 ? 0 :  a[childs[c[u]-1]]) + 1;
+    rep(i,c[u],childs.size()) {
+        a[childs[i]]++;
+    }
+    childs.insert(childs.begin() + c[u],u );
+    return childs;
+}
+void testcase(){
+    cin >> n;
+    int root = 0;
+    rep(i,0,n){
+        int p;
+        cin >> p >> c[i];
+        if(p==0) root = i;
+        else {adj[p-1].push_back(i);}
+    }
+    dfs(root);
+    pyn(f);
+    if(!f) return;
+    rep(i,0,n){
+        cout << a[i] << " ";
+    }
+    cout << endl;
+    
 }
 // driver code
 int32_t main()

@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e18+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,36 +113,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 3005;
+int dp_prev[N];
+int dp_cur[N];
+int a[N];
+int pa[N];
+// must satisfy quandrangle inequality
+int C(int i,int j) {
+    return (pa[j+1]-pa[i])*(pa[j+1]-pa[i]);
+}
+// find dp[l]...dp[r]
+void compute(int l,int r,int opl,int opr){
+    if(r<l) return;
+    int mid = (l+r) >> 1;
+    pair<int,int> best = {INF,-1};
+    for(int k=opl;k<=min(opr,mid);k++){
+        best = min(best,{(k-1>=0 ? dp_prev[k-1] : 0) + C(k,mid),k}  );
+    }
+    dp_cur[mid] = best.first;
+    int opt = best.second;
+    compute(l,mid-1,opl,opt);
+    compute(mid+1,r,opt,opr);
+}
+
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
+    int n,k;
+    cin >> n>> k;
     tkv(a,n);
-    rep(i,1,n-1){
-        int x = a[i]^a[i+1];
-        if(x<a[i-1]) {
-            put(1);
-            return;
-        }
-        
+    rep(i,0,n) {pa[i+1] =a[i]+pa[i]; dp_prev[i] = INF;}
+    rep(i,0,k){
+        compute(0,n-1,0,n-1);
+        rep(i,0,n) dp_prev[i] = dp_cur[i];
     }
-    vi pref(n+1);
-    rep(i,0,n){
-        pref[i+1] = pref[i]^a[i];
-    }
-    int res = n;
-    rep(l,0,n){
-        rep(m,l,n){
-            rep(r,m+1,n){
-                if((pref[m+1]^pref[l]) > (pref[r+1]^pref[m+1])){
-                    debug(l,r,m);
-                    res = min(res,r-l-1);
-                }
-            }
-        }
-    }
-    if(res==n) put(-1)
-    else put(res);
+    put(dp_cur[n-1]);
+    
 
 }
 // driver code

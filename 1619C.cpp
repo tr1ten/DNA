@@ -114,36 +114,37 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    rep(i,1,n-1){
-        int x = a[i]^a[i+1];
-        if(x<a[i-1]) {
-            put(1);
-            return;
+    string a,s;
+    cin >> a >> s;
+    int i = s.size()-1;
+    int j = a.size()-1;
+    string b;
+    while (i>=0 && j>=0)
+    {
+        if(a[j]>s[i]) {
+            if(i-1<0) {put(-1);return;}
+            int dx = atoi(s.substr(i-1,2).c_str());
+            int r = dx-(a[j]-'0');
+            if(r>9 || r<0) {put(-1);return;}
+            b.push_back(r + '0');
+            i-=2;j--;
         }
-        
-    }
-    vi pref(n+1);
-    rep(i,0,n){
-        pref[i+1] = pref[i]^a[i];
-    }
-    int res = n;
-    rep(l,0,n){
-        rep(m,l,n){
-            rep(r,m+1,n){
-                if((pref[m+1]^pref[l]) > (pref[r+1]^pref[m+1])){
-                    debug(l,r,m);
-                    res = min(res,r-l-1);
-                }
-            }
+        else{
+            b.push_back((s[i]-a[j]) + '0');
+            j--;i--;
         }
     }
-    if(res==n) put(-1)
-    else put(res);
-
+    if(j>=0) {put(-1);return;}
+    while (i>=0)
+    {
+        b.push_back(s[i--]);
+    }
+    while (b.size()>1 && b.back()=='0') b.pop_back();
+    
+    
+    reverse(all(b));
+    put(b);
+    
 }
 // driver code
 int32_t main()
@@ -153,7 +154,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

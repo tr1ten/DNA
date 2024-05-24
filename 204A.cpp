@@ -113,37 +113,36 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 19;
+int dp[N][2][11];
+int dfs(int i,int f,int first,string &s){
+    if(dp[i][f][first+1]!=-1) return dp[i][f][first+1];
+    int up = s[i]-'0';
+    if(f) up = 9;
+    // debug(i,f,first,s);
+    if(i==s.size()-1){
+        return first==-1 ? up : first<=up;
+    }
+    int res = 0;
+    rep(d,0,up+1){
+        int nf = f;
+        if(d<up) nf = 1;
+        res += dfs(i+1,nf,(first==-1 && d>0) ? d : first,s);
+    }
+    return dp[i][f][first+1]=res;
+    
+}
+int get(int i){
+    memset(dp,-1,sizeof dp);
+    string s = to_string(i);
+    return dfs(0,0,-1,s);
+}
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    rep(i,1,n-1){
-        int x = a[i]^a[i+1];
-        if(x<a[i-1]) {
-            put(1);
-            return;
-        }
-        
-    }
-    vi pref(n+1);
-    rep(i,0,n){
-        pref[i+1] = pref[i]^a[i];
-    }
-    int res = n;
-    rep(l,0,n){
-        rep(m,l,n){
-            rep(r,m+1,n){
-                if((pref[m+1]^pref[l]) > (pref[r+1]^pref[m+1])){
-                    debug(l,r,m);
-                    res = min(res,r-l-1);
-                }
-            }
-        }
-    }
-    if(res==n) put(-1)
-    else put(res);
-
+    int a,b;
+    cin >>a >> b;
+    a -=1;
+    debug(get(a),get(b));
+    put(get(b)-get(a));
 }
 // driver code
 int32_t main()
@@ -153,7 +152,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
     while(T--) testcase();
 
     return 0;

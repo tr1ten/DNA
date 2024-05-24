@@ -113,37 +113,93 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    rep(i,1,n-1){
-        int x = a[i]^a[i+1];
-        if(x<a[i-1]) {
-            put(1);
-            return;
-        }
-        
-    }
-    vi pref(n+1);
-    rep(i,0,n){
-        pref[i+1] = pref[i]^a[i];
-    }
-    int res = n;
-    rep(l,0,n){
-        rep(m,l,n){
-            rep(r,m+1,n){
-                if((pref[m+1]^pref[l]) > (pref[r+1]^pref[m+1])){
-                    debug(l,r,m);
-                    res = min(res,r-l-1);
-                }
-            }
-        }
-    }
-    if(res==n) put(-1)
-    else put(res);
+const int N = 1e5 + 7;
+int n,nn,K; // MAKE SURE TO INITIALIZE THIS TO SIZE OF ARRAY
 
+int a[N],b[N];
+struct Segment{
+    ll sum=INF;
+};
+Segment sega[4*N], segb[4*N]; // 0 index
+
+
+Segment combine(Segment left,Segment right){
+    Segment res;
+    res.sum = min(left.sum, right.sum);
+    return res;
+}
+
+// child- 2*x+1,2*x+2 (0 coz index)
+// add x to [l...r]
+void update(int node,int left,int right,int i,ll value,Segment *segm){
+    if(left==i && right==i) {
+            segm[node].sum = value;
+        }
+    else{
+        int mid = (left+right)/2;
+        if(i<=mid) update(2*node+1,left,mid,i,value,segm);
+        else update(2*node+2,mid+1,right,i,value,segm);
+        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
+    }
+    
+}
+
+Segment query(int node,int left,int right,int l,int r,Segment *segm){
+    if(left>=l && right<=r) {return segm[node];}
+    int mid = (left+right)/2;
+    Segment res;
+    if(l<=mid) res = combine(res,query(2*node+1,left,mid,l,r,segm));
+    if(r>mid) res = combine(res,query(2*node+2,mid+1,right,l,r,segm));
+
+    return res;
+}
+// everything is zero indexed
+void update(int i,ll x,Segment *segm){
+    update(0,0,n-1,i,x,segm);
+}
+Segment query(int l,int r,Segment *segm){
+    return query(0,0,n-1,l,r,segm);
+}
+
+void testcase(){
+    cin >> nn >>K;
+    tkv(a,nn);
+    tkv(b,nn);
+    // n = nn+1;
+    vi dp1(nn+1,INF);
+    vi dpa(nn+1,0);
+    vi dpb(nn+1,0);
+    vi pa(nn+1),ppb(nn+1);
+    rep(i,1,nn+1) pa[i] = pa[i-1] + a[i-1];
+    rep(j,1,nn+1) ppb[j] = ppb[j-1] + b[j-1];
+    dpa[0] =0,dpb[0]=0;
+    // rep(i,0,nn+1) {
+    //     update(i,INF*(i>0),sega);
+    //     update(i,INF*(i>0),segb);
+    // }
+    rep(k,1,K+1){
+        rep(i,1,nn+1){
+            dp1[i]=INF;
+            if(i<k) continue;
+            // int ar= min(query(0,i-1,sega).sum+pa[i],ppb[i] + query(0,i-1,segb).sum);
+            int br = min(dpa[i-1]+pa[i],ppb[i] + dpb[i-1]);
+            dp1[i] = br;
+            // debug(ar,br,i,k);
+            // assert(ar==br);
+            
+        }
+        rep(i,0,nn+1) {
+            dpa[i] = min(i-1>=0 ? dpa[i-1] : INF,dp1[i]-pa[i]);
+            dpb[i] = min(i-1>=0 ? dpb[i-1] :INF,dp1[i]-ppb[i]);
+            // update(i,dp1[i] - pa[i],sega);
+            // update(i,dp1[i] - ppb[i],segb);
+            // assert(dpa[i]==query(0,i,sega).sum);
+            // assert(dpb[i]==query(0,i,segb).sum);
+
+        }
+        // debug(dpa,dpb);
+    }
+    put(dp1[nn]);
 }
 // driver code
 int32_t main()
@@ -153,7 +209,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

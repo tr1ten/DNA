@@ -113,37 +113,37 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 2*(1e5) + 5;
+int stk[N],a[N],lf[N],rf[N],dist[N],last[N];
+int s=0;
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
     tkv(a,n);
-    rep(i,1,n-1){
-        int x = a[i]^a[i+1];
-        if(x<a[i-1]) {
-            put(1);
-            return;
-        }
-        
-    }
-    vi pref(n+1);
+    s= 0;
     rep(i,0,n){
-        pref[i+1] = pref[i]^a[i];
+        while (s && a[stk[s-1]] <= a[i] ) s--;
+        if(s) lf[i] = stk[s-1];
+        else lf[i] = -1;
+        stk[s++] = i;
     }
-    int res = n;
-    rep(l,0,n){
-        rep(m,l,n){
-            rep(r,m+1,n){
-                if((pref[m+1]^pref[l]) > (pref[r+1]^pref[m+1])){
-                    debug(l,r,m);
-                    res = min(res,r-l-1);
-                }
-            }
-        }
+    s = 0;
+    per(i,0,n){
+        while (s && a[stk[s-1]] < a[i] ) s--;
+        if(s) rf[i] = stk[s-1];
+        else rf[i] = n;
+        stk[s++] = i;
     }
-    if(res==n) put(-1)
-    else put(res);
-
+    
+    int res = n*(n+1)/2;
+    rep(i,0,n) {res += (i-lf[i])*(rf[i]-i)*(a[i]); }
+    memset(last,-1,(n+1)*(sizeof(int)));
+    rep(i,0,n){
+        dist[i] =(i-1<0 ? 0:  dist[i-1]) + i-last[a[i]];
+        last[a[i]] = i; 
+        res -= dist[i];
+    }
+    put(res);
 }
 // driver code
 int32_t main()
@@ -153,7 +153,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
