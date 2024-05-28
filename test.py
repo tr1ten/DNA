@@ -33,3 +33,9 @@ if not f:
     print("NO")
 else: print("YES") 
 
+a = list(map(int,input().split()))
+arr = []
+i = 0
+while i<n*m:
+    arr.append(a[i:i+m])
+    i +=m
