@@ -1,41 +1,31 @@
-x,y = map(int,input().split())
-def rev(s):
-    return int(bin(s)[2:][::-1],2)
-def check(s):
-    b = bin(s)[2:]
-    t = bin(y)[2:]
-    try:
-        i = t.index(b)-1
-        j = i+len(b)
-        # print(b,t,i);
-        while i>=0:
-            if t[i]!='1':
-                return False
-            i-=1
-        while j<len(t):
-            if t[j]!='1':
-                return False
-            j +=1
-        return True        
-    except:
-        return False
-    
+def min_moves(A: int, B: int, C: int) -> int:
+    def move_and_count(x, y, z):
+        count = 0
+        while x != 0 and y != 0:
+            move = min(x, y)
+            x -= move
+            y -= move
+            z += 2 * move
+            count += move
+        return x, y, z, count
 
+    total_count = 0
 
-f = 0
-if x==y or check(2*x+1) or check(rev(2*x+1)):
-    f=1
-while x%2==0:
-    x //=2
-if check(x) or check(rev(x)):
-    f=1
-if not f:
-    print("NO")
-else: print("YES") 
+    # Process pairs (A, B), (B, C), and (A, C)
+    A, B, C, count = move_and_count(A, B, C)
+    total_count += count
 
-a = list(map(int,input().split()))
-arr = []
-i = 0
-while i<n*m:
-    arr.append(a[i:i+m])
-    i +=m
+    B, C, A, count = move_and_count(B, C, A)
+    total_count += count
+
+    A, C, B, count = move_and_count(A, C, B)
+    total_count += count
+
+    # Check if all are equal
+    if A == B == C:
+        return total_count
+    return -1
+
+# Input and Output Handling
+A, B, C = map(int, input().split())
+print(min_moves(A, B, C))

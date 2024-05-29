@@ -112,29 +112,64 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    vi dp(n);   
-    dp[0] = 0;
-    stack<int> st;
-    st.push(0);
-    rep(i,1,n){
-        while (st.size()>1 && a[st.top()]>a[i])
-        {
-            st.pop();
+
+
+const int N = 2*(1e7) + 5;
+int p2p[65];
+int sieve[N+1];
+unordered_map<int,vector<int>> divs;
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    sieve[0] = 1;
+    sieve[1] = 1;
+    for(int x=2;x<=N;x++){
+        if(sieve[x]!=0) continue; 
+        sieve[x] = x;
+        for(int u=2*x;u<=N;u +=x){
+            sieve[u] = x;
         }
-        int j = st.top();
-        dp[i ] = (i-j)*max(a[i],a[j]) + dp[j];
-        if(a[st.top()] >= a[i]) {st.pop();}
-        st.push(i);
     }
-    put(dp[n-1]);
-    
-    
+}
+
+int factors(int x){
+    int res=0;
+    while(x>1){
+        int f = sieve[x];
+        if(x%f==0) res++;
+        while(x%f==0) x/=f;
+    }
+    return res;
+}
+
+
+vector<long long> divisors(long long x){
+    if(divs.count(x)) return divs[x];
+    vector<long long> cur;
+      for(int j=1;j*j<=x;j++)
+		{		
+			if(x%j==0)
+			{
+				cur.push_back(j);
+				if(j != x/j)
+					cur.push_back(x/j);
+            }
+        }
+    return divs[x] = cur;
+}
+
+void testcase(){
+    int c,d,x;
+    cin >> c >> d >> x;
+    int res = 0;
+    trav(g,divisors(x)){
+        if((g+d)%c) continue;
+        int t = factors((g+d)/c);
+        res += p2p[t];
+    }
+    put(res);
+
+
 }
 // driver code
 int32_t main()
@@ -144,6 +179,11 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    preprocess();
+    p2p[0] = 1;
+    rep(i,1,63){
+        p2p[i] = 2*p2p[i-1];
+    }
     cin>>T;
     while(T--) testcase();
 
