@@ -112,6 +112,7 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+// do not use unordered map use mll
 template <typename T> 
 class segtree{
     struct Node
@@ -159,8 +160,8 @@ class segtree{
             if(l==r) {_node->val = new_val; }
             else {
                 int mid = (l+r)/2;
-                _node->left = _update(node->left,l,mid,ind,new_val);
-                _node->right = _update(node->right, mid+1,r,ind,new_val);
+                if(ind<=mid)  _node->left = _update(node->left,l,mid,ind,new_val);
+                else _node->right = _update(node->right, mid+1,r,ind,new_val);
                 _node->val = merge((_node->left)->val,_node->right->val);
             }
             return _node;
@@ -172,60 +173,35 @@ class segtree{
             return merge(_query(node->left,l,mid,lq,rq),_query(node->right,mid+1,r,lq,rq));
         }
 };
-const int N = 35000 + 5;
-int n,k;
-// do not use unordered map use mll
-int dp_prev[N];
-int dp_cur[N];
+const int N = 2*(1e5) + 5;
 int a[N];
+pi c[N];
 int rm[N];
-int mm[N];
-segtree<int> seg;
-// must satisfy quandrangle inequality
-int C(int l,int r) {
-    int j= n+rm - upper_bound(rm,rm+n,r);
-    return -(seg.query(l,r,j));
-}
-// find dp[l]...dp[r]
-void compute(int l,int r,int opl,int opr){
-    if(r<l) return;
-    int mid = (l+r) >> 1;
-    pair<int,int> best = {INF,-1};
-    int b = C(opl,mid);
-    for(int k=opl;k<=min(opr,mid);k++){
-        best = min(best,{(k ? dp_prev[k-1] : 0) + b,k}  );
-        if(mm[k]>mid) b++;
-    }
-    dp_cur[mid] = best.first;
-    int opt = best.second;
-    compute(l,mid-1,opl,opt);
-    compute(mid+1,r,opt,opr);
-}   
 void testcase(){
-    cin >> n >> k;
+    int n,q;
+    cin >> n >> q;
     tkv(a,n);
-    seg = segtree<int>(n,0);
     mll last;
     per(i,0,n){
-        if(last.count(a[i]) ){mm[i]= rm[i] = last[a[i]];}
-        else {mm[i]=rm[i] = n;}
+        if(last.count(a[i]) ) rm[i] = last[a[i]];
+        else rm[i] = n;
         last[a[i]] = i;
     }
-    rep(i,0,n){ debug(i,rm[i]);}
-    vpi c(n);
     rep(i,0,n) {c[i].ff = rm[i];c[i].ss=i;}
-    srv(c);
-    reverse(all(c));
+    sort(c,c+n);
+    reverse(c,c+n);
+    segtree<int> seg(n,0);
     rep(i,0,n) {
         seg.roots.push_back(seg.update(c[i].ss,1,i));
     }
     sort(rm,rm+n);
-    rep(i,0,k){
-        compute(0,n-1,0,n-1);
-        rep(i,0,n) dp_prev[i] = dp_cur[i];
+    rep(i,0,q){
+        int l,r;
+        cin >> l >> r;
+        --l;--r;
+        int j= n + rm - upper_bound(rm,rm+n,r);
+        put(seg.query(l,r,0));
     }
-    put(-dp_cur[n-1]);
-
 }
 // driver code
 int32_t main()

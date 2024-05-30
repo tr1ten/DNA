@@ -113,7 +113,99 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
+
+template <typename T> 
+class segtree{
+    struct Node
+    {
+        Node *left,*right;
+        T val;
+        Node(T v,Node *lp=nullptr,Node* rp=nullptr): val(v), left(lp), right(rp) {}
+    };
+    public:
+        int n;
+        T basev;
+        vector<Node *> roots;
+        segtree() {}
+        segtree(int _n,T _bv): n(_n),basev(_bv)  {
+            roots.push_back(this->_build(0,n-1));
+        };
+        Node* update(int index,T new_val,int time=0) {
+            return _update(roots[time],0,n-1,index,new_val);
+        }
+        T query(int lq,int rq,int time=0){
+            return _query(roots[time],0,n-1,lq,rq);
+        }
+
+    private:
+        T merge(T a,T b) {
+            return a+b;
+        }
+        Node *_build(int l,int r){
+            if(l>r) return nullptr;
+            Node *node = new Node(this->basev);
+            if(l==r) return node;
+            int mid = (l+r) >> 1;
+            node->left = _build(l,mid);
+            node->right = _build(mid+1,r);
+            return node;
+        }
+
+        Node *_update(Node *node,int l,int r,int ind,T new_val) {
+            if(l>r) return nullptr;
+            if(ind<l || ind>r) return node;
+            Node *_node = new Node(node->val,node->left,node->right);
+            if(l==r) {_node->val = new_val; }
+            else {
+                int mid = (l+r)/2;
+                _node->left = _update(node->left,l,mid,ind,new_val);
+                _node->right = _update(node->right, mid+1,r,ind,new_val);
+                _node->val = merge((_node->left)->val,_node->right->val);
+            }
+            return _node;
+        }
+        T _query(Node *node, int l,int r, int lq,int rq) {
+            if(r<lq || l>rq) return this->basev;
+            if(l>=lq && r<=rq)  return node->val;
+            int mid = (l+r)/2;
+            return merge(_query(node->left,l,mid,lq,rq),_query(node->right,mid+1,r,lq,rq));
+        }
+     
+};
+
+
 void testcase(){
+    int n,q;
+    cin >> n >> q;
+    segtree<int> seg(n,0);
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        seg.roots[0]= seg.update(i,x);
+    }
+    rep(i,0,q){
+        int t;
+        cin >> t;
+        if(t==1){
+            int k,a,x;
+            cin >> k >> a >> x;
+            k--;a--;
+            seg.roots[k] = seg.update(a,x,k);
+        }
+        else if(t==2){
+            int k,a,b;
+            cin >> k >> a >> b;
+            a--;b--;k--;
+            put(seg.query(a,b,k));
+        }
+        else{
+            int k;
+            cin >> k;
+            k--;
+            seg.roots.push_back(seg.roots[k]);
+        }
+    }
 }
 // driver code
 int32_t main()
@@ -123,7 +215,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

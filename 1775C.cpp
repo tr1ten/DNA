@@ -44,7 +44,6 @@ struct custom_hash {
 // ht<int, null_type> g;
 
 typedef long long ll; 
-typedef unsigned long long ull; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -52,9 +51,6 @@ typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
-#define ss second
-#define ff first
-#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -78,6 +74,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
+void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -105,136 +102,43 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-template <typename T> 
-class segtree{
-    struct Node
-    {
-        Node *left,*right;
-        T val;
-        Node(T v,Node *lp=nullptr,Node* rp=nullptr): val(v), left(lp), right(rp) {}
-    };
-    public:
-        int n;
-        T basev;
-        vector<Node *> roots;
-        segtree() {}
-        segtree(int _n,T _bv): n(_n),basev(_bv)  {
-            roots.push_back(this->_build(0,n-1));
-        };
-        // Make sure to save node in roots when updating
-        Node* update(int index,T new_val,int time=0) {
-            assert(index<n);assert(time<roots.size());
-            return _update(roots[time],0,n-1,index,new_val);
-        }
-        T query(int lq,int rq,int time=0){
-            assert(lq>=0);assert(rq<n);assert(lq<=rq);assert(time<roots.size());
-            return _query(roots[time],0,n-1,lq,rq);
-        }
-
-    private:
-        T merge(T a,T b) {
-            return a+b;
-        }
-        Node *_build(int l,int r){
-            if(l>r) return nullptr;
-            Node *node = new Node(this->basev);
-            if(l==r) return node;
-            int mid = (l+r) >> 1;
-            node->left = _build(l,mid);
-            node->right = _build(mid+1,r);
-            return node;
-        }
-
-        Node *_update(Node *node,int l,int r,int ind,T new_val) {
-            if(l>r) return nullptr;
-            if(ind<l || ind>r) return node;
-            Node *_node = new Node(node->val,node->left,node->right);
-            if(l==r) {_node->val = new_val; }
-            else {
-                int mid = (l+r)/2;
-                _node->left = _update(node->left,l,mid,ind,new_val);
-                _node->right = _update(node->right, mid+1,r,ind,new_val);
-                _node->val = merge((_node->left)->val,_node->right->val);
-            }
-            return _node;
-        }
-        T _query(Node *node, int l,int r, int lq,int rq) {
-            if(r<lq || l>rq) return this->basev;
-            if(l>=lq && r<=rq)  return node->val;
-            int mid = (l+r)/2;
-            return merge(_query(node->left,l,mid,lq,rq),_query(node->right,mid+1,r,lq,rq));
-        }
-};
-const int N = 35000 + 5;
-int n,k;
 // do not use unordered map use mll
-int dp_prev[N];
-int dp_cur[N];
-int a[N];
-int rm[N];
-int mm[N];
-segtree<int> seg;
-// must satisfy quandrangle inequality
-int C(int l,int r) {
-    int j= n+rm - upper_bound(rm,rm+n,r);
-    return -(seg.query(l,r,j));
-}
-// find dp[l]...dp[r]
-void compute(int l,int r,int opl,int opr){
-    if(r<l) return;
-    int mid = (l+r) >> 1;
-    pair<int,int> best = {INF,-1};
-    int b = C(opl,mid);
-    for(int k=opl;k<=min(opr,mid);k++){
-        best = min(best,{(k ? dp_prev[k-1] : 0) + b,k}  );
-        if(mm[k]>mid) b++;
-    }
-    dp_cur[mid] = best.first;
-    int opt = best.second;
-    compute(l,mid-1,opl,opt);
-    compute(mid+1,r,opt,opr);
-}   
 void testcase(){
-    cin >> n >> k;
-    tkv(a,n);
-    seg = segtree<int>(n,0);
-    mll last;
-    per(i,0,n){
-        if(last.count(a[i]) ){mm[i]= rm[i] = last[a[i]];}
-        else {mm[i]=rm[i] = n;}
-        last[a[i]] = i;
+    ll n,x;
+    cin >> n >> x;
+    if((n&x)!=x){
+        put(-1);
+        return;
     }
-    rep(i,0,n){ debug(i,rm[i]);}
-    vpi c(n);
-    rep(i,0,n) {c[i].ff = rm[i];c[i].ss=i;}
-    srv(c);
-    reverse(all(c));
-    rep(i,0,n) {
-        seg.roots.push_back(seg.update(c[i].ss,1,i));
+    ll res = -1;
+    rep(i,0,63){
+        ll mask = 1ll<<i;
+        if((n&(mask))!=(x&(mask))){
+            n ^=mask;
+        }        
+        if(n==x){
+            res = n|(1ll<<(i+1));
+            break;
+        }
     }
-    sort(rm,rm+n);
-    rep(i,0,k){
-        compute(0,n-1,0,n-1);
-        rep(i,0,n) dp_prev[i] = dp_cur[i];
-    }
-    put(-dp_cur[n-1]);
-
+    put(res);
 }
 // driver code
-int32_t main()
+int main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
