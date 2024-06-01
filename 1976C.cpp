@@ -113,26 +113,49 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
+// ... ai..aj ....
+
+// before ai, best can be taken
+// after ai either all are tester or progrmamer
+/*
+
+    assuming programming position filled first
+
+    so if p[k]>t[k]: choice[j] + test[n]-test[j]
+    else choice[i] + test[n] - test[i]
+
+*/
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    vi b(n+1);
-    tkv(b,n+1);
-    int ex = INF;
-    debug(a,b);
-    int res = 0;
-    rep(i,0,n){
-        res += abs(a[i]-b[i]);
-        int mx = max(a[i],b[i]);
-        int mn = min(a[i],b[i]);
-        if(b[n]>mx) ex =min(ex, b[n]-mx);
-        else if(b[n]<mn) ex =min( mn - b[n],ex);
-        else ex = 0;
+    int n,m;
+    cin >> n >> m;
+    int tot = n+m+1;
+    vi p(tot),t(tot);
+    tkv(p,tot);tkv(t,tot);
+    vi pfp(tot+1),pft(tot+1);
+    int pc=0,tc=0;
+    int ii = tot,jj=tot;
+    vi choice(tot+1);
+    rep(i,0,tot){
+        pfp[i+1] = pfp[i] + p[i];
+        pft[i+1] = pft[i] + t[i];
+        pc += p[i] > t[i];
+        tc += p[i] < t[i];
+        choice[i+1] = choice[i] + max(t[i],p[i]);
+        if(pc==n+1) ii = i;
+        if(pc==n+2) jj = i;
+        if(tc==m+1) ii = i;
+        if(tc==m+2) jj = i;
     }
-    debug(res,ex);
-    put(res+ex+1);
+    if(ii<tot && p[ii] < t[ii]) {swap(pfp,pft);swap(p,t);}
+    debug(ii,jj);
+    rep(i,0,tot){
+        if(i<ii && p[i]>t[i]) cout << choice[jj] + pft[tot] - pft[jj] << " ";
+        else cout << choice[ii] + pft[tot] - pft[ii] << " ";
+    }
+    cout << endl;
+
+
 }
 // driver code
 int32_t main()
