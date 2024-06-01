@@ -113,23 +113,29 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+bool isdigit(char x) {return x<='9' && x>='0';}
 void testcase(){
-    int n,x;
-    cin >> n>> x;
-    int oo = 0;
-    int res = 0;
-    int ex = 0;
-    rep(i,0,63){
-        if(((n>>i)&1) && ((((x>>i)&1))==0)) {
-            ex += res;
-            res = 1LL<<i;
-        }
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int i= 0 ;
+    char last = '0';
+    while (i<n && isdigit(s[i]))
+    {
+        if(s[i]<last) {pyn(0);return;}
+        last = s[i];
+        i++;
     }
-    debug(ex,res);
-    res -=ex;
-    res +=n;
-    if((res&n)==x) put(res)
-    else put(-1)
+    last = 'a';
+    while (i<n )
+    {
+        if(isdigit(s[i]) ||  s[i]<last) {pyn(0);return;}
+        last = s[i];
+        i++;
+    }
+    pyn(1);
+    
 }
 // driver code
 int32_t main()
