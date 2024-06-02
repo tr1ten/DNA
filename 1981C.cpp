@@ -113,29 +113,115 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-bool isdigit(char x) {return x<='9' && x>='0';}
+bool match(int cur,int tar) {
+    bitset<32> cb= cur;
+    bitset<32> tb= tar;
+    string s1 = cb.to_string();
+    string s2 = tb.to_string();
+    int i =0,j=0;
+    while (s1[i]=='0')
+    {
+        i++;
+    }
+    while (s2[j]=='0')
+    {
+        j++;
+    }
+    while (i<s1.size())
+    {
+        if(s1[i++]!=s2[j++]) return false;
+    }
+    
+    return true;
+    
+}
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    int i= 0 ;
-    char last = '0';
-    while (i<n && isdigit(s[i]))
-    {
-        if(s[i]<last) {pyn(0);return;}
-        last = s[i];
-        i++;    
+    vi a(n);
+    tkv(a,n); 
+    vi inds;
+    rep(i,0,n){
+        if(a[i]!=-1) inds.pb(i);
     }
-    last = 'a';
-    while (i<n )
-    {
-        if(isdigit(s[i]) ||  s[i]<last) {pyn(0);return;}
-        last = s[i];
-        i++;
+    vi res=a;
+    if(inds.size()==0){
+        int choices[] = {1,2};
+        rep(i,0,n) res[i] = choices[i%2];
     }
-    pyn(1);
-    
+    else{
+        int f = 0;
+        rep(k,0,inds.size()-1){
+            int j=inds[k]+1;
+            int fs = 0;
+            if(a[inds[k]]  >a[inds[k+1]]){ swap(res[inds[k]],res[inds[k+1]]);fs=1;}
+            int cur=res[inds[k]];
+            int tar = res[inds[k+1]];
+            debug(cur,tar,match(cur,tar));
+            while (j<=inds[k+1] && cur/2 > 0 && !match(cur,tar))
+            {   
+                cur /=2;
+                res[j] = cur;
+                j++;
+            }
+            stack<int> st;
+            int tt = tar;
+            while (tt>cur)
+            {
+                st.push(tt%2);
+                tt/=2;
+            }
+            debug(res,k);
+            if(tt!=cur){
+                put(-1);
+                return;
+            }
+            double dd[2] = {2.0,0.5};
+            int c = 0;
+            while ( j<=inds[k+1])
+            {
+                
+                if(st.size()){
+                    cur = 2*cur;
+                    cur |= st.top();
+                    st.pop();
+                }
+                else{
+                    cur =( (double)cur*dd[c]);
+                    c ^=1;
+                }
+                res[j] = cur;
+                j++;
+            }
+            if(res[inds[k+1]]!=tar){
+                    put(-1);
+                    return;
+            }
+            if(fs){
+                debug(res,inds[k],inds[k+1],res[inds[k]],res[inds[k+1]]);
+                rep(i,inds[k],1+(inds[k+1]+inds[k])/2){
+                    swap(res[i],res[inds[k+1] -(i-inds[k])]);
+                }
+                debug(res,res[inds[k]],res[inds[k+1]]);
+
+            }
+        }
+        double dd[2] = {2.0,0.5};
+        int c = 0;
+        per(i,0,inds[0]){
+            res[i] = res[i+1]*dd[c];
+            c ^=1;
+        }
+        c =0;
+        rep(i,inds.back()+1,n){
+            res[i] = res[i-1]*dd[c];
+            c ^=1;
+        }
+
+        
+    }
+    pvc(res);
+
 }
 // driver code
 int32_t main()

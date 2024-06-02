@@ -12,14 +12,49 @@ using ordered_multiset = tree<T, null_type,less_equal<T>, rb_tree_tag,tree_order
 // find_by_order(k)  returns iterator to kth element starting from 0;
 // order_of_key(k) returns count of elements strictly smaller than k;
 // useful defs
+const int RANDOM = chrono::high_resolution_clock::now().time_since_epoch().count();
+struct chash {
+    int operator()(int x) const { return x ^ RANDOM; }
+};
+// gp_hash_table<int, int, chash> table;
+template <class K, class V>
+
+using ht = gp_hash_table<
+
+    K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
+
+    hash_standard_resize_policy<hash_exponential_size_policy<>,
+
+                                hash_load_check_resize_trigger<>, true>>;
+
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+// ht<int, null_type> g;
+
 typedef long long ll; 
+typedef unsigned long long ull; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
-typedef unordered_map<ll,ll> mll;
+typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
+#define ss second
+#define ff first
+#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -43,7 +78,6 @@ typedef unordered_map<ll,ll> mll;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
-void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -70,88 +104,63 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7;
-const ll INF = 1e10+5;
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll INF = 1e16+5;
 
-class HashedString {
-  private:
-	// change M and B if you want
-	static const long long M = 1e9 + 7;
-	static const long long B = 9973;
-
-	// pow[i] contains B^i % M
-	static vector<long long> pow;
-
-	// p_hash[i] is the hash of the first i characters of the given string
-	vector<long long> p_hash;
-
-  public:
-	HashedString(const string &s) : p_hash(s.size() + 1) {
-		while (pow.size() < s.size()) { pow.push_back((pow.back() * B) % M); }
-
-		p_hash[0] = 0;
-		for (int i = 0; i < s.size(); i++) {
-			p_hash[i + 1] = ((p_hash[i] * B) % M + s[i]) % M;
-		}
-	}
-
-	long long getHash(int start, int end) {
-		long long raw_val =
-		    (p_hash[end + 1] - (p_hash[start] * pow[end - start + 1]));
-		return (raw_val % M + M) % M;
-	}
-};
-
-vector<long long> HashedString::pow = {1};
-
+inline int ctz(ll x) { return __builtin_ctzll(x);}
+inline int clz(ll x) {return __builtin_clzll(x);}
+inline int pc(ll x) {return  __builtin_popcount(x);} 
+inline int hset(ll x) {return __lg(x);}
+void pyn(int x) {put(x?"YES":"NO");}
+// do not use unordered map use mll
+void testcase(){
+    int n,k,x;
+    cin >> n >> k >> x;
+    x--;
+    string s;
+    cin >> s;
+    vector<int> times;
+    vi vs;
+    vector<string> ree;
+    int i =0;
+    int pref = 1;
+    while(i<n){
+        if(s[i]=='*') {
+            int t=1;
+            while(i<n && s[i]=='*') {t+=k;i++;}
+            vs.push_back(ree.size());
+            ree.push_back("");
+            times.push_back(t);
+        }
+        else {ree.push_back("a"); i++;}
+    }
+    int sr=times.size();
+    per(i,0,times.size()) {
+        if(pref*times[i] <= x) sr=i;
+        else break;
+        pref *=times[i];
+    }
+    debug(ree,times,pref,sr);
+    rep(i,sr-1,times.size()){
+        rep(j,0,x/pref) ree[vs[i]] +="b";
+        x %=pref;
+        pref /=( i+1<times.size() ? times[i+1] : 1);
+    }
+    string res;
+    trav(x,ree) res += x;
+    put(res);
+    
+}
 // driver code
-int main()
+int32_t main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);	  
+    // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
-    while(T--){
-        int n,m;
-        cin >> n >> m;
-        unordered_map<int,map<pi,set<int>>> hashes;
-        rep(i,0,n){
-            string s;
-            cin >> s;
-            HashedString hs(s);
-            int nn = s.size();
-            hashes[nn][{0,hs.getHash(1,nn-1)}].insert(s[0]-'a');
-            hashes[nn][{hs.getHash(0,nn-2),0}].insert(s[nn-1]-'a');
-            rep(j,1,nn-1){
-                pi pp = {hs.getHash(0,j-1),hs.getHash(j+1,nn-1)};
-                hashes[nn][pp].insert(s[j]-'a');
-            }
-        }
-        rep(i,0,m){
-            string s;
-            cin >> s;
-            HashedString hs(s);
-            int nn = s.size();
-            int f = 0;
-            auto it1 =  hashes[nn].find({0,hs.getHash(1,nn-1)});
-            if(it1!=hashes[nn].end() && (*it1).second.find(s[0]-'a')==(*it1).second.end()) f=1;
-            it1 =  hashes[nn].find({hs.getHash(0,nn-2),0});
-            if(it1!=hashes[nn].end() && (*it1).second.find(s[nn-1]-'a')==(*it1).second.end()) f=1;
-            rep(j,1,nn-1){
-                if(f) break;
-                pi pp = {hs.getHash(0,j-1),hs.getHash(j+1,nn-1)};
-                it1 =  hashes[nn].find(pp);
-                if(it1!=hashes[nn].end() && (*it1).second.find(s[j]-'a')==(*it1).second.end()) f=1;
-            }
-            if(f) put("YES")
-            else put("NO")
-
-        }   
-
-
-    }
+    cin>>T;
+    while(T--) testcase();
 
     return 0;
 }

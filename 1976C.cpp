@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <bits/stdc++.h>
-
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
@@ -18,15 +17,10 @@ struct chash {
 };
 // gp_hash_table<int, int, chash> table;
 template <class K, class V>
-
 using ht = gp_hash_table<
-
     K, V, hash<K>, equal_to<K>, direct_mask_range_hashing<>, linear_probe_fn<>,
-
     hash_standard_resize_policy<hash_exponential_size_policy<>,
-
                                 hash_load_check_resize_trigger<>, true>>;
-
 struct custom_hash {
     static uint64_t splitmix64(uint64_t x) {
         // http://xorshift.di.unimi.it/splitmix64.c
@@ -35,14 +29,12 @@ struct custom_hash {
         x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
         return x ^ (x >> 31);
     }
-
-    size_t operator()(uint64_t x) const {
+        size_t operator()(uint64_t x) const {
         static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
         return splitmix64(x + FIXED_RANDOM);
     }
 };
 // ht<int, null_type> g;
-
 typedef long long ll; 
 typedef unsigned long long ull; 
 typedef vector<ll> vi;
@@ -77,7 +69,6 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 // debugging
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
-
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -90,7 +81,6 @@ void __print(char x) {cerr << '\'' << x << '\'';}
 void __print(const char *x) {cerr << '\"' << x << '\"';}
 void __print(const string &x) {cerr << '\"' << x << '\"';}
 void __print(bool x) {cerr << (x ? "true" : "false");}
-
 template<typename T, typename V>
 void __print(const pair<T, V> &x) {cerr << '{'; __print(x.first); cerr << ','; __print(x.second); cerr << '}';}
 template<typename T>
@@ -98,7 +88,6 @@ void __print(const T &x) {int f = 0; cerr << '{'; for (auto &i: x) cerr << (f++ 
 void _print() {cerr << "]\n";}
 template <typename T, typename... V>
 void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v...);}
-
 #ifndef ONLINE_JUDGE
 #define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
 #else
@@ -106,26 +95,20 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
-
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
 // ... ai..aj ....
-
 // before ai, best can be taken
 // after ai either all are tester or progrmamer
 /*
-
     assuming programming position filled first
-
     so if p[k]>t[k]: choice[j] + test[n]-test[j]
     else choice[i] + test[n] - test[i]
-
-*/
+    */
 void testcase(){
     int n,m;
     cin >> n >> m;
@@ -142,19 +125,22 @@ void testcase(){
         pc += p[i] > t[i];
         tc += p[i] < t[i];
         choice[i+1] = choice[i] + max(t[i],p[i]);
-        if(pc==n+1) ii = i;
-        if(pc==n+2) jj = i;
-        if(tc==m+1) ii = i;
-        if(tc==m+2) jj = i;
+        if(ii==tot) {
+            if(pc==n+1) ii = i;
+            if(tc==m+1) ii = i;
+        }
+        if(jj==tot){
+            if(pc==n+2) jj = i;
+            if(tc==m+2) jj = i;
+        }
     }
-    if(ii<tot && p[ii] < t[ii]) {swap(pfp,pft);swap(p,t);}
-    debug(ii,jj);
+    if(ii<tot && tc>=m+1) {swap(pfp,pft);swap(p,t);}
+    debug(pfp,pft,p,t,ii,jj);
     rep(i,0,tot){
-        if(i<ii && p[i]>t[i]) cout << choice[jj] + pft[tot] - pft[jj] << " ";
-        else cout << choice[ii] + pft[tot] - pft[ii] << " ";
+        if(i<ii && p[i]>t[i]) cout << choice[jj] + pft[tot] - pft[jj] -p[i] << " ";
+        else cout << choice[ii] + pft[tot] - pft[ii] - t[i] << " ";
     }
     cout << endl;
-
 
 }
 // driver code
@@ -170,3 +156,106 @@ int32_t main()
 
     return 0;
 }
+
+
+// 0 1
+// 1 1
+// 2 2
+// 1 0
+// 1 1
+// 2 2
+// 0 1
+// 1 1
+// 2 3
+// 1 0
+// 1 1
+// 2 3
+// 0 1
+// 1 1
+// 3 2
+// 1 0
+// 1 1
+// 3 2
+// 0 1
+// 1 1
+// 3 3
+// 1 0
+// 1 1
+// 3 3
+// 0 1
+// 1 2
+// 2 1
+// 1 0
+// 1 2
+// 2 1
+// 0 1
+// 1 2
+// 2 3
+// 1 0
+// 1 2
+// 2 3
+// 0 1
+// 1 2
+// 3 1
+// 1 0
+// 1 2
+// 3 1
+// 0 1
+// 1 2
+// 3 3
+// 1 0
+// 1 2
+// 3 3
+// 0 1
+// 1 3
+// 2 1
+// 1 0
+// 1 3
+// 2 1
+// 0 1
+// 1 3
+// 2 2
+// 1 0
+// 1 3
+// 2 2
+// 0 1
+// 1 3
+// 3 1
+// 1 0
+// 1 3
+// 3 1
+// 0 1
+// 1 3
+// 3 2
+// 1 0
+// 1 3
+// 3 2
+// 0 1
+// 2 1
+// 1 2
+// 1 0
+// 2 1
+// 1 2
+// 0 1
+// 2 1
+// 1 3
+// 1 0
+// 2 1
+// 1 3
+// 0 1
+// 2 1
+// 3 2
+// 1 0
+// 2 1
+// 3 2
+// 0 1
+// 2 1
+// 3 3
+// 1 0
+// 2 1
+// 3 3
+// 0 1
+// 2 2
+// 1 1
+// 1 0
+// 2 2
