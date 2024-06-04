@@ -113,36 +113,74 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 2e5 + 5;
+int row[N];
+int col[N];
 void testcase(){
-    int n;
-    cin >> n;
-    mll cnt;
+    int n,m;
+    cin >> n >> m;
+    vii mat(n,vi(m));
+    vii tar(n,vi(m));
     rep(i,0,n){
-        int x;
-        cin >> x;
-        cnt[x]++;
+        rep(j,0,m){
+            cin >> mat[i][j];
+        }
     }
-    vi b{(1LL<<31)-1};
-    while(cnt.size()){
-        int mx = 0;
-        trav(x,cnt){
-            mx = max(mx,x.first&b.back());
+     rep(i,0,n){
+        rep(j,0,m){
+            cin >> tar[i][j];
+            row[tar[i][j]] = i;
+            col[tar[i][j]] = j;
         }
-        int c = 0;
-        auto it= cnt.begin();
-        while(it!=cnt.end()){
-            if(((*it).first&b.back())==mx){
-                c += (*it).second;
-                cnt.erase((it++));
-            }
-            else ++it;
-            
+    }
+    vi vis(m);
+    rep(i,0,m){
+        if(vis[i]) continue;
+        int j = col[mat[0][i]];
+        vi temp(n);
+        rep(k,0,n) temp[k] = mat[k][i];
+        while (!vis[j])
+        {
+            vis[j] = 1;
+            vi t2(n);
+            int jj =  col[mat[0][j]];
+            rep(k,0,n) {t2[k] = mat[k][j];mat[k][j] = temp[k] ;}
+            j = jj;
+            temp= t2;
         }
-        rep(i,0,c) b.push_back(mx);
+    }
 
+    vis.clear();
+    vis.resize(n);
+    rep(i,0,n){
+        if(vis[i]) continue;
+        int j = row[mat[0][i]];
+        vi temp(m);
+        rep(k,0,m) temp[k] = mat[i][k];
+        while (!vis[j])
+        {
+            vis[j] = 1;
+            vi t2(m);
+            int jj =  row[mat[j][0]];
+
+            rep(k,0,m) {t2[k] = mat[j][k];mat[j][k] = temp[k] ;}
+            j =  jj;
+            temp= t2;
+        }
     }
-    b.erase(b.begin());
-    pvc(b);
+    rep(i,0,n){
+        rep(j,0,n){
+            if(tar[i][j]!=mat[i][j]) {
+                pyn(0);
+                return;
+            }
+        }
+    }
+    pyn(1);
+    
+    
+    
+    
 }
 // driver code
 int32_t main()
