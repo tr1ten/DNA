@@ -113,24 +113,18 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int st[N];
-int z = 0;
-
 void testcase(){
+    int n;
+    cin >> n;
     string s;
     cin >> s;
-    int n = s.size();
-    int bal = 0;
-    map<int,int> cnt;
-    int res = 0;
+    mll cnt;
+    int c = 0;
+    cnt[0]++;
+    int res = n*(n+1)/2;
     rep(i,0,n){
-        bal += s[i]=='(' ? 1:-1;
-        res +=    (cnt[bal]++);
-        while (2*(cnt.begin())->first < bal)
-        {
-            cnt.erase(cnt.begin());
-        }
+        c += s[i]=='0' ? -1 : 1;
+        res += (cnt[c]++);
     }
     put(res);
 }
