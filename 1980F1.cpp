@@ -134,13 +134,15 @@ void testcase(){
     {
         (*rit).second = min(last.second,(*rit).ss);
         res += (last.first-(rit->first))*(last.second-1);
-        debug(last,*rit);
+        // debug(last,*rit);
         last = *rit;
         rit++;
     }
-    debug(mins,cors);
+    mins[n+1] = m+1;
+    // debug(mins,cors);
     put(res);
     rep(i,0,k){
+        // debug(cors[ft[i].ff]==ft[i].ss, (mins.upper_bound(ft[i].ff))->second>ft[i].ss);
         cout << (cors[ft[i].ff]==ft[i].ss && (mins.upper_bound(ft[i].ff))->second>ft[i].ss) << " ";
     }
     cout << endl;

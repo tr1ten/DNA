@@ -133,6 +133,7 @@ void testcase(){
             col[tar[i][j]] = j;
         }
     }
+    debug(mat,tar);
     vi vis(m);
     rep(i,0,m){
         if(vis[i]) continue;
@@ -149,12 +150,13 @@ void testcase(){
             temp= t2;
         }
     }
+    debug(mat);
 
     vis.clear();
     vis.resize(n);
     rep(i,0,n){
         if(vis[i]) continue;
-        int j = row[mat[0][i]];
+        int j = row[mat[i][0]];
         vi temp(m);
         rep(k,0,m) temp[k] = mat[i][k];
         while (!vis[j])
@@ -168,8 +170,10 @@ void testcase(){
             temp= t2;
         }
     }
+    debug(mat);
+
     rep(i,0,n){
-        rep(j,0,n){
+        rep(j,0,m){
             if(tar[i][j]!=mat[i][j]) {
                 pyn(0);
                 return;
