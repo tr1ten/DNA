@@ -41,6 +41,8 @@ def find(root,x):
 Find max xor of x in trie
 """
 def max_xor(root,x):
+    if not root.childs[0] and not root.childs[1]:
+        return 0
     cur = root
     for i in range(MX,-1,-1):
         ind = (x>>i)&1
@@ -55,29 +57,39 @@ def main():
         u,v,w = map(int,input().split())
         u-=1;v-=1;
         adj[u].append((v,w))
-        adj[v].append((v,w))
+        adj[v].append((u,w))
     
     root = Node()
+    evroot = Node()
     path = [0]*n
-    def dfs(u,p,xr):
-        add(root,xr)
+    dd = [0]*n
+    def dfs(u,p,xr,d):
+        add(root if d else evroot,xr)
         path[u] = xr
-        for v,w in adj[p]:
+        dd[u] = d;
+        for v,w in adj[u]:
             if v!=p:
-                dfs(v,u,xr^w)
+                dfs(v,u,xr^w,(d+1)%2)
     # for x in A: add(root,x)
+    dfs(0,-1,0,0)
+    # print(path,dd)
     y_ = 0
     for i in range(m):
         ip = input()
         if ip[0]=='^':
-            _,y = map(int,ip)
+            y = int(ip.split(" ")[1])
             y_ ^= y
         else:
-            _,v,x = map(int,ip)
-            remove(root,path[v])
-            print(max_xor(root,x^path[v]^y_))
-            add(root,path[v])
-
+            v,x = map(int,ip.split(" ")[1:])
+            v -=1
+            if dd[v]:
+                evroot,root = root,evroot
+            remove(evroot,path[v])
+            print(max(max_xor(root,x^path[v]^y_),max_xor(evroot,x^path[v])),end=" ")
+            add(evroot,path[v])
+            if dd[v]:
+                evroot,root = root,evroot
+    print()
 if __name__=='__main__':
     t = int(input())
     while t:
