@@ -1,8 +1,75 @@
-#include <iostream>
-#include <vector>
+#include<bits/stdc++.h>
 using namespace std;
+
+
+
+
 const int A = 2;
-const int MX = 30;
+const int MX = 30; // 10**9 < 1<<30
+struct trie
+{
+    int v,sz;
+    int val;
+    trie *sons[A];
+ 
+    trie()
+    {
+        v = sz = 0;
+        memset(sons,0,sizeof(sons));
+    }
+ 
+    void add(int x,int m)
+    {
+        if ( m==-1  )
+        {
+            v++;
+            sz++;
+            val = x;
+            return;
+        }
+        int ind = (x>>m)&1;
+        if ( sons[ind ] == NULL ) sons[ind] = new trie();
+ 
+        sz -= sons[ind]->sz;
+        sons[ind]->add(x,m-1);
+        sz += sons[ind]->sz;
+    }
+ 
+    void remove(int x,int m)
+    {
+        if ( m == -1)
+        {
+            v--;
+            sz--;
+            
+            return;
+        }
+        int ind = (x>>m)&1;
+
+        if ( sons[ind]->sz == 0 ) sons[ind] = new trie();
+        else
+        {
+            sz -= sons[ind]->sz;
+            sons[ind]->remove(x,m-1);
+            sz += sons[ind]->sz;
+            if ( sons[ind]->sz == 0 )
+                sons[ind] = NULL;
+        }
+    }
+
+    
+    int max_xor(int x,int m){
+        if(m==-1) {
+            return val^x;
+        }
+        if(sz==0) { return 0;}
+        int ind = (x>>m)&1;
+        if(sons[!ind]!=NULL) return sons[!ind]->max_xor(x,m-1);
+        return sons[ind]->max_xor(x,m-1);
+    }
+ 
+};
+
 template <class F>
 struct y_combinator {
     F f; // the lambda will be stored here
@@ -21,62 +88,6 @@ y_combinator<std::decay_t<F>> make_y_combinator(F&& f) {
     return {std::forward<F>(f)};
 }
 
-class Node {
-public:
-    Node* childs[2] = {nullptr,nullptr};
-    bool ended;
-    int val;
-    int cnt;
-    
-    Node() {
-        ended = false;
-        val = 0;
-        cnt = 0;
-    }
-};
-
-void add(Node* root, int x) {
-    Node* cur = root;
-    for (int i = MX; i >= 0; --i) { // store from msb...lsb
-        int ind = (x >> i) & 1;
-        if (!cur->childs[ind]) cur->childs[ind] = new Node();
-        cur = cur->childs[ind];
-    }
-    cur->ended = true;
-    cur->cnt++;
-    cur->val = x;
-}
-
-void remove(Node* root, int x) {
-    Node* cur = root;
-    vector<pair<Node*, int>> path;
-    for (int i = MX; i >= 0; --i) { // store from msb...lsb
-        int ind = (x >> i) & 1;
-        path.push_back({cur, ind});
-        cur = cur->childs[ind];
-    }
-    cur->cnt--;
-    if (cur->cnt == 0) {
-        while (!path.empty()) {
-            pair<Node*, int> p = path.back();
-            path.pop_back();
-            p.first->childs[p.second] = nullptr;
-            if (p.first->childs[p.second ^ 1]) break;
-        }
-    }
-}
-
-
-int max_xor(Node* root, int x) {
-    if (!root->childs[0] && !root->childs[1]) return 0;
-    Node* cur = root;
-    for (int i = MX; i >= 0; --i) {
-        int ind = (x >> i) & 1;
-        if (cur->childs[ind ^ 1]) cur = cur->childs[ind ^ 1];
-        else cur = cur->childs[ind];
-    }
-    return cur->val ^ x;
-}
 const int N = 2e5 + 5;
 int path[N];
 int dd[N];
@@ -96,11 +107,11 @@ int32_t main() {
             adj[v].push_back({u, w});
         }
         
-        Node* root = new Node();
-        Node* evroot = new Node();
+        trie root;
+        trie evroot;
         
         auto dfs = make_y_combinator([&](auto dfs,int u, int p, int xr, int d)->void{
-            add(d ? root : evroot, xr);
+            (d ? root : evroot).add(xr,MX);
             path[u] = xr;
             dd[u] = d;
             for (auto [v, w] : adj[u]) {
@@ -112,7 +123,7 @@ int32_t main() {
 
 
         dfs(0, -1, 0, 0);
-
+        
         int y_ = 0;
         for (int i = 0; i < m; ++i) {
             string ip;
@@ -126,9 +137,10 @@ int32_t main() {
                 cin >> v >> x;
                 v--;
                 if (dd[v]) swap(root, evroot);
-                remove(evroot, path[v]);
-                cout << max(max_xor(root, x ^ path[v] ^ y_), max_xor(evroot, x ^ path[v])) << " ";
-                add(evroot, path[v]);
+                evroot.remove(path[v],MX);
+                cout << max(root.max_xor( x ^ path[v] ^ y_,MX), evroot.max_xor( x ^ path[v],MX)) << " ";
+                evroot.add(path[v],MX);
+
                 if (dd[v]) swap(root, evroot);
             }
         }

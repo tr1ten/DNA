@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <bits/stdc++.h>
-
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
@@ -113,23 +112,10 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 1e5 + 5;
-int b[N];
 void testcase(){
     int n,k;
     cin >> n >> k;
-    int f = 0;
-    rep(i,1,n+1) cin >> b[i];
-    vi vis(n+1);
-    rep(i,1,n+1){
-        if(vis[i]!=0) continue;
-        vi cyc{i};
-        while (vis[])
-        {
-            /* code */
-        }
-        
-    }
+
 }
 // driver code
 int32_t main()
@@ -144,3 +130,89 @@ int32_t main()
 
     return 0;
 }
+// 1 1
+// 1
+// 2 1
+// 1 1
+// 2 1
+// 2 1
+// 2 1
+// 1 2
+// 2 1
+// 2 2
+// 2 2
+// 1 1
+// 2 2
+// 2 1
+// 2 2
+// 1 2
+// 2 2
+// 2 2
+// 3 1
+// 1 1 1
+// 3 1
+// 2 1 1
+// 3 1
+// 3 1 1
+// 3 1
+// 1 2 1
+// 3 1
+// 2 2 1
+// 3 1
+// 3 2 1
+// 3 1
+// 1 3 1
+// 3 1
+// 2 3 1
+// 3 1
+// 3 3 1
+// 3 1
+// 1 1 2
+// 3 1
+// 2 1 2
+// 3 1
+// 3 1 2
+// 3 1
+// 1 2 2
+// 3 1
+// 2 2 2
+// 3 1
+// 3 2 2
+// 3 1
+// 1 3 2
+// 3 1
+// 2 3 2
+// 3 1
+// 3 3 2
+// 3 1
+// 1 1 3
+// 3 1
+// 2 1 3
+// 3 1
+// 3 1 3
+// 3 1
+// 1 2 3
+// 3 1
+// 2 2 3
+// 3 1
+// 3 2 3
+// 3 1
+// 1 3 3
+// 3 1
+// 2 3 3
+// 3 1
+// 3 3 3
+// 3 2
+// 1 1 1
+// 3 2
+// 2 1 1
+// 3 2
+// 3 1 1
+// 3 2
+// 1 2 1
+// 3 2
+// 2 2 1
+// 3 2
+// 3 2 1
+// 3 2
+// 1 3 1
