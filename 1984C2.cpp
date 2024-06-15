@@ -123,25 +123,23 @@ void testcase(){
         cin >> x;
         if(x<0) {
             if(abs(dp0+x)>dp1+x) n1 = n0;
-            else n1 *=2;
-            
-            if(abs(dp0+x)==dp1+x) n1 += n0;
-            
+            else if(abs(dp0+x)<dp1+x) n1 *=2;
+            else{
+                n1 *=2;
+                if(dp0!=dp1) n1 += n0;
+            }
             dp1 = max(abs(dp0+x),dp1+x);
             dp0 += x;
             if(dp0>=0) n0 *=2;
-            n0 %=MOD;
-            n1 %=MOD;
         }  
         else{
             dp0 +=x;
             if(dp0>=0) n0 *=2;
             dp1 +=x;
             n1 *=2;
-            n1 %=MOD; 
-            n0 %=MOD;
         }
-        debug(n0,n1,dp0,dp1);
+        // n1 %=MOD; 
+        // n0 %=MOD;
     }
     put(n1);
 }
