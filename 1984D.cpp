@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 998244353; // change me for god sake look at problem mod
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,37 +113,70 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    int dp0=0,dp1=0;
-    int n0=1,n1=1;
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        if(x<=0) {
-            if(abs(dp0+x)>dp1+x) n1 = n0;
-            else if(abs(dp0+x)<dp1+x) n1 *=2;
-            else{
-                if(dp0!=dp1) n1 = 2*n1 + n0;
-                else {debug(i,dp0,dp1,n1,n0);assert(n0==n1);n1 *=2;}
-            }
-            dp1 = max(abs(dp0+x),dp1+x);
-            dp0 += x;
-            if(dp0>=0) n0 *=2;
-        }  
-        else{
-            dp0 +=x;
-            if(dp0>=0) n0 *=2;
-            dp1 +=x;
-            n1 *=2;
+// use c++20 compiler
+using ll = long long;
+class HashedString {
+public:
+	static const long long M = (1LL<<61) -1;
+	static const long long B;
+    static vector<long long> ppow;
+    vector<long long> hashes;
+    __int128 mul(ll a, ll b) { return (__int128)a * b; }
+	ll mod_mul(ll a, ll b) { return mul(a, b) % M; }
+    HashedString(string s) {
+        int n = s.length();
+        ppow = {1};
+        hashes = {0};
+
+        for (int i = 0; i < n; ++i) {
+            ppow.push_back(mod_mul(ppow.back(),B) );
         }
-        n1 %=MOD; 
-        n0 %=MOD;
-        debug(i,n0,n1,dp0,dp1);
+
+        for (int i = 0; i < n; ++i) {
+            hashes.push_back((mod_mul(hashes.back(), B) + (s[i] - 'a' + 1)) % M);
+        }
     }
-    debug(dp0,dp1,n0,n1);
-    put(n1);
+
+    long long getHash(int i, int j) {
+        return (hashes[j + 1] - mod_mul(hashes[i], ppow[j - i + 1]) + M) % M;
+    }
+};
+mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
+const ll HashedString::B = uniform_int_distribution<ll>(0, M - 1)(rng);
+vector<long long> HashedString::ppow = {1};
+
+void testcase(){
+    string s;
+    cin >> s;
+    int n = s.size();
+    HashedString hs(s);
+    vi suff(n);
+    per(i,0,n){
+        if(s[i]!='a') suff[i] = i;
+        else suff[i] =( i+1>=n) ? n :  suff[i+1];      
+    }
+    if(suff[0]==n) {put(n-1);return;}
+    int res = 0;
+    rep(len,1,n-suff[0]+1){
+        int m = n;
+        int j=0;
+        int hash = hs.getHash(suff[0],suff[0]+len-1);
+        int f = 1;
+        while (f && j<n)
+        {
+            int d = suff[j]-j;
+            j = suff[j];
+            if(j==n) break;
+            m = min(d,m);
+            if(j+len-1>=n || (hs.getHash(j,j+len-1)!=hash)) f=0;
+            j += len;
+            
+        }
+        if(f) res += m+1;
+    }
+    put(res);
+    
+    
 }
 // driver code
 int32_t main()

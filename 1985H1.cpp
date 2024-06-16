@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 998244353; // change me for god sake look at problem mod
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,37 +113,126 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    int dp0=0,dp1=0;
-    int n0=1,n1=1;
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        if(x<=0) {
-            if(abs(dp0+x)>dp1+x) n1 = n0;
-            else if(abs(dp0+x)<dp1+x) n1 *=2;
-            else{
-                if(dp0!=dp1) n1 = 2*n1 + n0;
-                else {debug(i,dp0,dp1,n1,n0);assert(n0==n1);n1 *=2;}
-            }
-            dp1 = max(abs(dp0+x),dp1+x);
-            dp0 += x;
-            if(dp0>=0) n0 *=2;
-        }  
-        else{
-            dp0 +=x;
-            if(dp0>=0) n0 *=2;
-            dp1 +=x;
-            n1 *=2;
+
+
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    DSU(int n)
+    {
+        this->par = new int[n];
+        this->sz = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
         }
-        n1 %=MOD; 
-        n0 %=MOD;
-        debug(i,n0,n1,dp0,dp1);
     }
-    debug(dp0,dp1,n0,n1);
-    put(n1);
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    void connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+    }
+};
+
+
+int solve(vii mat){
+    int n=mat.size(),m = mat[0].size();
+    int res = 0;
+    DSU ds(n*m);
+    vi suff(m+1);
+    per(j,0,m){
+        int sm=  0;
+        rep(i,0,n){
+            if(mat[i][j]){
+                if(j+1<m && mat[i][j+1]) ds.connect(i*m+j,i*m+j+1);
+                if(i-1>=0 && mat[i-1][j]) ds.connect(i*m+j,(i-1)*m+j);
+            }
+        }
+        unordered_set<int> vis;
+        rep(i,0,n){
+            if(mat[i][j]){
+                if(!vis.count(ds.find(i*m+j))) {sm += ds.sz[ds.find(i*m+j)];vis.insert(ds.find(i*m + j));}
+            }
+        }
+        suff[j] = sm;
+    }
+    DSU ds2(n*m);
+
+    int last = 0;
+    rep(j,0,m){
+        int sm=  0;
+        rep(i,0,n){
+            if(mat[i][j]){
+                if(j-1>=0 && mat[i][j-1]) ds2.connect(i*m+j,i*m+j-1);
+                if(i-1>=0 && mat[i-1][j]) ds2.connect(i*m+j,(i-1)*m+j);
+            }
+        }
+        unordered_set<int> vis;
+        rep(i,0,n){
+            if(mat[i][j]){
+                if(!vis.count(ds2.find(i*m+j))) {sm += ds2.sz[ds2.find(i*m+j)];vis.insert(ds2.find(i*m + j));}
+            }
+        }
+        res = max(res,last+n+suff[j+1]);
+        last = sm;
+    }
+    return res;
+    
+}
+vector<vector<int>> rotate(vector<vector<int>> &mat){
+    int n=mat.size(),m=mat[0].size();
+    vector<vector<int>> ans(m,vi(n));
+    rep(i,0,n){
+        rep(j,0,m){
+            ans[j][i] = mat[i][j];
+        }
+    }
+    rep(i,0,m){
+        rep(j,0,n/2){
+            swap(ans[i][j],ans[i][n-j-1]);
+        }
+    }
+    return ans;
+}
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    vii mat(n,vi(m));
+    rep(i,0,n){
+        string s;
+        cin >> s;
+        rep(j,0,m){
+            mat[i][j] = (s[j]=='#');
+        }
+    }
+    vii rmat = rotate(mat);
+    put(max(solve(mat),solve(rmat)));
+
+    
 }
 // driver code
 int32_t main()

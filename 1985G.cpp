@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 998244353; // change me for god sake look at problem mod
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -112,38 +112,23 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    int dp0=0,dp1=0;
-    int n0=1,n1=1;
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        if(x<=0) {
-            if(abs(dp0+x)>dp1+x) n1 = n0;
-            else if(abs(dp0+x)<dp1+x) n1 *=2;
-            else{
-                if(dp0!=dp1) n1 = 2*n1 + n0;
-                else {debug(i,dp0,dp1,n1,n0);assert(n0==n1);n1 *=2;}
-            }
-            dp1 = max(abs(dp0+x),dp1+x);
-            dp0 += x;
-            if(dp0>=0) n0 *=2;
-        }  
-        else{
-            dp0 +=x;
-            if(dp0>=0) n0 *=2;
-            dp1 +=x;
-            n1 *=2;
-        }
-        n1 %=MOD; 
-        n0 %=MOD;
-        debug(i,n0,n1,dp0,dp1);
-    }
-    debug(dp0,dp1,n0,n1);
-    put(n1);
+    int l,r,k;
+    cin >> l >> r >> k;
+    int nk = 9/k;
+    put((fast_pow(nk+1,r,MOD)-fast_pow(nk+1,l,MOD)+MOD)%MOD)
 }
 // driver code
 int32_t main()
