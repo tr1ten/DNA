@@ -113,111 +113,58 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5*(1e5) + 5;
-int n; // MAKE SURE TO INITIALIZE THIS TO SIZE OF ARRAY
-struct Segment{
-    ll sum=INF;
-};
-Segment seg1[2*N]; // 0 index
-Segment seg2[2*N]; // 0 index
 
-Segment combine(Segment left,Segment right){
-    Segment res;
-    res.sum = min(left.sum , right.sum);
-    return res;
-}
-
-// child- 2*x+1,2*x+2 (0 coz index)
-// add x to [l...r]
-void update(Segment* segm, int node,int left,int right,int i,ll value){
-    if(left==i && right==i) {
-            segm[node].sum = value;
-        }
-    else{
-        int mid = (left+right)/2;
-        if(i<=mid) update(segm,2*node+1,left,mid,i,value);
-        else update(segm,2*node+2,mid+1,right,i,value);
-        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
-    }
-    
-}
-
-Segment query(Segment* segm,int node,int left,int right,int l,int r){
-    if(left>=l && right<=r) {return segm[node];}
-    int mid = (left+right)/2;
-    Segment res;
-    if(l<=mid) res = combine(res,query(segm,2*node+1,left,mid,l,r));
-    if(r>mid) res = combine(res,query(segm,2*node+2,mid+1,right,l,r));
-
-    return res;
-}
-// everything is zero indexed
-void update(int i,ll x,Segment* segm){
-    update(segm,0,0,n-1,i,x);
-}
-int query(int l,int r,Segment* segm){
-    return query(segm,0,0,n-1,l,r).sum;
-}
-// int main(int argc, char const *argv[])
-// {   
-//     cin >> n;
-//     int q;
-//     cin >> q;
-//     for(int i=0;i<n;i++) {int x;cin >> x;update(i,x);}
-//     for(int i=0;i<q;i++){
-//         int x;
-//         cin >> x;
-//         if(x==0){
-//             int ind,y;
-//             cin >> ind >> y;
-//             update(ind,y);
-//         }
-//         else{
-//             int l,r;
-//             cin >> l >> r;
-//             r--;
-//             cout << (query(l,r)).sum << endl;
-//         }
-//     }
-    
-//     return 0;
-// }
-
+/**
+ *  a1 a2 a3 a4 a5
+ *   
+ *   b1  b2 b3 b4
+ * 
+ *   bi-1,bi => gcd(ai-1,ai+1)
+ *      
+ *      
+ */
 void testcase(){
+    int n;
     cin >> n;
     vi a(n);
     tkv(a,n);
-    rep(i,0,n){
-        update(i,INF,seg1);
-        update(i,INF,seg2);
+    vi b(n-1);
+    rep(i,0,n-1){
+        b[i] = gcd(a[i],a[i+1]);
     }
-    stack<int> st1;
-    stack<int> st2;
-    vi dp(n,INF);
-    dp[0] =0;
-    st1.push(0);st2.push(0);
-    update(0,0,seg1);
-    update(0,0,seg2);
-    rep(i,1,n){
-        while (st1.size() && a[st1.top()]>a[i] )
-        {
-            update(st1.top(),INF,seg1);
-            st1.pop();
-        }
-        while (st2.size() && a[st2.top()]<a[i] )
-        {
-            update(st2.top(),INF,seg2);
-            st2.pop();
-        }
-        dp[i] = min(query(st1.size() ? st1.top() : 0,i,seg2),query(st2.size() ? st2.top() : 0,i,seg1)) + 1;
-        st1.push(i);
-        st2.push(i);
-        debug(i,dp[i]);
-        update(i,dp[i],seg1);
-        update(i,dp[i],seg2);
-    
+    vi sb(n,1);
+    int last = 1e9+1;
+    per(i,0,n-1){
+        sb[i] = (b[i]<=last) & sb[i+1];
+        last = b[i];
     }
-    put(dp.back());
+    vi pb(n,1);
+    rep(i,0,n-1){
+        pb[i+1] = pb[i] & (b[i]>=last);
+        last =  b[i];
+    }
+    if(pb[n-2] || sb[1]) {
+        pyn(1);
+        return;
+    }
+    rep(i,1,n-1){
+        int lf = i-1>=0 ? pb[i-1] : 1;
+        int rg = i+1<n ? sb[i+1] : 1;
+        int lfn,rgn;
+        if(i-2>=0) lfn = b[i-2];
+        else lfn = -INF;
+        if(i+1<n-1) rgn = b[i+1];
+        else rgn = INF;
+        int g = gcd(a[i-1],a[i+1]);
+        if(lf && rg && lfn<=g && g<=rgn ){
+            pyn(1);
+            return;
+        }
+    }
+    pyn(0);
+
+
+
 }
 // driver code
 int32_t main()

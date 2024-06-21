@@ -113,111 +113,96 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5*(1e5) + 5;
-int n; // MAKE SURE TO INITIALIZE THIS TO SIZE OF ARRAY
-struct Segment{
-    ll sum=INF;
-};
-Segment seg1[2*N]; // 0 index
-Segment seg2[2*N]; // 0 index
-
-Segment combine(Segment left,Segment right){
-    Segment res;
-    res.sum = min(left.sum , right.sum);
-    return res;
+const int N = 104;
+int n,m;
+int mat[N][N];
+int check(vii&mt){
+    if(mt[0][0]==0 && mt[0][1]==0 && mt[1][0]==0 && mt[1][1]==0) return 1;
+    return 0;
 }
-
-// child- 2*x+1,2*x+2 (0 coz index)
-// add x to [l...r]
-void update(Segment* segm, int node,int left,int right,int i,ll value){
-    if(left==i && right==i) {
-            segm[node].sum = value;
+vpi solve(int i,int j){
+    vector<vector<pi>> p = {{{0,0},{1,0},{0,1}},{{0,1},{0,0},{1,1}},{{1,0},{0,0},{1,1}},{{1,1},{0,1},{1,0}}};
+    vi t = {0,1,2,3};
+    vii mt = {{mat[i][j],mat[i][j+1]},{mat[i+1][j],mat[i+1][j+1]}};
+    // debug(i,j,mt);;
+    if(check(mt)) return {};
+    do{
+        auto temp = mt;
+        vector<pi> moves;
+        trav(v,t){
+            trav(c,p[v]) {
+                temp[c.ff][c.ss] ^=1;
+                moves.push_back({i+c.ff,j+c.ss});
+            }
+            if(check(temp)){
+                // debug(moves.size());
+                 mat[i][j] = 0;
+                mat[i][j+1] = 0;
+                mat[i+1][j+1] = 0;
+                mat[i+1][j] = 0;
+                 return moves;
+                 
+                 }
         }
-    else{
-        int mid = (left+right)/2;
-        if(i<=mid) update(segm,2*node+1,left,mid,i,value);
-        else update(segm,2*node+2,mid+1,right,i,value);
-        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
     }
+    while(next_permutation(all(t)));
+    return {};
     
 }
-
-Segment query(Segment* segm,int node,int left,int right,int l,int r){
-    if(left>=l && right<=r) {return segm[node];}
-    int mid = (left+right)/2;
-    Segment res;
-    if(l<=mid) res = combine(res,query(segm,2*node+1,left,mid,l,r));
-    if(r>mid) res = combine(res,query(segm,2*node+2,mid+1,right,l,r));
-
-    return res;
-}
-// everything is zero indexed
-void update(int i,ll x,Segment* segm){
-    update(segm,0,0,n-1,i,x);
-}
-int query(int l,int r,Segment* segm){
-    return query(segm,0,0,n-1,l,r).sum;
-}
-// int main(int argc, char const *argv[])
-// {   
-//     cin >> n;
-//     int q;
-//     cin >> q;
-//     for(int i=0;i<n;i++) {int x;cin >> x;update(i,x);}
-//     for(int i=0;i<q;i++){
-//         int x;
-//         cin >> x;
-//         if(x==0){
-//             int ind,y;
-//             cin >> ind >> y;
-//             update(ind,y);
-//         }
-//         else{
-//             int l,r;
-//             cin >> l >> r;
-//             r--;
-//             cout << (query(l,r)).sum << endl;
-//         }
-//     }
-    
-//     return 0;
-// }
 
 void testcase(){
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
+    cin >> n >> m;
     rep(i,0,n){
-        update(i,INF,seg1);
-        update(i,INF,seg2);
-    }
-    stack<int> st1;
-    stack<int> st2;
-    vi dp(n,INF);
-    dp[0] =0;
-    st1.push(0);st2.push(0);
-    update(0,0,seg1);
-    update(0,0,seg2);
-    rep(i,1,n){
-        while (st1.size() && a[st1.top()]>a[i] )
-        {
-            update(st1.top(),INF,seg1);
-            st1.pop();
+        string s;
+        cin >> s;
+        rep(j,0,m){
+            mat[i][j] = s[j] -'0';
         }
-        while (st2.size() && a[st2.top()]<a[i] )
-        {
-            update(st2.top(),INF,seg2);
-            st2.pop();
-        }
-        dp[i] = min(query(st1.size() ? st1.top() : 0,i,seg2),query(st2.size() ? st2.top() : 0,i,seg1)) + 1;
-        st1.push(i);
-        st2.push(i);
-        debug(i,dp[i]);
-        update(i,dp[i],seg1);
-        update(i,dp[i],seg2);
-    
     }
-    put(dp.back());
+    int k = 0;
+    vpi ans;
+    for(int i=0;i<n-1;i+=1){
+        for(int j=0;j<m-1;j+=1){
+            if(mat[i][j] + mat[i+1][j] + mat[i+1][j+1] + mat[i][j+1] == 3) {
+                trav(c,solve(i,j)){
+                        ans.push_back(c);
+                }
+            }
+           
+
+        }
+    }
+    for(int i=0;i<n-1;i+=1){
+        for(int j=0;j<m-1;j+=1){
+            if(mat[i][j]){
+                trav(c,solve(i,j)){
+                        ans.push_back(c);
+                }
+            }
+           
+
+        }
+    }
+    rep(i,0,n-1){
+        if(mat[i][m-2]==0 && mat[i][m-1]==0) continue;
+        trav(c,solve(i,m-2)){
+            ans.push_back(c);
+        }
+    }
+    rep(j,0,m-1){
+        if(mat[n-2][j]==0 && mat[n-1][j]==0) continue;
+        trav(c,solve(n-2,j)){
+            ans.push_back(c);
+        }
+    }
+
+    put(ans.size()/3);
+    assert(ans.size()/3 <= n*m);
+    for(int i=0;i<ans.size();i+=3){
+        cout << ans[i].ff+1 << " "<< ans[i].ss+1 << " "<< ans[i+1].ff+1 << " "<< ans[i+1].ss+1 << " " << ans[i+2].ff+1 << " "<< ans[i+2].ss+1 << endl;
+    }
+
+
 }
 // driver code
 int32_t main()

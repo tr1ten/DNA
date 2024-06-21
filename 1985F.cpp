@@ -113,111 +113,30 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5*(1e5) + 5;
-int n; // MAKE SURE TO INITIALIZE THIS TO SIZE OF ARRAY
-struct Segment{
-    ll sum=INF;
-};
-Segment seg1[2*N]; // 0 index
-Segment seg2[2*N]; // 0 index
-
-Segment combine(Segment left,Segment right){
-    Segment res;
-    res.sum = min(left.sum , right.sum);
-    return res;
-}
-
-// child- 2*x+1,2*x+2 (0 coz index)
-// add x to [l...r]
-void update(Segment* segm, int node,int left,int right,int i,ll value){
-    if(left==i && right==i) {
-            segm[node].sum = value;
-        }
-    else{
-        int mid = (left+right)/2;
-        if(i<=mid) update(segm,2*node+1,left,mid,i,value);
-        else update(segm,2*node+2,mid+1,right,i,value);
-        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
-    }
-    
-}
-
-Segment query(Segment* segm,int node,int left,int right,int l,int r){
-    if(left>=l && right<=r) {return segm[node];}
-    int mid = (left+right)/2;
-    Segment res;
-    if(l<=mid) res = combine(res,query(segm,2*node+1,left,mid,l,r));
-    if(r>mid) res = combine(res,query(segm,2*node+2,mid+1,right,l,r));
-
-    return res;
-}
-// everything is zero indexed
-void update(int i,ll x,Segment* segm){
-    update(segm,0,0,n-1,i,x);
-}
-int query(int l,int r,Segment* segm){
-    return query(segm,0,0,n-1,l,r).sum;
-}
-// int main(int argc, char const *argv[])
-// {   
-//     cin >> n;
-//     int q;
-//     cin >> q;
-//     for(int i=0;i<n;i++) {int x;cin >> x;update(i,x);}
-//     for(int i=0;i<q;i++){
-//         int x;
-//         cin >> x;
-//         if(x==0){
-//             int ind,y;
-//             cin >> ind >> y;
-//             update(ind,y);
-//         }
-//         else{
-//             int l,r;
-//             cin >> l >> r;
-//             r--;
-//             cout << (query(l,r)).sum << endl;
-//         }
-//     }
-    
-//     return 0;
-// }
-
 void testcase(){
-    cin >> n;
-    vi a(n);
+    int h,n;
+    cin >> h >> n;
+    vi a(n),c(n);
     tkv(a,n);
-    rep(i,0,n){
-        update(i,INF,seg1);
-        update(i,INF,seg2);
+    tkv(c,n);
+    int ans = 0;
+    int lo=0,hi = 1e12;
+    while (lo<=hi)
+    {   
+        int mid = (lo+hi)/2;
+        int hh = 0;
+        rep(i,0,n){
+            hh += ((mid/c[i])+1)*a[i];
+            if(hh>=h) break;
+        }
+        if(hh>=h) {
+            hi = mid-1;
+            ans = mid;
+        }
+        else lo = mid+1;
     }
-    stack<int> st1;
-    stack<int> st2;
-    vi dp(n,INF);
-    dp[0] =0;
-    st1.push(0);st2.push(0);
-    update(0,0,seg1);
-    update(0,0,seg2);
-    rep(i,1,n){
-        while (st1.size() && a[st1.top()]>a[i] )
-        {
-            update(st1.top(),INF,seg1);
-            st1.pop();
-        }
-        while (st2.size() && a[st2.top()]<a[i] )
-        {
-            update(st2.top(),INF,seg2);
-            st2.pop();
-        }
-        dp[i] = min(query(st1.size() ? st1.top() : 0,i,seg2),query(st2.size() ? st2.top() : 0,i,seg1)) + 1;
-        st1.push(i);
-        st2.push(i);
-        debug(i,dp[i]);
-        update(i,dp[i],seg1);
-        update(i,dp[i],seg2);
+    put(ans+1);
     
-    }
-    put(dp.back());
 }
 // driver code
 int32_t main()
