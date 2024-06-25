@@ -112,87 +112,86 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
+/**
+  if aleast n-2 nodes have <n-3 degree and remaing 2 have n-2 degree than ans = 0
+    if n*(n-1)/2 - m > n-1 ans = 0
 
-vii adj;
-int n,m;
-vi shortest_path(int S,int T){
-    unordered_set<int> vis;
-    vi parent(n,-1);
-    parent[S] = -1;
-    queue<int> q;
-    q.push(S);
-    while (q.size())
+
+**/
+// do not use unordered map use mll
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int cnt;
+    DSU(int n)
     {
-        int u = q.front();
-        if(u==T){
-            vi path{T};
-            while (parent[path.back()]!=-1)
-            {
-                path.push_back(parent[path.back()]);
-            }
-            reverse(all(path));
-            return path;
-            
-        }
-        vis.insert(u);
-        q.pop();
-        trav(v,adj[u]){
-            if(u==S && v==T) continue;
-            if(vis.count(v)==0){
-                parent[v] = u;
-                q.push(v);
-            }
+        this->par = new int[n];
+        this->sz = new int[n];
+        cnt = n;
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
         }
     }
-    return {};
-    
-}
-void testcase(){
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    void connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+        cnt--;
+    }
+};
+
+void testcase(){    
+    int n,m;
     cin >> n >> m;
-    adj.clear();
-    adj.resize(n);
+    vector<unordered_set<int>> adj(n);
     rep(i,0,m){
         int u,v;
         cin >> u >> v;
         --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-
+        adj[u].insert(v);
+        adj[v].insert(u);
     }
-    int res = 0;
-    for(int u=0;u<n;u++){
-        if(adj[u].size()<4) continue;
-        trav(v,adj[u]){
-            vi pa = shortest_path(u,v);
-            if(pa.size()){
-                unordered_set<int> vis;
-                trav(x,pa) vis.insert(x);
-                debug(u,v,pa);
-                vpi vr;
-                trav(vv,adj[u]){
-                    if(vr.size()==2) break;
-                    if(vis.count(vv)==0){
-                        vr.push_back({u,vv});
-                    }
-                }
-                if(vr.size()==2){
-                    for(int i=1;i<pa.size();i++){
-                        vr.push_back({pa[i-1],pa[i]});
-                    }
-                    vr.push_back({u,v});
-                    pyn(1);
-                    put(vr.size());
-                    trav(v,vr){
-                        put2(v.ff+1,1+v.ss);
-                    }
-                    return;
-                
-                }   
-            }
+    int v= 0 ;
+    rep(i,0,n){
+        if(adj[v].size()>adj[i].size()){
+            v = i;
         }
-    }   
-    pyn(0);
+    }
+    DSU ds(n);
+    rep(i,0,n){
+        if(i!=v && adj[v].count(i)==0) ds.connect(v,i);
+    }
+    trav(u,adj[v]){
+        rep(i,0,n){
+                if(i!=u && adj[u].count(i)==0) ds.connect(u,i);
+            }
+    }
+    put(ds.cnt-1);
     
 }
 // driver code
@@ -203,7 +202,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

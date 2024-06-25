@@ -113,87 +113,71 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+int n; // number of nodes
+vector<vector<int>> adj; // adjacency list of graph
 
-vii adj;
-int n,m;
-vi shortest_path(int S,int T){
-    unordered_set<int> vis;
-    vi parent(n,-1);
-    parent[S] = -1;
-    queue<int> q;
-    q.push(S);
-    while (q.size())
-    {
-        int u = q.front();
-        if(u==T){
-            vi path{T};
-            while (parent[path.back()]!=-1)
-            {
-                path.push_back(parent[path.back()]);
-            }
-            reverse(all(path));
-            return path;
-            
+vector<bool> visited;
+vector<int> tin, low;
+int timer;
+int res;
+vi siz;
+
+void IS_BRIDGE(int v,int to){
+    res = max({res,siz[to]*(n-siz[to])});
+}
+void dfs(int v, int p = -1) {
+    siz[v]=1;
+    visited[v] = true;
+    tin[v] = low[v] = timer++;
+    bool parent_skipped = false;
+    for (int to : adj[v]) {
+        if (to == p && !parent_skipped) {
+            parent_skipped = true;
+            continue;
         }
-        vis.insert(u);
-        q.pop();
-        trav(v,adj[u]){
-            if(u==S && v==T) continue;
-            if(vis.count(v)==0){
-                parent[v] = u;
-                q.push(v);
-            }
+        if (visited[to]) {
+            low[v] = min(low[v], tin[to]);
+        } else {
+            dfs(to, v);
+            low[v] = min(low[v], low[to]);
+            if (low[to] > tin[v])
+                IS_BRIDGE(v, to);
+            siz[v] +=siz[to];
         }
     }
-    return {};
-    
+}
+
+void find_bridges() {
+    timer = 0;
+    siz.assign(n,0);
+    visited.assign(n, false);
+    tin.assign(n, -1);
+    low.assign(n, -1);
+    for (int i = 0; i < n; ++i) {
+        if (!visited[i])
+            dfs(i);
+    }
 }
 void testcase(){
-    cin >> n >> m;
+    int m;
+    cin >> n>> m;
     adj.clear();
     adj.resize(n);
+    vpi edges;
     rep(i,0,m){
         int u,v;
         cin >> u >> v;
         --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-
+        adj[u].pb(v);
+        adj[v].pb(u);
+        edges.pb({u,v});
     }
-    int res = 0;
-    for(int u=0;u<n;u++){
-        if(adj[u].size()<4) continue;
-        trav(v,adj[u]){
-            vi pa = shortest_path(u,v);
-            if(pa.size()){
-                unordered_set<int> vis;
-                trav(x,pa) vis.insert(x);
-                debug(u,v,pa);
-                vpi vr;
-                trav(vv,adj[u]){
-                    if(vr.size()==2) break;
-                    if(vis.count(vv)==0){
-                        vr.push_back({u,vv});
-                    }
-                }
-                if(vr.size()==2){
-                    for(int i=1;i<pa.size();i++){
-                        vr.push_back({pa[i-1],pa[i]});
-                    }
-                    vr.push_back({u,v});
-                    pyn(1);
-                    put(vr.size());
-                    trav(v,vr){
-                        put2(v.ff+1,1+v.ss);
-                    }
-                    return;
-                
-                }   
-            }
-        }
-    }   
-    pyn(0);
+    res=  0;
+    find_bridges();
+    debug(res);
+    put(n*(n-1)/2 -res);
     
+
 }
 // driver code
 int32_t main()

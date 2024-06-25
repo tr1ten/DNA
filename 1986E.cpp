@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e14+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,87 +113,45 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-vii adj;
-int n,m;
-vi shortest_path(int S,int T){
-    unordered_set<int> vis;
-    vi parent(n,-1);
-    parent[S] = -1;
-    queue<int> q;
-    q.push(S);
-    while (q.size())
-    {
-        int u = q.front();
-        if(u==T){
-            vi path{T};
-            while (parent[path.back()]!=-1)
-            {
-                path.push_back(parent[path.back()]);
-            }
-            reverse(all(path));
-            return path;
-            
-        }
-        vis.insert(u);
-        q.pop();
-        trav(v,adj[u]){
-            if(u==S && v==T) continue;
-            if(vis.count(v)==0){
-                parent[v] = u;
-                q.push(v);
-            }
-        }
-    }
-    return {};
-    
-}
 void testcase(){
-    cin >> n >> m;
-    adj.clear();
-    adj.resize(n);
-    rep(i,0,m){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-
+    int n,k;
+    cin >> n >> k;
+    map<int,vi> rs;
+    vi a(n);
+    tkv(a,n);
+    srv(a);
+    trav(x,a){
+        rs[x%k].push_back(x);
     }
-    int res = 0;
-    for(int u=0;u<n;u++){
-        if(adj[u].size()<4) continue;
-        trav(v,adj[u]){
-            vi pa = shortest_path(u,v);
-            if(pa.size()){
-                unordered_set<int> vis;
-                trav(x,pa) vis.insert(x);
-                debug(u,v,pa);
-                vpi vr;
-                trav(vv,adj[u]){
-                    if(vr.size()==2) break;
-                    if(vis.count(vv)==0){
-                        vr.push_back({u,vv});
-                    }
-                }
-                if(vr.size()==2){
-                    for(int i=1;i<pa.size();i++){
-                        vr.push_back({pa[i-1],pa[i]});
-                    }
-                    vr.push_back({u,v});
-                    pyn(1);
-                    put(vr.size());
-                    trav(v,vr){
-                        put2(v.ff+1,1+v.ss);
-                    }
-                    return;
+    int c = 0;
+    int res= 0 ;
+    for(auto &x:rs){
+        if(x.second.size()&1){
+            c++;
+            if(c>(n&1)) {put(-1);return;}
+            vi suff((int)(x.second.size())+1,INF);
+            suff.back() = 0;
+            for(int i=(int)(x.second.size())-2;i>=0;i-=2){
+                suff[i] =  ((x.second[i+1]-x.second[i])/k) + suff[i+2];
+            }
+            int pref = 0;
+            int mn = INF;
+            for(int i=0;i<(int)(x.second.size())-1;i+=2){
+                mn = min(mn,pref+suff[i+1]);
+                pref = pref + (x.second[i+1]-x.second[i])/k;
                 
-                }   
+            }
+            mn = min(mn,pref);
+            res +=mn;
+        }
+        else{
+            for(int i=0;i<(int)(x.second.size())-1;i+=2){
+                res += (x.second[i+1]-x.second[i])/k;
             }
         }
-    }   
-    pyn(0);
-    
+    }
+    put(res)
+
 }
 // driver code
 int32_t main()
