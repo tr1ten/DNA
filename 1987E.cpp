@@ -105,46 +105,76 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e17+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}    
+void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 const int N = 5005;
-int dp[N][N];
-vi a;
-int m;
-int dfs(int i,int money_left){
-    if(i==m){
-        return 0;
+int dep[N];
+vi b;
+vector<pi> bfs(int u,vector<vector<int>> &adj)  {
+    dep[u] = 0;
+    queue<int> q;
+    q.push(u);
+    vpi cands;
+    while (q.size())
+    {
+        int v = q.front();
+        if(b[v]>0) cands.push_back({dep[v],v});
+        q.pop();
+        for(auto w:adj[v]){
+            dep[w] = dep[v]+1;
+            q.push(w);
+        }
     }
-    if(dp[i][money_left]!=-1) return dp[i][money_left];
-    int res = dfs(i+1,money_left+1);
-    if(a[i] <= money_left) res = max(res,1+dfs(i+1,money_left-a[i]));
-    return dp[i][money_left] = res;
+    return cands;
+    
 }
 void testcase(){
     int n;
     cin >> n;
-    map<int,int> cost;
-    rep(i,0,n){
+    vi a(n);
+    tkv(a,n);
+    vii adj(n);
+    b.clear();
+    b.resize(n);
+    rep(i,0,n-1){
         int x;
         cin >> x;
-        cost[x]++;
+        --x;
+        adj[x].push_back(i+1);
+        b[x] += a[i+1];
     }
-    a.clear();
-    trav(x,cost){a.push_back(x.ss);}
-    m = cost.size();
-    rep(i,0,m+1){
-        rep(j,0,m+1) {dp[i][j]=-1;}
+    rep(i,0,n){
+        if(adj[i].size()==0) b[i] = INF;
+        else {b[i] -=a[i];}
     }
-    put(m-dfs(0,0));
-    
+    bfs(0,adj);
+    vpi inds;
+    rep(i,0,n){
+        inds.push_back({-dep[i],i});
+    }
+    srv(inds);
+    ll res = 0;
+    for(auto [_,v]:inds){
+        if(b[v]>=0) continue;
+        auto cands = bfs(v,adj);
+        int need = -b[v];
+        for(auto [dt,w]:cands){
+            int d = min(need,b[w]);
+            if(b[w]<INF) b[w] -=d;
+            need -=d;
+            res += dt*d;
+            if(need==0) break;
+        }
+        assert(need==0);
+    }
+    put(res);
 
-    
 }
 // driver code
 int32_t main()

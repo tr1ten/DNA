@@ -111,40 +111,74 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}    
+void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5005;
-int dp[N][N];
-vi a;
-int m;
-int dfs(int i,int money_left){
-    if(i==m){
-        return 0;
-    }
-    if(dp[i][money_left]!=-1) return dp[i][money_left];
-    int res = dfs(i+1,money_left+1);
-    if(a[i] <= money_left) res = max(res,1+dfs(i+1,money_left-a[i]));
-    return dp[i][money_left] = res;
+vector<long long> divisors(long long x){
+    vector<long long> cur;
+      for(int j=1;j*j<=x;j++)
+		{		
+			if(x%j==0)
+			{
+				cur.push_back(j);
+				if(j != x/j)
+					cur.push_back(x/j);
+            }
+        }
+    return cur;
 }
 void testcase(){
-    int n;
-    cin >> n;
-    map<int,int> cost;
+    int n,m,k;
+    cin >> n >> m >> k;
+    vii g(n,vi(m));
+    vii t(n,vi(m));
     rep(i,0,n){
-        int x;
-        cin >> x;
-        cost[x]++;
+        rep(j,0,m){
+            cin >> g[i][j];
+        }
     }
-    a.clear();
-    trav(x,cost){a.push_back(x.ss);}
-    m = cost.size();
-    rep(i,0,m+1){
-        rep(j,0,m+1) {dp[i][j]=-1;}
+    int diff=0;
+    rep(i,0,n){
+        string s;
+        cin >> s;
+        rep(j,0,m){
+            t[i][j] = s[j]-'0';
+            diff += t[i][j] ? g[i][j] : -g[i][j];
+        }
     }
-    put(m-dfs(0,0));
-    
-
-    
+    if(diff==0){
+        pyn(1);
+        return;
+    }
+    vii pref(n+1,vi(m+1));
+    rep(i,1,n+1){
+        rep(j,1,m+1){
+            pref[i][j] += pref[i-1][j] + pref[i][j-1] - pref[i-1][j-1]  + (t[i-1][j-1] ? 1 : -1);
+        }
+    }
+    auto getf = [&](int r1,int c1,int r2,int c2){
+        return pref[r2+1][c2+1] - pref[r2+1][c1] - pref[r1][c2+1] + pref[r1][c1];
+    }; 
+    unordered_set<int> xs; 
+    rep(i,k-1,n){
+        rep(j,k-1,m){
+            xs.insert(abs(getf(i-k+1,j-k+1,i,j)));
+        }   
+    }
+    debug(diff,xs); 
+    auto dv = divisors(abs(diff));
+    for(auto d:dv){
+        int g = 0;
+        for(auto x:xs){
+            if(x%d==0){
+                g = gcd(g,x);
+            }
+            if(g==d) {
+                pyn(1);
+                return;
+            }
+        }
+    }
+    pyn(0);
 }
 // driver code
 int32_t main()
