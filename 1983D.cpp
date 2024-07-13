@@ -50,7 +50,8 @@ typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
-#define mp ma   ke_pair
+#define pb push_back
+#define mp make_pair
 #define ss second
 #define ff first
 #define int long long
@@ -112,42 +113,47 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int n,tar;
-vector<int> solve(vi &pa,vi &pb,vi &pc){
-    int l = 1;
-    for(int r=1;r<n-1;r++) {
-        if(pb[r+1]-pb[l]>=tar) {
-            while (l<=r && pb[r+1]-pb[l]>=tar) l++;
-            l--;
-        }
-        int asum = pa[l],bsum = pb[r+1]-pb[l],csum = pc[n]-pc[r+1];
-        if(asum>=tar && bsum>=tar && csum>=tar) return {0+1,l-1+1,l+1,r+1,r+1+1,n-1+1};
+mll pr;
+int merge(int ix,int mid,int jx,vi &arr){
+    int *temp = new int[jx-ix+1];
+    int j=0,k=0;
+    int n1=mid-ix+1,n2 = jx-mid;
+    int res=  0;
+    for(int i=0;i<n1;i++) {
+        while(j<n2 && pr[arr[mid+1+j]]<pr[arr[i+ix]]) {temp[k++]=arr[mid+1+j];res+=n1-i;j++;}
+        temp[k++] = arr[ix+i];
     }
-    return {-1,-1,-1,-1,-1,-1};
+    while(j<n2) {temp[k++] = arr[mid+1+j];j++;}
+    for(int c=ix;c<=jx;c++) {
+        arr[c] = temp[c-ix];   
+    }
+    return res;
+}
+
+int mergeSort(int i,int j,vi &arr){
+    if(i>=j) {
+        return 0;
+    }
+    int mid= (i+j)/2;
+    int res = 0;
+    res += mergeSort(i,mid,arr);
+    res += mergeSort(mid+1,j,arr);
+    res += merge(i,mid,j,arr);
+    return res;
 }
 void testcase(){
+    int n;
     cin >> n;
-    vi a(n),b(n),c(n);
-    tkv(a,n);tkv(b,n);tkv(c,n);
-    vi pa(n+1),pb(n+1),pc(n+1);
-    int total = 0;
+    vi a(n),b(n);
+    tkv(a,n);tkv(b,n);
+    pr.clear();
     rep(i,0,n){
-        pa[i+1] += pa[i] +a[i];
-        pb[i+1] += pb[i] +b[i];
-        pc[i+1] += pc[i] +c[i];
-        total += a[i];
+        pr[a[i]] = i;
     }
-    assert(pa.back()==pb.back() && pb.back()==pc.back());
-    tar = (total+2)/3;
-    vi res = solve(pa,pb,pc);
-    if(res[0]==-1){ res = solve(pc,pb,pa);swap(res[0],res[4]); swap(res[1],res[5]);}
-    if(res[0]==-1){ res = solve(pb,pa,pc);swap(res[0],res[2]); swap(res[1],res[3]);}
-    if(res[0]==-1){ res = solve(pc,pa,pb);swap(res[0],res[2]); swap(res[1],res[3]); swap(res[2],res[4]);swap(res[3],res[5]);}
-    if(res[0]==-1){ res = solve(pa,pc,pb);swap(res[2],res[4]);swap(res[3],res[5]);}
-    if(res[0]==-1){ res = solve(pb,pc,pa);swap(res[0],res[2]); swap(res[1],res[3]); swap(res[0],res[4]);swap(res[1],res[5]);}
-    assert(res.size()==6);
-    if(res[0]==-1) res = {-1};
-    pvc(res);
+    int res = mergeSort(0,n-1,b);
+    debug(res,b);
+    pyn(a==b && res%2==0);
+    
 }
 // driver code
 int32_t main()

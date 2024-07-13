@@ -50,7 +50,8 @@ typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
 typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
-#define mp ma   ke_pair
+#define pb push_back
+#define mp make_pair
 #define ss second
 #define ff first
 #define int long long
@@ -112,42 +113,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int n,tar;
-vector<int> solve(vi &pa,vi &pb,vi &pc){
-    int l = 1;
-    for(int r=1;r<n-1;r++) {
-        if(pb[r+1]-pb[l]>=tar) {
-            while (l<=r && pb[r+1]-pb[l]>=tar) l++;
-            l--;
-        }
-        int asum = pa[l],bsum = pb[r+1]-pb[l],csum = pc[n]-pc[r+1];
-        if(asum>=tar && bsum>=tar && csum>=tar) return {0+1,l-1+1,l+1,r+1,r+1+1,n-1+1};
-    }
-    return {-1,-1,-1,-1,-1,-1};
-}
 void testcase(){
-    cin >> n;
-    vi a(n),b(n),c(n);
-    tkv(a,n);tkv(b,n);tkv(c,n);
-    vi pa(n+1),pb(n+1),pc(n+1);
-    int total = 0;
+    int n,m;
+    cin >> n >> m;
+    vector<string> a(n);
     rep(i,0,n){
-        pa[i+1] += pa[i] +a[i];
-        pb[i+1] += pb[i] +b[i];
-        pc[i+1] += pc[i] +c[i];
-        total += a[i];
+       cin >> a[i];
     }
-    assert(pa.back()==pb.back() && pb.back()==pc.back());
-    tar = (total+2)/3;
-    vi res = solve(pa,pb,pc);
-    if(res[0]==-1){ res = solve(pc,pb,pa);swap(res[0],res[4]); swap(res[1],res[5]);}
-    if(res[0]==-1){ res = solve(pb,pa,pc);swap(res[0],res[2]); swap(res[1],res[3]);}
-    if(res[0]==-1){ res = solve(pc,pa,pb);swap(res[0],res[2]); swap(res[1],res[3]); swap(res[2],res[4]);swap(res[3],res[5]);}
-    if(res[0]==-1){ res = solve(pa,pc,pb);swap(res[2],res[4]);swap(res[3],res[5]);}
-    if(res[0]==-1){ res = solve(pb,pc,pa);swap(res[0],res[2]); swap(res[1],res[3]); swap(res[0],res[4]);swap(res[1],res[5]);}
-    assert(res.size()==6);
-    if(res[0]==-1) res = {-1};
-    pvc(res);
+    int f = 1;
+    rep(i,0,n){
+        string s;
+        cin >> s;
+        int row = 0;
+        rep(j,0,m){
+           a[i][j]= (((s[j]- a[i][j]) + 3)%3) + '0';
+        }
+    }
+    rep(i,0,n){
+        int row =0 ;
+        rep(j,0,m){
+            row += a[i][j]-'0';
+            row %=3;
+        }
+        if(row!=0) {pyn(0);return;}
+    }
+
+    rep(j,0,m){
+        int col =0 ;
+        rep(i,0,n){
+            col += a[i][j]-'0';
+            col %=3;
+        }
+        if(col!=0) {pyn(0);return;}
+    }
+    pyn(1);
 }
 // driver code
 int32_t main()
