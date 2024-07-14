@@ -113,47 +113,56 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-mll pr;
-int merge(int ix,int mid,int jx,vi &arr){
-    int *temp = new int[jx-ix+1];
-    int j=0,k=0;
-    int n1=mid-ix+1,n2 = jx-mid;
-    int res=  0;
-    for(int i=0;i<n1;i++) {
-        while(j<n2 && pr[arr[mid+1+j]]<pr[arr[i+ix]]) {temp[k++]=arr[mid+1+j];res+=n1-i;j++;}
-        temp[k++] = arr[ix+i];
-    }
-    while(j<n2) {temp[k++] = arr[mid+1+j];j++;}
-    for(int c=ix;c<=jx;c++) {
-        arr[c] = temp[c-ix];   
-    }
-    return res;
-}
-
-int mergeSort(int i,int j,vi &arr){
-    if(i>=j) {
-        return 0;
-    }
-    int mid= (i+j)/2;
-    int res = 0;
-    res += mergeSort(i,mid,arr);
-    res += mergeSort(mid+1,j,arr);
-    res += merge(i,mid,j,arr);
-    return res;
-}
+const int N = 1005;
+bool dp[N][N];
 void testcase(){
     int n;
     cin >> n;
-    vi a(n),b(n);
-    tkv(a,n);tkv(b,n);
-    pr.clear();
-    rep(i,0,n){
-        pr[a[i]] = i;
+    vi a(2*n);
+    tkv(a,2*n);
+    vi blocks;
+    int i =0;
+    while (i<2*n)
+    {
+        int x = a[i];
+        i++;
+        blocks.push_back(1);
+        while (i<2*n && a[i]<x) {blocks.back()++;i++;}
     }
-    int res = mergeSort(0,n-1,b);
-    debug(res,b);
-    pyn(a==b && res%2==0);
-    
+    int m = blocks.size();
+    dp[0][0] = 1;
+    rep(i,0,n+1){
+        rep(j,1,m+1){
+            if(blocks[j-1]<=i) dp[i][j] = dp[i-blocks[j-1]][j-1] || dp[i][j-1];
+            else dp[i][j] = dp[i][j-1];
+        }
+    }
+    if(!dp[n][m]) {put(-1);return;}
+    int req = n;
+    vi side(m,0);
+    per(i,1,m+1){
+        if(req>=blocks[i-1] && dp[req-blocks[i-1]][i-1]) {
+            side[i-1] = 1;
+            req -= blocks[i-1];
+        }
+    }
+    assert(req==0);
+    int j = 0;
+    i = 0;
+    vii b(2);
+    while (i<2*n)
+    {
+        int x = a[i];
+        b[side[j]].push_back(a[i]);
+        i++;
+        while (i<2*n && a[i]<x) {b[side[j]].push_back(a[i]);i++;}
+        j++;
+    }
+    assert(b[0].size()==n);
+    assert(b[1].size()==n);
+    pvc(b[0]);
+    pvc(b[1]);
+
 }
 // driver code
 int32_t main()
@@ -163,8 +172,8 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
-    while(T--) testcase();  
+    // cin>>T;
+    while(T--) testcase();
 
     return 0;
 }
