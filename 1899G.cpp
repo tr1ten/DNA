@@ -113,106 +113,128 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int solve(int i,vi A,vi &ans) {
-    if(i==A.size()) {
-        int cn = count(all(A),0);
-        if(cn==4) return 1;
-        if(cn<3) return 0;
-        rep(i,0,A.size()){
-            if(A[i]!=0) {
-                if(A[i]>1 || (ans.size() && abs(ans.back()-i)!=1)) { return 0;}
-                ans.pb(i);
-                return 1;
-            }
+vii adj;
+// https://cses.fi/problemset/result/9393258/
+template <typename T> 
+class segtree{
+    struct Node
+    {
+        Node *left,*right;
+        T val;
+        Node(T v,Node *lp=nullptr,Node* rp=nullptr): val(v), left(lp), right(rp) {}
+    };
+    public:
+        int n;
+        T basev;
+        vector<Node *> roots;
+        segtree() {}
+        segtree(int _n,T _bv): n(_n),basev(_bv)  {
+            roots.push_back(this->_build(0,n-1));
+        };
+        // Make sure to save node in roots when updating
+        Node* update(int index,T new_val,int time=0) {
+            assert(index<n);assert(time<roots.size());
+            return _update(roots[time],0,n-1,index,new_val);
         }
-        return 0;
+        T query(int lq,int rq,int time=0){
+            assert(lq>=0);assert(rq<n);assert(lq<=rq);assert(time<roots.size());
+            return _query(roots[time],0,n-1,lq,rq);
+        }
+
+    private:
+        T merge(T a,T b) {
+            return a+b;
+        }
+        Node *_build(int l,int r){
+            if(l>r) return nullptr;
+            Node *node = new Node(this->basev);
+            if(l==r) return node;
+            int mid = (l+r) >> 1;
+            node->left = _build(l,mid);
+            node->right = _build(mid+1,r);
+            return node;
+        }
+
+        Node *_update(Node *node,int l,int r,int ind,T new_val) {
+            if(l>r) return nullptr;
+            if(ind<l || ind>r) return node;
+            Node *_node = new Node(node->val,node->left,node->right);
+            if(l==r) {_node->val = new_val; }
+            else {
+                int mid = (l+r)/2;
+                if(ind<=mid)  _node->left = _update(node->left,l,mid,ind,new_val);
+                else _node->right = _update(node->right, mid+1,r,ind,new_val);
+                _node->val = merge((_node->left)->val,_node->right->val);
+            }
+            return _node;
+        }
+        T _query(Node *node, int l,int r, int lq,int rq) {
+            if(r<lq || l>rq) return this->basev;
+            if(l>=lq && r<=rq)  return node->val;
+            int mid = (l+r)/2;
+            return merge(_query(node->left,l,mid,lq,rq),_query(node->right,mid+1,r,lq,rq));
+        }
+};
+// int main(int argc, char const *argv[])
+// {
+//     segtree<int> s(10,0);
+//     for(int i=1;i<10;i++){ s.roots[0]= s.update(i,i+1); cout << i << " sum " << (s.query(i-1,i)) << endl;}
+    
+//     return 0;
+// }
+int timer=0;
+const int N = 1e5 + 5;
+int start[N],ed[N];
+int rev[N];
+// 2 values for start and end, for path queries 
+
+void dfs(int u,int p){
+    rev[timer] = u;
+    start[u] = timer++;
+    trav(v,adj[u] ) {
+        if(v==p) continue;
+        dfs(v,u);
     }
-    assert(i>0);
-    int &a = A[i-1];
-    int &b = A[i];
-    // debug(i,A,ans);
-    if(a==0) return solve(i+1,A,ans);
-    if(a>b){
-        if(a-b>1 || (ans.size() && abs(ans.back()-i+1)!=1)) return 0;
-        ans.push_back(i-1);
-        a-=1;
-        while (a>0) 
-        {
-            ans.push_back(i);
-            ans.push_back(i-1);
-            a--;b--;
-        }
-        return solve(i+1,A,ans);
-    }
-    else if(a==b) {
-        if(ans.size()==0 || ans.back()==i-2){
-            while (a>0)
-            {
-                ans.push_back(i-1);
-                ans.push_back(i);
-                a--;b--;
-            }
-        }
-        else {
-            if(ans.size() && ans.back()!=i-1) return 0;
-            while (a>0)
-            {
-                ans.push_back(i);
-                ans.push_back(i-1);
-                a--;b--;
-            }
-        }
-        return solve(i+1,A,ans);
-    }
-    else{
-        vi temp = ans;
-        int ta=a,tb=b;
-        if(a && ( ans.size()==0 || ans.back()==i-2)){
-            temp.push_back(i-1);
-            a -=1;
-            while (a>0)
-            {
-                temp.push_back(i);
-                temp.push_back(i-1);
-                a--;b--;
-            }
-            if(solve(i+1,A,temp)){
-                ans = temp;
-                return 1;
-            }
-            else {a=ta;b=tb;}
-        }
-        temp = ans;
-        if(b && ( ans.size()==0 || ans.back()==i-1)){
-            temp.push_back(i);
-            b -=1;
-            while (a>0)
-            {
-                temp.push_back(i-1);
-                temp.push_back(i);
-                a--;b--;
-            }
-            if(solve(i+1,A,temp)){
-                ans = temp;
-                return 1;
-            }
-        }
-        return 0;
-    }
+    ed[u] = timer;
 
 }
-void testcase(){
-    vi A(4);
-    tkv(A,4);
-    vi ans;
-    int a =solve(1,A,ans);
-    if(a){
-        pyn(1);
-        pvc(ans);
-    }
-    else pyn(0);
 
+void testcase(){
+    int n,q;
+    cin >> n >> q;
+    timer=0;
+    adj.clear();
+    adj.resize(n);
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+    vi p(n);
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        x--;
+        p[x] = i;
+    }
+    dfs(0,-1);
+    segtree<int> seg(n,0);
+    rep(i,0,timer){
+        seg.roots.push_back(seg.update(p[rev[i]],1,i));
+    }
+    rep(i,0,q){
+        int l,r,x;
+        cin >> l >> r >> x;
+        l--;r--;x--;
+        int lc = seg.query(l,r,start[x]);
+        int rc = seg.query(l,r,ed[x]);
+        pyn(lc<rc);
+    }
+    cout << endl;
     
+
 }
 // driver code
 int32_t main()
@@ -222,7 +244,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

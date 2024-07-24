@@ -113,106 +113,43 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int solve(int i,vi A,vi &ans) {
-    if(i==A.size()) {
-        int cn = count(all(A),0);
-        if(cn==4) return 1;
-        if(cn<3) return 0;
-        rep(i,0,A.size()){
-            if(A[i]!=0) {
-                if(A[i]>1 || (ans.size() && abs(ans.back()-i)!=1)) { return 0;}
-                ans.pb(i);
-                return 1;
-            }
-        }
-        return 0;
-    }
-    assert(i>0);
-    int &a = A[i-1];
-    int &b = A[i];
-    // debug(i,A,ans);
-    if(a==0) return solve(i+1,A,ans);
-    if(a>b){
-        if(a-b>1 || (ans.size() && abs(ans.back()-i+1)!=1)) return 0;
-        ans.push_back(i-1);
-        a-=1;
-        while (a>0) 
-        {
-            ans.push_back(i);
-            ans.push_back(i-1);
-            a--;b--;
-        }
-        return solve(i+1,A,ans);
-    }
-    else if(a==b) {
-        if(ans.size()==0 || ans.back()==i-2){
-            while (a>0)
-            {
-                ans.push_back(i-1);
-                ans.push_back(i);
-                a--;b--;
-            }
-        }
-        else {
-            if(ans.size() && ans.back()!=i-1) return 0;
-            while (a>0)
-            {
-                ans.push_back(i);
-                ans.push_back(i-1);
-                a--;b--;
-            }
-        }
-        return solve(i+1,A,ans);
-    }
-    else{
-        vi temp = ans;
-        int ta=a,tb=b;
-        if(a && ( ans.size()==0 || ans.back()==i-2)){
-            temp.push_back(i-1);
-            a -=1;
-            while (a>0)
-            {
-                temp.push_back(i);
-                temp.push_back(i-1);
-                a--;b--;
-            }
-            if(solve(i+1,A,temp)){
-                ans = temp;
-                return 1;
-            }
-            else {a=ta;b=tb;}
-        }
-        temp = ans;
-        if(b && ( ans.size()==0 || ans.back()==i-1)){
-            temp.push_back(i);
-            b -=1;
-            while (a>0)
-            {
-                temp.push_back(i-1);
-                temp.push_back(i);
-                a--;b--;
-            }
-            if(solve(i+1,A,temp)){
-                ans = temp;
-                return 1;
-            }
-        }
-        return 0;
-    }
 
+
+
+const int N = 1e5 + 5;
+long long fact[N];
+long long inv[N];
+long long finv[N];
+
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
+    }
+    inv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
+    }
+    finv[0] = finv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        finv[i] = (inv[i]*finv[i-1])%MOD;
+    }
 }
-void testcase(){
-    vi A(4);
-    tkv(A,4);
-    vi ans;
-    int a =solve(1,A,ans);
-    if(a){
-        pyn(1);
-        pvc(ans);
-    }
-    else pyn(0);
 
-    
+long long nCk(int n,int k) {
+    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
+}
+
+void testcase(){
+    int n,k;
+    cin >> n >> k;
+    int ans = 0;
+    k = min(n,k);
+    rep(i,0,k+1){
+        ans += nCk(n,i);
+        ans %=MOD;
+    }
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -222,6 +159,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    pre();
     // cin>>T;
     while(T--) testcase();
 

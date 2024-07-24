@@ -113,106 +113,29 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int solve(int i,vi A,vi &ans) {
-    if(i==A.size()) {
-        int cn = count(all(A),0);
-        if(cn==4) return 1;
-        if(cn<3) return 0;
-        rep(i,0,A.size()){
-            if(A[i]!=0) {
-                if(A[i]>1 || (ans.size() && abs(ans.back()-i)!=1)) { return 0;}
-                ans.pb(i);
-                return 1;
-            }
-        }
-        return 0;
-    }
-    assert(i>0);
-    int &a = A[i-1];
-    int &b = A[i];
-    // debug(i,A,ans);
-    if(a==0) return solve(i+1,A,ans);
-    if(a>b){
-        if(a-b>1 || (ans.size() && abs(ans.back()-i+1)!=1)) return 0;
-        ans.push_back(i-1);
-        a-=1;
-        while (a>0) 
-        {
-            ans.push_back(i);
-            ans.push_back(i-1);
-            a--;b--;
-        }
-        return solve(i+1,A,ans);
-    }
-    else if(a==b) {
-        if(ans.size()==0 || ans.back()==i-2){
-            while (a>0)
-            {
-                ans.push_back(i-1);
-                ans.push_back(i);
-                a--;b--;
-            }
-        }
-        else {
-            if(ans.size() && ans.back()!=i-1) return 0;
-            while (a>0)
-            {
-                ans.push_back(i);
-                ans.push_back(i-1);
-                a--;b--;
-            }
-        }
-        return solve(i+1,A,ans);
-    }
-    else{
-        vi temp = ans;
-        int ta=a,tb=b;
-        if(a && ( ans.size()==0 || ans.back()==i-2)){
-            temp.push_back(i-1);
-            a -=1;
-            while (a>0)
-            {
-                temp.push_back(i);
-                temp.push_back(i-1);
-                a--;b--;
-            }
-            if(solve(i+1,A,temp)){
-                ans = temp;
-                return 1;
-            }
-            else {a=ta;b=tb;}
-        }
-        temp = ans;
-        if(b && ( ans.size()==0 || ans.back()==i-1)){
-            temp.push_back(i);
-            b -=1;
-            while (a>0)
-            {
-                temp.push_back(i-1);
-                temp.push_back(i);
-                a--;b--;
-            }
-            if(solve(i+1,A,temp)){
-                ans = temp;
-                return 1;
-            }
-        }
-        return 0;
-    }
-
-}
 void testcase(){
-    vi A(4);
-    tkv(A,4);
-    vi ans;
-    int a =solve(1,A,ans);
-    if(a){
-        pyn(1);
-        pvc(ans);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    // if 1 after >1 then -1
+    int g = 0;
+    int ans = 0;
+    rep(i,1,n){
+        g |= a[i]>1;
+        if(g && a[i]==1){
+            put(-1);;
+            return ;
+        }
+        while (a[i]<a[i-1])
+        {
+            a[i] *= a[i];
+            ans++;
+            
+        }
+        
     }
-    else pyn(0);
-
-    
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -222,7 +145,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
