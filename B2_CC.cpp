@@ -114,38 +114,41 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    // if 1 after >1 then -1
-    int g = 0;
-    int ans = 0;
-    int x = 0;
+    int n,m;
+    cin >> n >> m;
+    vi a(n),c(n);
+    vi inds(n);
+    iota(all(inds),0);
+    sort(all(inds),[&](int i,int j) {
+        return a[i] < a[j];
+    });
+    int res = 0;
     rep(i,0,n){
-        g |= a[i]>1;
-        if(g && a[i]==1){
-            put(-1);
-            return ;
+        if(i==0 || a[inds[i-1]]<a[inds[i]]-1) {
+            int aa = a[inds[i]];
+            int cc = c[inds[i]];
+            int d = min(cc,m/aa);
+            res = max(res,d*aa);
         }
-        if(a[i]==1) continue;
-        if(i==0) continue;
-        int aa = a[i-1];
-        if(aa==1) continue;
-        int bb = a[i];
-        int sig = aa>bb ? 1 : -1;
-        if(aa<bb) swap(aa,bb);
-        int val;
-        if(sig==-1) val = log2(log(aa)/log(bb));
-        else val = ceil(log2(log(aa)/log(bb)));
-        
-        int y = max(0LL,x + sig*val);
-        debug(i,sig,val,x,y);
-        ans +=y;
-        x=y;
+        else{
+            int kk = a[inds[i]];
+            int cc1 = c[inds[i]];
+            int cc2 = c[inds[i-1]];
+            int mm = m;
+            assert(kk>1);
+            int d1 = min(cc1,mm/kk);
+            cc1-=d1;
+            mm -= d1*kk;
+            int d2 = min(cc2,mm/(kk-1));
+            cc2 -=d2;
+            mm -= d2*(kk-1);
+            int j = kk-mm;
+            if(j-1<=d1 && cc2>=j) res = m;
+            else res = max(res,m-mm);
+        }
         
     }
-    put(ans);
+    put(res);
 }
 // driver code
 int32_t main()
