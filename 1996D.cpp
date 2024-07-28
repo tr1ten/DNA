@@ -114,39 +114,15 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi a(n),b(n);
-    tkv(a,n);tkv(b,n);
-    // cnt greater than x
-    function<int(int)> f = [&](int x) {
-        int cnt = 0;
-        rep(i,0,n){
-            cnt += max(0LL,(a[i]-x)/b[i] + (a[i]>=x));
+    int n,x;
+    cin >> n >> x;
+    int res = 0;
+    rep(a,1,min(n,x-2)+1){
+        rep(b,1,min(n/a,x-a-1) + 1){
+            res += min((n-a*b)/(a+b),x-a-b);
         }
-        return cnt;
-    };
-    int lo = 1,hi=1e9;
-    int x=1;
-    while (lo<=hi)
-    {
-        int mid = (lo+hi)/2;
-        if(f(mid)>=k) {
-            x = mid;
-            lo = mid+1;
-        }
-        else hi = mid-1;
     }
-    int ans = 0;
-    int fcnt = f(x);
-    debug(x,fcnt);
-    rep(i,0,n){
-        int c = max(0LL,(a[i]-x)/b[i] + (a[i]>=x));
-        ans += c*a[i] - c*(c-1)*b[i]/2;
-    }
-    ans -= max(0LL,x*(fcnt-k));
-    put(ans);
-    
+    put(res);
 }
 // driver code
 int32_t main()

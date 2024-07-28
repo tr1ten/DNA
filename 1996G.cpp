@@ -66,7 +66,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define srv(vec) sort(vec.begin(), vec.end())
 #define all(x) x.begin(), x.end()
 #define less(a,b) a<b
-#define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
+#define vans(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
@@ -113,40 +113,66 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi a(n),b(n);
-    tkv(a,n);tkv(b,n);
-    // cnt greater than x
-    function<int(int)> f = [&](int x) {
-        int cnt = 0;
-        rep(i,0,n){
-            cnt += max(0LL,(a[i]-x)/b[i] + (a[i]>=x));
-        }
-        return cnt;
-    };
-    int lo = 1,hi=1e9;
-    int x=1;
-    while (lo<=hi)
-    {
-        int mid = (lo+hi)/2;
-        if(f(mid)>=k) {
-            x = mid;
-            lo = mid+1;
-        }
-        else hi = mid-1;
-    }
-    int ans = 0;
-    int fcnt = f(x);
-    debug(x,fcnt);
-    rep(i,0,n){
-        int c = max(0LL,(a[i]-x)/b[i] + (a[i]>=x));
-        ans += c*a[i] - c*(c-1)*b[i]/2;
-    }
-    ans -= max(0LL,x*(fcnt-k));
-    put(ans);
+const int N = 2*1e5;
+struct Segment
+{
+    int iv=0;
+    int total=0;
+} seg[4*N];
+int n;
+void add(int l,int r,int x,int ln=0,int rn=n,int node=1) {
     
+    if(l>=rn || r<=ln){ return;}
+    int lc = node<<1,rc = lc | 1;
+    if(l<=ln && r>=rn){
+        seg[node].iv +=x;
+        if(seg[node].iv) seg[node].total = rn-ln;
+        else {
+            seg[node].total = 0;
+            if(rn-ln>1) seg[node].total = seg[lc].total + seg[rc].total;
+        }
+        return;
+        
+    }
+    int mid = (ln+rn)>>1;
+    add(l,r,x,ln,mid,lc);
+    add(l,r,x,mid,rn,rc);
+    if(seg[node].iv) seg[node].total = rn-ln;
+    else seg[node].total = seg[lc].total + seg[rc].total;
+
+}
+
+void clear() {
+    rep(i,0,4*n){
+        seg[i].iv =0,seg[i].total=0; 
+    }
+}
+void testcase(){
+    int m;
+    cin >> n >> m;
+    vector<vector<int>> g(n+1);
+    rep(i,0,m){
+        int a,b;
+        cin >> a >> b;
+        --a;--b;
+        add(a,b,1);
+        g[a].pb(b);
+        g[b].pb(a);
+    }
+    int res = n;
+    rep(u,0,n+1){
+        res = min(res,seg[1].total);
+        trav(v,g[u]){
+            int s = 1;
+            int a=u,b=v;
+            if(b<a) {s = s*-1;swap(a,b);}
+            add(a,b,-s);
+            add(0,a,s);
+            add(b,n,s);
+        }
+    }
+    put(res);
+    clear();
 }
 // driver code
 int32_t main()
