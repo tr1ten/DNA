@@ -114,7 +114,7 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 /*
-    split string into word of len<=k minimzing # distinct end characters    
+    split string into word of len<=k minimzing      
 
 */
 void testcase(){
@@ -122,6 +122,7 @@ void testcase(){
     cin >> n >> c >> k;
     string s;
     cin >> s;
+    
 
 }
 // driver code

@@ -116,36 +116,18 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    // if 1 after >1 then -1
-    int g = 0;
+    unordered_map<char,int> cnt;
+    string s;
+    cin >> s;
+    rep(i,0,s.size()){
+        cnt[s[i]]++;
+    }
     int ans = 0;
-    int x = 0;
-    rep(i,0,n){
-        g |= a[i]>1;
-        if(g && a[i]==1){
-            put(-1);
-            return ;
-        }
-            if(a[i]==1) continue;
-        if(i==0) continue;
-        int aa = a[i-1];
-        if(aa==1) continue;
-        int bb = a[i];
-        int sig = aa>bb ? 1 : -1;
-        if(aa<bb) swap(aa,bb);
-        int val;
-        if(sig==-1) val = log2(log(aa)/log(bb));
-        else val = ceil(log2(log(aa)/log(bb)));
-        
-        int y = max(0LL,x + sig*val);
-        debug(i,sig,val,x,y);
-        ans +=y;
-        x=y;
-        
+    trav(x,cnt){
+        if(x.first!='?') ans += min(n,x.second);
     }
     put(ans);
+
 }
 // driver code
 int32_t main()

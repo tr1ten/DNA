@@ -113,40 +113,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+/*
+    
+    o e
+    o o
+    oo e
+
+    e e e o e 
+
+    e o o o e e e
+
+*/
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    // if 1 after >1 then -1
-    int g = 0;
-    int ans = 0;
-    int x = 0;
-    rep(i,0,n){
-        g |= a[i]>1;
-        if(g && a[i]==1){
-            put(-1);
-            return ;
-        }
-            if(a[i]==1) continue;
-        if(i==0) continue;
-        int aa = a[i-1];
-        if(aa==1) continue;
-        int bb = a[i];
-        int sig = aa>bb ? 1 : -1;
-        if(aa<bb) swap(aa,bb);
-        int val;
-        if(sig==-1) val = log2(log(aa)/log(bb));
-        else val = ceil(log2(log(aa)/log(bb)));
-        
-        int y = max(0LL,x + sig*val);
-        debug(i,sig,val,x,y);
-        ans +=y;
-        x=y;
+    int ec= 0;
+    vi a;
+    rep(i,0,n) {
+        int x;
+        cin >> x;
+        ec += (x%2==0);
+        a.push_back(x);
+    }
+    if(ec==n || ec==0) put(0)
+    else {
+        srv(a);
+        int u = n-1;
+        while(u>=0 && a[u]%2==0) u--;
+        int c = n-u-1;
+        if(c==0) 
+        while(u>=0 && a[u]%2==1) u--;
         
     }
-    put(ans);
 }
+
 // driver code
 int32_t main()
 {
