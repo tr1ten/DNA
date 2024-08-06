@@ -113,49 +113,42 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-/*
-    
-    o e
-    o o
-    o e
-    
-    e e e o e 
-
-    e o e e o o o e e e
-
-*/
 void testcase(){
-    int n;
-    cin >> n;
-    int ec= 0;
-    vi a;
-    rep(i,0,n) {
-        int x;
-        cin >> x;
-        ec += (x%2==0);
-        a.push_back(x);
-    }
-    if(ec==n || ec==0) put(0)
-    else {
-        srv(a);
-        int u = n-1;
-        while(u>=0 && a[u]%2==0) u--;
-        int cs = 0;
-        rep(i,0,u) {
-            if(a[i]%2==0) {cs += a[i];}
+    int k,n;
+    cin  >> n >> k;
+    vi a(n);
+    tkv(a,n);
+    int mx = *max_element(all(a));
+    rep(i,0,n){
+        if((mx-a[i])%k==0 && ((mx-a[i])/k)&1) {
+            put(-1);
+            return;
         }
-        cs += a[u];
-        u++;
-        while (u<n && a[u]<cs)
-        {
-            cs+=a[u++];
-        }
-        if(u==n) put(ec)
-        else put(ec+1);
-        
     }
-}
-
+    vi diff(k+1);
+    rep(i,0,n){
+        int ii = (mx-a[i])/(2*k);
+        int aa = a[i]+2*ii*k;
+        int bb = a[i] +2*(ii+1)*k;
+        if(aa+k<mx) {
+            diff[bb-mx] +=1;
+            diff[k] -=1;
+        } 
+        else{
+            diff[aa+k-mx] -=1;
+            diff[0] +=1;
+        } 
+    }
+    int sm = 0;    
+    rep(i,0,k) {
+        sm +=diff[i];
+        if(sm==n) {
+            put(mx + i);
+            return;
+        }
+    }
+    put(-1);
+}   
 // driver code
 int32_t main()
 {
