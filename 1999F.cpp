@@ -113,23 +113,47 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 2e5 + 5;
+long long fact[N];
+long long inv[N];
+long long finv[N];
+
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
+    }
+    inv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
+    }
+    finv[0] = finv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        finv[i] = (inv[i]*finv[i-1])%MOD;
+    }
+}
+
+long long nCk(int n,int k) {
+    if(n==k) return 1;
+    if(n<k) return 0;
+    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
+}
+
 void testcase(){
-    int n;
-    cin >> n;
-    vi b(n-1);
-    tkv(b,n-1);
+    int n,k;
+    cin >> n >> k;
+    int m = k/2;
     vi a(n);
-    a[0] = b[0];
-    rep(i,1,n) {
-        a[i] = b[i-1]|b[i];
+    tkv(a,n);
+    int n1 = accumulate(all(a),0);
+    int n0 = n-n1;
+    int ans = 0;
+    rep(i,0,m+1) {
+        ans += nCk(n0,i)*nCk(n1,k-i)%MOD;
+        ans%=MOD;
     }
-    rep(i,1,n){
-        if((a[i]&a[i-1])!=b[i-1]) {
-            put(-1);
-            return;
-        }
-    }
-    pvc(a);
+    put(ans);
+
 }
 // driver code
 int32_t main()
@@ -140,6 +164,7 @@ int32_t main()
     // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
+    pre();
     while(T--) testcase();
 
     return 0;

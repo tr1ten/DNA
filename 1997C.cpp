@@ -116,20 +116,21 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    vi b(n-1);
-    tkv(b,n-1);
-    vi a(n);
-    a[0] = b[0];
-    rep(i,1,n) {
-        a[i] = b[i-1]|b[i];
-    }
-    rep(i,1,n){
-        if((a[i]&a[i-1])!=b[i-1]) {
-            put(-1);
-            return;
+    string s;
+    cin >> s;
+    int res =0;
+    stack<int> st;
+    rep(i,0,n) {
+        if(s[i]=='(') st.push(i);
+        else if(s[i]==')') {res += i-st.top();st.pop();}
+        else {
+            if(st.size()) {res += i-st.top();st.pop();}
+            else{
+                st.push(i);
+            }
         }
     }
-    pvc(a);
+    put(res);
 }
 // driver code
 int32_t main()

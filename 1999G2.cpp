@@ -113,23 +113,50 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+int x=4;
+int qc=0,L=7;
+int ask(int a,int b){
+    qc++;
+    assert(qc<=L);
+    cout << "? " << a << " " << b << endl;
+    cout.flush();
+    int p;
+    cin >> p;
+    // if(a>=x) a++;
+    // if(b>=x) b++;
+    // cout << a*b << endl;
+    // int x  = gcd(ansx+a,ansx+b);
+    // cout << x << endl;
+    // p = a*b;
+    return p;
+}
+void tell(int x){
+    cout << "! " << x  << endl;
+    cout.flush();
+}
+
 void testcase(){
-    int n;
-    cin >> n;
-    vi b(n-1);
-    tkv(b,n-1);
-    vi a(n);
-    a[0] = b[0];
-    rep(i,1,n) {
-        a[i] = b[i-1]|b[i];
-    }
-    rep(i,1,n){
-        if((a[i]&a[i-1])!=b[i-1]) {
-            put(-1);
-            return;
+    int lo = 0, hi = 999;
+    qc=0;
+    while (lo<hi)
+    {
+        int l1 = (hi-lo)/3 + lo;
+        int l2 = (hi-lo)*2/3 + lo;
+        int AA = ask(l1,l2);
+        int A = l1*l2;
+        if(AA==A) lo = l2+1;
+        else if(AA==A+l1) {lo = l1+1;hi=l2;}
+        else {
+            assert(AA==A+l2+l1+1);
+            hi = l1;
         }
+        // debug(lo,hi);
     }
-    pvc(a);
+    // debug(qc);
+    tell(lo);
+    
+
+
 }
 // driver code
 int32_t main()
