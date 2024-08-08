@@ -103,7 +103,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...) cerr << "[" << #x << "] = ["; _print(x)
 #else
 #define debug(x...)
-#endif
+#endif  
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
@@ -120,11 +120,12 @@ void testcase(){
     tkv(b,n-1);
     vi a(n);
     a[0] = b[0];
-    rep(i,1,n) {
+    a[n-1] = b[n-2];
+    rep(i,1,n-1) {
         a[i] = b[i-1]|b[i];
     }
-    rep(i,1,n){
-        if((a[i]&a[i-1])!=b[i-1]) {
+    rep(i,0,n-1) {
+        if(b[i]!=(a[i]&a[i+1])) {
             put(-1);
             return;
         }

@@ -113,55 +113,21 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-/*
-    split string into word of len<=k minimzing distinct end letters
-
-
-*/
-// N*2^N
-// Think of it as N dimesion hyper cube (errichto <3): easy to visualize with 2D
-// similar idea as prefix sum over each dimesion then merge 
-// dimensionality reduction
-void sos_fwd(vector<bool> &dp,int N){ // op value of supermask to submask
-    for(int i = 0;i < N; ++i) for(int mask = (1<<N)-1; mask >=0; --mask){
-	if((mask & (1<<i))==0)
-		dp[mask] = dp[mask] || dp[mask^(1<<i)];
-}
-}
 void testcase(){
-    int n,c,k;
-    cin >> n >> c >> k;
-    string s;
-    cin >> s;
-    vector<bool> dp(1<<c);
-    int M =(1<<c)-1;
-    dp[M^(1<<(s.back()-'A'))] = 1;
-    // debug(dp[(1<<(s.back()-'A'))]);
-    mll cnt;
-    int pref = 0;
-    rep(i,0,k-1){
-        cnt[s[i]-'A']++;
-        pref |= 1<<(s[i]-'A');
-    }
-    rep(i,k-1,n){
-        cnt[s[i]-'A']++;
-        pref |=1<<(s[i]-'A');
-        dp[pref^M] = 1;
-        if((--cnt[s[i-k+1]-'A'])==0){
-            pref ^= 1<<(s[i-k+1]-'A');
+    int n;
+    cin >> n;
+    if(n==1) cout << "1\n1" << endl;
+    else if(n==2) cout << "2\n1 2" << endl;
+    else if(n==3) cout << "2\n1 2 2" << endl;
+    else if(n==4) cout << "3\n1 2 2 3" << endl;
+    else if(n==5) cout << "3\n1 2 2 3 3" << endl;
+    else{
+        cout << 4 << endl;
+        rep(i,0,n){
+            cout<< (i%4)+1 << " ";
         }
+        cout << endl;
     }
-    sos_fwd(dp,c);
-    // debug(dp[(1<<(s.back()-'A'))]);
-
-    int ans = c;
-    rep(i,0,M+1){
-        if(!dp[i]){
-            ans = min(ans,(int)pc(i));
-        }
-    }
-    put(ans);
-    
 
 }
 // driver code

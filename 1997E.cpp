@@ -113,56 +113,97 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-/*
-    split string into word of len<=k minimzing distinct end letters
+typedef long long ll;
+class BIT {
+private:
+    std::vector<int> nums;
+    int LOG;
+public:
+    BIT(int n) {
+    	LOG = (int)log2(n)+1;
+        nums.resize((1ll<<LOG) + 1);
+    }
+    void update(int i, int val) {
+        i += 1;
+        while (i < nums.size()) {
+            nums[i] += val;
+            i += (i & (-i));
+        }
+    }
+    int sum(int i) {
+        int r = 0;
+        // i += 1;
+        while (i > 0) {
+            r += nums[i];
+            i -= (i & (-i));
+        }
+        return r;
+    }
+    int query(int l,int r) {
+        return sum(r+1) - sum(l);
+    }
+};
 
-
-*/
-// N*2^N
-// Think of it as N dimesion hyper cube (errichto <3): easy to visualize with 2D
-// similar idea as prefix sum over each dimesion then merge 
-// dimensionality reduction
-void sos_fwd(vector<bool> &dp,int N){ // op value of supermask to submask
-    for(int i = 0;i < N; ++i) for(int mask = (1<<N)-1; mask >=0; --mask){
-	if((mask & (1<<i))==0)
-		dp[mask] = dp[mask] || dp[mask^(1<<i)];
-}
-}
 void testcase(){
-    int n,c,k;
-    cin >> n >> c >> k;
-    string s;
-    cin >> s;
-    vector<bool> dp(1<<c);
-    int M =(1<<c)-1;
-    dp[M^(1<<(s.back()-'A'))] = 1;
-    // debug(dp[(1<<(s.back()-'A'))]);
-    mll cnt;
-    int pref = 0;
-    rep(i,0,k-1){
-        cnt[s[i]-'A']++;
-        pref |= 1<<(s[i]-'A');
+    int n,q;
+    cin >> n >> q;
+    map<int,vi> inds;
+    BIT bit(n);
+    vi a(n+1);
+    rep(i,1,1+n){
+        int x;
+        cin >> x;
+        inds[x].push_back(i);
+        bit.update(i,1);
+        a[i] = x;
     }
-    rep(i,k-1,n){
-        cnt[s[i]-'A']++;
-        pref |=1<<(s[i]-'A');
-        dp[pref^M] = 1;
-        if((--cnt[s[i-k+1]-'A'])==0){
-            pref ^= 1<<(s[i-k+1]-'A');
+    unordered_map<int,unordered_map<int,int>> pos;
+    for(int lvl=2;lvl<=n+1;lvl++) {
+        
+        for(int k=1;k<=n/(lvl-1);k++) {
+            int l=pos[k][lvl-1];
+            if(l==n+1) {
+                pos[k][lvl] = n+1;
+                continue;
+            }
+            int lo=l,hi=n;
+            int r = n+1;
+            while (lo<=hi)
+            {
+                int mid = (lo+hi)/2;
+                if(bit.query(l+1,mid)>=k) {
+                    r = mid;
+                    hi = mid-1;
+                }
+                else lo = mid+1;
+            }
+            pos[k][lvl] = r;
+            // debug(lvl,k,l,r,bit.query(l,r));
+        }
+
+        auto it = inds.begin();
+        while (it!=inds.end())
+        {
+            if(it->first<lvl) {
+                for(int i:it->second) {
+                    bit.update(i,-1);
+                }
+                inds.erase(it++);
+            }
+            else break;
         }
     }
-    sos_fwd(dp,c);
-    // debug(dp[(1<<(s.back()-'A'))]);
-
-    int ans = c;
-    rep(i,0,M+1){
-        if(!dp[i]){
-            ans = min(ans,(int)pc(i));
+    rep(j,0,q){
+        int i,x;
+        cin >> i >> x;
+        if(a[i]>=(n/x) +1) {
+            pyn(1);
+        }
+        else{
+            // debug(i+1,x,a[i]+1,pos[x][a[i]+1]);
+            pyn(pos[x][a[i]+1] >=i); 
         }
     }
-    put(ans);
-    
-
 }
 // driver code
 int32_t main()
@@ -172,7 +213,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
