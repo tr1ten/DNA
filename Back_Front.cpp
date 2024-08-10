@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const double INF = 1e17+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,40 +113,42 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
+int f(string &s, string a) {
+    int m = a.size();
+    vi dp(m+1);
+    dp[0]  = INF;
+    trav(x,s) {
+        rep(j,0,m){
+            if(a[j]==x){
+                int d = min(1LL,dp[j]);
+                dp[j] -=d;
+                dp[j+1] +=d;
+                break;
+            }
+        }
+    }
+    // debug(s,a,dp);
+    int op =0;
+    int res=  0;
+    per(i,0,m+1){
+        while (op>=m-i && dp[i]) {
+            res += i;
+            dp[i] -=1;
+            op = op - (m-i) + 1;
+        }
+    }
+    return res-op;
+}
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    vi b(n);
-    tkv(a,n);tkv(b,n);
-    map<int,int> mxx;
-    rep(i,0,n){
-        mxx[a[i]] = max(mxx[a[i]],b[i]);
-    }
-    int m = mxx.size();
-    vi c;
-    trav(x,mxx) {
-        c.push_back(x.first);
-    }
-    vi suff(m+1,-INF);
-    per(i,0,m) {
-        suff[i] = max(suff[i+1],mxx[c[i]] + c[i]);
-    }
-    int p = -INF;
-    double mx = INF;
-    double ans = c[0];
-    rep(i,0,m-1){
-        p = max(p,mxx[c[i]] - c[i]);
-        int s = suff[i+1];
-        double x0 = max(c[i]*1.0,min((s-p)*1.0/2,1.0*c[i+1]));
-        double dist = max(p+x0,s-x0);   
-        if(dist<mx) {
-            mx = dist;
-            ans = x0;
-        }
-    }
-    cout << setprecision (15)   W << endl;
-    
+    string s;
+    cin >> s;
+    string rev = s;
+    reverse(all(rev));
+    put(n -  f(rev,"kcab") - f(s,"front"));
+
 }
 // driver code
 int32_t main()
