@@ -145,7 +145,6 @@ void testcase(){
             ans = x0;
         }
     }
-    cout << setprecision (15)   W << endl;
     
 }
 // driver code

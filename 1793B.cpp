@@ -113,51 +113,22 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// 1 2 3 4 5
-// 
-void testcase(){ 
-    int n,k;
-    cin >> n >> k;
-    vector<int> cnt(n);
-    rep(i,0,n) {
-        int x;
-        cin >> x;
-        cnt[i] +=x;
+void testcase(){
+    int x,y;
+    cin >> x >> y;
+    put(2*(x-y));
+    cout << x-1 << " ";
+    int t = x;
+    while(t>y) {
+        cout << t << " ";
+        t--;
     }
-    auto check = [&] (int x) {
-        int req = 0;
-        rep(i,0,n) {
-            req += max(0LL,x-cnt[i]);
-        }
-        return req <= k;
-    };
-    int lo= 0,hi = 2*(1e12);
-    int ans = 0;
-    while (lo<=hi)
+    while (y<x-1)
     {
-        int mid = (lo+hi)/2;
-        if(check(mid)) {
-            ans = mid;
-            lo = mid+1;
-        }
-        else hi = mid-1;
+        cout << y << " ";
+        y++;
     }
-    int res = ans*n - n + 1;
-    rep(i,0,n) {
-        if(cnt[i]<ans){
-            k -= ans-cnt[i];
-            cnt[i] = ans;
-        } 
-        cnt[i] -= ans;
-    }
-    rep(i,0,n) {
-        if(cnt[i] || k) {
-            if(cnt[i]==0) k--;
-            res++;
-        }
-    }
-    
-    put(res);
+    cout << endl;
     
 }
 // driver code

@@ -113,52 +113,74 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// 1 2 3 4 5
-// 
-void testcase(){ 
-    int n,k;
-    cin >> n >> k;
-    vector<int> cnt(n);
-    rep(i,0,n) {
-        int x;
-        cin >> x;
-        cnt[i] +=x;
-    }
-    auto check = [&] (int x) {
-        int req = 0;
-        rep(i,0,n) {
-            req += max(0LL,x-cnt[i]);
+vector<int> toposort(vector<vector<int>> &g) {
+    int n = (int)g.size();
+    vector<int> ind(n);
+    for(int i=0;i<n;i++) {
+        for(int v:g[i]) {
+            ind[v]++;
         }
-        return req <= k;
-    };
-    int lo= 0,hi = 2*(1e12);
-    int ans = 0;
-    while (lo<=hi)
+    }
+    queue<int> q;
+    rep(i,0,n) {
+        if(ind[i]==0) {
+            q.push(i);
+        }
+    }
+    vector<int> topo;
+    while (q.size())
     {
-        int mid = (lo+hi)/2;
-        if(check(mid)) {
-            ans = mid;
-            lo = mid+1;
-        }
-        else hi = mid-1;
-    }
-    int res = ans*n - n + 1;
-    rep(i,0,n) {
-        if(cnt[i]<ans){
-            k -= ans-cnt[i];
-            cnt[i] = ans;
-        } 
-        cnt[i] -= ans;
-    }
-    rep(i,0,n) {
-        if(cnt[i] || k) {
-            if(cnt[i]==0) k--;
-            res++;
+        int u = q.front();
+        topo.push_back(u);
+        q.pop();
+        for(int v:g[u]) {
+            if((--ind[v])==0){
+                q.push(v);
+            }
         }
     }
-    
-    put(res);
-    
+    assert((int)topo.size()==n);
+    debug(topo);
+    return topo;
+}
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    vector<vector<int>> g(n);
+    vector<vector<int>> rg(n);
+    rep(i,0,m) {
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        g[u].push_back(v);rg[v].push_back(u);
+    }
+    vi dp(n,0);
+    int ans = 0;
+    trav(u,toposort(g)) {
+        int f =0;
+        int mx = 0;
+        int cnt = 0;
+        trav(v,rg[u]) {
+            if(g[v].size()==1) {
+                f = 1;
+            }
+            else{
+                cnt++;
+                mx = max(dp[v],mx);
+            }
+        }
+        if(f) {
+            dp[u] = mx+1;
+        }
+        else{
+            if(cnt==1) dp[u] = 1;
+            else dp[u] = mx+1;
+        }
+        ans = max(ans,dp[u]);
+    }
+    put(ans);
+
+
 }
 // driver code
 int32_t main()
@@ -168,7 +190,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

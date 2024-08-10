@@ -113,51 +113,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-// 1 2 3 4 5
-// 
-void testcase(){ 
-    int n,k;
-    cin >> n >> k;
-    vector<int> cnt(n);
-    rep(i,0,n) {
-        int x;
-        cin >> x;
-        cnt[i] +=x;
-    }
-    auto check = [&] (int x) {
-        int req = 0;
-        rep(i,0,n) {
-            req += max(0LL,x-cnt[i]);
-        }
-        return req <= k;
-    };
-    int lo= 0,hi = 2*(1e12);
-    int ans = 0;
-    while (lo<=hi)
+void testcase(){
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    int mn  = 1,mx = n;
+    int i = 0,j=n-1;
+    while (i<j)
     {
-        int mid = (lo+hi)/2;
-        if(check(mid)) {
-            ans = mid;
-            lo = mid+1;
+        if(a[i]==mn || a[i]==mx || a[j]==mn || a[j]==mx) {
+            if(a[i]==mn) {
+                i++;
+                mn++;
+            }
+            if(a[j]==mn) {
+                j--;
+                mn++;
+            }
+            if(a[i]==mx){
+                mx--;
+                i++;
+            }
+            if(a[j]==mx){
+                mx--;
+                j--;
+            }
         }
-        else hi = mid-1;
-    }
-    int res = ans*n - n + 1;
-    rep(i,0,n) {
-        if(cnt[i]<ans){
-            k -= ans-cnt[i];
-            cnt[i] = ans;
-        } 
-        cnt[i] -= ans;
-    }
-    rep(i,0,n) {
-        if(cnt[i] || k) {
-            if(cnt[i]==0) k--;
-            res++;
+        else{
+            put2(i+1,j+1);
+            return;
         }
     }
-    
-    put(res);
+    put(-1);
+
     
 }
 // driver code
