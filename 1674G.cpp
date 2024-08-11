@@ -114,7 +114,7 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 vector<int> toposort(vector<vector<int>> &g) {
-    int n = (int)g.size();
+    int n;
     vector<int> ind(n);
     for(int i=0;i<n;i++) {
         for(int v:g[i]) {
@@ -140,7 +140,6 @@ vector<int> toposort(vector<vector<int>> &g) {
         }
     }
     assert((int)topo.size()==n);
-    debug(topo);
     return topo;
 }
 void testcase(){

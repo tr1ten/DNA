@@ -113,52 +113,94 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+int n,k;
+int findx(vi &c,vi &b,int s){
+    int m = n-s;
+    auto check = [&](int x){
+        int have = k;
+        int cnt = 0;
+        per(i,0,c.size()){
+            if(c[i]>=x) {cnt++;continue;}
+            if(x-c[i]>have || b[i]==0) continue;
+            have -=(x-c[i]);
+            cnt++;
+        }
+        return cnt>=m;
+    };
+    int lo = 0,hi = 1e10;
+    int ans = 0;
+    while(lo<=hi){
+        int mid = (lo+hi)/2;
+        if(check(mid)) {
+            ans = mid;
+            lo = mid+1;
+        }
+        else hi = mid-1;
+    }
+    debug(c,b,s,ans);
+    return ans;
+}
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n+1),b(n+1);
+    cin >> n >> k;
+    vi a(n);
+    tkv(a,n);
+    vi b(n);
+    tkv(b,n);
+    vi c=a;
+    srv(c);
+    vi inds(n);
+    iota(all(inds),0);
+    sort(all(inds),[&](int i,int j){
+        return a[i] < a[j];
+    });
+    vi d = b;
     rep(i,0,n){
-        int x;
-        cin >> x;
-        a[x]=  i;
-    }
+        d[i] = b[inds[i]];
+}
+    mll ind;
     rep(i,0,n){
-        int x;
-        cin >> x;
-        b[x]=  i;
+        if(ind.count(c[i])==0) ind[c[i]] = i;
+        else ind[c[i]] = min(ind[c[i]],i);
     }
-    int x=a[1],y=b[1];
-    int i1 = x,i2 = x;
-    int j1=y,j2 = y;
-    if(x>y) swap(x,y);
-    int res = 0;
-    res += x*(x+1)/2;
-    res += (n-y-1)*(n-y)/2;
-    res += (y-x)*(y-x-1)/2;
-    rep(p,2,n+1){
-        int ix=0,iy =n-1;
-        int jx = -1,jy = n;
-        // debug((i1>=a[p] && a[p]<=i2) , (j1>=b[p] && b[p]<=j2));
-        if((i1<=a[p] && a[p]<=i2) || (j1<=b[p] && b[p]<=j2)) continue;
-        if(a[p]<i1) ix = a[p]; 
-        else iy = a[p];
-        if(b[p] <j1) jx = b[p];
-        else jy = b[p];
-        int tx = max(jx,ix),ty = min(jy,iy);
-        if(tx>ty) continue;
-        // if(tx-min(i1,j1)+1<=0 || max(i2,j2)-ty+1<=0) continue;
-        int left = max(0LL,(tx-min(i1,j1))),right = max(0LL,(max(i2,j2)-ty));
-        res += max(0LL,left*right);
-        i1 = min(a[p],i1);
-        i2 = max(a[p],i2);
-        j1 = min(b[p],j1);
-        j2 = max(b[p],j2);
-        
-        debug(p,i1,i2,j1,j2,ix,iy,jx,jy,tx,ty,left,right,res);
+    int ans = 0;
+    if(n%2){
+        int m = n/2;
+        int x = findx(c,d,m);
+        int x1 = findx(c,d,m-1);
+        debug(x,x1);
+        rep(i,0,n){
+            if(b[i]){
+                if(ind[a[i]]<m) ans = max(ans,a[i]+k+c[m]);
+                else{
+                    ans = max(ans,a[i]+k+c[m-1]);
+                }
+            }
+            else{
+                if(ind[a[i]]<m) ans = max(ans,a[i]+x);
+                else{
+                    ans = max(ans,a[i]+x1);
+                }
+            }
+        }
     }
-    put(res);
-    
-    
+    else{
+        int m = (n-1)/2;
+        int x = findx(c,d,m);
+        rep(i,0,n){
+            if(b[i]){
+                if(ind[a[i]]<=m) ans = max(ans,a[i]+k+c[m+1]);
+                else{
+                    ans = max(ans,a[i]+k+c[m]);
+                }
+            }
+            else{
+                ans = max(ans,a[i]+x);
+            }
+        }
+
+    }
+    put(ans);
+
 }
 // driver code
 int32_t main()
@@ -168,7 +210,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

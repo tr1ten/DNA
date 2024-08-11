@@ -114,51 +114,31 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n+1),b(n+1);
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        a[x]=  i;
+    int x,y,k;
+    cin >> x >> y >> k;
+    int t = k;
+    int i =1e5+5;
+    while(k>2) {
+        cout << i << " " << i << endl;
+        cout << -i << " " << -i << endl;
+        i +=1;
+        k-=2;
     }
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        b[x]=  i;
+    if(k==1){
+        cout << t*x << " "<< t*y << endl;
     }
-    int x=a[1],y=b[1];
-    int i1 = x,i2 = x;
-    int j1=y,j2 = y;
-    if(x>y) swap(x,y);
-    int res = 0;
-    res += x*(x+1)/2;
-    res += (n-y-1)*(n-y)/2;
-    res += (y-x)*(y-x-1)/2;
-    rep(p,2,n+1){
-        int ix=0,iy =n-1;
-        int jx = -1,jy = n;
-        // debug((i1>=a[p] && a[p]<=i2) , (j1>=b[p] && b[p]<=j2));
-        if((i1<=a[p] && a[p]<=i2) || (j1<=b[p] && b[p]<=j2)) continue;
-        if(a[p]<i1) ix = a[p]; 
-        else iy = a[p];
-        if(b[p] <j1) jx = b[p];
-        else jy = b[p];
-        int tx = max(jx,ix),ty = min(jy,iy);
-        if(tx>ty) continue;
-        // if(tx-min(i1,j1)+1<=0 || max(i2,j2)-ty+1<=0) continue;
-        int left = max(0LL,(tx-min(i1,j1))),right = max(0LL,(max(i2,j2)-ty));
-        res += max(0LL,left*right);
-        i1 = min(a[p],i1);
-        i2 = max(a[p],i2);
-        j1 = min(b[p],j1);
-        j2 = max(b[p],j2);
-        
-        debug(p,i1,i2,j1,j2,ix,iy,jx,jy,tx,ty,left,right,res);
+    else if(k==2) {
+        if(x!=0 || y!=0) {
+            cout << 0 << " " << 0 << endl;
+            cout << t*x << " "<< t*y << endl;
+        }
+        else{
+            cout << -1 << " " << -1 << endl; 
+            cout << 1 << " " << 1 << endl; 
+        }
+
+
     }
-    put(res);
-    
-    
 }
 // driver code
 int32_t main()
@@ -168,7 +148,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
