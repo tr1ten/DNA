@@ -66,7 +66,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define srv(vec) sort(vec.begin(), vec.end())
 #define all(x) x.begin(), x.end()
 #define less(a,b) a<b
-#define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
+#define vval(vec) accumulate(vec.begin(), vec.end(), 0L);
 #define vmax(vec) *max_element(vec.begin(), vec.end());
 #define vmin(vec) *min_element(vec.begin(), vec.end());
 #define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
@@ -113,52 +113,81 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n+1),b(n+1);
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        a[x]=  i;
-    }
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        b[x]=  i;
-    }
-    int x=a[1],y=b[1];
-    int i1 = x,i2 = x;
-    int j1=y,j2 = y;
-    if(x>y) swap(x,y);
-    int res = 0;
-    res += x*(x+1)/2;
-    res += (n-y-1)*(n-y)/2;
-    res += (y-x)*(y-x-1)/2;
-    rep(p,2,n+1){
-        int ix=-1,iy =n;
-        int jx = -1,jy = n;
-        // debug((i1>=a[p] && a[p]<=i2) , (j1>=b[p] && b[p]<=j2));
-        if(!((i1<=a[p] && a[p]<=i2) || (j1<=b[p] && b[p]<=j2))) {
-            if(a[p]<i1) ix = a[p]; 
-            else iy = a[p];
-            if(b[p] <j1) jx = b[p];
-            else jy = b[p];
-            int tx = max(jx,ix),ty = min(jy,iy);
-            if(tx<=ty && tx<=min(i1,j1) && ty>=max(i1,j2))  {
-                int left = max(0LL,(min(i1,j1) - tx)),right = max(0LL,(ty - max(i2,j2)));
-                res += max(0LL,left*right);
-                debug(p,i1,i2,j1,j2,ix,iy,jx,jy,tx,ty,left,right,res);
-            }
-        }
-        i1 = min(a[p],i1);
-        i2 = max(a[p],i2);
-        j1 = min(b[p],j1);
-        j2 = max(b[p],j2);
+// battle tested
+// https://judge.yosupo.jp/submission/170986
+typedef long long ll;
+const int N = 5*(1e5) + 5;
+int n; // MAKE SURE TO INITIALIZE THIS TO SIZE OF ARRAY
+struct Segment{
+    ll val=-INF;
+} segm[4*N]; // 0 index
+Segment combine(Segment left,Segment right){
+    Segment res;
+    res.val = max(left.val, right.val);
+    return res;
+}
 
+// child- 2*x+1,2*x+2 (0 coz index)
+// add x to [l...r]
+void update(int node,int left,int right,int i,ll value){
+    if(left==i && right==i) {
+            segm[node].val = value;
+        }
+    else{
+        int mid = (left+right)/2;
+        if(i<=mid) update(2*node+1,left,mid,i,value);
+        else update(2*node+2,mid+1,right,i,value);
+        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
     }
-    put(res+1);
     
+}
+
+Segment query(int node,int left,int right,int l,int r){
+    if(left>=l && right<=r) {return segm[node];}
+    int mid = (left+right)/2;
+    Segment res;
+    if(l<=mid) res = combine(res,query(2*node+1,left,mid,l,r));
+    if(r>mid) res = combine(res,query(2*node+2,mid+1,right,l,r));
+
+    return res;
+}
+// everything is zero indexed
+void update(int i,ll x){
+    update(0,0,n-1,i,x);
+}
+Segment query(int l,int r){
+    return query(0,0,n-1,l,r);
+}
+
+void testcase(){
+    int m;
+    cin >> n >> m;
+    vii adj(n);
+    rep(i,0,m){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        adj[u].push_back(v);
+    }
+    string s(n-1,'1');
+    rep(i,0,n){
+        update(i,-INF);
+    }
+    vi dp(n,INF);
+    dp[0] = 0;
+    rep(i,0,n-1){
+        int mx = query(i+1,n-1).val;
+        if(i<mx) {
+            s[i] = '0';
+        }
+        dp[i+1] = min(dp[i+1],dp[i]+1);
+        trav(v,adj[i]){
+            dp[v] = min(dp[i]+1,dp[v]);
+            update(v,v-dp[v]);
+        }
+        update(i+1,i+1-dp[i+1]);
+    }
+    put(s);
     
 }
 // driver code
@@ -169,7 +198,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

@@ -116,50 +116,17 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    vi a(n+1),b(n+1);
+    mll cnt;
     rep(i,0,n){
         int x;
         cin >> x;
-        a[x]=  i;
+        cnt[x]++;
     }
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        b[x]=  i;
+    int res=  0;
+    trav(x,cnt){
+        res +=min(2LL,x.second);
     }
-    int x=a[1],y=b[1];
-    int i1 = x,i2 = x;
-    int j1=y,j2 = y;
-    if(x>y) swap(x,y);
-    int res = 0;
-    res += x*(x+1)/2;
-    res += (n-y-1)*(n-y)/2;
-    res += (y-x)*(y-x-1)/2;
-    rep(p,2,n+1){
-        int ix=-1,iy =n;
-        int jx = -1,jy = n;
-        // debug((i1>=a[p] && a[p]<=i2) , (j1>=b[p] && b[p]<=j2));
-        if(!((i1<=a[p] && a[p]<=i2) || (j1<=b[p] && b[p]<=j2))) {
-            if(a[p]<i1) ix = a[p]; 
-            else iy = a[p];
-            if(b[p] <j1) jx = b[p];
-            else jy = b[p];
-            int tx = max(jx,ix),ty = min(jy,iy);
-            if(tx<=ty && tx<=min(i1,j1) && ty>=max(i1,j2))  {
-                int left = max(0LL,(min(i1,j1) - tx)),right = max(0LL,(ty - max(i2,j2)));
-                res += max(0LL,left*right);
-                debug(p,i1,i2,j1,j2,ix,iy,jx,jy,tx,ty,left,right,res);
-            }
-        }
-        i1 = min(a[p],i1);
-        i2 = max(a[p],i2);
-        j1 = min(b[p],j1);
-        j2 = max(b[p],j2);
-
-    }
-    put(res+1);
-    
-    
+    put((res+1)/2);
 }
 // driver code
 int32_t main()
@@ -169,7 +136,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
