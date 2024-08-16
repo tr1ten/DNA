@@ -114,66 +114,6 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    int t0,t1,t2;
-    cin >> t0 >> t1 >> t2;
-    vector<vector<vector<int>>> adj(n);
-    rep(i,0,m){
-        int u,v,l1,l2;
-        cin >> u>> v >> l1 >> l2;
-        --u;--v;
-        adj[u].push_back({v,l1,l2});
-        adj[v].push_back({u,l1,l2});
-    }
-    auto check = [&](int x){
-        priority_queue<pair<int,int>,vector<pi>,greater<pi>> pq;
-        pq.push({x,0});
-        vi dist(n,INF);
-        dist[0] = x;
-        while (pq.size())
-        {
-            auto [t,u] = pq.top();
-            pq.pop();
-            if(t>dist[u]) continue;
-            bool inside = t>=t1 && t<t2;
-            for(auto v:adj[u]){
-                if(inside){
-                    int d = min(t+v[2],t2 + v[1]);
-                    if(d<dist[v[0]]) {
-                        dist[v[0]] = d;
-                        pq.push({dist[v[0]],v[0]});
-                    }
-                }
-                else{
-                    if(t+v[1] < dist[v[0]]) {
-                        if(t>=t2 || t+v[1]<=t1) {
-                            dist[v[0]] = t+v[1];
-                            pq.push({dist[v[0]],v[0]});
-                        }
-                        else if(min(t2+v[1],t+v[2])<dist[v[0]]) {
-                            dist[v[0]] = min(t2+v[1],t+v[2]);
-                            pq.push({dist[v[0]],v[0]});
-                        }
-                    }
-                }
-            }
-        }
-        debug(x,dist[n-1]);
-        return dist[n-1] <= t0;
-    };
-    int lo = 0,hi = t0;
-    int ans = -1;
-    while (lo<=hi)
-    {
-        int mid = (lo+hi) >> 1;
-        if(check(mid)){
-            lo = mid+1;
-            ans = mid;
-        }
-        else hi = mid-1;
-    }
-    put(ans);
 }
 // driver code
 int32_t main()
