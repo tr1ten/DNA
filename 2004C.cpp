@@ -119,12 +119,16 @@ void testcase(){
     vi a(n);
     tkv(a,n);
     srv(a);
-    if(a.size()&1) a.insert(a.begin(),0);
     int res = 0;
-    for(int i=0;i<a.size();i+=2){
-        res += a[i];
+    int ex = 0;
+    if(a.size()&1) {
+        ex += a[0];
+        a.erase(a.begin());
     }
-    put(res);
+    for(int i=0;i<a.size();i+=2){
+        res += a[i+1]-a[i];
+    }
+    put(max(0LL,res-k) + ex);
 }
 // driver code
 int32_t main()

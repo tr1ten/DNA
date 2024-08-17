@@ -114,17 +114,54 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi a(n);
-    tkv(a,n);
-    srv(a);
-    if(a.size()&1) a.insert(a.begin(),0);
-    int res = 0;
-    for(int i=0;i<a.size();i+=2){
-        res += a[i];
+    int n,q;
+    cin >> n >> q;
+    unordered_map<string,set<int>> cs;
+    vector<string> vs(n);
+    rep(i,0,n){
+        string a;
+        cin >> a;
+        vs[i] = a;
+        cs[a].insert(i);
+        reverse(all(a));
+        cs[a].insert(i);
+
     }
-    put(res);
+    rep(_,0,q){
+        int i,j;
+        cin >> i >> j;
+        --i;--j;
+        if(i>j) swap(i,j);
+        if(vs[j].find(vs[i][0])!=string::npos || vs[j].find(vs[i][1])!=string::npos ){
+            put(abs(i-j));
+        }
+        else{
+            int res = INF;
+            rep(c,0,2){ 
+                rep(d,0,2){
+                    string b = vs[i].substr(c,1) + vs[j].substr(d,1);
+                    auto up = cs[b].lower_bound(i);
+                    if(up!=cs[b].end()) {
+                        if(*up<=j) res = min(res,j-i);
+                        else {
+                            res = min(res,(*up)-i+((*up) - j));
+                        }
+                    }
+                    if(up!=cs[b].begin()){
+                        up--;
+                        res = min(res,i-(*up) + (j-*up));
+                    }
+                    // trav(x,cs[b]){
+                    //     res = min(res,abs(i-x) + abs(j-x));
+                    // }
+                    
+                }
+            }
+            if(res>=INF) put(-1)
+            else put(res)
+        }
+    }
+
 }
 // driver code
 int32_t main()
