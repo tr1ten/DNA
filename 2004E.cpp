@@ -116,14 +116,13 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    int c = 0;
+    int res = 0;
     rep(i,0,n){
         int x;
         cin >> x;
-        c += (x%2);
+        res += (x!=2);
     }
-    c %=2;
-    pyn(c);
+    pyn(res%2);
 }
 // driver code
 int32_t main()
