@@ -114,63 +114,63 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 
+const int N = 2000 + 5;
+long long fact[N];
+long long inv[N];
+long long finv[N];
 
-const int N = 1e7 + 5;
-int g[N+1];
-int lp[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    vector<int> pr;
-    for (int i=2; i <= N; ++i) {
-    if (lp[i] == 0) {
-        lp[i] = i;
-        pr.push_back(i);
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
     }
-    for (int j = 0; i * pr[j] <= N; ++j) {
-        lp[i * pr[j]] = pr[j];
-        if (pr[j] == lp[i]) {
-            break;
-        }
+    inv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
     }
-}
-}
-
-
-
-void pre(){
-    preprocess();
-    g[1] = 1;
-    int pc = 1;
-    for(int i=3;i<=N;i++) {
-        if(i==lp[i]){
-            g[i] = ++pc;
-        }
-        else{
-            int mx = INF;
-            int x = i;
-            while(x>1){
-                int f = lp[x];
-                if(x%f==0) mx = min(mx,g[f]);
-                while(x%f==0) x/=f;
-            }
-            g[i] = mx;
-        }
+    finv[0] = finv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        finv[i] = (inv[i]*finv[i-1])%MOD;
     }
 }
 
-
+long long nCk(int n,int k) {
+    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
+}
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
 void testcase(){
     int n;
     cin >> n;
-    int x = 0;
-    rep(i,0,n){
-        int u;
-        cin >> u;
-        x ^=g[u];
+    int m = 0;
+    mll cnt;
+    rep(i,0,n) {
+        int x;
+        cin >> x;
+        cnt[x]++;
+        if(cnt[x]==2) m++;
     }
-    if(x==0) put("Bob")
-    else put("Alice")
+    int ans = fact[n];
+    ans *= fast_pow(fast_pow(2,m,MOD),MOD-2,MOD);
+    ans %=MOD;
+    for(int i=1;i<=m;i++) {
+        int r = nCk(m,i)*fact[n-i]%MOD;
+        r *=fast_pow(fast_pow(2,m-i,MOD),MOD-2,MOD);
+        r %=MOD;
+        ans +=r*(i%2 ? -1 : 1);
+        ans = (ans+MOD)%MOD;
+        // debug(r);
+    }
+    put(ans);
 }
 // driver code
 int32_t main()
