@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e18+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,27 +113,102 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int euc(int x1,int x2,int y1,int y2) {
-    return (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int cnt;
+    DSU(int n)
+    {
+        this->par = new int[n];
+        this->sz = new int[n];
+        cnt = n;
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
+        }
+    }
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    void connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+        cnt--;
+    }
+};
+
+
+int n;
+int q;
+vpi edges;
+int ask(int a,int b){
+    cout << "? " << a << " " << b << endl;
+    cout.flush();
+    int x;
+    cin >> x;
+    q++;
+    assert(q<=15*n);
+    return x;
+}
+void tell(int x){
+    cout << "! " << x  << endl;
+    cout.flush();
+    int r;
+    cin >> r;
+    assert(r);
+}
+
+void build(int u,int v, DSU &dsu){
+    if(dsu.find(u)==dsu.find(v)) return;
+    int w = ask(u+1,v+1);
+    w--;
+    if(u==w){
+        dsu.connect(u,v);
+        edges.push_back({u+1,v+1});
+    }
+    build(u,w,dsu);
+    build(w,v,dsu);
+    
 }
 void testcase(){
-    int n;
     cin >> n;
-    vpi a(n);
-    rep(i,0,n){
-        cin >> a[i].ff >> a[i].ss;
+    q= 0 ;
+    edges.clear();
+    DSU dsu(n);
+    rep(i,1,n){
+        build(0,i,dsu);
     }
-    int xs,ys,xf,yf;
-    cin >> xs >> ys >> xf >> yf;
-    int mn = INF;
-    rep(i,0,n){
-        mn = min(mn,euc(xf,a[i].ff,yf,a[i].ss));
-    }
-    int mn2 = euc(xs,xf,ys,yf);
-    // debug(mn2,mn,a); 
-    pyn(mn2<mn);
-
+    assert(edges.size()==n-1);
+    cout << "! " ;
+    trav(x,edges){
+        cout << x.first << " " << x.ss << " ";
+    }   
+    cout << endl;
+    
 }
+
 // driver code
 int32_t main()
 {

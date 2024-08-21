@@ -126,7 +126,7 @@ void testcase(){
     trav(x,cnt){
         res +=min(2LL,x.second);
     }
-    put((res+1)/2);
+    put((r  1)/2);
 }
 // driver code
 int32_t main()

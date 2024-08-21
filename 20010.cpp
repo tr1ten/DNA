@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e18+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,26 +113,18 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int euc(int x1,int x2,int y1,int y2) {
-    return (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
-}
 void testcase(){
     int n;
     cin >> n;
-    vpi a(n);
+    mll cnt;
+    int res =n;
     rep(i,0,n){
-        cin >> a[i].ff >> a[i].ss;
+        int x;
+        cin >> x;
+        cnt[x]++;
+        res = min(res,n-cnt[x]);
     }
-    int xs,ys,xf,yf;
-    cin >> xs >> ys >> xf >> yf;
-    int mn = INF;
-    rep(i,0,n){
-        mn = min(mn,euc(xf,a[i].ff,yf,a[i].ss));
-    }
-    int mn2 = euc(xs,xf,ys,yf);
-    // debug(mn2,mn,a); 
-    pyn(mn2<mn);
-
+    put(res);
 }
 // driver code
 int32_t main()
