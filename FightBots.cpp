@@ -111,11 +111,24 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    
+    int n,x,y;
+    cin >> n >> x >> y;
+    int a=0,b=0;
+    string s;
+    cin >> s;
+    rep(i,0,n){
+        if(s[i]=='L') a--;
+        else if(s[i]=='R') a++;
+        else if(s[i]=='U') b--;
+        else b++;
+        int d = abs(x-a) + abs(y-b);
+        if(d<=i+1 && (i+1-d)%2==0) {pyn(1);return;}
+    }
+    pyn(0);
+    return;
 }
 // driver code
 int32_t main()
