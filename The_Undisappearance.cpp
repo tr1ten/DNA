@@ -111,24 +111,42 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"Yes":"No");}
+void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,x,y;
-    cin >> n >> x >> y;
-    int a=0,b=0;
-    string s;
-    cin >> s;
+    int n;
+    cin >> n;
+    vi lri(4,-1),rri(4);
+    vi a(n);
     rep(i,0,n){
-        if(s[i]=='L') a--;
-        else if(s[i]=='R') a++;
-        else if(s[i]=='U') b++;
-        else b--;
-        int d = abs(x-a) + abs(y-b);
-        if(d<=i+1 && (i+1-d)%2==0) {pyn(1);return;}
+        int x;
+        cin >> x;
+        if(lri[x]==-1) {
+            lri[x] =i;
+        }
+        rri[x] = i;
+        a[i] = x;
     }
-    pyn(0);
-    return;
+    int ans = n*(n+1)/2;
+    rep(i,1,4){
+        int l = lri[i];
+        int r = rri[i];
+        int f = 1;
+        rep(k,l,r+1){
+            if(a[k]%3+1==i) {
+                f = 0;
+                break;
+            }
+        }
+        if(!f) continue;
+        int cc = 1,rc = 1;
+        while(l-cc>=0 && a[l-cc]%3+1!=i) cc++;
+        while(r+rc<n && a[r+rc]%3+1!=i) rc++;
+        debug(i,l,r,rc,cc);
+        ans -= rc*cc;
+        // else ans += 1;
+    }
+    put(ans);
 }
 // driver code
 int32_t main()

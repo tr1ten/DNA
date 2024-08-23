@@ -143,7 +143,7 @@ Segment query(int node,int left,int right,int l,int r,Segment segm[4*N]){
 }
 // everything is zero indexed
 void update(int i,pi x,Segment segm[4*N]){
-    update(0,0,n-1,i,x,segm);
+    update(0,0,n-1,i,x,segm);   
 }
 Segment query(int l,int r,Segment segm[4*N]){
     return query(0,0,n-1,l,r,segm);

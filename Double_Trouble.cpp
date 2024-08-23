@@ -111,24 +111,57 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"Yes":"No");}
+void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n,x,y;
-    cin >> n >> x >> y;
-    int a=0,b=0;
-    string s;
-    cin >> s;
-    rep(i,0,n){
-        if(s[i]=='L') a--;
-        else if(s[i]=='R') a++;
-        else if(s[i]=='U') b++;
-        else b--;
-        int d = abs(x-a) + abs(y-b);
-        if(d<=i+1 && (i+1-d)%2==0) {pyn(1);return;}
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
     }
-    pyn(0);
-    return;
+    return res;
+}
+void testcase(){
+    int n,k;
+    cin >> n >> k;
+    vi a(n);
+    tkv(a,n);
+    srv(a);
+    int K = min(k,30*n);
+    k -=K;
+    int mxb = 0;
+    priority_queue<int,vi,greater<int>>pq;
+    rep(i,0,n){
+        mxb = max(hset(a[i]),mxb);
+        pq.push(a[i]);
+    }
+    while (K && (pq.top()&(1<<mxb))==0)
+    {
+        int t = pq.top();
+        pq.pop();
+        pq.push(2*t);
+        K--;
+    }
+    k +=K;
+    int d = k/n;
+    int r = k%n;
+    int res =  0;
+    while (pq.size())
+    {
+        int x = pq.top();   
+        pq.pop();
+        res +=( x*fast_pow(2,d+(r ? 1 : 0),MOD))%MOD;
+        res %=MOD;
+        if(r) r--;
+    }
+    put(res);
+
+    
+    
+
 }
 // driver code
 int32_t main()
