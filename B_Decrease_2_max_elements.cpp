@@ -114,42 +114,18 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi g(n);
-    rep(i,0,m) {
-        int u,v,d;
-        cin >> u >> v >> d;
-        --u;--v;
-        g[v]+=d;
-        g[u]-=d;
-    }
-    vpi lend;
-    vpi borr;
+    int n;
+    cin >> n;
+    int mx = 0;
+    int t= 0 ;
     rep(i,0,n){
-        if(g[i]>0) lend.push_back({g[i],i});
-        else if(g[i]<0) borr.push_back({-g[i],i});
-    }   
-    srv(lend);
-    srv(borr);
-    int i=(int)lend.size()-1,j=(int)borr.size()-1;
-    vector<pair<int,pi>> res;
-    while (i>=0 && j>=0)
-    {
-        int d = min(lend[i].ff,borr[j].ff);
-        lend[i].ff -=d;
-        borr[j].ff -=d;
-        res.push_back({borr[j].ss+1,{1+lend[i].ss,d}});
-        if(lend[i].ff==0) i--;
-        if(borr[j].ff==0) j--;
+        int x;
+        cin >> x;
+        mx = max(mx,x);
+        t +=x;
     }
-
-    
-    put(res.size());
-    trav(x,res){
-        cout << x.first <<" " << x.second.first <<" " << x.ss.ss << endl;
-    }
-
+    if(mx<=t-mx) put(t/2)
+    else put(t-mx) 
 }
 // driver code
 int32_t main()
@@ -159,7 +135,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
     while(T--) testcase();
 
     return 0;

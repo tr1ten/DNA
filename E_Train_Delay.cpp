@@ -113,43 +113,42 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+struct Train {
+    int a;
+    int b;
+    int s;
+    int e;
+};
+vector<Train> e;
+vi X;
+vii adj;
+void dfs(int u,int p){
+    trav(v,adj[u]){
+        auto t = e[v];
+        if(e[p].e<=t.s && e[p].e+X[p]>t.s){
+            X[v] = e[p].e+X[p]-t.s;
+            dfs(e[v].b,v);
+        }
+    }
+}
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi g(n);
-    rep(i,0,m) {
-        int u,v,d;
-        cin >> u >> v >> d;
-        --u;--v;
-        g[v]+=d;
-        g[u]-=d;
+    int n,m,x;
+    cin >> n >> m >> x;
+    X.resize(m);
+    X[0] = x;
+    adj.resize(n);
+    rep(i,0,m){
+        int a,b,c,d;
+        cin >> a >> b >> c >>d;
+        --a;--b;
+        adj[a].push_back(i);
+        e.push_back({a,b,c,d});
     }
-    vpi lend;
-    vpi borr;
-    rep(i,0,n){
-        if(g[i]>0) lend.push_back({g[i],i});
-        else if(g[i]<0) borr.push_back({-g[i],i});
-    }   
-    srv(lend);
-    srv(borr);
-    int i=(int)lend.size()-1,j=(int)borr.size()-1;
-    vector<pair<int,pi>> res;
-    while (i>=0 && j>=0)
-    {
-        int d = min(lend[i].ff,borr[j].ff);
-        lend[i].ff -=d;
-        borr[j].ff -=d;
-        res.push_back({borr[j].ss+1,{1+lend[i].ss,d}});
-        if(lend[i].ff==0) i--;
-        if(borr[j].ff==0) j--;
+    dfs(e[0].b,0);
+    rep(i,1,m){
+        cout << X[i] << " ";
     }
-
-    
-    put(res.size());
-    trav(x,res){
-        cout << x.first <<" " << x.second.first <<" " << x.ss.ss << endl;
-    }
-
+    cout << endl;
 }
 // driver code
 int32_t main()

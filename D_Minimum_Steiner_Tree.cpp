@@ -113,43 +113,51 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N =2e5 + 5;
+int A[N];
+bool B[N];
+vii adj;
+int ans =0;
+int dffs(int u,int p){
+    int cnt = 0;
+    for(int v:adj[u]){
+        if(v!=p){
+            cnt += (dffs(v,u)>=1);
+        }
+    }
+    A[u] +=cnt;
+    return (A[u]>=1) || B[u];
+}
+void dffs(int u,int p,int pp){
+    int take =B[u] || ( A[u]+pp>=2);
+    pp =pp||take;
+    for(int v:adj[u]){
+        if(v!=p){
+            dffs(v,u,pp);
+        }
+    }
+    ans+=take;
+}
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi g(n);
-    rep(i,0,m) {
-        int u,v,d;
-        cin >> u >> v >> d;
+    int n,k;
+    cin >> n >> k;
+    adj.resize(n);
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
         --u;--v;
-        g[v]+=d;
-        g[u]-=d;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-    vpi lend;
-    vpi borr;
-    rep(i,0,n){
-        if(g[i]>0) lend.push_back({g[i],i});
-        else if(g[i]<0) borr.push_back({-g[i],i});
-    }   
-    srv(lend);
-    srv(borr);
-    int i=(int)lend.size()-1,j=(int)borr.size()-1;
-    vector<pair<int,pi>> res;
-    while (i>=0 && j>=0)
-    {
-        int d = min(lend[i].ff,borr[j].ff);
-        lend[i].ff -=d;
-        borr[j].ff -=d;
-        res.push_back({borr[j].ss+1,{1+lend[i].ss,d}});
-        if(lend[i].ff==0) i--;
-        if(borr[j].ff==0) j--;
-    }
+    rep(i,0,k){
+        int u;
+        cin >> u;
+        B[--u] = 1;
 
-    
-    put(res.size());
-    trav(x,res){
-        cout << x.first <<" " << x.second.first <<" " << x.ss.ss << endl;
     }
-
+    dffs(0,-1);
+    dffs(0,-1,0);
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -159,7 +167,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
     while(T--) testcase();
 
     return 0;

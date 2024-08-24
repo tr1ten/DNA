@@ -113,42 +113,67 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi g(n);
-    rep(i,0,m) {
-        int u,v,d;
-        cin >> u >> v >> d;
-        --u;--v;
-        g[v]+=d;
-        g[u]-=d;
+const int N=1005;
+char mat[N][N];
+int vis[N][N];
+int n,m;
+bool dfs(int i,int j,vpi &ends) {
+    if(i<0 || j <0 || i>=n || j>=m || mat[i][j]=='.' || vis[i][j]) {
+        return true;
     }
-    vpi lend;
-    vpi borr;
-    rep(i,0,n){
-        if(g[i]>0) lend.push_back({g[i],i});
-        else if(g[i]<0) borr.push_back({-g[i],i});
-    }   
-    srv(lend);
-    srv(borr);
-    int i=(int)lend.size()-1,j=(int)borr.size()-1;
-    vector<pair<int,pi>> res;
-    while (i>=0 && j>=0)
-    {
-        int d = min(lend[i].ff,borr[j].ff);
-        lend[i].ff -=d;
-        borr[j].ff -=d;
-        res.push_back({borr[j].ss+1,{1+lend[i].ss,d}});
-        if(lend[i].ff==0) i--;
-        if(borr[j].ff==0) j--;
-    }
+    vis[i][j] = 1;
+    int a = dfs(i+1,j,ends) + dfs(i,j+1,ends) + dfs(i-1,j,ends) + dfs(i,j-1,ends);
+    if(a) ends.push_back({i,j});
+    return false;
 
-    
-    put(res.size());
-    trav(x,res){
-        cout << x.first <<" " << x.second.first <<" " << x.ss.ss << endl;
+}
+void testcase(){
+    cin >> n >> m;
+    rep(i,0,n){
+        cin >> mat[i];
     }
+    vi rmax(n,-1);
+    vi rmin(n,N);
+    vi cmax(m,-1);
+    vi cmin(m,N);
+    int ans = 0;
+    rep(i,0,n){
+        rep(j,0,m){
+            if(mat[i][j]=='#' && vis[i][j]==0) {
+                vpi ends;
+                dfs(i,j,ends);
+                ans++;
+                trav(x,ends){
+                    auto [r,c] = x;
+                    rmax[r] = max(rmax[r],c);
+                    rmin[r] = min(rmin[r],c);
+                    cmax[c] = max(cmax[c],r);
+                    cmin[c] = min(cmin[c],r);
+                    if((cmin[c] < r && mat[r-1][c]=='.') || (cmax[c] > r && mat[r+1][c]=='.') || ((rmin[r] < c && mat[r][c-1]=='.') || (rmax[r] > c && mat[r][c+1]=='.'))) {
+                        // debug(r,c,cmax[c],rmin[r] );
+                        put(-1);
+                        return;
+                    } 
+                }
+            }
+        }
+    }
+    rep(i,0,n){
+        rep(j,0,m){
+            if(mat[i][j]=='.') {
+                if(rmax[i]<0 && cmax[j]<0){
+                    rmax[i] = -2;
+                    cmax[j] = -2;
+                }
+            }
+        }
+    }
+    debug(rmax,cmax);
+    if(count(all(rmax),-1)==0 && count(all(cmax),-1)==0){
+        put(ans);
+    }
+    else put(-1);
+
 
 }
 // driver code

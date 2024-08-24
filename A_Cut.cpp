@@ -114,41 +114,24 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi g(n);
-    rep(i,0,m) {
-        int u,v,d;
-        cin >> u >> v >> d;
-        --u;--v;
-        g[v]+=d;
-        g[u]-=d;
-    }
-    vpi lend;
-    vpi borr;
-    rep(i,0,n){
-        if(g[i]>0) lend.push_back({g[i],i});
-        else if(g[i]<0) borr.push_back({-g[i],i});
-    }   
-    srv(lend);
-    srv(borr);
-    int i=(int)lend.size()-1,j=(int)borr.size()-1;
-    vector<pair<int,pi>> res;
-    while (i>=0 && j>=0)
+    int n,k;
+    cin >> n >> k;
+    vi a(n);
+    tkv(a,n);
+    vi b;
+    rep(i,0,k)
     {
-        int d = min(lend[i].ff,borr[j].ff);
-        lend[i].ff -=d;
-        borr[j].ff -=d;
-        res.push_back({borr[j].ss+1,{1+lend[i].ss,d}});
-        if(lend[i].ff==0) i--;
-        if(borr[j].ff==0) j--;
+        b.push_back(a.back());
+        a.pop_back();
     }
-
-    
-    put(res.size());
-    trav(x,res){
-        cout << x.first <<" " << x.second.first <<" " << x.ss.ss << endl;
+    debug(b,a);
+    per(i,0,k){
+        cout << b[i] << " ";
     }
+    rep(i,0,n-k){
+        cout << a[i] << " ";
+    }
+    cout << endl;
 
 }
 // driver code
