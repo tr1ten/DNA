@@ -111,52 +111,22 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
-const int  N =1e5 + 5;
-int dp[N];
-int cnt[N];
-vector<vector<int>> divs(N+1,{1});
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    for(int x=2;x<=N;x++){
-        for(int u=x;u<=N;u +=x){
-            divs[u].push_back(x);   
-        }
-    }
-}
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    memset(dp,0,sizeof dp);
-    memset(cnt,0,sizeof cnt);
-    rep(i,0,n){
-        debug(a[i],divs[a[i]]);
-        for(auto d:divs[a[i]]){
-            cnt[d]++;
+    if((n&1)==0) {pyn(0);}
+    else{
+        int a = 3*(n+1)/2;
+        int c =0;
+        pyn(1);
+        rep(t,0,2){
+            for(int i=t;i<n;i+=2){
+                put2(++c,a+i-c)
+            }
         }
     }
-    srv(a);
-    per(i,0,n){
-        trav(d,divs[a[i]]){
-            cnt[d]-=1;
-            dp[d] += cnt[d]*(n-i-1);
-        }
-    }
-    per(d,1,N){
-        for(int i=d+d;i<N;i+=d){
-            dp[d] -=dp[i];
-        }
-    }
-    int ans = 0;
-    rep(i,1,N){
-        ans += dp[i]*i;
-    }
-    put(ans);
-
 
 }
 // driver code
@@ -168,7 +138,6 @@ int32_t main()
     // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
-    preprocess();
     while(T--) testcase();
 
     return 0;

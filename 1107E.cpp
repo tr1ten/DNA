@@ -113,51 +113,36 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int  N =1e5 + 5;
-int dp[N];
-int cnt[N];
-vector<vector<int>> divs(N+1,{1});
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    for(int x=2;x<=N;x++){
-        for(int u=x;u<=N;u +=x){
-            divs[u].push_back(x);   
-        }
-    }
-}
+const int N = 105;
+int dp[N][N][N];
+int dp2[N][N];
+
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    memset(dp,0,sizeof dp);
-    memset(cnt,0,sizeof cnt);
+    string s;
+    cin >> s;
+    vi A(n+1);
     rep(i,0,n){
-        debug(a[i],divs[a[i]]);
-        for(auto d:divs[a[i]]){
-            cnt[d]++;
+        cin >> A[i+1];
+    }
+    debug(A,n,s);
+    for(int len=1;len<=n;len++) {
+        for(int i=1;i<=n-len+1;i++) {
+            int j = i+len-1;
+            for(int c=1;c<=n;c++) {
+                int cnt = 0;
+                for(int k=j;k>=i;k--) {
+                    if(s[k-1]==s[j-1]) {
+                        cnt+=1;
+                        if(cnt>=c) dp[i][j][c] = max(dp[i][j][c],dp2[i][k-1] + dp[k+1][j][c-1] - A[c-1] + A[c]);
+                    }
+                }
+                dp2[i][j] = max(dp2[i][j],dp[i][j][c]);
+            }
         }
-    }
-    srv(a);
-    per(i,0,n){
-        trav(d,divs[a[i]]){
-            cnt[d]-=1;
-            dp[d] += cnt[d]*(n-i-1);
-        }
-    }
-    per(d,1,N){
-        for(int i=d+d;i<N;i+=d){
-            dp[d] -=dp[i];
-        }
-    }
-    int ans = 0;
-    rep(i,1,N){
-        ans += dp[i]*i;
-    }
-    put(ans);
-
-
+    }       
+    put(dp2[1][n]);
 }
 // driver code
 int32_t main()
@@ -167,8 +152,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
-    preprocess();
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
