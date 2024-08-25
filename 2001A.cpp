@@ -113,44 +113,9 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-struct Train {
-    int a;
-    int b;
-    int s;
-    int e;
-};
-vector<Train> e;
-vi X;
-vector<set<pi>> adj;
-void dfs(int u,int p){
-    auto it = adj[u].lower_bound({e[p].e,-1});
-    while(it!=adj[u].end() && e[p].e<=e[it->second].s){
-        int v = it->second;
-        auto t = e[v];
-        if(e[p].e+X[p]<=t.s+X[v]) break;
-        X[v] =max(X[v], e[p].e+X[p]-t.s);
-        dfs(e[v].b,v);
-        it++;
-    }
-}
 void testcase(){
-    int n,m,x;
-    cin >> n >> m >> x;
-    X.resize(m);
-    X[0] = x;
-    adj.resize(n);
-    rep(i,0,m){
-        int a,b,c,d;
-        cin >> a >> b >> c >>d;
-        --a;--b;
-        adj[a].insert({c,i});
-        e.push_back({a,b,c,d});
-    }
-    dfs(e[0].b,0);
-    rep(i,1,m){
-        cout << X[i] << " ";
-    }
-    cout << endl;
+    int n;
+    cin >>
 }
 // driver code
 int32_t main()
@@ -160,7 +125,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

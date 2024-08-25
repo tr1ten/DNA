@@ -113,44 +113,96 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-struct Train {
-    int a;
-    int b;
-    int s;
-    int e;
+
+typedef long long ll;
+class BIT {
+private:
+    std::vector<int> nums;
+    int LOG;
+public:
+    BIT(int n) {
+    	LOG = (int)log2(n)+1;
+        nums.resize((1ll<<LOG) + 1);
+    }
+    void update(int i, int val) {
+        i += 1;
+        while (i < nums.size()) {
+            nums[i] += val;
+            i += (i & (-i));
+        }
+    }
+    int sum(int i) {
+        int r = 0;
+        // i += 1, not needed here since we need sum of rank less than i rank[0...i-1]
+        while (i > 0) {
+            r += nums[i];
+            i -= (i & (-i));
+        }
+        return r;
+    }
 };
-vector<Train> e;
-vi X;
-vector<set<pi>> adj;
-void dfs(int u,int p){
-    auto it = adj[u].lower_bound({e[p].e,-1});
-    while(it!=adj[u].end() && e[p].e<=e[it->second].s){
-        int v = it->second;
-        auto t = e[v];
-        if(e[p].e+X[p]<=t.s+X[v]) break;
-        X[v] =max(X[v], e[p].e+X[p]-t.s);
-        dfs(e[v].b,v);
-        it++;
-    }
-}
+
 void testcase(){
-    int n,m,x;
-    cin >> n >> m >> x;
-    X.resize(m);
-    X[0] = x;
-    adj.resize(n);
-    rep(i,0,m){
-        int a,b,c,d;
-        cin >> a >> b >> c >>d;
-        --a;--b;
-        adj[a].insert({c,i});
-        e.push_back({a,b,c,d});
+    int n;
+    cin >> n;
+    vi a(n);
+    vi b(n);
+    tkv(a,n);
+    tkv(b,n);
+    set<int> st;
+    BIT as(n);
+    rep(i,0,n){
+        if(b[i]==1) as.update(i,a[i]);
+        else st.insert(i);
     }
-    dfs(e[0].b,0);
-    rep(i,1,m){
-        cout << X[i] << " ";
+    st.insert(n);
+    int q;
+    cin >> q;
+    debug(a,b);
+    rep(i,0,q){
+        int t,ii,jj;
+        cin >> t >> ii >> jj;
+        ii--;
+        // debug(t,ii,jj);
+        if(t==1) {
+            if(b[ii]==1) as.update(ii,jj-a[ii]);
+            a[ii] = jj;
+        }
+        else if(t==2) {
+            if(b[ii]==jj ) continue;
+            if(b[ii]==1) {
+                as.update(ii,-a[ii]);
+                st.insert(ii);
+            }
+            else{
+                if(jj==1) {
+                    as.update(ii,a[ii]);
+                    st.erase(ii);
+                }
+            }
+            b[ii] = jj;
+        }
+        else{
+            jj--;
+            int ans = a[ii++];
+            int last = ii-1;
+            auto it = st.lower_bound(ii);
+            while (it!=st.end() && *it <= jj)
+            {
+                debug(ii,jj,*it,ans,last);
+                ans += as.sum(*it+1) - as.sum(last+1);
+                debug(ii,jj,*it,ans,last);
+                ans = max(ans*b[*it],ans+a[*it]);
+                last = *it;
+                it++;
+            }
+            debug(ans,last);
+            ans += as.sum(jj+1) - as.sum(last+1); 
+            put(ans);
+            
+        }
     }
-    cout << endl;
+
 }
 // driver code
 int32_t main()

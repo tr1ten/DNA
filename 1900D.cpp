@@ -44,7 +44,6 @@ struct custom_hash {
 // ht<int, null_type> g;
 
 typedef long long ll; 
-typedef unsigned long long ull; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -52,9 +51,6 @@ typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
-#define ss second
-#define ff first
-#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -78,6 +74,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
+void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -105,62 +102,57 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-struct Train {
-    int a;
-    int b;
-    int s;
-    int e;
-};
-vector<Train> e;
-vi X;
-vector<set<pi>> adj;
-void dfs(int u,int p){
-    auto it = adj[u].lower_bound({e[p].e,-1});
-    while(it!=adj[u].end() && e[p].e<=e[it->second].s){
-        int v = it->second;
-        auto t = e[v];
-        if(e[p].e+X[p]<=t.s+X[v]) break;
-        X[v] =max(X[v], e[p].e+X[p]-t.s);
-        dfs(e[v].b,v);
-        it++;
+const int N = 1e5+5;
+vector<vector<int>> divs(N+1,{1});
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    for(int x=2;x<=N;x++){
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
+        }
     }
+    rep(i,0,N){ reverse(all(divs[i]));}
 }
+// do not use unordered map use mll
+const int MX = 80001;
 void testcase(){
-    int n,m,x;
-    cin >> n >> m >> x;
-    X.resize(m);
-    X[0] = x;
-    adj.resize(n);
-    rep(i,0,m){
-        int a,b,c,d;
-        cin >> a >> b >> c >>d;
-        --a;--b;
-        adj[a].insert({c,i});
-        e.push_back({a,b,c,d});
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    srv(a);
+    unordered_map<int,bitset<MX>,custom_hash> cnt;
+    ll res = 0;
+    rep(i,0,n){
+        bitset<MX> rs;
+        trav(d,divs[a[i]]){
+            ll c = (((~rs)&cnt[d]).count());
+            // debug(i,d,c);
+            res += (n-i-1)*d*c;
+            rs |= cnt[d];
+            cnt[d].set(i);
+        }
     }
-    dfs(e[0].b,0);
-    rep(i,1,m){
-        cout << X[i] << " ";
-    }
-    cout << endl;
+    put(res);
 }
 // driver code
-int32_t main()
+int main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
+    // freopen("output.out","w",stdout); 
+    preprocess();     
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
