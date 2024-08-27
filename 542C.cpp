@@ -1,6 +1,5 @@
 #include <cstdio>
 #include <bits/stdc++.h>
-
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
@@ -113,35 +112,54 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 105;
-int dp[N][N][N];
-int dp2[N][N];
-
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    vi A(n+1);
-    rep(i,0,n){
-        cin >> A[i+1];
+    vi nxt(n);
+    tkv(nxt,n);
+    rep(i,0,n) {
+        nxt[i]--;
     }
-    for(int len=1;len<=n;len++) {
-        for(int i=1;i<=n-len+1;i++) {
-            int j = i+len-1;
-            for(int c=1;c<=n;c++) {
-                int cnt = 0;
-                for(int k=j;k>=i;k--) {
-                    if(s[k-1]==s[j-1]) {
-                        cnt+=1;
-                        if(cnt>=c) dp[i][j][c] = max(dp[i][j][c],dp2[i][k-1] + dp[k+1][j][c-1] - A[c-1] + A[c]);
-                    }
+    int A = 1;
+    int B = 1;
+    vi dp(n,-1);
+    rep(i,0,n){
+        if(dp[i]==-1) {
+            int cur = i;
+            vi st;
+            st.push_back(i);
+            while (dp[nxt[cur]]==-1)
+            {
+                dp[cur] = -2;
+                cur = nxt[cur];
+                st.push_back(cur);
+            }
+            if(dp[nxt[cur]]==-2){
+                debug(nxt[cur],st);
+                int len = 1;
+                while (st.size() && st.back()!=nxt[cur])
+                {
+                    dp[st.back()] = 0;
+                    st.pop_back();
+                    len++;
                 }
-                dp2[i][j] = max(dp2[i][j],dp[i][j][c]);
+                A = lcm(A,len);
+                dp[nxt[cur]] = 0;
+                assert(st.back()==nxt[cur]);
+                st.pop_back();
+            }
+            while (st.size())
+            {
+                dp[st.back()] = dp[nxt[st.back()]] + 1;
+                st.pop_back();
             }
         }
-    }       
-    put(dp2[1][n]);
+        B = max(B,dp[i]-1);
+    }
+
+    debug(dp,A,B);
+    int ans =  ((B+A-1)/A)*A;
+    put(ans);
 }
 // driver code
 int32_t main()

@@ -111,37 +111,68 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
-const int N = 105;
-int dp[N][N][N];
-int dp2[N][N];
-
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    vi A(n+1);
+    vi a(n);
+    int sm = 0;
     rep(i,0,n){
-        cin >> A[i+1];
+        cin >> a[i];
+        sm +=a[i];
     }
-    for(int len=1;len<=n;len++) {
-        for(int i=1;i<=n-len+1;i++) {
-            int j = i+len-1;
-            for(int c=1;c<=n;c++) {
-                int cnt = 0;
-                for(int k=j;k>=i;k--) {
-                    if(s[k-1]==s[j-1]) {
-                        cnt+=1;
-                        if(cnt>=c) dp[i][j][c] = max(dp[i][j][c],dp2[i][k-1] + dp[k+1][j][c-1] - A[c-1] + A[c]);
-                    }
-                }
-                dp2[i][j] = max(dp2[i][j],dp[i][j][c]);
+    if(sm%n){
+        pyn(0);
+        return;
+    }
+    int t = sm/n;
+    mll net;
+    map<int,int> sin;
+    rep(i,0,n) {
+        if(a[i]==t) continue;
+        int d = abs(a[i]-t);
+        if((d&(d-1))==0){
+            if(a[i]<t) sin[d]++;
+            else sin[d]--;
+            continue;
+        }
+        int xa = hset(d);
+        int b = hset(d&~(d-1)); 
+        int aa =  pow(2,xa+1);
+        int bb = pow(2,b);
+        int p =aa - bb;
+        if(p!=d){
+            pyn(0);
+            return;
+        }
+        if(a[i]<t) swap(aa,bb);
+        net[aa]--;
+        net[bb]++;
+    }
+    debug(net,sin,t);
+    trav(x,sin){
+        if(x.second==0) continue;
+        int sign = x.second < 0 ? -1 : 1;
+        rep(i,0,abs(x.second)){
+            if(net[x.first]*sign<0) {
+                net[x.first] -= sign*-1;
+            }
+            else {
+                net[2*x.first] += sign;
+                net[x.first] -= sign;
             }
         }
-    }       
-    put(dp2[1][n]);
+        x.second = 0;
+    }
+    debug(net);
+    trav(x,net){
+        if(x.second!=0){
+            pyn(0);
+            return;
+        }
+    }
+    pyn(1);
 }
 // driver code
 int32_t main()
@@ -151,7 +182,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

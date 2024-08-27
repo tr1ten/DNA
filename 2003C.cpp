@@ -113,35 +113,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 105;
-int dp[N][N][N];
-int dp2[N][N];
-
 void testcase(){
     int n;
     cin >> n;
     string s;
     cin >> s;
-    vi A(n+1);
+    vi c(26);
     rep(i,0,n){
-        cin >> A[i+1];
+        c[s[i]-'a']++;
     }
-    for(int len=1;len<=n;len++) {
-        for(int i=1;i<=n-len+1;i++) {
-            int j = i+len-1;
-            for(int c=1;c<=n;c++) {
-                int cnt = 0;
-                for(int k=j;k>=i;k--) {
-                    if(s[k-1]==s[j-1]) {
-                        cnt+=1;
-                        if(cnt>=c) dp[i][j][c] = max(dp[i][j][c],dp2[i][k-1] + dp[k+1][j][c-1] - A[c-1] + A[c]);
-                    }
-                }
-                dp2[i][j] = max(dp2[i][j],dp[i][j][c]);
-            }
+    queue<int> q;
+    rep(i,0,26){
+        if(c[i]) q.push(i);
+    }
+    string res;
+    while (q.size())
+    {
+        int ch = q.front();
+        res += (ch+'a');
+        q.pop();
+        if(--c[ch]>0){
+            q.push(ch);
         }
-    }       
-    put(dp2[1][n]);
+    }
+    assert(res.size()==n);
+    put(res);
+    
 }
 // driver code
 int32_t main()
@@ -151,7 +148,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

@@ -113,35 +113,39 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 105;
-int dp[N][N][N];
-int dp2[N][N];
-
 void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    vi A(n+1);
+    int n,m;
+    cin >> n >>m;
+    mll mxx;
+    int maxx=0;
+    int ml  =0;
     rep(i,0,n){
-        cin >> A[i+1];
-    }
-    for(int len=1;len<=n;len++) {
-        for(int i=1;i<=n-len+1;i++) {
-            int j = i+len-1;
-            for(int c=1;c<=n;c++) {
-                int cnt = 0;
-                for(int k=j;k>=i;k--) {
-                    if(s[k-1]==s[j-1]) {
-                        cnt+=1;
-                        if(cnt>=c) dp[i][j][c] = max(dp[i][j][c],dp2[i][k-1] + dp[k+1][j][c-1] - A[c-1] + A[c]);
-                    }
-                }
-                dp2[i][j] = max(dp2[i][j],dp[i][j][c]);
-            }
+        int l;
+        cin >> l;
+        set<int> st;
+        rep(j,0,l+2){
+            st.insert(j);
         }
-    }       
-    put(dp2[1][n]);
+        rep(i,0,l){
+            int x;
+            cin >> x;
+            if(st.count(x)) st.erase(x); 
+        }
+        int mex = *st.begin();
+        int mex2 = *next(st.begin());
+        mxx[mex] = max(mxx[mex],mex2);
+        maxx = max(mex2,maxx);
+        ml = max(l,ml);
+    }
+    debug(mxx);
+    int ans =0;
+    rep(i,0,min(m,ml+2)){
+        ans += max(maxx,mxx[i]);
+    }
+    if(m>=ml+2){
+        ans += (m-(ml+1))*maxx;
+    } 
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -151,7 +155,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
