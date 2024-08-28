@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
@@ -112,58 +113,56 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 5005;
+vii adj;
+int good[N];
+void dfs(int u){
+    good[u] =1 ;
+    for(auto v:adj[u]){
+        if(!good[v]) dfs(v);
+    }
+}
+void dfs2(int u,int &cnt,vi &vis){
+    vis[u] = 1;
+    cnt++;
+    trav(v,adj[u]){
+        if(!good[v] && !vis[v]) dfs2(v,cnt,vis);
+    } 
+}
 void testcase(){
-    int n;
-    cin >> n;
-    vi nxt(n);
-    tkv(nxt,n);
-    rep(i,0,n) {
-        nxt[i]--;
+    int n,m,s;
+    cin >> n >> m >> s;
+    adj.resize(n);
+    s--;
+    rep(i,0,m){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        adj[u].push_back(v);
     }
-    int A = 1;
-    int B = 1;
-    vi dp(n,-1);
-    vi fixed(n,0);
+    dfs(s);
+    vpi scores;
+    vi vis(n);
     rep(i,0,n){
-        if(dp[i]==-1) {
-            int cur = i;
-            vi st;
-            st.push_back(i);
-            while (dp[nxt[cur]]==-1)
-            {
-                dp[cur] = -2;
-                cur = nxt[cur];
-                st.push_back(cur);
-            }
-            if(dp[nxt[cur]]==-2){
-                debug(nxt[cur],st);
-                int len = 1;
-                while (st.size() && st.back()!=nxt[cur])
-                {
-                    dp[st.back()] = 0;
-                    st.pop_back();
-                    len++;
-                }
-                A = lcm(A,len);
-                dp[nxt[cur]] = 0;
-                assert(st.back()==nxt[cur]);
-                st.pop_back();
-                fixed[nxt[cur]] = len==1;
-            }
-            while (st.size())
-            {
-                dp[st.back()] = dp[nxt[st.back()]] + 1;
-                fixed[st.back()] |= fixed[nxt[st.back()]];
-                st.pop_back();
-            }
-            
-        }
-        B = max(B,dp[i]-fixed[i]);
+        if(good[i]) continue;
+        int cnt = 0;
+        dfs2(i,cnt,vis);
+        fill(vis.begin(),vis.end(),0);
+        scores.push_back({cnt,i});
     }
+    int ans = 0;
+    srv(scores);
+    reverse(all(scores));
+    trav(u,scores) {
+        if(!good[u.ss]){
+            dfs(u.ss);
+            ans++;
 
-    debug(dp,A,B);
-    int ans =  ((B+A-1)/A)*A;
+        }
+    }
     put(ans);
+
+    
 }
 // driver code
 int32_t main()

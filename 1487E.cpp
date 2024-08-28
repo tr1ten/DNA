@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <bits/stdc++.h>
+
 using namespace std;
 #include "ext/pb_ds/assoc_container.hpp"
 #include "ext/pb_ds/tree_policy.hpp"
@@ -104,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e17+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -112,58 +113,91 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi nxt(n);
-    tkv(nxt,n);
-    rep(i,0,n) {
-        nxt[i]--;
-    }
-    int A = 1;
-    int B = 1;
-    vi dp(n,-1);
-    vi fixed(n,0);
-    rep(i,0,n){
-        if(dp[i]==-1) {
-            int cur = i;
-            vi st;
-            st.push_back(i);
-            while (dp[nxt[cur]]==-1)
-            {
-                dp[cur] = -2;
-                cur = nxt[cur];
-                st.push_back(cur);
-            }
-            if(dp[nxt[cur]]==-2){
-                debug(nxt[cur],st);
-                int len = 1;
-                while (st.size() && st.back()!=nxt[cur])
-                {
-                    dp[st.back()] = 0;
-                    st.pop_back();
-                    len++;
-                }
-                A = lcm(A,len);
-                dp[nxt[cur]] = 0;
-                assert(st.back()==nxt[cur]);
-                st.pop_back();
-                fixed[nxt[cur]] = len==1;
-            }
-            while (st.size())
-            {
-                dp[st.back()] = dp[nxt[st.back()]] + 1;
-                fixed[st.back()] |= fixed[nxt[st.back()]];
-                st.pop_back();
-            }
-            
-        }
-        B = max(B,dp[i]-fixed[i]);
-    }
 
-    debug(dp,A,B);
-    int ans =  ((B+A-1)/A)*A;
-    put(ans);
+const int N = 150005;
+
+int a[N],bb[N],c[N],d[N];
+void testcase(){
+    int n1,n2,n3,n4;
+    cin >> n1 >> n2 >> n3 >> n4;
+    tkv(a,n1);
+    tkv(bb,n2);
+    tkv(c,n3);
+    tkv(d,n4);
+    int m1;
+    cin >> m1;
+    vector<unordered_set<int>> ab(n1);
+    vector<unordered_set<int>> bc(n2);
+    vector<unordered_set<int>> cd(n3);
+    rep(i,0,m1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        ab[u].insert(v);
+    }
+    int m2;
+    cin >> m2;
+    rep(i,0,m2){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        bc[u].insert(v);
+    }
+    int m3;
+    cin >> m3;
+    rep(i,0,m3){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        cd[u].insert(v);
+    }
+    vi indb(n2),indc(n3),indd(n4);
+    iota(all(indb),0);
+    iota(all(indc),0);
+    iota(all(indd),0);
+    sort(all(indd),[&](int i,int j) {
+        return d[i] < d[j];
+    });
+    
+    vi dp23(n2,INF),dp34(n3,INF);
+    rep(i,0,n3){
+
+        int j = 0;
+        while(j<n4 && cd[i].count(indd[j])){j++;}
+        if(j<n4){
+            dp34[i] = d[indd[j]] + c[i];
+        }
+        debug(i,dp34[i],j,cd[i]);
+    }
+    sort(all(indc),[&](int i,int j) {
+        return dp34[i] < dp34[j];
+    });
+    
+    rep(i,0,n2){
+        int j = 0;
+        while(j<n3 && bc[i].count(indc[j])){j++;}
+        if(j<n3){
+            dp23[i] = dp34[indc[j]] + bb[i];
+        }
+        debug(i,dp23[i],j,bc[i]);
+    }
+    sort(all(indb),[&](int i,int j) {
+        return dp23[i] < dp23[j];
+    });
+    int ans = INF;
+    rep(i,0,n1){
+        int j = 0;
+        while(j<n2 && ab[i].count(indb[j])){j++;}
+        if(j<n2){
+            int dp = dp23[indb[j]] + a[i];
+            ans = min(ans,dp);
+        }
+    }
+    if(ans<INF) put(ans)
+    else put(-1)
+    
+    
+    
 }
 // driver code
 int32_t main()
