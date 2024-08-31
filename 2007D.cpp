@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e17+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,91 +113,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-const int N = 150005;
-
-int a[N],bb[N],c[N],d[N];
 void testcase(){
-    int n1,n2,n3,n4;
-    cin >> n1 >> n2 >> n3 >> n4;
-    tkv(a,n1);
-    tkv(bb,n2);
-    tkv(c,n3);
-    tkv(d,n4);
-    int m1;
-    cin >> m1;
-    vector<unordered_set<int>> ab(n1);
-    vector<unordered_set<int>> bc(n2);
-    vector<unordered_set<int>> cd(n3);
-    rep(i,0,m1){
+    int n;
+    cin >> n;
+    vi ind(n);
+    string s;
+    rep(i,0,n-1){
         int u,v;
         cin >> u >> v;
         --u;--v;
-        ab[u].insert(v);
+        ind[u]++;ind[v]++;
     }
-    int m2;
-    cin >> m2;
-    rep(i,0,m2){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        bc[u].insert(v);
-    }
-    int m3;
-    cin >> m3;
-    rep(i,0,m3){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        cd[u].insert(v);
-    }
-    vi indb(n2),indc(n3),indd(n4);
-    iota(all(indb),0);
-    iota(all(indc),0);
-    iota(all(indd),0);
-    sort(all(indd),[&](int i,int j) {
-        return d[i] < d[j];
-    });
-    
-    vi dp23(n2,INF),dp34(n3,INF);
-    rep(i,0,n3){
-        
-        int j = 0;
-        while(j<n4 && cd[i].count(indd[j])){j++;}
-        if(j<n4){
-            dp34[i] = d[indd[j]] + c[i];
-        }
-        debug(i,dp34[i],j,cd[i]);
-    }
-    sort(all(indc),[&](int i,int j) {
-        return dp34[i] < dp34[j];
-    });
-    
-    rep(i,0,n2){
-        int j = 0;
-        while(j<n3 && bc[i].count(indc[j])){j++;}
-        if(j<n3){
-            dp23[i] = dp34[indc[j]] + bb[i];
-        }
-        debug(i,dp23[i],j,bc[i]);
-    }
-    sort(all(indb),[&](int i,int j) {
-        return dp23[i] < dp23[j];
-    });
-    int ans = INF;
-    rep(i,0,n1){
-        int j = 0;
-        while(j<n2 && ab[i].count(indb[j])){j++;}
-        if(j<n2){
-            int dp = dp23[indb[j]] + a[i];
-            ans = min(ans,dp);
+    cin >> s;
+
+    int zc=0,oc=0,m=0;
+    int t = count(all(s),'?');
+    rep(i,1,n){
+        if(ind[i]==1) {
+            if(s[i]=='?') m++;
+            else if(s[i]=='1') oc++;
+            else zc++;
         }
     }
-    if(ans<INF) put(ans)
-    else put(-1)
-    
-    
-    
+    if(s[0]=='?')  {
+        if(oc!=zc) put(max(oc,zc) + (m)/2)
+        else {
+            if((t-(m+1))&1) put(zc+(m+1)/2)
+            else put(zc+m/2)
+        }
+    }
+    else {
+        if(s[0]=='0') put(oc+(m+1)/2)
+        else put(zc+(m+1)/2)
+    }
+
 }
 // driver code
 int32_t main()
@@ -207,7 +156,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
