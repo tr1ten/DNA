@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e17+5;
+const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,69 +113,62 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 405;
-int d[N][N];
-const int M = 2*(1e5)  +5;
-struct Bridge {
-    int u;
-    int v;
-    int t;
-} edges[M];
-int n,m;
-
-int f(vi &bridges) {
-    int ans = INF;
-    do {
-        pi c1 = {0,0},c2={0,0};
-        rep(i,0,bridges.size()){
-            auto bu = edges[bridges[i]];
-            pi nc1 = {INF,bu.u}, nc2 = {INF,bu.v};
-            nc1.ff = min(c1.first+d[c1.ss][nc2.ss],c2.first+d[c2.ss][nc2.ss]) + bu.t;
-            nc2.ff = min(c1.first+d[c1.ss][nc1.ss],c2.first+d[c2.ss][nc1.ss]) + bu.t;
-            c1 = nc1;
-            c2 = nc2;
-        }
-        ans = min(ans,c1.first + d[c1.second][n-1]);
-        ans = min(ans,c2.first + d[c2.second][n-1]);
-
-    }
-    while(next_permutation(all(bridges)));
-    return ans;
-
-}
 void testcase(){
-    cin >> n >> m;
-    rep(i,0,n) rep(j,0,n) d[i][j] = (i==j) ? 0 : INF;
-    rep(i,0,m){
-        int u,v,t;
-        cin >> u >> v >> t;
-        --u;--v;
-        d[u][v] = min(d[u][v],t);
-        d[v][u] = min(d[v][u],t);
-
-        edges[i] = {u,v,t};
+    int h,w,n;
+    cin >> h >> w >> n;
+    map<int,vector<int>> cells;
+    rep(i,0,n){
+        int r,c;
+        cin >> r >> c;
+        cells[c].push_back(r);
     }
-    rep(k,0,n){
-        rep(i,0,n){
-            rep(j,0,n){
-                d[i][j] = min(d[i][j],d[i][k] + d[k][j]);
+    trav(x,cells) {
+        srv(x.ss);
+        debug(x.ff,x.ss);
+        }
+    map<int,pi> dp;
+    dp[0] = {0,0};
+    vi p = {0};
+    trav(x,cells){
+        trav(y,x.ss){
+            dp[y] = {(prev(dp.upper_bound(y)))->second.ff+1,x.ff};
+            auto it = dp.upper_bound(y);
+            while (it!=dp.end() && it->second<=dp[y])
+            {
+                dp.erase(it++);
             }
-        }
+            // debug(y,dp[y]);
+        }   
     }
-    int q;
-    cin >> q;
-    rep(i,0,q){
-        int k;
-        cin >> k;
-        vi bridges(k);
-        rep(j,0,k){
-            cin >> bridges[j];
-            bridges[j]--;
+    auto ret = dp.rbegin();
+    dp.erase(dp.begin());
+    string res;
+    int x2=w,y2=h;
+    while (1)
+    {
+        int y1=1,x1=1;
+        if(ret!=dp.rend()){
+            debug(*ret);
+            y1=ret->first,x1 = ret->second.second;
         }
-        srv(bridges);
-        put(f(bridges));
-
+        if(x1<=x2) {
+            debug(y1,x1,y2,x2);
+            rep(i,x1,x2){
+                res += 'R';
+            }
+            rep(i,y1,y2){
+                res += 'D';
+            }
+            y2 = y1,x2=x1;
+        }
+        if(ret==dp.rend()) break;
+        ret++;
     }
+    reverse(all(res));
+    assert(res.size()==h+w-2);
+    debug( dp.rbegin()->second.first,res);
+    put( dp.rbegin()->second.first);
+    put(res);
 }
 // driver code
 int32_t main()
@@ -185,6 +178,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
