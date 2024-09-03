@@ -113,105 +113,44 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-class DSU
-{
-public:
-    int *par;
-    int *sz;
-    DSU(int n)
-    {
-        this->par = new int[n];
-        this->sz = new int[n];
-        for (int i = 0; i < n; i++)
-        {
-            this->par[i] = i;
-            this->sz[i] = 1;
-        }
-    }
-    int find(int x)
-    {
-        int p = x;
-        while (p != this->par[p])
-        {
-            p = par[p];
-        }
-        return p;
-    }
-    void connect(int u, int v)
-    {
-        int rootu = find(u);
-        int rootv = find(v);
-        if (rootu == rootv)
-            return;
-        if (sz[rootu] < sz[rootv])
-        {
-            par[rootu] = rootv;
-            sz[rootv] += sz[rootu];
-        }
-        else
-        {
-            par[rootv] = rootu;
-            sz[rootu] += sz[rootv];
-        }
-    }
-};
-
 void testcase(){
-    int n,w;
-    cin >> n >> w;
-    vii adj(n);
-    vi p(n);
-    rep(i,1,n){
+    int n,q;
+    cin >> n >> q;
+    vi p(n+1);
+    rep(i,0,n){
         int x;
         cin >> x;
-        x--;
-        adj[x].push_back(i);
-        p[i] =x;
+        p[x]++;
     }
-    vi nxt(n);
-    function<void(int,int)> dfs = [&](int u,int c){
-        srv(adj[u]);
-        nxt[u] = c;
-        for(int i=0;i<adj[u].size();i++){
-            dfs(adj[u][i],i+1<adj[u].size() ? adj[u][i+1] : c);
-        }
-    };
-    dfs(0,0);
-    DSU dsu(n+1);
-    int ans = n*w;
-    int m = n;
-    rep(i,0,n-1){
-        int x,y;
-        cin >> x >> y;
-        x--;
-        w -=y;
-        assert(m>=2);
-        ans -= (m-2)*y; 
-        if(dsu.find((nxt[x]-1+n)%n)!=dsu.find(nxt[x])) {
-            dsu.connect(x,p[x]);
-            if((p[x]+1)%n==x) {
-                ans -= w;
-                m--;
-                // debug("parent ot child");
-            }
-            else if(dsu.find((x-1+n)%n)==dsu.find(x)){
-                ans -=w;
-                m--;
-                // debug("cousin to child");
-            }
-            if(dsu.find((nxt[x]-1+n)%n)==dsu.find(nxt[x])){
-                ans -= w;
-                m--;
-                // debug("child ot cousin");
-
-            }
-        }
-        // debug(m,x,y);
-        cout << ans << " ";
+    rep(i,0,n){
+        p[i+1] += p[i];
     }
-    assert(m==0);
-    cout << endl;
-
+    vi res(n+1);
+    rep(x,1,n+1){
+        int lo=0,hi = x-1;
+        int ans = -1;
+        while (lo<=hi)
+        {
+            int mid = (lo+hi)/2;
+            int cnt = 0;
+            for(int i=0;i<=n;i+=x){
+                cnt += p[min(n,i+mid)]-p[max(i-1,0LL)];
+            }
+            if(cnt>=n/2+1) {
+                ans = mid;
+                hi = mid-1;
+            }
+            else lo = mid+1;
+        }
+        assert(ans!=-1);
+        res[x]= ans;
+    }
+    rep(i,0,q){
+        int x;
+        cin >> x;
+        cout << res[x] << " ";
+    }
+    cout <<endl;
 }
 // driver code
 int32_t main()

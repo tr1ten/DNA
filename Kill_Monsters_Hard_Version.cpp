@@ -123,7 +123,10 @@ void testcase(){
         cnt[x]++;
     }
     auto ret = cnt.rbegin();
+    int flag = 0;
     int ans = 0;
+    int X =x;
+    int used = 0;
     while (ret!=cnt.rend())
     {
         if(ret->second>1){  
@@ -131,9 +134,9 @@ void testcase(){
                 x = ret->first;
                 ans++;
             }
-            if(x*k > ret->first) {
+            if(!flag && x*k > ret->first) {
                 ans +=cnt.size() - distance(cnt.rbegin(),ret);
-                debug(ret->first,cnt.size() - distance(cnt.rbegin(),ret));
+                used = ret->first;
                 break;
             }
         }
@@ -142,14 +145,21 @@ void testcase(){
                 x = ret->first;
                 ans++;
             }
-            else if( x*k > ret->first) {
+            else if(!flag && x*k > ret->first) {
                 ans +=cnt.size() - distance(cnt.rbegin(),ret);
-                debug(ret->first,cnt.size() - distance(cnt.rbegin(),ret));
+                used = ret->first;
                 break;
             }
         }
         ret++;
     }
+    auto lp = (cnt.lower_bound((used+k)/k));
+    while (lp!=cnt.end() && lp->first<used)
+    {
+        if(lp->second>1) {ans++;break;}
+        lp++;
+    }
+    
     put(ans);
     
 }
