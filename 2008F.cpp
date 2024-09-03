@@ -113,62 +113,32 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
 void testcase(){
-    int h,w,n;
-    cin >> h >> w >> n;
-    map<int,vector<int>> cells;
+    int n;
+    cin >> n;
+    int sm = 0;
+    int inv = fast_pow(n*(n-1)/2,MOD-2,MOD);
+    int num=0;
     rep(i,0,n){
-        int r,c;
-        cin >> r >> c;
-        cells[c].push_back(r);
+        int x;
+        cin >> x;
+        num +=x*sm%MOD;
+        num %=MOD;
+        sm += x;
+        sm %=MOD;
     }
-    trav(x,cells) {
-        srv(x.ss);
-        debug(x.ff,x.ss);
-        }
-    map<int,pi> dp;
-    dp[0] = {0,0};
-    vi p = {0};
-    trav(x,cells){
-        trav(y,x.ss){
-            dp[y] = {(prev(dp.upper_bound(y)))->second.ff+1,x.ff};
-            auto it = dp.upper_bound(y);
-            while (it!=dp.end() && it->second<=dp[y])
-            {
-                dp.erase(it++); 
-            }
-            // debug(y,dp[y]);
-        }   
-    }
-    auto ret = dp.rbegin();
-    dp.erase(dp.begin());
-    string res;
-    int x2=w,y2=h;
-    while (1)
-    {
-        int y1=1,x1=1;
-        if(ret!=dp.rend()){
-            debug(*ret);
-            y1=ret->first,x1 = ret->second.second;
-        }
-        if(x1<=x2) {
-            debug(y1,x1,y2,x2);
-            rep(i,x1,x2){
-                res += 'R';
-            }
-            rep(i,y1,y2){
-                res += 'D';
-            }
-            y2 = y1,x2=x1;
-        }
-        if(ret==dp.rend()) break;
-        ret++;
-    }
-    reverse(all(res));
-    assert(res.size()==h+w-2);
-    debug( dp.rbegin()->second.first,res);
-    put( dp.rbegin()->second.first);
-    put(res);
+    put(num*inv%MOD);
 }
 // driver code
 int32_t main()
@@ -178,7 +148,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

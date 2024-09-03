@@ -114,6 +114,9 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
+    int n,w;
+    cin >> n >> w;
+        
 }
 // driver code
 int32_t main()

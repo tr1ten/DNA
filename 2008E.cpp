@@ -114,61 +114,67 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int h,w,n;
-    cin >> h >> w >> n;
-    map<int,vector<int>> cells;
-    rep(i,0,n){
-        int r,c;
-        cin >> r >> c;
-        cells[c].push_back(r);
+    int m;
+    cin >> m;
+    string s;
+    cin >> s;
+    vector<vector<int>> a(m+1);
+    vi cnt(26);
+    for(int i=0;i<m;i+=2) {
+        cnt[s[i]-'a']++;
+        a[i+1] = cnt;
     }
-    trav(x,cells) {
-        srv(x.ss);
-        debug(x.ff,x.ss);
-        }
-    map<int,pi> dp;
-    dp[0] = {0,0};
-    vi p = {0};
-    trav(x,cells){
-        trav(y,x.ss){
-            dp[y] = {(prev(dp.upper_bound(y)))->second.ff+1,x.ff};
-            auto it = dp.upper_bound(y);
-            while (it!=dp.end() && it->second<=dp[y])
-            {
-                dp.erase(it++); 
-            }
-            // debug(y,dp[y]);
-        }   
+    cnt.assign(26,0);
+    for(int i=1;i<m;i+=2) {
+        cnt[s[i]-'a']++;
+        a[i+1] = cnt;
     }
-    auto ret = dp.rbegin();
-    dp.erase(dp.begin());
-    string res;
-    int x2=w,y2=h;
-    while (1)
-    {
-        int y1=1,x1=1;
-        if(ret!=dp.rend()){
-            debug(*ret);
-            y1=ret->first,x1 = ret->second.second;
+    auto ef = [&](string s) {
+        int ch1=0,ch2=0;
+        int n = s.size();
+        vi cnti(26);
+        for(int i=0;i<n;i+=2) {
+            cnti[s[i]-'a']++;
+            ch1 = max(ch1,cnti[s[i]-'a']);
         }
-        if(x1<=x2) {
-            debug(y1,x1,y2,x2);
-            rep(i,x1,x2){
-                res += 'R';
-            }
-            rep(i,y1,y2){
-                res += 'D';
-            }
-            y2 = y1,x2=x1;
+        cnti.assign(26,0);
+        for(int i=1;i<n;i+=2) {
+            cnti[s[i]-'a']++;
+            ch2 = max(ch2,cnti[s[i]-'a']);
         }
-        if(ret==dp.rend()) break;
-        ret++;
+        debug(s,n,ch1,ch2);
+        return n-ch1-ch2;
+    };
+    if(m%2==0){
+        put(ef(s));
+    }   
+    else{
+        int ans = ef(s.substr(1,m-1));
+        if(m>=2) ans = min(ans,ef(s.substr(0,1)+s.substr(2)));
+        if(m>=3) ans = min(ans,ef(s.substr(0,m-1)));
+        if(m>=4) ans = min(ans,ef(s.substr(0,m-2)+s.substr(m-1)));
+        for(int j=2;j<m-2;j++) {
+            int ev=0,od = 0;
+            rep(i,0,26){
+                int ch1,ch2,rh1,rh2;
+                ch1 =a[j][i];
+                ch2 =a[j-1][i];
+                if((j&1)==((m)&1)) {
+                    rh2 = a[m][i]-a[j][i] ;
+                    rh1 = a[m-1][i]-a[j+1][i];
+                }
+                else {
+                    rh1 = a[m][i]-a[j+1][i];
+                    rh2 = a[m-1][i] - a[j][i];
+                }
+                debug(j,i,od,ev);
+                ev = max(ev,rh1+ch1);
+                od = max(od,rh2+ch2);
+            }
+            ans = min(ans,m-1-ev-od);
+        }
+        put(ans+1);
     }
-    reverse(all(res));
-    assert(res.size()==h+w-2);
-    debug( dp.rbegin()->second.first,res);
-    put( dp.rbegin()->second.first);
-    put(res);
 }
 // driver code
 int32_t main()
@@ -178,7 +184,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
