@@ -113,43 +113,27 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-/*
-    we can skip the biggest element, 
-
-
-*/
 void testcase(){
-    int n,x,k;
-    cin >> n >> x >> k;
-    map<int,int> cnt;
-    rep(i,0,n){
-        int f;
-        cin >> f;
-        cnt[f]++;
-    }
-    vi unq,dbl;
-    trav(z,cnt){
-        unq.push_back(z.first);
-        if(z.second>1 || z.ff>=(x*k)){
-            dbl.push_back(z.ff);
-        }
-    }
-    srv(unq);srv(dbl);
-    int pok = lower_bound(all(unq),x*k)-unq.begin();
-    int ans = pok;
-    pok = lower_bound(all(unq),x) - unq.begin();
-    pok--;
-    int i = pok;
-    while (i>=0)
+    int n,k;
+    cin >> n >> k;
+    int lo=2,hi = n;
+    int mid = 1;
+    int ans = abs((mid)*(mid) + (mid)*(2*k-1) - n*k - n*(n-1)/2);
+    while (lo<=hi)
     {
-        int hp = unq[i];
-        int h = lower_bound(all(dbl),hp*k)-lower_bound(all(dbl),hp);
-        ans = max(ans,h+pok+1);
-        i--;
+        mid = (lo+hi)/2;
+        int f_1 = abs((mid-1)*(mid-1) + (mid-1)*(2*k-1) - n*k - n*(n-1)/2);
+        int f=abs(mid*mid + mid*(2*k-1) - n*k - n*(n-1)/2);
+        debug(mid,f,ans);
+        if(f_1>f){
+            ans  = min(f,ans);
+            lo=mid+1;
+        }
+        else hi = mid-1;
     }
     put(ans);
     
+
 }
 // driver code
 int32_t main()

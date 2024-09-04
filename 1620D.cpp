@@ -113,43 +113,50 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-/*
-    we can skip the biggest element, 
-
-
-*/
 void testcase(){
-    int n,x,k;
-    cin >> n >> x >> k;
-    map<int,int> cnt;
-    rep(i,0,n){
-        int f;
-        cin >> f;
-        cnt[f]++;
-    }
-    vi unq,dbl;
-    trav(z,cnt){
-        unq.push_back(z.first);
-        if(z.second>1 || z.ff>=(x*k)){
-            dbl.push_back(z.ff);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    auto f=[&](vi &b){
+        trav(v,a){
+            int z = v;
+            z -= max(0LL,min((z/3)-1,b[0]-1))*3;
+            vi p;
+            if(z>=3 && b[0]) p.push_back(3);
+            if(z>=2 && b[1]) p.push_back(2);
+            if(z>=4 && b[1]>1) p.push_back(2);
+            if(z>=1 && b[2]) p.push_back(1);
+            int m = p.size();
+            int f = 0;
+            rep(i,0,1<<m) {
+                int sm = 0;
+                rep(j,0,m){
+                    if(i&(1<<j)){
+                        sm += p[j];
+                    }
+                }
+                if(sm==z) {f=1;break;}
+            }
+            if(!f) return false;
+        }
+        return true;
+    };
+    int mx = vmax(a);
+    int X = mx/3;
+    vii scn = {{X,0,0},{X,1,0},{X,0,1}};
+    if(X>0) scn.push_back({X-1,2,0});
+    if(X>0) scn.push_back({X-1,1,1});
+    scn.push_back({X,1,1});
+    trav(v,scn){
+        if(f(v)){
+            // debug(v);
+            put(v[0]+v[1]+v[2]);
+            return;
         }
     }
-    srv(unq);srv(dbl);
-    int pok = lower_bound(all(unq),x*k)-unq.begin();
-    int ans = pok;
-    pok = lower_bound(all(unq),x) - unq.begin();
-    pok--;
-    int i = pok;
-    while (i>=0)
-    {
-        int hp = unq[i];
-        int h = lower_bound(all(dbl),hp*k)-lower_bound(all(dbl),hp);
-        ans = max(ans,h+pok+1);
-        i--;
-    }
-    put(ans);
-    
+    assert(false);
+    put(-1);
 }
 // driver code
 int32_t main()

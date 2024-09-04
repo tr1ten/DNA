@@ -113,43 +113,35 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-/*
-    we can skip the biggest element, 
-
-
-*/
 void testcase(){
-    int n,x,k;
-    cin >> n >> x >> k;
-    map<int,int> cnt;
-    rep(i,0,n){
-        int f;
-        cin >> f;
-        cnt[f]++;
+    int n,q;
+    cin >> n >> q;
+    vi a(n);
+    tkv(a,n);
+    vi pref(2*n+1);
+    rep(i,0,2*n){
+        pref[i+1] += a[i%n] + pref[i];
     }
-    vi unq,dbl;
-    trav(z,cnt){
-        unq.push_back(z.first);
-        if(z.second>1 || z.ff>=(x*k)){
-            dbl.push_back(z.ff);
+    auto f = [&](int i,int l,int r){
+        return pref[(i+r+1)%(2*n)] - pref[(i+l)%(2*n)];
+    };
+    rep(i,0,q){
+        int l,r;
+        cin >> l >>r;
+        l--;r--;
+        int c1 = (l)/n;
+        int c2 = (r)/n;
+        debug(c1,c2,l,r);
+        if(c1==c2){
+            put(f(c1,l%n,r%n));
+        }
+        else{
+            int ans = f(c1,l%n,n-1) + f(c2,0,r%n) + (c2-c1-1)*pref[n];
+            put(ans);
         }
     }
-    srv(unq);srv(dbl);
-    int pok = lower_bound(all(unq),x*k)-unq.begin();
-    int ans = pok;
-    pok = lower_bound(all(unq),x) - unq.begin();
-    pok--;
-    int i = pok;
-    while (i>=0)
-    {
-        int hp = unq[i];
-        int h = lower_bound(all(dbl),hp*k)-lower_bound(all(dbl),hp);
-        ans = max(ans,h+pok+1);
-        i--;
-    }
-    put(ans);
     
+
 }
 // driver code
 int32_t main()

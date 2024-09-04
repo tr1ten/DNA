@@ -113,43 +113,78 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-/*
-    we can skip the biggest element, 
-
-
-*/
-void testcase(){
-    int n,x,k;
-    cin >> n >> x >> k;
-    map<int,int> cnt;
-    rep(i,0,n){
-        int f;
-        cin >> f;
-        cnt[f]++;
-    }
-    vi unq,dbl;
-    trav(z,cnt){
-        unq.push_back(z.first);
-        if(z.second>1 || z.ff>=(x*k)){
-            dbl.push_back(z.ff);
+const int N = 1e6+5;
+int d[N];
+void pre(){
+    for(int i=1;i<N;i++){
+        for(int j=i;j<N;j+=i) {
+            d[j]++;
         }
     }
-    srv(unq);srv(dbl);
-    int pok = lower_bound(all(unq),x*k)-unq.begin();
-    int ans = pok;
-    pok = lower_bound(all(unq),x) - unq.begin();
-    pok--;
-    int i = pok;
-    while (i>=0)
-    {
-        int hp = unq[i];
-        int h = lower_bound(all(dbl),hp*k)-lower_bound(all(dbl),hp);
-        ans = max(ans,h+pok+1);
-        i--;
+}
+class BIT {
+private:
+    std::vector<int> nums;
+    int LOG;
+public:
+    BIT(int n) {
+    	LOG = (int)log2(n)+1;
+        nums.resize((1ll<<LOG) + 1);
     }
-    put(ans);
-    
+    void update(int i, int val) {
+        i += 1;
+        while (i < nums.size()) {
+            nums[i] += val;
+            i += (i & (-i));
+        }
+    }
+    int sum(int i) {
+        int r = 0;
+        // i += 1, not needed here since we need sum of rank less than i rank[0...i-1]
+        while (i > 0) {
+            r += nums[i];
+            i -= (i & (-i));
+        }
+        return r;
+    }
+    int sum(int l,int r){
+        return sum(r+1) - sum(l);
+    }
+};
+void testcase() {
+    int n,q;
+    cin >> n >> q;
+    BIT bit(n);
+    vi a;
+    set<int> st;
+    rep(i,0,n){
+        int x;
+        cin >>x;
+        bit.update(i,x);
+        a.pb(x);
+        if(x>2) st.insert(i);
+    }
+    rep(i,0,q){
+        int t,l,r;
+        cin >> t >> l >> r;
+        --l;--r;
+        if(t==1) {
+            auto lt = st.lower_bound(l);
+            while (lt!=st.end() && *lt<=r)
+            {
+                int v = a[*lt];
+                int x = d[v];
+                a[*lt] = x;
+                bit.update(*lt,x-v);
+                if(x<=2) st.erase(lt++);
+                else lt++;
+            }
+        }
+        else {
+            put(bit.sum(l,r));
+        }
+    }
+
 }
 // driver code
 int32_t main()
@@ -159,7 +194,8 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
+    pre();
     while(T--) testcase();
 
     return 0;
