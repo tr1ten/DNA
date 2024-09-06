@@ -114,45 +114,26 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    string s,t;
-    cin >> s >> t;
-    if(s==t){
-        put(0);
-        return;
+    int n,q;
+    cin >> n >> q;
+    vi pref(n);
+    vi a(n);
+    rep(i,0,n){
+        cin >> a[i];
+        if(i>0) pref[i] += pref[i-1] + abs(a[i]-a[i-1]);   
     }
-    int i = 0;
-    int f = 0;
-    int r = -1;
-    while (i<n)
-    {
-        char x = t[i];
-        int len=0;
-        r = i;
-        while (i<n && t[i]==x) {i++;len++;}
-        if(len>=k) {
-            f=1;
-            break;
-        }
+    rep(i,0,q){
+        int l,r,y;
+        cin >> l >> r >> y;
+        l--;r--;
+        int t = pref[r]-pref[l];
+        int x = abs(a[r]-a[l]);
+        y = max(0LL,t-y);
+        int d = min(t-x,y);
+        y -=d;
+        put(max(0LL,(d+1)/2 + y));
     }
-    if(!f) put(-1)
-    else {
-        vector<pair<int,char>> res;
-        per(i,0,r+1){
-            res.push_back({i+1,t[i]});
-        }
-        rep(i,r+1,n-k+1){
-            res.push_back({i+1,t[i+k-1]});
-        }
-        reverse(all(res));
-        assert(res.size()<=2*n);
-        put(res.size());
-        trav(x,res){
-            cout << x.ff << " " << x.ss <<endl;
-        }
-    }
-    
+
 }
 // driver code
 int32_t main()
