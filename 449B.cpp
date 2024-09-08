@@ -112,75 +112,52 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-vector<int> dijsktra(int S,vector<vector<pair<int,ll>>> &adj){
-    int n = adj.size();
-    vector<int> dist(n,INF);
-    vector<int> par(n,-1);
-    dist[S] = 0;
-    par[S] = S;
-    priority_queue<pair<ll,int>,vector<pair<ll,int>>,greater<pair<ll,int>>> pq;
-    pq.push(make_pair(0LL,S));
-    while(!pq.empty()){
-        auto u = pq.top();
-        pq.pop();
-        if(u.first>dist[u.second]) continue;
-        for(auto &v:adj[u.second]){
-            if(dist[v.first]>dist[u.second] + v.second){
-                dist[v.first] = dist[u.second] + v.second;
-                par[v.first] = u.second;
-                pq.push(make_pair(dist[v.first],v.first));
-            }
-        }
-    }
-    return dist; // or dist according to needs
-}
 // do not use unordered map use mll
 void testcase(){
     int n,m,k;
     cin >> n >> m >> k;
-    vector<vector<pi>> adj(n);
-    rep(i,0,m) {
+    vector<vector<pair<int,int>>> g(n);
+    rep(i,0,m){
         int u,v,x;
         cin >> u >> v >> x;
         --u;--v;
-        adj[u].push_back({v,x});
-        adj[v].push_back({u,x});
+        g[u].push_back({v,x});
+        g[v].push_back({u,x});
     }
-    vi dist(n,INF);
-    vpi trains;
+    vi train(n,INF);
     rep(i,0,k){
-        int u=0,v,x;
-        cin >> v >> x;
-        --v;
-        dist[v] = min(dist[v],x);
-        trains.push_back({v,x});
+        int u,x;
+        cin >> u >> x;
+        --u;
+        train[u] = min(train[u],x);
     }
-    rep(i,0,n){
-        if(dist[i]<INF) {
-            adj[0].push_back({i,dist[i]});
-            adj[i].push_back({0,dist[i]});
+    priority_queue<vector<int>,vii,greater<vi>> pq;
+    vi dist(n,INF);
+    dist[0] = 0;
+    trav(v,g[0]){
+        pq.push({v.second,0,v.ff});
+    }
+    for(int i=1;i<n;i++) {
+        pq.push({train[i],1,i});
+    }
+    int ans = 0;
+    while (pq.size())
+    {
+        auto v=pq.top();
+        pq.pop();
+        if(dist[v[2]] <= v[0]) {
+            continue;
+        }
+        debug(v);
+        dist[v[2]] = v[0];
+        ans += v[1];
+        for(auto u:g[v[2]]) {
+            pq.push({dist[v[2]] + u.ss,0,u.ff });
         }
     }
-    dist = dijsktra(0,adj);
-    int res = 0;
-    trav(x,trains){
-        if(dist[x.ff] < x.ss)  {res++;}
-        else{
-            int sk = 0;
-            trav(v,adj[x.ff]){
-                if(!sk && v.ff==0 && v.ss==x.ss) {sk=1;}
-                else{
-                    if(dist[v.ff]+v.ss==dist[x.ff]) {
-                        res++;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    put(res);
-
-
+    put(k-ans);
+    
+    
 }
 // driver code
 int32_t main()

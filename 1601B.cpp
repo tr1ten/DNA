@@ -113,39 +113,63 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N =34;
-int dp[N][N][N];
 void testcase(){
-    int n,q;
-    cin >> n >> q;
-    vi a(n);
-    tkv(a,n);
-    rep(_,0,q){
-        int l,r,k;
-        cin >> l >> r >> k;
-        --l;--r;
-        vi b;
-        rep(j,l,r+1) b.pb(a[j]);
-        int m = b.size();
-        memset(dp,-1,sizeof dp);
-        function<int(int,int,int)> dfs = [&](int i,int d,int last){
-            if(d>k) return INF;
-            if(i==m) return 0LL;
-            if(dp[i][d][last+1]!=-1) return dp[i][d][last+1];
-            int j =i;
-            while(j<m && b[j]==b[i]) j++;
-            int res =INF;       
-            rep(x,0,N){
-                res=min(res,dfs(j,d+(last==-1 ? 0 : abs(last-x)),((j<m && b[j]==x) ? last : x))+abs(b[i]-x));
+    int n;
+    cin >> n;
+    vi a(n+1); 
+    rep(i,1,n+1){
+        cin >> a[i];
+    }
+    vi b(n+1);
+    rep(i,1,n+1) {
+        cin >> b[i];
+    }
+    set<int> e;
+    rep(i,0,n+1){
+        e.insert(i);
+    }
+    int ans = 0;
+    vi dist(n+1,INF);
+    queue<pi> q;
+    dist[n] = 0;
+    q.push({n,0});
+    vi par(n+1,-1);
+    vi slip(n+1,-1);
+    while (q.size())
+    {   
+
+        auto u = q.front();
+        q.pop();
+        if(u.second>dist[u.first]) continue;
+        auto it = e.lower_bound(u.first-a[u.ff]);
+        while (it!=e.end() && *it<=u.ff)
+        {
+            int k = *it + b[*it];
+            if(dist[k]>=u.ss+1) {
+                dist[k] = u.ss+1;
+                par[*it] = u.ff;
+                slip[k] = *it;
+                q.push({k,dist[k]});
             }
-            debug(i,d,last,res);            
-            return dp[i][d][last+1] = res;
-        };
-        int ans = dfs(0,0,-1);
-        assert(ans<INF);
-        put(ans);
+            e.erase(it++);
+        }
+    }
+    
+    if(dist[0]>=INF) put(-1)
+    else {
+        int cur = 0;
+        vi path;
+        while (cur<n)
+        {
+            path.push_back(slip[cur]);
+            cur = par[slip[cur]];
+        }
+        put(dist[0]);
+        reverse(all(path));
+        pvc(path);
     }
 }
+
 // driver code
 int32_t main()
 {
@@ -154,7 +178,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
