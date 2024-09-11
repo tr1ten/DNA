@@ -114,29 +114,25 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    if(n%2==0){
-        cout << n/2 << " ";
-        per(i,1,n+1){
-            int c = i==n/2 ? k-1 : k;
-            rep(j,0,c){
-                cout << i << " ";
-            }
-        }
+    int n,m,d;
+    cin >> n >> m >> d;
+    vi pos(n+1);
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        pos[x] = i;
     }
-    else {
-        rep(i,0,k) cout << (n+1)/2 << " ";
-        if(n>=3) {
-        cout << n/2  << " ";
-        per(i,1,n+1){
-           int c = i==(n+1)/2 ? 0 : i==n/2 ? k-1 : k;
-           rep(j,0,c) cout << i << " ";
+    vi a(m);
+    tkv(a,m);
+    int ans = INF;
+    rep(i,0,m-1){
+        if((pos[a[i+1]]<pos[a[i]] || pos[a[i+1]]-pos[a[i]]>d)) {
+            put(0);
+            return;
         }
-        }
+        ans = min(ans, min(d+1<n ? d+1-(pos[a[i+1]]-pos[a[i]]) : INF,(pos[a[i+1]]-pos[a[i]])) );
     }
-
-    cout << endl;
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -146,6 +142,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll MOD = 998244353; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,30 +113,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
+const int N = 1e6 + 5;
+int dp[N];
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    if(n%2==0){
-        cout << n/2 << " ";
-        per(i,1,n+1){
-            int c = i==n/2 ? k-1 : k;
-            rep(j,0,c){
-                cout << i << " ";
-            }
-        }
+    int n;
+    cin >> n;
+    string a,b;
+    cin >> a >> b;
+    int k = 0;
+    rep(i,0,n){
+        k += a[i] != b[i];
     }
-    else {
-        rep(i,0,k) cout << (n+1)/2 << " ";
-        if(n>=3) {
-        cout << n/2  << " ";
-        per(i,1,n+1){
-           int c = i==(n+1)/2 ? 0 : i==n/2 ? k-1 : k;
-           rep(j,0,c) cout << i << " ";
-        }
-        }
+    dp[n] = 1;
+    per(x,1,n){
+        dp[x] = (n + (n-x)*dp[x+1]%MOD)%MOD;
+        int inv2 = fast_pow(x,MOD-2,MOD);
+        dp[x] = (dp[x]*inv2)%MOD;
     }
-
-    cout << endl;
+    int ans = 0;
+    rep(i,0,k+1)    {
+        ans+=dp[i];
+        ans %=MOD;
+    }
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -144,8 +154,9 @@ int32_t main()
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
+    // freopen("output.out","w",stdout);    
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

@@ -116,27 +116,32 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n,k;
     cin >> n >> k;
-    if(n%2==0){
-        cout << n/2 << " ";
-        per(i,1,n+1){
-            int c = i==n/2 ? k-1 : k;
-            rep(j,0,c){
-                cout << i << " ";
+    string s,t;
+    cin >> s >> t;
+    map<char,int> vc;
+    for(char c:s){
+        if(vc.count(c)==0) vc[c] = vc.size();
+    }
+    int cp = vc.size();
+    if(cp<=k){
+        cout << n*(n+1)/2 << endl;
+        return;
+    }
+    int res = 0;
+    rep(mask,0,1<<cp){
+        if(pc(mask)>k) continue;
+        int cnt = 0;
+        int ans = 0;
+        rep(i,0,n){
+            if((s[i]==t[i]) || (mask&(1<<(vc[s[i]])))) cnt++;
+            else {
+                cnt=0;
             }
+            ans +=cnt;
         }
+        res = max(res,ans);
     }
-    else {
-        rep(i,0,k) cout << (n+1)/2 << " ";
-        if(n>=3) {
-        cout << n/2  << " ";
-        per(i,1,n+1){
-           int c = i==(n+1)/2 ? 0 : i==n/2 ? k-1 : k;
-           rep(j,0,c) cout << i << " ";
-        }
-        }
-    }
-
-    cout << endl;
+    put(res);
 }
 // driver code
 int32_t main()
@@ -146,6 +151,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
