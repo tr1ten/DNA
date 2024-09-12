@@ -113,84 +113,25 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-typedef long long ll;
-const int K = 26;
-const int N = 5*(1e5) + 5;
-
-ll st[N][K+1];
-ll merge(ll x,ll y){
-    return min(x,y);
-}
-int log2_floor(unsigned long long i) {
-    return i ? __builtin_clzll(1) - __builtin_clzll(i) : -1;
-}
-void build(vector<ll> A){
-    int K = log2_floor(A.size());
-    for(int i =0;i<A.size();i++) st[i][0] = A[i];
-    for(int k=1;k<=K;k++){
-        for(int i=0;i<A.size();i++){
-            st[i][k] = merge(st[i][k-1],st[i+(1ll<<(k-1))][k-1] );
-        }
-    }
-}
-// pre C++20
-
-ll query(int l,int r){
-    int k = log2_floor(r-l+1);
-    return merge(st[l][k],st[r-(1ll<<k) +1][k] );
-}
-vi get_dp(vi a, int n){
-    vi b;
-    rep(i,0,n){
-        b.push_back(a[i]-i);
-    }   
-    vi pref(n+1);
-    vi pp(n+1);
-    rep(i,0,n){
-        pref[i+1] += pref[i] + a[i]-i;
-        pp[i+1] += pp[i] + a[i];
-    }
-    build(b);
-    vi dp(n+1,0);
-    rep(i,0,n){
-        int lo=0,hi=i-1;
-        int l = -1;
-        while (lo<=hi)
-        {
-            int mid = (lo+hi)/2;
-            if(query(mid,i-1)<=b[i]) {
-                l = mid;
-                lo = mid+1;
-            }
-            else hi = mid-1;
-        }
-        debug(l);
-        if(l<-b[i]) {
-            l = -b[i];
-            dp[i+1] = pp[l+1] + pref[i]-pref[l+1] - b[i]*(i-l-1);
-        }
-        else dp[i+1] = dp[l+1] + pref[i]-pref[l+1] - b[i]*(i-l-1);
-    }
-    return dp;
-}
 void testcase(){
     int n;
     cin >> n;
+    vi ev,od;
     vi a(n);
-    tkv(a,n);
-    vi pdp = get_dp(a,n);
-    debug(pdp);
-    reverse(all(a));
-    vi sdp = get_dp(a,n);
-    reverse(all(sdp));
-    reverse(all(a));
-    debug(sdp);
-    int ans = INF;
     rep(i,0,n){
-        ans = min(ans,pdp[i+1]+sdp[i]+a[i]);
+        cin >> a[i];
+        if(a[i] % 2) od.push_back(i);
+        else ev.pb(i);
     }
-    put(ans);
-
+    if(ev.size()>=2 && od.size()) {
+        pyn(1);
+        cout << ev[0]+1 << " " << ev[1]+1 << " " << od[0]+1 << endl;
+    }
+    else if(od.size()>=3) {
+        pyn(1);
+        cout << od[0]+1<< " " << od[1]+1 << " " << od[2]+1 << endl;
+    }
+    else pyn(0);
 }
 // driver code
 int32_t main()

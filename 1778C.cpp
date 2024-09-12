@@ -109,7 +109,7 @@ const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
-inline int pc(ll x) {return  __builtin_popcount(x);} 
+inline int pc(ll x) {return     (x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
