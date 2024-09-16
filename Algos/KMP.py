@@ -15,6 +15,9 @@ def ps(s):
 class Solution(object):
     def strStr(self, haystack, needle):
         s  =  needle+"#"+haystack
+        print(s,ps(s))
         for i,x in enumerate(ps(s)):
             if(x==len(needle)): return i-2*len(needle)
         return -1
+    
+print(Solution().strStr("aaaa","aaaa"))
