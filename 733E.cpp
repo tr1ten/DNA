@@ -63,7 +63,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define mk_mat(name,n,m,value) vii name(n, vi(m, value))
 #define contains(x) find(x) != string::npos
 #define tkv(vec,sz) rep(i,0,sz) cin>>vec[i]
-#define srv(vec) sort(vec.begin(), vec.end())
+#define srv(ve                      c) sort(vec.begin(), vec.end())
 #define all(x) x.begin(), x.end()
 #define less(a,b) a<b
 #define vsum(vec) accumulate(vec.begin(), vec.end(), 0L);
