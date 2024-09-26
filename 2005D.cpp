@@ -113,19 +113,49 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+using t3 = array<int,3>;
 void testcase(){
     int n;
     cin >> n;
-    char a[5] = {'a','e','i','o','u'};
-    int d = n/5;
-    int r= n%5;
-    rep(i,0,5){
-        rep(j,0,d+(r>0)) {
-            cout << a[i];
+    vi a(n),b(n);
+    tkv(a,n);tkv(b,n);
+    
+    map<t3,int> ways;
+    ways[t3{0,a[0],b[0]}]++;
+    ways[t3{1,b[0],a[0]}]++;
+    ways[t3{2,b[0],a[0]}]++;
+ 
+    for(int it=1;it<n;it++){
+        map<t3,int> ways2;
+        const int ai=a[it],bi=b[it];
+        for(const auto &z:ways){
+            const int ph=z.ff[0],g1=z.ff[1],g2=z.ff[2],f=z.ss;
+            if(ph==2){
+                ways2[t3{2,__gcd(ai,g1),__gcd(bi,g2)}]+=f;
+                continue;
+            }
+            if(ph==1){
+                ways2[t3{1,__gcd(bi,g1),__gcd(ai,g2)}]+=f;
+                ways2[t3{2,__gcd(bi,g1),__gcd(ai,g2)}]+=f;
+                continue;
+            }
+            ways2[t3{0,__gcd(ai,g1),__gcd(bi,g2)}]+=f;
+            ways2[t3{1,__gcd(bi,g1),__gcd(ai,g2)}]+=f;
+            ways2[t3{2,__gcd(bi,g1),__gcd(ai,g2)}]+=f;
         }
-        if(r) r--;
+        ways=ways2;
     }
-    cout << endl;
+ 
+    map<int,int> res;
+    for(const auto &z:ways){
+        const int ph=z.ff[0],g1=z.ff[1],g2=z.ff[2],f=z.ss;
+        if(ph!=2)
+            continue;
+        res[g1+g2]+=f;
+    }
+    const auto bst = *res.rbegin();
+    cout<<bst.ff<<" "<<bst.ss<<endl;
+
 }
 // driver code
 int32_t main()

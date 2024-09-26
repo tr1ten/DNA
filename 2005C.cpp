@@ -113,19 +113,48 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    char a[5] = {'a','e','i','o','u'};
-    int d = n/5;
-    int r= n%5;
-    rep(i,0,5){
-        rep(j,0,d+(r>0)) {
-            cout << a[i];
+pi match(string &s,string p){
+    int j = 0;
+    int cnt = 0;
+    rep(i,0,s.size()){
+        if(s[i]==p[j]) {
+            j++;
+            if(j==p.size()) {
+                cnt++;
+                j = 0;
+            }
         }
-        if(r) r--;
     }
-    cout << endl;
+    return {j,cnt};
+}
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    vi pref(n),suff(n),cnt(n);
+    rep(i,0,n){
+        string s;
+        cin >> s;
+        string r = s;
+        reverse(all(r));
+        auto p1 = match(s,"narek");
+        cnt[i] = p1.second;
+        suff[i]= p1.first;
+        auto p2 = match(r,"keran");
+        pref[i] = p1.first;
+    }
+    vii dp(n,vi(5));
+    int res = -INF;
+    rep(i,0,n){
+        int base = 2*cnt[i]*5 - m;
+        rep(j,0,suff[i]+1) {
+            dp[i][j] = base;
+        }
+        rep(j,0,i){
+        }
+        res = max(res,dp[i]);
+    }
+    put(res);
+    
 }
 // driver code
 int32_t main()
