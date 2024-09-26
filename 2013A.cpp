@@ -113,38 +113,11 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii dp;
-vector<string> sts;
-int n,m;
-string t = "narek";
-int f(int i,int j){
-    if(i==n) return 0;
-    int &dpp = dp[i][j];
-    if(dpp!=-1) return dpp;
-
-    int res = f(i+1,j);
-    int score = 0;
-    rep(k,0,m){
-        if(t.find(sts[i][k])!=string::npos) score--;
-        if(t[j]==sts[i][k]) {
-            j++;
-            if(j==t.size()){
-                j = 0;
-                score += 10;
-            }
-        }
-    }
-    res = max(res,score+f(i+1,j));
-    return dpp =res;
-}
 void testcase(){
-    cin >>n >> m;
-    sts.clear();
-    sts.resize(n);
-    tkv(sts,n);
-    dp.clear();
-    dp.resize(n,vi(5,-1));
-    put(f(0,0));
+    int n,x,y;
+    cin >> n >> x >> y;
+    int m = min(x,y);
+    put((n+m-1)/m);
 }
 // driver code
 int32_t main()

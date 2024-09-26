@@ -113,38 +113,62 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii dp;
-vector<string> sts;
-int n,m;
-string t = "narek";
-int f(int i,int j){
-    if(i==n) return 0;
-    int &dpp = dp[i][j];
-    if(dpp!=-1) return dpp;
-
-    int res = f(i+1,j);
-    int score = 0;
-    rep(k,0,m){
-        if(t.find(sts[i][k])!=string::npos) score--;
-        if(t[j]==sts[i][k]) {
-            j++;
-            if(j==t.size()){
-                j = 0;
-                score += 10;
-            }
+void testcase(){
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    int k =  accumulate(all(a),0LL)/n;
+    int m = k;
+    int give = 0;
+    rep(i,0,n){
+        if(a[i]>k){
+            give += a[i]-k;
+        }
+        else{
+            int d = min(k-a[i],give);
+            give -=d;
+            m = min(m,a[i] + d);
         }
     }
-    res = max(res,score+f(i+1,j));
-    return dpp =res;
-}
-void testcase(){
-    cin >>n >> m;
-    sts.clear();
-    sts.resize(n);
-    tkv(sts,n);
-    dp.clear();
-    dp.resize(n,vi(5,-1));
-    put(f(0,0));
+    auto ok = [&] (int x) {
+        vi b=a;
+        int mx_give = 0;
+        int min_give = 0;
+        int last = 0;
+        rep(i,0,n){
+            if(a[i]>m+x) {
+                min_give += a[i]-(m+x);
+                mx_give += a[i] - m;
+            }
+            else if(a[i]<m) {
+                if(a[i] + mx_give<m) return false;
+                int d = m-a[i];
+                mx_give -=d;
+                min_give -= min(min_give,m+x-a[i]);
+            }
+            else{
+                min_give -= min(min_give,m+x-a[i]);
+                mx_give += a[i] - m;
+            }
+        }
+        return  min_give==0;
+    };
+    int lo = max(0LL,a.back()-a[0]),hi = 1e12;
+    int ans = INF;
+    while (lo<=hi)
+    {
+        int mid = (lo+hi)/2;
+        if(ok(mid)) {
+            hi = mid-1;
+            ans = mid;
+        }
+        else lo = mid+1;
+    }
+    put(ans);
+    
+    
+
 }
 // driver code
 int32_t main()

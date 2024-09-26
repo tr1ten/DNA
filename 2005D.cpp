@@ -134,7 +134,7 @@ void testcase(){
                 ways2[t3{2,__gcd(ai,g1),__gcd(bi,g2)}]+=f;
                 continue;
             }
-            if(ph==1){
+            if(ph==1){  
                 ways2[t3{1,__gcd(bi,g1),__gcd(ai,g2)}]+=f;
                 ways2[t3{2,__gcd(bi,g1),__gcd(ai,g2)}]+=f;
                 continue;
