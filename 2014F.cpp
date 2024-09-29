@@ -113,26 +113,36 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    vector<pi> st;
-    rep(i,0,n){
-        int sm = a[i];
-        int cnt = 1;
-        while (st.size() && st.back().first>sm/cnt)
-        {
-            auto f = st.back();
-            st.pop_back();
-            sm +=f.first*f.second;
-            cnt +=f.second;
+const int N= 2*(1e5);
+vii adj;
+int a[N];
+int n,c;
+pi dfs(int u,int p) {
+    pi res = {0,a[u]};
+    trav(v,adj[u]){
+        if(v!=p){
+            pi vr = dfs(v,u);
+            res.first += max(vr.first,vr.second);
+            res.second += max(vr.first,vr.second-2*c);
         }
-        st.push_back({sm/cnt,cnt-(sm%cnt)});
-        if(sm%cnt) st.push_back({sm/cnt+1,sm%cnt});
     }
-    put(st.back().first-st.begin()->first);
+    return res;
+
+}
+void testcase(){
+    cin >> n >> c;
+    tkv(a,n);
+    adj.clear();
+    adj.resize(n);
+    rep(i,0,n-1){   
+        int u,v;
+        cin >> u >> v;
+        u--;--v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+    pi res = dfs(0,-1);
+    put(max(res.first,res.second));
 
 }
 // driver code

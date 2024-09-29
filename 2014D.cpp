@@ -114,26 +114,29 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    vector<pi> st;
-    rep(i,0,n){
-        int sm = a[i];
-        int cnt = 1;
-        while (st.size() && st.back().first>sm/cnt)
-        {
-            auto f = st.back();
-            st.pop_back();
-            sm +=f.first*f.second;
-            cnt +=f.second;
-        }
-        st.push_back({sm/cnt,cnt-(sm%cnt)});
-        if(sm%cnt) st.push_back({sm/cnt+1,sm%cnt});
+    int n,d,k;
+    cin >> n >> d >> k;
+    vector<pi> a;
+    rep(i,0,k){
+        int l,r;
+        cin >> l >>r;
+        a.push_back({l,r});
     }
-    put(st.back().first-st.begin()->first);
-
+    srv(a);
+    priority_queue<int,vi,greater<int>> pq;
+    int j = 0;
+    pi a1 = {-1,-1};
+    pi a2 = {INF,-1};
+    rep(i,1,n+1){
+        while(j<k && a[j].ff<=i) {pq.push(a[j].ss);j++;}
+        while(pq.size() && pq.top()<=i-d) pq.pop();
+        if(i-d+1>=1){
+            a1 = max(a1,{pq.size(),-(i-d+1)});
+            a2 = min(a2,{pq.size(),i-d+1});
+        }
+    }
+    debug(a1,a2);
+    put2(-a1.second,a2.second);  
 }
 // driver code
 int32_t main()

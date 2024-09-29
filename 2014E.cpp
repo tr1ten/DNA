@@ -113,26 +113,65 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    vector<pi> st;
-    rep(i,0,n){
-        int sm = a[i];
-        int cnt = 1;
-        while (st.size() && st.back().first>sm/cnt)
-        {
-            auto f = st.back();
-            st.pop_back();
-            sm +=f.first*f.second;
-            cnt +=f.second;
-        }
-        st.push_back({sm/cnt,cnt-(sm%cnt)});
-        if(sm%cnt) st.push_back({sm/cnt+1,sm%cnt});
+const int N = 2e5+5;
+int horsy[N];
+vii dijsktra(int S,vector<vector<pair<int,int>>> &adj){
+    int n = adj.size();
+    vii dist(n,vi(2,INF));
+    priority_queue<vi,vector<vi>,greater<vi>> pq;
+    pq.push({0,S,0});
+    dist[S][0] = 0;
+    if(horsy[S]) {
+        dist[S][1] = 0;
+        pq.push({0,S,1});
     }
-    put(st.back().first-st.begin()->first);
+    while(!pq.empty()){
+        auto u = pq.top();
+        pq.pop();
+        int horse = u[2];
+        if(u[0]>dist[u[1]][horse]) continue;
+        for(auto &v:adj[u[1]]){
+            int hr = horse | horsy[v.first];
+            int nw = (horse ? (v.second/2) : v.second);
+            if(dist[v.first][hr]>u[0] + nw){
+                dist[v.first][hr] = u[0] + nw;
+                pq.push({dist[v.first][hr],v.first,hr});
+            }
+        }
+    }
+    return dist; // or dist according to needs
+}
+
+void testcase(){
+    int n,m,h;
+    cin >> n >> m >> h;
+    rep(i,0,n) horsy[i] =0;
+    rep(i,0,h){
+        int x;
+        cin >> x;
+        x--;
+        horsy[x] =1;
+    }
+    vector<vector<pi>> adj(n);
+    rep(i,0,m){
+        int u,v,w;
+        cin >> u >> v >> w;
+        --u;--v;
+        adj[u].push_back({v,w});
+        adj[v].push_back({u,w});
+    }
+    auto dist1 = dijsktra(0,adj);
+    auto dist2 = dijsktra(n-1,adj);
+    int res = INF;
+    rep(i,0,n){
+        res = min(res,max(min(dist1[i][0],dist1[i][1]), min(dist2[i][0],dist2[i][1])));
+        debug(i,res);
+    }
+    if(res>=INF){
+        put(-1);
+        return;
+    }
+    put(res);
 
 }
 // driver code

@@ -113,38 +113,57 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    vector<pi> st;
-    rep(i,0,n){
-        int sm = a[i];
-        int cnt = 1;
-        while (st.size() && st.back().first>sm/cnt)
-        {
-            auto f = st.back();
-            st.pop_back();
-            sm +=f.first*f.second;
-            cnt +=f.second;
-        }
-        st.push_back({sm/cnt,cnt-(sm%cnt)});
-        if(sm%cnt) st.push_back({sm/cnt+1,sm%cnt});
-    }
-    put(st.back().first-st.begin()->first);
+
+const int S = 450; // block size
+struct Q {
+    int l, r, idx;
+    
+    inline pair<int, int> toPair() const {
+		return make_pair(l / S, ((l / S) & 1) ? -r : +r);
+	}
+};
+inline bool operator<(const Q &a, const Q &b) {
+	return a.toPair() < b.toPair();
+}
+const int N = 2e5 + 3;
+int A[N];
+long long rng() {
+
+	static std::mt19937 gen(
+
+	    std::chrono::steady_clock::now().time_since_epoch().count());
+
+	return std::uniform_int_distribution<long long>(0, INT64_MAX)(gen);
 
 }
-// driver code
 int32_t main()
 {
     ios_base::sync_with_stdio(false);
-	cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
+    cin.tie(nullptr);
     int T=1;
     cin>>T;
-    while(T--) testcase();
+    while(T--){
+        int n,t;
+        cin >> n >> t;
+        tkv(A,n);
+        mll rv;
+        rep(i,0,n){
+            if(!rv.count(A[i])) {
+                rv[A[i]] = rng();
+            }
+        }
+        
+        vi pref(n+1);
+        rep(i,0,n){
+            pref[i+1] =pref[i]^rv[A[i]];
+        }
+        rep(i,0,t){
+            int l,r;
+            cin >> l >> r;
+            pyn((pref[r]^pref[l-1])==0);
+        }
+    }
 
     return 0;
 }
+
