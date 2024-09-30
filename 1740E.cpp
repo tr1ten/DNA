@@ -113,45 +113,30 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5*(1e5)+5;
-int A[N];
 vii adj;
 int n;
-
-int dfs(int u,int p,int d) {
-    int lu = d;
+pi dfs(int u){
+    int mx =0;
+    int sm = 0;
     trav(v,adj[u]){
-        if(v!=p){
-            lu = max(lu,dfs(v,u,d+1));
-        }
+        auto r = dfs(v);
+        mx = max(r.second,mx);
+        sm +=max(r.first,r.second);
     }
-    A[d]++;
-    A[lu+1]--;
-    return lu;
+    return {sm,mx+1};
 }
 void testcase(){
     cin >> n;
     adj.clear();
     adj.resize(n);
-    debug(adj);
-    rep(i,0,n-1){
-        int u,v;
-        cin >>u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    rep(i,1,n){
+        int p;
+        cin >> p;
+        p--;
+        adj[p].push_back(i);
     }
-    rep(i,0,n){
-        A[i] = 0;
-    }
-    dfs(0,-1,0);
-    int ans = n;
-    rep(i,0,n){
-        ans = min(ans,n-A[i]);
-        A[i+1] +=A[i];
-    }
-    put(ans);
-    
+    pi ans = dfs(0);
+    put(max(ans.first,ans.second));
 }
 // driver code
 int32_t main()
@@ -161,7 +146,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

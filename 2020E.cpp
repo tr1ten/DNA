@@ -113,45 +113,44 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5*(1e5)+5;
-int A[N];
-vii adj;
-int n;
-
-int dfs(int u,int p,int d) {
-    int lu = d;
-    trav(v,adj[u]){
-        if(v!=p){
-            lu = max(lu,dfs(v,u,d+1));
-        }
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
     }
-    A[d]++;
-    A[lu+1]--;
-    return lu;
+    return res;
 }
+const int A = 1024;
+const int P = 1e4;
+const int N = 2e5 + 5;
+int a[N],p[N];
+int inv1;
 void testcase(){
+    int n;
     cin >> n;
-    adj.clear();
-    adj.resize(n);
-    debug(adj);
-    rep(i,0,n-1){
-        int u,v;
-        cin >>u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
+    tkv(a,n);tkv(p,n);
+    vi prob(A);
+    prob[0] =1;
     rep(i,0,n){
-        A[i] = 0;
+        vi tprob(A);
+        rep(mask,0,A){
+            tprob[a[i]^mask] += (((prob[mask]*p[i])%MOD))*inv1%MOD;
+            tprob[a[i]^mask] %=MOD;
+            tprob[mask] += ((prob[mask]*(P-p[i])%MOD)%MOD)*inv1%MOD;
+            tprob[mask] %=MOD;
+        }
+        prob = tprob;
     }
-    dfs(0,-1,0);
-    int ans = n;
-    rep(i,0,n){
-        ans = min(ans,n-A[i]);
-        A[i+1] +=A[i];
+    int ans = 0;
+    rep(x,1,A){
+        ans += (((x*x)*prob[x])%MOD)%MOD;
+        ans %=MOD;
     }
     put(ans);
-    
 }
 // driver code
 int32_t main()
@@ -161,6 +160,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    inv1 = fast_pow(P,MOD-2,MOD);
     cin>>T;
     while(T--) testcase();
 

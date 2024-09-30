@@ -113,46 +113,85 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5*(1e5)+5;
-int A[N];
-vii adj;
-int n;
+using namespace std;
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int cnt = 0;
+    DSU(int n)
+    {
+        this->par = new int[n];
+        this->sz = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
+        }
+        cnt = n;
+    }
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    void connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+        cnt--;
+    }
+};
 
-int dfs(int u,int p,int d) {
-    int lu = d;
-    trav(v,adj[u]){
-        if(v!=p){
-            lu = max(lu,dfs(v,u,d+1));
+
+const int N = 2e5 +5;
+const int D = 11;
+int A[N][D];
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    rep(i,0,n){
+        rep(j,0,D){
+            A[i][j] = 0;
         }
     }
-    A[d]++;
-    A[lu+1]--;
-    return lu;
+    DSU ds(n);
+    rep(i,0,m){
+        int a,d,k;
+        cin >> a >> d >> k;
+        a--;
+        k++;
+        int cur = a;
+        while(k>0) {
+            // debug(i,a,d,k,cur);
+            ds.connect(a,cur);
+            int temp = cur;
+            cur += (A[temp][d]+1)*d;
+            int left = k-A[temp][d]-1;
+            A[temp][d] = max(A[temp][d],k-1);
+            k = left;
+        }
+    }
+    put(ds.cnt);
 }
-void testcase(){
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    debug(adj);
-    rep(i,0,n-1){
-        int u,v;
-        cin >>u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    rep(i,0,n){
-        A[i] = 0;
-    }
-    dfs(0,-1,0);
-    int ans = n;
-    rep(i,0,n){
-        ans = min(ans,n-A[i]);
-        A[i+1] +=A[i];
-    }
-    put(ans);
-    
-}
+
 // driver code
 int32_t main()
 {

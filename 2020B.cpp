@@ -113,45 +113,28 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 5*(1e5)+5;
-int A[N];
-vii adj;
-int n;
-
-int dfs(int u,int p,int d) {
-    int lu = d;
-    trav(v,adj[u]){
-        if(v!=p){
-            lu = max(lu,dfs(v,u,d+1));
-        }
-    }
-    A[d]++;
-    A[lu+1]--;
-    return lu;
-}
 void testcase(){
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    debug(adj);
-    rep(i,0,n-1){
-        int u,v;
-        cin >>u >> v;
-        --u;--v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    rep(i,0,n){
-        A[i] = 0;
-    }
-    dfs(0,-1,0);
-    int ans = n;
-    rep(i,0,n){
-        ans = min(ans,n-A[i]);
-        A[i+1] +=A[i];
+    int k;
+    cin >> k;
+    int lo=1,hi = 2*(1e18);
+    auto ok = [&](int n){
+        int r = sqrt(n);
+        return n-r>=k;
+    };
+    int ans= 0;
+    while (lo<=hi)
+    {
+        int mid=lo+(hi-lo)/2;
+        if(ok(mid)) {
+            ans = mid;
+            hi = mid-1;
+        }
+        else lo = mid+1;
     }
     put(ans);
     
+
+
 }
 // driver code
 int32_t main()
