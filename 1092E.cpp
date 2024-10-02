@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 998244353; // change me for god sake look at problem mod
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,64 +113,92 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-const int N = 3e5 + 5;
-long long fact[N];
-long long inv[N];
-long long finv[N];
-mt19937_64 gen(chrono::steady_clock::now().time_since_epoch().count());
-uniform_int_distribution<ll> rnd(0,LLONG_MAX);
-void pre() {
-    fact[0] = 1;
-    for (int i = 1; i <= N; i++) {
-        fact[i] = (fact[i-1]*i)%MOD;
+vii adj;
+void dfs(int u,int p,int d,vi &dist){
+    dist[u] = d;
+    trav(v,adj[u]){
+        if(v!=p){
+            dfs(v,u,d+1,dist);
+        }
     }
-    inv[1] = 1;
-    for (int i = 2; i <= N; i++) {
-        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
-    }
-    finv[0] = finv[1] = 1;
-    for (int i = 2; i <= N; i++) {
-        finv[i] = (inv[i]*finv[i-1])%MOD;
-    }
-}
-        
-long long nCk(int n,int k) {
-    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
-}       
-
-int catlan(int m){
-    assert(m%2==0);
-    int n = m/2;
-    int minv = inv[n+1];
-    return minv*nCk(m,n)%MOD;
 }
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi diff(n+1);
-    rep(i,0,k){
-        int l,r;
-        cin >> l >>r;
-        l--;r--;
-        int v = rnd(gen);
-        diff[l] ^= v;
-        diff[r+1] ^=v;
-    }   
-    mll cnt;    
-    for(int i=0;i<n;i++) {
-        cnt[diff[i]]++;
-        diff[i+1] ^=diff[i];
+    int n,m;
+    cin >> n >> m;
+    adj.resize(n);
+    rep(i,0,m){
+        int u,v;
+        cin >>u >> v;
+        u--;v--;
+        adj[u].pb(v);adj[v].push_back(u);
     }
-    int ans = 1;
-    for(auto v:cnt){
-        if(v.second%2){
-            put(0);
-            return;
+    int id = 0;
+    unordered_map<int,pi> cpts;
+    unordered_map<int,int> cpdi;
+    unordered_map<int,unordered_set<int>> cpel;
+    vi mxids(n);
+    vi cid(n,-1);
+    int df = 0;
+    vii dist(n,vi(n,INF));
+    rep(i,0,n) {
+        dfs(i,-1,0,dist[i]);
+        if(cid[i]==-1){
+            cid[i] = id++;
         }
-        ans = ans*catlan(v.second)%MOD;
+        int mx = 0;
+        rep(j,0,n){
+            if(dist[i][j]!=INF){
+                cid[j] = cid[i];
+                mx = max(mx,dist[i][j]);
+                cpel[cid[i]].insert(j);
+            }
+        }
+        cpdi[cid[i]] = max(cpdi[cid[i]],mx);
+        mxids[i] = mx;
+        if(cpts.count(cid[i])) cpts[cid[i]] = min(cpts[cid[i]],{mx,i});
+        else cpts[cid[i]] = {mx,i};
     }
-    put(ans);
+    pi mmx = {0,0};
+    auto merge_cpt = [&](int id1,int id2){
+        int cu  =cpts[id1].second,cv = cpts[id2].second;
+        for(int u:cpel[id1]){
+            for(int v:cpel[id2]){
+                dist[u][v] = dist[u][cu] + dist[v][cv]+1;
+                dist[v][u] = dist[u][v];
+                mxids[u] = max(mxids[u],dist[u][v]);
+                mxids[v] = max(mxids[v],dist[u][v]);
+            }
+        }
+        for(int u:cpel[id1]){
+            cpel[id2].insert(u);
+            cid[id2] = id2;
+        }
+        cpts[id2] = {INF,-1};
+        trav(v,cpel[id2]){
+            cpts[id2] = min(cpts[id2],{mxids[v],v});
+            cpdi[id2] = max(cpdi[id2],mxids[v]);
+        }
+        // debug(id1,id2,cpdi[id2],cpts[id2]);
+
+    };
+    trav(x,cpts){
+        mmx = max(mmx,{x.second.first,x.first});
+    }
+    int last = mmx.second;
+    vpi edges;
+    rep(i,0,id){
+        if(i==mmx.second) continue;
+        edges.push_back({cpts[last].second,cpts[i].second});
+        merge_cpt(last,i);
+        last = i;
+
+    }
+    put(cpdi[last]);
+    trav(e,edges){
+        put2(e.first+1,e.second+1);
+    }
+    
+
 }
 // driver code
 int32_t main()
@@ -180,8 +208,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    pre();
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

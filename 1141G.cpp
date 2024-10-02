@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 998244353; // change me for god sake look at problem mod
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,65 +113,63 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-const int N = 3e5 + 5;
-long long fact[N];
-long long inv[N];
-long long finv[N];
-mt19937_64 gen(chrono::steady_clock::now().time_since_epoch().count());
-uniform_int_distribution<ll> rnd(0,LLONG_MAX);
-void pre() {
-    fact[0] = 1;
-    for (int i = 1; i <= N; i++) {
-        fact[i] = (fact[i-1]*i)%MOD;
+vi res;
+vector<vector<pi>> adj;
+int bad = 0;
+void dfs(int u,int p,int color,int r){
+    int cur = 1;
+    int bc = 0;
+    for(auto v:adj[u]){
+        if(v.first!=p){
+            if(cur==color) {
+                cur++;
+            }
+            if(cur==r+1) {cur =1;
+            bc=1;
+            }            
+            res[v.second] = cur;
+            dfs(v.first,u,cur,r);
+            cur++;
+        }
     }
-    inv[1] = 1;
-    for (int i = 2; i <= N; i++) {
-        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
-    }
-    finv[0] = finv[1] = 1;
-    for (int i = 2; i <= N; i++) {
-        finv[i] = (inv[i]*finv[i-1])%MOD;
-    }
-}
-        
-long long nCk(int n,int k) {
-    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
-}       
-
-int catlan(int m){
-    assert(m%2==0);
-    int n = m/2;
-    int minv = inv[n+1];
-    return minv*nCk(m,n)%MOD;
+    bad+=bc;
 }
 void testcase(){
     int n,k;
     cin >> n >> k;
-    vi diff(n+1);
-    rep(i,0,k){
-        int l,r;
-        cin >> l >>r;
-        l--;r--;
-        int v = rnd(gen);
-        diff[l] ^= v;
-        diff[r+1] ^=v;
-    }   
-    mll cnt;    
-    for(int i=0;i<n;i++) {
-        cnt[diff[i]]++;
-        diff[i+1] ^=diff[i];
+    vi ind(n);
+    adj.clear();adj.resize(n);
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        ind[u]++;
+        ind[v]++;
+        adj[u].push_back({v,i});
+        adj[v].push_back({u,i});
     }
-    int ans = 1;
-    for(auto v:cnt){
-        if(v.second%2){
-            put(0);
-            return;
+    vi freq(n+1);
+    rep(i,0,n){
+        freq[ind[i]]++;
+    }
+    int r= -1;
+    rep(i,0,n){
+        if(freq[i]>=n-k){
+            r = i;
+            break;
         }
-        ans = ans*catlan(v.second)%MOD;
+        freq[i+1] += freq[i];
     }
-    put(ans);
+    res.clear();
+    res.resize(n-1);
+    bad = 0;
+    dfs(0,-1,0,r);
+    assert(bad<=k);
+    put(r);
+    pvc(res);
+
 }
+
 // driver code
 int32_t main()
 {
@@ -180,8 +178,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    pre();
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

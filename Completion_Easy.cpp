@@ -114,12 +114,11 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 
-const int N = 3e5 + 5;
+const int N = 2e5 + 5;
 long long fact[N];
 long long inv[N];
 long long finv[N];
-mt19937_64 gen(chrono::steady_clock::now().time_since_epoch().count());
-uniform_int_distribution<ll> rnd(0,LLONG_MAX);
+
 void pre() {
     fact[0] = 1;
     for (int i = 1; i <= N; i++) {
@@ -134,43 +133,34 @@ void pre() {
         finv[i] = (inv[i]*finv[i-1])%MOD;
     }
 }
-        
+
 long long nCk(int n,int k) {
     return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
-}       
-
-int catlan(int m){
-    assert(m%2==0);
-    int n = m/2;
-    int minv = inv[n+1];
-    return minv*nCk(m,n)%MOD;
 }
+
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi diff(n+1);
-    rep(i,0,k){
-        int l,r;
-        cin >> l >>r;
-        l--;r--;
-        int v = rnd(gen);
-        diff[l] ^= v;
-        diff[r+1] ^=v;
-    }   
-    mll cnt;    
-    for(int i=0;i<n;i++) {
-        cnt[diff[i]]++;
-        diff[i+1] ^=diff[i];
+    int n;
+    cin >> n;
+    int left=n,right=n;
+    vi a(2*n);
+    rep(i,0,2*n){
+        int x;
+        cin >> x;
+        if(x>0 && x<=n) left--;
+        else if(x>=n) right--;
+        a[i] = x;
     }
-    int ans = 1;
-    for(auto v:cnt){
-        if(v.second%2){
-            put(0);
-            return;
-        }
-        ans = ans*catlan(v.second)%MOD;
+    int cnt = 0;
+    for(int i=0;i<2*n;i+=2){
+        cnt += (a[i]==0 && a[i^1]==0);
     }
-    put(ans);
+    fact[0] = 0;
+    int base= (((fact[left]-fact[cnt])%MOD)*((fact[right]-fact[cnt])%MOD))%MOD;
+    debug(cnt,base);
+    base = base*fact[cnt]%MOD;
+    base = 2*base%MOD;
+    put(base);
+
 }
 // driver code
 int32_t main()
@@ -180,8 +170,8 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    pre();
     cin>>T;
+    pre();
     while(T--) testcase();
 
     return 0;
