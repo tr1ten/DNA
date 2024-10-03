@@ -113,14 +113,54 @@
     inline int hset(ll x) {return __lg(x);}
     void pyn(int x) {put(x?"YES":"NO");}
     // do not use unordered map use mll
+    vii res;
+    vii adj;
+
+    void dfsod(int u,int p){
+        trav(v,adj[u]){
+            if(v!=p){
+                dfsod(v,u);
+            }
+        }
+        if(p!=-1){
+            res.pb({u+1,p+1,u+1});
+        }
+    }
+    void dfsev(int u,int p){
+        trav(v,adj[u]){
+            if(v!=p){
+                dfsev(v,u);
+            }
+        }
+        if(p!=-1){
+            if(res.size()<=1) res.pb({u+1,p+1,p+1});
+            else res.pb({u+1,p+1,u+1});
+        }
+    }
     void testcase(){
         int n;
         cin >> n;
-        cout << "1 ";
-        per(i,2,n+1) {
-            cout << i << " ";
+        adj.clear();
+        adj.resize(n);
+        res.clear();
+        rep(i,0,n-1){
+            int u,v;
+            cin >> u >> v;
+            --u;--v;
+            adj[u].push_back(v);
+            adj[v].pb(u);
         }
-        cout << endl;   
+        if(n==2 || n%2==1){
+            dfsod(0,-1);
+        }
+        else{
+            dfsev(0,-1);
+        }
+        put(n==2);
+        trav(x,res){
+            cout << x[0] << " " << x[1] << " " << x[2] << endl;
+        }
+
     }
     // driver code
     int32_t main()
