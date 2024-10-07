@@ -113,45 +113,39 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int MAXN = 1e7+4;
-std::vector <int> prime;
-bool is_composite[MAXN];
-
-void sieve (int n) {
-	std::fill (is_composite, is_composite + n, false);
-	for (int i = 2; i < n; ++i) {
-		if (!is_composite[i]) {
-			prime.push_back (i);
-		}
-		for (int j = 0; j < prime.size () && i * prime[j] < n; ++j) {
-			is_composite[i * prime[j]] = true;
-		}
-	}
-}
-int dp[MAXN];
-void testcase(int t){
-    int n;
-    cin >> n;
-    cout << "Case #"<<t << ": " << dp[n] << endl;
+void testcase(){
+    int n,m,q;
+    cin >> n >> m >> q;
+    vi a(n);
+    tkv(a,n);
+    vi b(m);
+    tkv(b,m);
+    vi c;
+    mll cnt;
+    rep(i,0,m){
+        if((c.size()==0 || c.back()!=b[i]) && cnt[b[i]]==0){
+            c.push_back(b[i]);
+            cnt[b[i]]++;
+        }
+    }
+    rep(i,0,c.size()){
+        if(c[i]!=a[i]) {
+            put("TIDAK");
+            return;
+        }
+    }
+    put("YA")
 }
 // driver code
 int32_t main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
-    freopen("input.in","r",stdin);
-    freopen("output.out","w",stdout);      
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
+    while(T--) testcase();
 
-    sieve(MAXN);
-    dp[5] =2;
-    rep(i,6,MAXN){
-        if(is_composite[i] || is_composite[i-2]) dp[i] = dp[i-1];
-        else dp[i] = dp[i-2] +1;
-    }
-    rep(i,1,T+1){
-        testcase(i);
-    }
     return 0;
 }

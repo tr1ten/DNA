@@ -112,46 +112,47 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
-// do not use unordered map use mll
-const int MAXN = 1e7+4;
-std::vector <int> prime;
-bool is_composite[MAXN];
-
-void sieve (int n) {
-	std::fill (is_composite, is_composite + n, false);
-	for (int i = 2; i < n; ++i) {
-		if (!is_composite[i]) {
-			prime.push_back (i);
-		}
-		for (int j = 0; j < prime.size () && i * prime[j] < n; ++j) {
-			is_composite[i * prime[j]] = true;
-		}
-	}
+// do not use unordered map use ml
+int ask(int a,int b){
+    
+    cout << "? " << a<< " "<<b << endl;
+    cout.flush();
+    int x;
+    cin >> x;
+    assert(x!=-1);
+    // int x  = gcd(ansx+a,ansx+b);
+    // cout << x << endl;
+    return x;
 }
-int dp[MAXN];
-void testcase(int t){
-    int n;
+void tell(int x,int y){
+    cout << "! " << x << " " << y << endl;
+    cout.flush();
+    int z;
+    cin >> z;
+    assert(z!=-1);
+}
+int n;
+void testcase(){
     cin >> n;
-    cout << "Case #"<<t << ": " << dp[n] << endl;
+    int i=0,j=1;
+    rep(k,2,n){
+        int l=ask(i+1,k+1),r=ask(j+1,k+1);
+        if(l<r){i=k;}
+        else if(r<l){j=k;}
+    }
+    tell(i+1,j+1);
+
 }
 // driver code
 int32_t main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
-    freopen("input.in","r",stdin);
-    freopen("output.out","w",stdout);      
+    // freopen("input.in","r",stdin);
+    // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
+    while(T--) testcase();
 
-    sieve(MAXN);
-    dp[5] =2;
-    rep(i,6,MAXN){
-        if(is_composite[i] || is_composite[i-2]) dp[i] = dp[i-1];
-        else dp[i] = dp[i-2] +1;
-    }
-    rep(i,1,T+1){
-        testcase(i);
-    }
     return 0;
 }
