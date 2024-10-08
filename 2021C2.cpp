@@ -104,72 +104,95 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 998244353; // change me for god sake look at problem mod
+const ll MOD = 1e9+7; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"YA":"TIDAK");}
 // do not use unordered map use mll
-
-const int N = 2e5 + 5;
-long long fact[N];
-long long inv[N];
-long long finv[N];
-
-void pre() {
-    fact[0] = 1;
-    for (int i = 1; i <= N; i++) {
-        fact[i] = (fact[i-1]*i)%MOD;
-    }
-}
-
-long long fast_pow(long long a, long long b, long long m) {
-    a %= m;
-    long long res = 1;
-    while (b > 0) {
-        if (b & 1)
-            res = res * a % m;
-        a = a * a % m;
-        b >>= 1;
-    }
-    return res;
-}
 void testcase(){
-    int n;
-    cin >> n;
-    int left=n,right=n;
-    vi a(2*n);
-    rep(i,0,2*n){
+    int n,m,q;
+    cin >> n >> m >> q;
+    vi a(n);
+    vi ind(n+1);
+    rep(i,0,n){
         int x;
         cin >> x;
-        if(x>0 && x<=n) left--;
-        else if(x>=n) right--;
         a[i] = x;
+        ind[x] =i;
     }
-    int cnt = 0;
-    for(int i=0;i<2*n;i+=2){
-        cnt += (a[i]==0 && a[i^1]==0);
+    vi b(m);
+    tkv(b,m);
+    vector<set<int>> af(n);
+    rep(i,0,m){
+        af[ind[b[i]]].insert(i);
     }
-    int base= (((fact[left]))%MOD)*((fact[right])%MOD)%MOD;
-    debug(cnt,base);    
-    base = base*fast_pow(2,cnt,MOD)%MOD;
-
-    put(base);
-
+    set<int> falty;
+    auto getv=[&] (int i) {
+        int v = af[i].size() ? *af[i].begin() : m;
+        return v;  
+    };
+    rep(i,0,n-1){
+        int prev = getv(i);
+        int nxt = getv(i+1);
+        if(prev>nxt){
+            falty.insert(i);
+        }
+    }
+    debug(falty);
+    pyn(falty.size()==0);
+    rep(i,0,q){
+        int s,t;
+        cin >> s>> t;
+        s--;
+        if(b[s]!=t) {
+            int ot = b[s];
+            int it = ind[t];
+            int iot = ind[ot];
+            af[iot].erase(s);
+            af[it].insert(s);
+            int p1 = getv(ind[ot]);
+            int p2 = getv(ind[t]);
+            debug(t,ot,p1,p2,it,iot);
+            if(p2==s){
+                if(it-1>=0 ) {
+                    if(getv(it-1)>p2){
+                        falty.insert(it-1);
+                    }
+                }
+                
+                if(it+1<n && falty.count(it)){
+                    if(p2<=getv(it+1)) falty.erase(it);   
+                }
+            }
+            if(p1>s){
+                if(iot-1>=0 && falty.count(iot-1) ) { 
+                    if(p1>=getv(iot-1)) falty.erase(iot-1);   
+                }
+                if(iot+1<n) {
+                    if(getv(iot+1)<p1){
+                        falty.insert(iot);
+                    }
+                }
+            }
+        }
+        debug(falty);
+        pyn(falty.size()==0);
+        b[s] = t;
+    }
 }
 // driver code
 int32_t main()
 {
     ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
+	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
     cin>>T;
-    pre();
     while(T--) testcase();
 
     return 0;

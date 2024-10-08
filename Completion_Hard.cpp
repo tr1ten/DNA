@@ -140,19 +140,35 @@ long long fast_pow(long long a, long long b, long long m) {
 void testcase(){
     int n;
     cin >> n;
-    int left=n,right=n;
     vi a(2*n);
+    tkv(a,2*n);
+    vi av(2*n,1);
+    for(int i=0;i<2*n;i+=2){
+        if(a[i]==0 || a[i^1]==0) continue;
+        av[a[i]-1]=0;
+        av[a[i^1]-1]=0;
+    }
+    int total =count(all(av),1);
+    int boundary=0;
+    int lf = 0;
+    while (lf*2<total)
+    {
+        lf += av[boundary++];
+    }
+    
+    debug(boundary,av,total,lf);
+    int left=boundary,right=2*n-boundary;
     rep(i,0,2*n){
-        int x;
-        cin >> x;
-        if(x>0 && x<=n) left--;
-        else if(x>=n) right--;
-        a[i] = x;
+        int x= a[i];
+        if(x>0 && x<=boundary) left--;
+        else if(x>boundary) right--;
+        
     }
     int cnt = 0;
     for(int i=0;i<2*n;i+=2){
         cnt += (a[i]==0 && a[i^1]==0);
     }
+    debug(left,right,cnt);
     int base= (((fact[left]))%MOD)*((fact[right])%MOD)%MOD;
     debug(cnt,base);    
     base = base*fast_pow(2,cnt,MOD)%MOD;
