@@ -113,52 +113,27 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii adj;
 void testcase(){
-    int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
-    rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            if(s[j]=='1') {
-                adj[i].push_back(j);
-                ind[j]++;
-            }
-        }
+    int n,m;
+    string s,t;
+    cin >> n >> m;
+    cin >> s >> t;
+    if(s==t){
+        put(0);
+        return;
     }
-    vector<set<int>> ans(n);
-    rep(i,1,n+1){
-        ans[i-1].insert(i);
+    if(s[0]!=t[0]) {
+        put(-1);
+        return;
     }
-    queue<int>q;
-    rep(i,0,n){
-        if(ind[i]==0)q.push(i);
-    }
-    while (q.size())
-    {
-        int u= q.front();
-        q.pop();
-        trav(v,adj[u]){
-            ind[v]--;
-            ans[v].insert(all(ans[u]));
-            if(ind[v]==0) {
-                q.push(v);
-            }
-        }
-    }
-    rep(i,0,n){
-        cout << ans[i].size() << " ";
-        trav(x,ans[i]){
-            cout << x << " ";
-        }
-        cout << endl;
-    }
+    if(s.size() < t.size()) {swap(s,t);swap(n,m);}
+    int i=0;
+    while (i<t.size() && t[i]==s[i]) i++;
+    int j = 0;
+    while (m-j-1>=0 && t[m-j-1]==s[n-j-1]) j++;
+    if(i+j>=m) put(1)
+    else put(2)
     
-
 }
 // driver code
 int32_t main()

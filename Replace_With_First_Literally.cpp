@@ -113,52 +113,39 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii adj;
+int n,m;
+string s,t;
+const int N = 2e3 +5;
+int dp[N][N][2];
+int f(int i,int j,int last){
+    if(j==m) {
+        return i==n ? -last : 0; 
+    }
+    if(i==n){
+        return  INF;
+    }
+    if(dp[i][j][last]!=-1) return dp[i][j][last];
+    int res = INF;
+    if(i!=0){
+        res = f(i+1,j,0);
+    }
+    if(s[i]==t[j]){
+        res = min(res,f(i+1,j+1,1)+1-last);
+    }
+    return dp[i][j][last] = res;
+}
 void testcase(){
-    int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
+    cin >> n >> m;
+    cin >> s >> t;
     rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            if(s[j]=='1') {
-                adj[i].push_back(j);
-                ind[j]++;
+        rep(j,0,m){
+            rep(k,0,2){
+                dp[i][j][k] = -1;
             }
         }
     }
-    vector<set<int>> ans(n);
-    rep(i,1,n+1){
-        ans[i-1].insert(i);
-    }
-    queue<int>q;
-    rep(i,0,n){
-        if(ind[i]==0)q.push(i);
-    }
-    while (q.size())
-    {
-        int u= q.front();
-        q.pop();
-        trav(v,adj[u]){
-            ind[v]--;
-            ans[v].insert(all(ans[u]));
-            if(ind[v]==0) {
-                q.push(v);
-            }
-        }
-    }
-    rep(i,0,n){
-        cout << ans[i].size() << " ";
-        trav(x,ans[i]){
-            cout << x << " ";
-        }
-        cout << endl;
-    }
-    
-
+    int res = f(0,0,0);
+    put(res>=INF ? -1 : res);
 }
 // driver code
 int32_t main()

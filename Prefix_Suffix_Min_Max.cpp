@@ -113,52 +113,28 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii adj;
 void testcase(){
     int n;
     cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
+    vi b(n);
+    tkv(b,n);
+    if(n==1){
+        put(0);
+        return;
+    }
+    vi a(n);
+    a[0]=2*(1e6);
+    rep(i,1,n){
+        a[i] = b[i]-b[i-1];
+    }
+    pvc(a);
+    int sm  = 0;
+    int mx = -INF;
     rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            if(s[j]=='1') {
-                adj[i].push_back(j);
-                ind[j]++;
-            }
-        }
+        sm += a[i];
+        mx = max(mx,a[i]);
+        assert(b[i]==sm-mx);
     }
-    vector<set<int>> ans(n);
-    rep(i,1,n+1){
-        ans[i-1].insert(i);
-    }
-    queue<int>q;
-    rep(i,0,n){
-        if(ind[i]==0)q.push(i);
-    }
-    while (q.size())
-    {
-        int u= q.front();
-        q.pop();
-        trav(v,adj[u]){
-            ind[v]--;
-            ans[v].insert(all(ans[u]));
-            if(ind[v]==0) {
-                q.push(v);
-            }
-        }
-    }
-    rep(i,0,n){
-        cout << ans[i].size() << " ";
-        trav(x,ans[i]){
-            cout << x << " ";
-        }
-        cout << endl;
-    }
-    
-
 }
 // driver code
 int32_t main()

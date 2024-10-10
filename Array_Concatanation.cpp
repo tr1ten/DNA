@@ -113,52 +113,45 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-vii adj;
-void testcase(){
-    int n;
-    cin >> n;
-    adj.clear();
-    adj.resize(n);
-    vi ind(n);
-    rep(i,0,n){
-        string s;
-        cin >> s;
-        rep(j,0,n){
-            if(s[j]=='1') {
-                adj[i].push_back(j);
-                ind[j]++;
-            }
-        }
-    }
-    vector<set<int>> ans(n);
-    rep(i,1,n+1){
-        ans[i-1].insert(i);
-    }
-    queue<int>q;
-    rep(i,0,n){
-        if(ind[i]==0)q.push(i);
-    }
-    while (q.size())
-    {
-        int u= q.front();
-        q.pop();
-        trav(v,adj[u]){
-            ind[v]--;
-            ans[v].insert(all(ans[u]));
-            if(ind[v]==0) {
-                q.push(v);
-            }
-        }
-    }
-    rep(i,0,n){
-        cout << ans[i].size() << " ";
-        trav(x,ans[i]){
-            cout << x << " ";
-        }
-        cout << endl;
-    }
-    
 
+const int N = 1e6 + 5;
+long long fact[N];
+long long inv[N];
+long long finv[N];
+
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
+    }
+    inv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
+    }
+    finv[0] = finv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        finv[i] = (inv[i]*finv[i-1])%MOD;
+    }
+}
+
+long long nCk(int n,int k) {
+    if(n<k) return 0;
+    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
+}
+
+void testcase(){
+    int a,b;
+    cin >> a >> b;
+    int n = a+b;
+    int n2 =  (a+b)/2;
+    int e = (n2/2),o = (n2+1)/2;
+    int ans = 0;
+    for(int i=0;i<=b;i+=2){
+        int aa = (nCk(o,i/2)*(nCk(e,i/2)))%MOD;
+        ans += (aa*(nCk(n2,b-i)))%MOD;
+        ans %=MOD;
+    }
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -167,6 +160,7 @@ int32_t main()
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
+    pre();
     int T=1;
     cin>>T;
     while(T--) testcase();
