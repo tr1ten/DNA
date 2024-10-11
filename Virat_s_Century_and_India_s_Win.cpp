@@ -113,29 +113,48 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 155,B=64,W=11,X=105;
+int dp[N][B][W][X][3];
+int psum(int a,int b){
+    return (a+b)%MOD;
+}
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
+int f(int n,int b,int w,int x,int turn){
+    if(w==10){
+        return 0;
+    }
+    if(n<=0) {
+        return x>=100;
+    }
+    if(b==0) return 0;
+    // 1
+    int res= 0;
+        for(int i=1;i<=6;i++){
+            if(i==5) continue;
+            int nt = turn^(i&1)^((b-1)%6==0);
+        res = psum(res,f(n-i,b-1,w,x+(turn==2 ? 0 : i*turn),turn!=2 ? nt: turn));
+    }
+    int nt = turn^((b-1)%6==0);
+    res = psum(res,f(n,b-1,w+1,x,turn==1 ? 2 : nt));
+    return (res)%MOD;
+
+}
+
 void testcase(){
-    int n,k;
-    cin >>n>>k;
-    vi a(n);
-    tkv(a,n);
-    srv(a);
-    int mx = 0;
-    int mn = 0;
-    int cnt = 0;
-    debug(a);
-    for(int i=0;i<n;i+=1){
-        if(cnt==k-1) break;
-        mn +=a[i];
-        cnt++;
-    }
-    mn +=a[n-1-k];
-    cnt = 0;
-    for(int i=n-2;i>=0;i-=2){
-        mx +=a[i];
-        cnt++;
-        if(cnt==k) break;
-    }
-    put2(mn,mx);
+    int n,b,w,x;
+    cin >> n >> b >> w >> x;
+    int  res = f(n,b,w,x,1);
+    put(res%MOD);
 
 }
 // driver code

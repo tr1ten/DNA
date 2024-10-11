@@ -112,31 +112,84 @@ inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
+class HashedString {
+public:
+	static const long long M = 9;
+	static const long long B;
+    static vector<long long> ppow;
+    vector<long long> hashes;
+    ll mul(ll a, ll b) { return (ll)a * b; }
+	ll mod_mul(ll a, ll b) { return mul(a, b) % M; }
+    HashedString(string s) {
+        int n = s.length();
+        ppow = {1};
+        hashes = {0};
+
+        for (int i = 0; i < n; ++i) {
+            ppow.push_back(mod_mul(ppow.back(),B) );
+        }
+
+        for (int i = 0; i < n; ++i) {
+            hashes.push_back((mod_mul(hashes.back(), B) + (s[i] - '0' )) % M);
+        }
+    }
+
+    long long getHash(int i, int j) {
+        return (hashes[j + 1] - mod_mul(hashes[i], ppow[j - i + 1]) + M) % M;
+    }
+};
+mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
+const ll HashedString::B = 10;
+vector<long long> HashedString::ppow = {1};
+
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >>n>>k;
-    vi a(n);
-    tkv(a,n);
-    srv(a);
-    int mx = 0;
-    int mn = 0;
-    int cnt = 0;
-    debug(a);
-    for(int i=0;i<n;i+=1){
-        if(cnt==k-1) break;
-        mn +=a[i];
-        cnt++;
+    string s;
+    cin >> s;
+    int w,m;
+    cin >> w >> m;
+    int n =s.size();
+    vi ind(9,-1);
+    vi ind2(9,-1);
+    HashedString hs(s);
+    for(int i=w-1;i<n;i++){
+        int r = hs.getHash(i-w+1,i);
+        if(ind[r]==-1) ind[r] = i-w+1;
+        else if(ind2[r]==-1) ind2[r] = i-w+1;
     }
-    mn +=a[n-1-k];
-    cnt = 0;
-    for(int i=n-2;i>=0;i-=2){
-        mx +=a[i];
-        cnt++;
-        if(cnt==k) break;
+    debug(ind); 
+    rep(i,0,m){
+        int l,r,k;
+        cin >> l >> r >> k;
+        l--;r--;
+        int g = (hs.getHash(l,r));
+        pi res = {INF,INF};
+        rep(l1,0,9){
+            if(ind[l1]==-1) continue;
+            int l2 = (k-l1*g%9+9)%9;
+            if(ind[l2]!=-1){
+                pi rr = {ind[l1]+1,ind[l2]+1};
+                if(l1==l2){ 
+                    if(ind2[l2]!=-1) rr.ss = ind2[l2]+1;
+                    else rr = {INF,INF};
+                }
+                res = min(res,rr);
+            }
+        }
+        if(res.ff==INF) put2(-1,-1) 
+        else  put2(res.ff,res.ss);
     }
-    put2(mn,mx);
-
 }
 // driver code
 int32_t main()
