@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll MOD = 998244353; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,15 +113,63 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 405;
+const int N = 5005;
+int a[N];
+int dp1[2*N],dp2[2*N];
+int dp11[2*N];
+
+long long fast_pow(long long a, long long b, long long m) {
+a %= m;
+long long res = 1;
+while (b > 0) {
+    if (b & 1)
+        res = res * a % m;
+    a = a * a % m;
+    b >>= 1;
+}
+return res;
+}
+int n ;
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vector<string> mat(n);
-    rep(i,0,n){
-        cin >> mat[i];
+    cin >> n;
+    tkv(a,n);
+    sort(a,a+n);
+    if(n==1){
+        put(a[0]);
+        return;
     }
-    put(res);
+    dp2[0] = 1;
+    rep(i,1,n+1){
+        per(sm,1,N){
+            if(sm>=a[i-1] && sm<2*a[i-1]){
+                dp1[sm] +=(dp2[sm-a[i-1]]*a[i-1])%MOD;
+                dp11[sm] += (dp2[sm-a[i-1]]*((sm+1)/2))%MOD ;
+                dp1[sm] %=MOD;
+                dp11[sm] %=MOD;
+            }
+            if(sm-a[i-1]>=0)  dp2[sm] += dp2[sm-a[i-1]];
+            dp2[sm] %=MOD;
+        }
+    }
+    int a1 = 0,a2=0;
+    rep(i,1,2*N) {
+        a1 +=dp1[i],a2+=dp11[i];
+        a1 %=MOD,a2%=MOD;
+    }
+    int odd = 0;
+    int sm = 0;
+    int p2 = fast_pow(2,n-2,MOD);
+    rep(i,0,n){
+        odd |= a[i]&1;
+        sm += p2*a[i]%MOD;
+        sm %=MOD;
+    }
+    if(odd){
+        sm += p2;
+        sm %=MOD;
+    }
+    int ans = (a1 + (sm-a2+MOD)%MOD)%MOD;
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -131,7 +179,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
