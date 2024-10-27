@@ -145,7 +145,7 @@ void testcase(){
             int smm = i+j;
             int jj= smm-d;
             if(jj%2==0 && (jj/2)>=1 && (jj/2)<i) {res1++;
-             debug("aa",i,j,jj);
+                    debug("aa",i,j,jj);
             }
 
         }

@@ -126,7 +126,7 @@ void testcase(){
         if((c.size()==0 || c.back()!=b[i]) && cnt[b[i]]==0){
             c.push_back(b[i]);
             cnt[b[i]]++;
-        }
+        }       
     }
     rep(i,0,c.size()){
         if(c[i]!=a[i]) {

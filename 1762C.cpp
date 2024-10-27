@@ -120,7 +120,7 @@ void testcase(){
     string s;
     cin >> s;
     int ans = 0;
-    int i= 0;
+    int i= 0;       
     while (i<n)
     {
         char x=s[i];

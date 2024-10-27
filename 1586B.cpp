@@ -167,7 +167,7 @@ void testcase(){
         int a,b,c;
         cin >>a >> b >> c;
         a--;b--;c--;
-        if(ds.find(a)) ans.push_back({a,c});
+        if(ds.find(a)!=) ans.push_back({a,c});
         ds.connect(a,c);
     }
 

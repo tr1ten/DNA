@@ -133,7 +133,7 @@ void testcase(){
     rep(i,0,n){
         sm += a[i];
         mx = max(mx,a[i]);
-        assert(b[i]==sm-mx);
+        assert(b[i]==sm-mx);z   
     }
 }
 // driver code

@@ -114,17 +114,13 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi a(n);
-    tkv(a,n);   
-    srv(a);
-    if(k==1){
-        put(a[0] + 2*a[n-1] + a[n-2]);
+    int n;
+    cin >> n;
+    cout << "1" ;
+    rep(i,0,n-1){
+        cout <<"0";
     }
-    else{
-        put(a[n-1] + a[0] + a[n-2] + a[n-1-k]);
-    }
+    cout << endl;
 }
 // driver code
 int32_t main()
