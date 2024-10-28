@@ -113,20 +113,68 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 4e5 + 5;
+int dp[N];
+int a[N],b[N],pref[N];
+int n; // MAKE SURE TO INITIALIZE THIS TO SIZE OF ARRAY
+struct Segment{
+    ll sum=0;
+} segm[4*N]; // 0 index
+Segment combine(Segment left,Segment right){
+    Segment res;
+    res.sum = max(left.sum,right.sum);
+    return res;
+}
+
+// child- 2*x+1,2*x+2 (0 coz index)
+// add x to [l...r]
+void update(int node,int left,int right,int i,ll value){
+    if(left==i && right==i) {
+            segm[node].sum = value;
+        }
+    else{
+        int mid = (left+right)/2;
+        if(i<=mid) update(2*node+1,left,mid,i,value);
+        else update(2*node+2,mid+1,right,i,value);
+        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
+    }
+    
+}
+
+Segment query(int node,int left,int right,int l,int r){
+    if(left>=l && right<=r) {return segm[node];}
+    int mid = (left+right)/2;
+    Segment res;
+    if(l<=mid) res = combine(res,query(2*node+1,left,mid,l,r));
+    if(r>mid) res = combine(res,query(2*node+2,mid+1,right,l,r));
+
+    return res;
+}
+// everything is zero indexed
+void update(int i,ll x){
+    update(0,0,n-1,i,x);
+}
+Segment query(int l,int r){
+    return query(0,0,n-1,l,r);
+}
+
 void testcase(){
-    int n;
-    cin >> n;
-    vpi a(n);
+    cin >>n ;
+    tkv(a,n);
+    tkv(b,n);
+    vii adj(n);
+    rep(i,0,n) {update(i,0);}
     rep(i,0,n){
-        cin >> a[i].ff >> a[i].ss;
+        pref[i+1] = a[i] + pref[i];
+        adj[b[i]-1].push_back(i);
     }
-    sort(all(a),[&](pi &i,pi &j) {
-        return pi{min(i.ff,i.ss),max(i.ff,i.ss)} < pi{min(j.ff,j.ss),max(j.ff,j.ss)};
-    });
-    rep(i,0,n){
-        cout << a[i].ff << " " << a[i].ss << " ";
+    per(i,1,n+1){
+        dp[i] = max(pref[i],query(0,i-1).sum);
+        trav(j,adj[i-1]){
+            update(j,dp[i]-a[j]);
+        }
     }
-    cout << endl;
+    put(dp[1]);
 }
 // driver code
 int32_t main()

@@ -116,17 +116,32 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    vpi a(n);
-    rep(i,0,n){
-        cin >> a[i].ff >> a[i].ss;
+    map<int,vi> adj;
+    rep(i,1,n+1){
+        int x;
+        cin >> x;
+        adj[x+i-1].push_back(x+i-1+i-1);
     }
-    sort(all(a),[&](pi &i,pi &j) {
-        return pi{min(i.ff,i.ss),max(i.ff,i.ss)} < pi{min(j.ff,j.ss),max(j.ff,j.ss)};
-    });
-    rep(i,0,n){
-        cout << a[i].ff << " " << a[i].ss << " ";
+    int ans = 0;
+    set<int> vis;
+    deque<int> dq;
+    vis.insert(n);
+    dq.push_back(n);
+    while (dq.size())
+    {
+        int u = dq.front();
+        dq.pop_front();
+        ans = max(u,ans);
+        trav(v,adj[u]){
+            if(vis.count(v)==0){
+                vis.insert(v);
+                dq.push_back(v);
+            }
+        }
     }
-    cout << endl;
+    put(ans);
+    
+    
 }
 // driver code
 int32_t main()

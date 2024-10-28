@@ -114,19 +114,41 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n;
-    cin >> n;
-    vpi a(n);
+    int n,m;
+    cin >> n >> m;
+    vi a(n);
+    vi b(m);
+    tkv(a,n);
+    tkv(b,m);
+    vii dp(n+1,vi(m+1,INF));
+    vii dp2(n+1,vi(m+1,0));
+
+    rep(i,0,m+1) {dp[0][i] =0;dp2[0][i]=1;}
+    // dp2[0][0]=1;
+    vi pref{0};
     rep(i,0,n){
-        cin >> a[i].ff >> a[i].ss;
+        pref.push_back(pref.back() + a[i]);
     }
-    sort(all(a),[&](pi &i,pi &j) {
-        return pi{min(i.ff,i.ss),max(i.ff,i.ss)} < pi{min(j.ff,j.ss),max(j.ff,j.ss)};
-    });
-    rep(i,0,n){
-        cout << a[i].ff << " " << a[i].ss << " ";
+    vii dpref(n+1,vi(m+1,0));
+    rep(i,1,n+1){
+        rep(j,1,m+1){
+            dp[i][j] = dp[i][j-1];
+            dp2[i][j] = dp[i][j-1];
+            int pp = 0;
+            per(k,0,i){
+                pp +=a[k];
+                if(pp>b[j-1]) break;
+                int ns = m-j+dp[k][j];
+                if(ns<dp[i][j]) {
+                    dp[i][j] = ns;
+                    dp2[i][j] = dp2[k][j];
+                }
+                else if(ns==dp[i][j]) dp2[i][j] += dp2[k][j];
+            }
+        }
     }
-    cout << endl;
+    if(dp[n][m]==INF) put(-1)
+    else put2(dp[n][m],dp2[n][m]);
 }
 // driver code
 int32_t main()
