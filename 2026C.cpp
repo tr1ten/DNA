@@ -114,42 +114,19 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m;
-    cin >> n >> m;
-    vi a(n);
-    vi b(m);
-    tkv(a,n);
-    tkv(b,m);
-    vii dp(n+1,vi(m+1,INF));
-    rep(i,0,m+1) dp[0][i] =0 ;
-    vi pref{0};
-    rep(i,0,n){
-        pref.push_back(pref.back() + a[i]);
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int res = n*(n+1)/2;
+    int cnt = 0;
+    per(i,0,n){
+        if(s[i]=='0') {cnt = max(0LL,cnt-1);continue;}
+        cnt++;
+        if(i<cnt) break;
+        res -= (i+1);
     }
-    rep(i,1,n+1){
-        rep(j,1,m+1){
-            dp[i][j] = dp[i][j-1];
-            int kk = -1;
-            int lo = 0,hi=i-1;
-            while (lo<=hi)
-            {
-                int mid = (lo+hi)/2;
-                if(pref[i] - pref[mid] <= b[j-1]){
-                    kk =mid;
-                    hi = mid-1;
-                }
-                else lo = mid+1;
-            }
-            
-            per(k,0,i){
-                pref += a[k];
-                if(pref>b[j-1]) break;
-                kk = k;
-            }
-            if(kk!=-1) dp[i][j] = min(dp[i][j],m-j+dp[i-(i-kk)][j]);
-        }
-    }
-    put(dp[n][m]==INF ? -1 : dp[n][m]);
+    put(res);
 }
 // driver code
 int32_t main()

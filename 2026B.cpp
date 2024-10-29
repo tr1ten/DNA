@@ -114,42 +114,43 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m;
-    cin >> n >> m;
+    int n;
+    cin >> n;
     vi a(n);
-    vi b(m);
     tkv(a,n);
-    tkv(b,m);
-    vii dp(n+1,vi(m+1,INF));
-    rep(i,0,m+1) dp[0][i] =0 ;
-    vi pref{0};
-    rep(i,0,n){
-        pref.push_back(pref.back() + a[i]);
-    }
-    rep(i,1,n+1){
-        rep(j,1,m+1){
-            dp[i][j] = dp[i][j-1];
-            int kk = -1;
-            int lo = 0,hi=i-1;
-            while (lo<=hi)
-            {
-                int mid = (lo+hi)/2;
-                if(pref[i] - pref[mid] <= b[j-1]){
-                    kk =mid;
-                    hi = mid-1;
-                }
-                else lo = mid+1;
-            }
-            
-            per(k,0,i){
-                pref += a[k];
-                if(pref>b[j-1]) break;
-                kk = k;
-            }
-            if(kk!=-1) dp[i][j] = min(dp[i][j],m-j+dp[i-(i-kk)][j]);
+    srv(a);
+    if(n%2){
+        vi pref(n+1),suff(n+1);
+        int res = 0;
+        for(int i=1;i<n;i+=2){
+            pref[i] = pref[i-1];
+            res = max(res,a[i]-a[i-1]);
+            pref[i+1] = res;
+        }   
+        pref.back() = pref[n-1];
+         res = 0;
+        for(int i=n-2;i>=0;i-=2){
+            suff[i+1] = suff[i+2];
+            res = max(res,a[i+1]-a[i]);
+            suff[i] = res;
+        }  
+        debug(pref,suff);
+
+        int ans = INF; 
+        rep(i,1,n+1){
+            ans = min(ans,max({pref[i],suff[i],1LL}) );
         }
+        put(ans);
+        
+
     }
-    put(dp[n][m]==INF ? -1 : dp[n][m]);
+    else {
+        int res = 0;
+        for(int i=1;i<n;i+=2){
+            res = max(res,a[i]-a[i-1]);
+        }
+        put(res);
+    }
 }
 // driver code
 int32_t main()

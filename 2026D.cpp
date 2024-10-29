@@ -114,42 +114,77 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m;
-    cin >> n >> m;
+    int n;
+    cin >> n;
     vi a(n);
-    vi b(m);
     tkv(a,n);
-    tkv(b,m);
-    vii dp(n+1,vi(m+1,INF));
-    rep(i,0,m+1) dp[0][i] =0 ;
-    vi pref{0};
+    vi p1(n+1),p2(n+2),p3(n+2);
     rep(i,0,n){
-        pref.push_back(pref.back() + a[i]);
+        p1[i+1] += p1[i] + a[i];
+    }
+    
+    p2[0] = 0;
+    rep(i,0,n){
+        p2[1] += a[i]*(n-i);
+    }
+    rep(i,2,n+1){
+        p2[i] = p2[i-1] - (a[i-2]*(n-(i-2)));
     }
     rep(i,1,n+1){
-        rep(j,1,m+1){
-            dp[i][j] = dp[i][j-1];
-            int kk = -1;
-            int lo = 0,hi=i-1;
-            while (lo<=hi)
-            {
-                int mid = (lo+hi)/2;
-                if(pref[i] - pref[mid] <= b[j-1]){
-                    kk =mid;
-                    hi = mid-1;
-                }
-                else lo = mid+1;
-            }
-            
-            per(k,0,i){
-                pref += a[k];
-                if(pref>b[j-1]) break;
-                kk = k;
-            }
-            if(kk!=-1) dp[i][j] = min(dp[i][j],m-j+dp[i-(i-kk)][j]);
-        }
+        p3[i] += p3[i-1] + p2[i];
     }
-    put(dp[n][m]==INF ? -1 : dp[n][m]);
+    auto get_sm = [&](int i,int x) {
+        if(i<0 || x<=0) return 0LL;
+        int sm =  p2[i+1];
+        int ex1 = p2[i+x+1] ;
+        int ex2 = (n-(i+x))*(p1[i+x]-p1[i]);
+        debug(i,x,sm,ex1,ex2);
+        return sm-ex1-ex2;
+    };
+    auto get_cnt = [&](int mid) {
+        if(mid<0) return 0LL;
+        return (mid+1)*n - (mid*(mid+1))/2;
+    };
+    
+    debug(a,p1,p2,p3);
+    int q;
+    cin >> q;
+    rep(o,0,q){
+        int l,r;
+        cin >> l >> r;
+        int lo=0,hi = n-1;
+        int i=0;
+        while (lo<=hi)
+        {
+            int mid = (lo+hi)/2;
+            if(get_cnt(mid) >= l){
+                i = mid;
+                hi = mid-1;
+            }
+            else lo = mid+1;
+        }
+        
+        lo=0,hi = n-1;
+        int j=0;
+        while (lo<=hi)
+        {
+            int mid = (lo+hi)/2;
+            if(get_cnt(mid) >= r){
+                j = mid;
+                hi = mid-1;
+            }
+            else lo = mid+1;
+        }
+        int res = p3[j+1]-p3[i] ;
+        int jrm = p2[j+1] - get_sm(j,n-j-(get_cnt(j)-r));
+        int irm = get_sm(i,l-get_cnt(i-1)-1);
+        // debug(i,j,res,jrm,irm);
+        put(res-irm-jrm);
+        
+    }
+    
+    
+    
 }
 // driver code
 int32_t main()
@@ -159,7 +194,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
