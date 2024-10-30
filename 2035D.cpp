@@ -113,32 +113,53 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 1e5+5;
-vector<vector<int>> divs(N+1);
-// find prime <sqrt(MAX)
-// O(LlogL)
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
 void testcase(){
     int n;
     cin >> n;
-    auto check = [&](int k){
-        if(k<=1) return false;
-        if(k*(k+1)>2*n) return false;
-        return n%k == ((k*(k+1))/2)%k;
+    vi a(n);
+    tkv(a,n);
+    vector<pi> stk;
+    auto less_eq = [&] (pi i,pi j) {
+        while(j.second &&  j.first < i.first){
+            j.first *=2;
+            j.second -=1;
+        }
+        return i.first <= j.first;
     };
-    int m = n;
-    int m2 = 1;
-    while (m%2==0)
-    {
-        m /=2;
-        m2 *=2;
+    int ans = 0;
+    rep(i,0,n){ 
+        int x = a[i];
+        pi par = {x,0};
+        while (x%2==0)
+        {
+            x >>=1;
+            par.second++;
+        }
+        par.first = x;
+        while (stk.size() && less_eq(stk.back(),par))
+        {
+            ans = (ans-(stk.back().first*fast_pow(2,stk.back().second,MOD))%MOD + MOD)%MOD;
+            ans += stk.back().first;
+            ans %=MOD;
+            par.second += stk.back().second;
+            stk.pop_back();
+        }
+        ans = (ans+(par.first*fast_pow(2,par.second,MOD)%MOD) )%MOD;
+        stk.pb(par);
+        cout << ans << " ";
     }
-    m2 *=2;
-    if(check(min(m,m2))) {
-        put(min(m,m2));
-        return;
-    }
-    
-    put(-1);
+    cout << endl;
 }
 // driver code
 int32_t main()

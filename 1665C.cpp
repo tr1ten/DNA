@@ -34,7 +34,7 @@ int main() {
     }
 
     vi vec = {1}; // for initial infection spread 
-    for (int i = 1; i <= n; ++i) {
+    for (int i = 1; i <= m; ++i) {
         if (classroom[i]) vec.push_back(classroom[i]);
     }
 

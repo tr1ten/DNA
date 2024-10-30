@@ -105,7 +105,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e17+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,32 +113,55 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 1e5+5;
-vector<vector<int>> divs(N+1);
-// find prime <sqrt(MAX)
-// O(LlogL)
 void testcase(){
-    int n;
-    cin >> n;
-    auto check = [&](int k){
-        if(k<=1) return false;
-        if(k*(k+1)>2*n) return false;
-        return n%k == ((k*(k+1))/2)%k;
+    int x,y,z,k;
+    cin >> x >> y >> z >> k;
+    auto f = [&](int a, int b) {
+        int c = min(b,a/k);
+        int damage = (c*(c+1)/2*k + a*(b-c));
+        debug(a,b,damage);
+        return damage>=z;
     };
-    int m = n;
-    int m2 = 1;
-    while (m%2==0)
-    {
-        m /=2;
-        m2 *=2;
+    int ans = INF;
+    int i = 1;
+    int sqz =sqrt(z);
+    int a = 1;
+    do {
+        int lo=1,hi=z;
+        int perf = -1;
+        while (lo<=hi)
+        {
+            int b = (lo+hi)/2;
+            if(f(a,b)){
+                perf = b;
+                hi = b-1;
+            }
+            else lo = b+1;
+        }
+        if (perf!=-1) ans =min(a*x + perf*y,ans);
+        a++;
     }
-    m2 *=2;
-    if(check(min(m,m2))) {
-        put(min(m,m2));
-        return;
+    while(a<=2*sqz);
+    int b = 1;
+    do {
+        int lo=1,hi=z;
+        int pa = -1;
+        while (lo<=hi)
+        {
+            int a = (lo+hi)/2;
+            if(f(a,b)){
+                pa = a;
+                hi = a-1;
+            }
+            else lo = a+1;
+        }
+        if(pa!=-1) ans = min(ans,pa*x + b*y);
+        debug(pa,b,ans);
+
+        b++;
     }
-    
-    put(-1);
+    while(b<=2*sqz);
+    put(ans);
 }
 // driver code
 int32_t main()

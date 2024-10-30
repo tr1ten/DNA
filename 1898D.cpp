@@ -113,32 +113,20 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 1e5+5;
-vector<vector<int>> divs(N+1);
-// find prime <sqrt(MAX)
-// O(LlogL)
 void testcase(){
     int n;
     cin >> n;
-    auto check = [&](int k){
-        if(k<=1) return false;
-        if(k*(k+1)>2*n) return false;
-        return n%k == ((k*(k+1))/2)%k;
-    };
-    int m = n;
-    int m2 = 1;
-    while (m%2==0)
-    {
-        m /=2;
-        m2 *=2;
+    vi a(n),b(n);
+    tkv(a,n);tkv(b,n);
+    int end_min=INF,start_mx =-INF;
+    int ans = 0;
+    rep(i,0,n){
+        end_min =min(end_min, max(a[i],b[i]));
+        start_mx = max(start_mx,min(a[i],b[i]));
+        ans += abs(a[i]-b[i]);
     }
-    m2 *=2;
-    if(check(min(m,m2))) {
-        put(min(m,m2));
-        return;
-    }
-    
-    put(-1);
+    put(ans + max(0LL,start_mx-end_min)*2);
+
 }
 // driver code
 int32_t main()

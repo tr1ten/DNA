@@ -113,32 +113,30 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 1e5+5;
-vector<vector<int>> divs(N+1);
-// find prime <sqrt(MAX)
-// O(LlogL)
 void testcase(){
-    int n;
-    cin >> n;
-    auto check = [&](int k){
-        if(k<=1) return false;
-        if(k*(k+1)>2*n) return false;
-        return n%k == ((k*(k+1))/2)%k;
-    };
-    int m = n;
-    int m2 = 1;
-    while (m%2==0)
-    {
-        m /=2;
-        m2 *=2;
+    int n,d;
+    cin >> n >> d;
+    vi a(n);
+    tkv(a,n);
+    vi dist(n,INF);
+    deque<int> dq;
+    rep(i,0,n){
+        if(a[i]==0) {
+            dq.push_back(i);
+            dist[i] = 0;
+        }
     }
-    m2 *=2;
-    if(check(min(m,m2))) {
-        put(min(m,m2));
-        return;
+    while(dq.size()){
+        int u = dq.front();
+        dq.pop_front();
+        if(dist[(u+d)%n]>dist[u]+1 ){
+            dist[(u+d)%n] = dist[u]+1;
+            dq.push_back((u+d)%n);
+        }
     }
-    
-    put(-1);
+    int ans = *max_element(all(dist));
+    if(ans==INF) put(-1)
+    else put(ans);
 }
 // driver code
 int32_t main()
