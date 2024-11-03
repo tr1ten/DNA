@@ -1,41 +1,26 @@
-from collections import *
-def solve(nxt,k): # assume zero index
-    if k==1:
-        for i in range(len(nxt)): 
-            if nxt[i]!=i+1: return False
-    nxt = [x-1 for x in nxt]
-    n = len(nxt)
-    cycle = [-1]*n
-    for i in range(n):
-        if(cycle[i]!=-1): continue
-        path =[i]
-        cycle[i] = -2
-        while cycle[nxt[path[-1]]]==-1:
-            path.append(nxt[path[-1]])
-            cycle[path[-1]] = -2 # -2 processing
-        last = path[-1]
-        if cycle[nxt[last]]!=-2: # if part of chain
-            for v in path[::-1]: 
-                cycle[v] = cycle[nxt[last]]
-            continue
-        cyc = False
-        sz = 0
-        for v in path:
-            cyc = cyc | (nxt[last]==v)
-            if cyc: sz +=1
-        if cyc and sz!=k: return False
-    return True
+from functools import *
+
+@lru_cache(maxsize=10**5)
+def rv(n, x):
+    if n == 0: return 0
+    ans = float('inf')
+    for t in range(min(4, x + 1, n + 1)):
+        ans = min(ans, (n - t) % 4 + rv((n - t) // 4, (x - t) // 4))
+    return ans
 
 
-import sys
+def solve(n, x):
+    n, d = divmod(n, 2)
+    ans = float('inf')
+    if d == 0: ans = min(ans, rv(n, 0))
+    if x >= d: ans = min(ans, rv(n, (x - d) // 2) + 1)
+    return ans
 
 
-# input
-t = int(sys.stdin.readline())
-# solve 
-# input processing
-for _ in range(t):
-    n,k = map(int,input().split())
-    A = list(map(int,input().split()))
-    if(solve(A,k)): print("YES")
-    else: print("NO")
+def main():
+    for cas in range(int(input())):
+        ans = solve(*map(int, input().split()))
+        assert ans >= 0
+        print(ans if ans < float('inf') else -1)
+
+if __name__ == '__main__': main()
