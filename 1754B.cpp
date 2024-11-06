@@ -113,46 +113,25 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+
+vi f(vi &a){
+    vi ev,od;
+    rep(i,0,a.size()){
+        if(i%2) od.push_back(a[i]);
+        else ev.pb(a[i]);
+    }
+    vi a = f(ev);
+    vi b= f(od);
+    a.insert(a.end(),all(b));
+    return a;
+}
 void testcase(){
-    int n,x;
-    cin >> n >> x;
-    if(n%2 && x==0){
-        put(-1);
-        return;
-    }
-    int ans =0;
-    per(i,1,30){
-        int mask = 1LL<<i;
-        if(n<=x) break;
-        if(n&mask) {
-
-            if(mask>x){
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-            else {
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-
-        }
-    }
-    put(ans+(n>0));
+    int n;
+    cin >> n;
+    vi inds(n,0);
+    iota(all(inds),1);
     
+
 }
 // driver code
 int32_t main()

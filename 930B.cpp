@@ -114,44 +114,33 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,x;
-    cin >> n >> x;
-    if(n%2 && x==0){
-        put(-1);
-        return;
-    }
-    int ans =0;
-    per(i,1,30){
-        int mask = 1LL<<i;
-        if(n<=x) break;
-        if(n&mask) {
-
-            if(mask>x){
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-            else {
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-
+    string s;
+    cin >> s;
+    int n = s.size();
+    s +=s;
+    vector<vector<vector<int>>> masks(26,vii(n,vi(26)));
+    mll cnt;
+    rep(i,0,n){
+        int c = s[i]-'a';
+        rep(j,i,i+n){
+            masks[c][j-i][(s[j]-'a')]++;
         }
+        cnt[c]++;
     }
-    put(ans+(n>0));
+    int num = 0;
+    rep(i,0,26){
+        int mxc = 0;
+        trav(x,masks[i]) {
+            int cc = 0;
+            rep(j,0,26){
+                cc += (x[j]==1);
+            }
+            mxc = max(mxc,cc);
+        }
+        num +=mxc;
+    }
+    cout << fixed << setprecision(15) << ((double)num/(double)n) << endl;
+
     
 }
 // driver code
@@ -162,7 +151,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

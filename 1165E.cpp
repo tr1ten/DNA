@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll MOD = 998244353; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -114,45 +114,25 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,x;
-    cin >> n >> x;
-    if(n%2 && x==0){
-        put(-1);
-        return;
+    int n;
+    cin >> n;
+    vi a(n);
+    vi b(n);
+    tkv(a,n);tkv(b,n);
+    srv(b);
+    reverse(all(b));
+    vii inds(n);
+    rep(i,0,n){
+        inds[i] = {a[i]*(i+1)*(n-i),a[i],i};
     }
-    int ans =0;
-    per(i,1,30){
-        int mask = 1LL<<i;
-        if(n<=x) break;
-        if(n&mask) {
-
-            if(mask>x){
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-            else {
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-
-        }
+    srv(inds);
+    int res = 0;
+    rep(i,0,n){
+        res += ((a[inds[i][2]]*b[i]%MOD)*((inds[i][2]+1)*(n-inds[i][2])%MOD))%MOD;
+        res %=MOD;
     }
-    put(ans+(n>0));
-    
+    put(res);
+
 }
 // driver code
 int32_t main()
@@ -162,7 +142,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

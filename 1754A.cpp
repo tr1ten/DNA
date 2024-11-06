@@ -111,49 +111,20 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
 void testcase(){
-    int n,x;
-    cin >> n >> x;
-    if(n%2 && x==0){
-        put(-1);
-        return;
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    int pref= 0 ;
+    rep(i,0,n){
+        pref =max(0LL,pref+(s[i]=='Q' ? 1 : -1));
     }
-    int ans =0;
-    per(i,1,30){
-        int mask = 1LL<<i;
-        if(n<=x) break;
-        if(n&mask) {
-
-            if(mask>x){
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-            else {
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-
-        }
-    }
-    put(ans+(n>0));
-    
+    pyn(pref<=0);
 }
+
 // driver code
 int32_t main()
 {

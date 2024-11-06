@@ -44,7 +44,6 @@ struct custom_hash {
 // ht<int, null_type> g;
 
 typedef long long ll; 
-typedef unsigned long long ull; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
 typedef pair<ll,ll> pi;
@@ -52,9 +51,6 @@ typedef vector<pi> vpi;
 typedef unordered_map<ll,ll,custom_hash> mll;
 #define pb push_back
 #define mp make_pair
-#define ss second
-#define ff first
-#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -78,6 +74,7 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define timed(x) {auto start = chrono::steady_clock::now(); x; auto end = chrono::steady_clock::now(); auto diff = end - start; cout << chrono::duration <double, milli> (diff).count() << " ms" << endl;}
 
 
+void __print(int x) {cerr << x;}
 void __print(long x) {cerr << x;}
 void __print(long long x) {cerr << x;}
 void __print(unsigned x) {cerr << x;}
@@ -105,7 +102,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const ll INF = 1e10+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -114,55 +111,30 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,x;
-    cin >> n >> x;
-    if(n%2 && x==0){
-        put(-1);
-        return;
-    }
-    int ans =0;
-    per(i,1,30){
-        int mask = 1LL<<i;
-        if(n<=x) break;
-        if(n&mask) {
-
-            if(mask>x){
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    rep(i,0,n){
+        long double res = 1;
+        rep(j,0,n){
+            if(j!=i){
+                res += a[j]*1.0/(1.0*(a[i] + a[j]));
             }
-            else {
-                if(i%2) {ans++;n -= mask;}
-                else {
-                    ans++;
-                    n -= mask/2;
-                    if(n<=x) break;
-                    n -= mask/2;
-                    ans++;
-
-                }
-            }
-
         }
+        cout << setprecision(9) << fixed << res << " ";
     }
-    put(ans+(n>0));
-    
+    cout<< endl;
 }
 // driver code
-int32_t main()
+int main()
 {
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;
