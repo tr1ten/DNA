@@ -111,29 +111,36 @@ inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
 inline int pc(ll x) {return  __builtin_popcount(x);} 
 inline int hset(ll x) {return __lg(x);}
-void pyn(int x) {put(x?"YES":"NO");}
+void pyn(int x) {put(x?"Yes":"No");}
 // do not use unordered map use mll
-
 void testcase(){
-    int n;
-    cin >> n;
-    vi a;
-    int jump = n/2;
-    vi taken(n+1);
-    rep(i,1,n+1){
-        if(taken[i]) continue;
-        a.push_back(i);
-        taken[a.back()] = 1;
-        if (i+jump<=n)
-        {
-            a.pop_back();
-            a.push_back(i+jump);
-            taken[a.back()] = 1;
-            a.push_back(i);
-        }
+    int n,x;
+    cin >> n >> x;
+    vi a(n);
+    tkv(a,n);
+    map<int,int> cnt;
+    rep(i,0,n){
+        cnt[x-a[i]]++;
     }
-    pvc(a);
-    
+    auto itr = cnt.rbegin();
+    while(itr!=cnt.rend()){
+        pi z =*itr;
+        debug(z);
+        if(z.first==0){
+            pyn(1);return;
+        }
+        int y = z.first;
+        if((z.second%(x-(z.first-1)))==0) {
+            cnt[z.first-1] += z.second/(x-(z.first-1));
+        }
+        else {
+            pyn(0);
+            return;
+        }
+        itr++;
+
+    }
+
 
 }
 // driver code
@@ -144,7 +151,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

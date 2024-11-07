@@ -113,29 +113,47 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
 void testcase(){
     int n;
     cin >> n;
-    vi a;
-    int jump = n/2;
-    vi taken(n+1);
-    rep(i,1,n+1){
-        if(taken[i]) continue;
-        a.push_back(i);
-        taken[a.back()] = 1;
-        if (i+jump<=n)
+    vi a(n);
+    tkv(a,n);
+    int i = 0;
+    int cost = 0;
+    vpi res;
+    while (i<n)
+    {
+        if(a[i]==0){ res.pb({i+1,i+1});i++; continue;}
+        int j = i+1;
+        while (j<n && a[j]==0)
         {
-            a.pop_back();
-            a.push_back(i+jump);
-            taken[a.back()] = 1;
-            a.push_back(i);
+            j++;
         }
-    }
-    pvc(a);
-    
+        if(j==n){
+            put(-1);return;
+        }
+        int len = j-i+1;
+        int c = a[i] + (len%2 ? 1 : -1)*a[j];
+        if(c!=0) {
+            if(len%2==0){
+                res.pb({i+1,j});
+                res.pb({j+1,j+1});
+            }
+            else {
+                res.pb({i+1,i+1});
+                res.pb({i+2,j+1});
+            }
+        }
+        else res.pb({i+1,j+1});
+        i = j+1;
 
+    }
+    put(res.size());
+    trav(x,res){
+        put2(x.ff,x.ss);
+    }
 }
+
 // driver code
 int32_t main()
 {

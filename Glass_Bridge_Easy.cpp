@@ -113,28 +113,59 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+const int N = 5*(1e5) + 5;
+
+long long fact[N];
+long long inv[N];
+long long finv[N];
+
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
+    }
+    inv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
+    }
+    finv[0] = finv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        finv[i] = (inv[i]*finv[i-1])%MOD;
+    }
+}
+
+long long nCk(int n,int k) {
+    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
+}
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
 
 void testcase(){
-    int n;
-    cin >> n;
-    vi a;
-    int jump = n/2;
-    vi taken(n+1);
-    rep(i,1,n+1){
-        if(taken[i]) continue;
-        a.push_back(i);
-        taken[a.back()] = 1;
-        if (i+jump<=n)
-        {
-            a.pop_back();
-            a.push_back(i+jump);
-            taken[a.back()] = 1;
-            a.push_back(i);
+    int n,m;
+    cin >> n >> m;
+    int p = 1;
+    int pp = 0;
+    rep(i,1,m+1){
+        p *=2;
+        p %=MOD; 
+        if(n>i){
+            cout << 0 << " ";
+            continue;
         }
+        int ans = (pp + (nCk(i-1,n-1))*fast_pow(p,MOD-2,MOD)%MOD)%MOD;
+        cout << (ans) << " ";
+        pp = ans;
     }
-    pvc(a);
-    
-
+    cout << endl;
 }
 // driver code
 int32_t main()
@@ -144,6 +175,8 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    pre();
+
     cin>>T;
     while(T--) testcase();
 

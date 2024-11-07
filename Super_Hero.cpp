@@ -113,28 +113,41 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
-void testcase(){
-    int n;
-    cin >> n;
-    vi a;
-    int jump = n/2;
-    vi taken(n+1);
-    rep(i,1,n+1){
-        if(taken[i]) continue;
-        a.push_back(i);
-        taken[a.back()] = 1;
-        if (i+jump<=n)
-        {
-            a.pop_back();
-            a.push_back(i+jump);
-            taken[a.back()] = 1;
-            a.push_back(i);
+const int N = 1e6 + 5;
+int sieve[N+1];
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    sieve[0] = 1;
+    sieve[1] = 1;
+    for(int x=2;x<=N;x++){
+        if(sieve[x]!=0) continue; 
+        sieve[x] = x;
+        for(int u=2*x;u<=N;u +=x){
+            sieve[u] = x;
         }
     }
-    pvc(a);
-    
+}
 
+mll factors(int x){
+    mll res;
+    while(x>1){
+        int f = sieve[x];
+        while(x%f==0) {x/=f;res[f]++;}
+    }
+    return res;
+}
+
+
+void testcase(){
+    int n,k;
+    cin >> n >> k;
+    int ans = 0;
+    trav(x,factors(n)) {
+        ans +=x.second;
+    }
+    ans += hset(k);
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -144,6 +157,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    preprocess();
     cin>>T;
     while(T--) testcase();
 

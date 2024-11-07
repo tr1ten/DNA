@@ -113,28 +113,52 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-
 void testcase(){
-    int n;
-    cin >> n;
-    vi a;
-    int jump = n/2;
-    vi taken(n+1);
-    rep(i,1,n+1){
-        if(taken[i]) continue;
-        a.push_back(i);
-        taken[a.back()] = 1;
-        if (i+jump<=n)
-        {
-            a.pop_back();
-            a.push_back(i+jump);
-            taken[a.back()] = 1;
-            a.push_back(i);
+    int n,m,k;
+    cin >> n >> m >> k;
+    string s;
+    cin >> s;
+    int z = min(n,m);
+    int x = 0,y=0;
+    int cx=0,cy=0;
+    rep(i,0,min(z,k)){
+        if(s[i]=='A'){
+            x += n+m-1-2*cx;
+            y -=2*cy;
+            cx +=1;
+        }
+        else{
+            y += n+m-1-2*cy;
+            x -=2*cx;
+            cy +=1;
         }
     }
-    pvc(a);
-    
-
+    if(z>k){
+        debug(x,y,cx,cy);
+        int p = z/k;
+        x = p*x - cx*k*(p*(p-1)); 
+        y = p*y - cy*k*(p*(p-1)); 
+        cx = p*cx;
+        cy = p*cy;
+        rep(i,0,z%k){
+            if(s[i]=='A'){
+                x += n+m-1-2*cx;
+                y -=2*cy;
+                cx +=1;
+            }
+            else{
+                y += n+m-1-2*cy;
+                x -=2*cx;
+                cy +=1;
+            }
+        }
+    }
+    debug(x,y);
+    debug(x,z,s[(z-1)%k]);
+    assert(x+y==n*m);
+    if(x>y) put("Alice")
+    else if(x==y) put("Draw")
+    else put("Bob")
 }
 // driver code
 int32_t main()
