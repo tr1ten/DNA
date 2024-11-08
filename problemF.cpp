@@ -44,6 +44,7 @@ struct custom_hash {
 // ht<int, null_type> g;
 
 typedef long long ll; 
+typedef long double dll; 
 typedef unsigned long long ull; 
 typedef vector<ll> vi;
 typedef vector<vi> vii;
@@ -105,7 +106,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define debug(x...)
 #endif
 const ll MOD = 1e9+7; // change me for god sake look at problem mod
-const ll INF = 1e16+5;
+const dll INF = 1e17+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
 inline int clz(ll x) {return __builtin_clzll(x);}
@@ -113,30 +114,34 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-int divisors(long long x){
-    vector<long long> cur{x};
-      for(int j=2;j*j<=x;j++)
-		{		
-			if(x%j==0)
-			{
-				cur.push_back(j);
-				if(j != x/j)
-					cur.push_back(x/j);
-            }
-        }
-    return *min_element(all(cur));
-}
+vector<dll> ans;
+void solve(dll a,dll b,dll c,dll i,dll X){
+    dll D=b*b-4*a*c;
+    debug(a,b,c,D);
+    if(D<0) return;
+    dll sD = sqrtl((dll)D);
+    dll x1 = (dll)(-b+sD)/((dll)2*a);
+    dll x2 = (dll)(-b-sD)/((dll)2*a);
+    vector<dll> vd = {x1,x2};
+    for(auto x:vd ){
+        if(x>=0) ans = min(ans,{x,X,i} );
+    }
+}   
 void testcase(){
+    dll a,b,v1,v2;
+    cin >> a >> b >> v1 >> v2;
+    ans = {INF,-1,-1};
     int n;
     cin >> n;
-    int h = hset(n);
-    int rs = (1<<(h+1)) -1;
-    if(rs!=n){
-        put(rs);
-        return;
+    rep(i,0,n){
+        dll x,y;
+        cin >> x >> y;
+        dll A = v1*v2;
+        dll B = v1*(y-b)+v2*(a-x);
+        dll C= a*y+x*b-a*b;
+        solve(A,B,C,i+1,x);
     }
-    put(n/divisors(n));
-    return;
+    put(ans[2]);
 }
 // driver code
 int32_t main()

@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll MOD = 998244353; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,43 +113,36 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+long long fast_pow(long long a, long long b, long long m) {
+    a %= m;
+    long long res = 1;
+    while (b > 0) {
+        if (b & 1)
+            res = res * a % m;
+        a = a * a % m;
+        b >>= 1;
+    }
+    return res;
+}
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    if(s[0]==s[n-1]){
-        put(0);
-        return;
+    vi a(n);
+    tkv(a,n);
+    int c = count(all(a),1);
+    int z = 0;
+    rep(i,n-c,n){
+        z += a[i]==0;
     }
-    int l=0,r=0;
-    rep(i,0,n){
-        if(s[i]=='1') {
-            l++;
-        }
-        else break;
+    vi dp(z+1,0);
+    int inv = fast_pow(n*(n-1)/2,MOD-2,MOD);
+    rep(i,1,z+1){
+        int p = ((i*i)%MOD)*inv%MOD;
+        dp[i] = ((p*dp[i-1]+1)%MOD)*fast_pow(p,MOD-2,MOD)%MOD;
     }
-    per(i,0,n){
-        if(s[i]=='1'){
-            r++;
-        }
-        else break;
-    }
-    int z= 0;
-    if(s[n-1]=='1'){
-        rep(i,1,n){
-            if(s[i]=='1') z++;
-            else break;
-        }
-    }
-    else {
-        per(i,0,n-1){
-            if(s[i]=='1') z++;
-            else break;
-        }
-    }
+    debug(z,dp);
+    put(dp[z]);
 
-    put(min({1+z,max(l,r),2LL}) );
 }
 // driver code
 int32_t main()

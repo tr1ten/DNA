@@ -116,41 +116,44 @@ void pyn(int x) {put(x?"YES":"NO");}
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    if(s[0]==s[n-1]){
-        put(0);
-        return;
-    }
-    int l=0,r=0;
-    rep(i,0,n){
-        if(s[i]=='1') {
-            l++;
+    vi a(n);
+    tkv(a,n);
+    int i = 0;
+    int cost = 0;
+    vpi res;
+    while (i<n)
+    {
+        if(a[i]==0){ res.pb({i+1,i+1});i++; continue;}
+        int j = i+1;
+        while (j<n && a[j]==0)
+        {
+            j++;
         }
-        else break;
-    }
-    per(i,0,n){
-        if(s[i]=='1'){
-            r++;
+        if(j==n){
+            put(-1);return;
         }
-        else break;
-    }
-    int z= 0;
-    if(s[n-1]=='1'){
-        rep(i,1,n){
-            if(s[i]=='1') z++;
-            else break;
+        int len = j-i+1;
+        int c = a[i] + (len%2 ? 1 : -1)*a[j];
+        if(c!=0) {
+            if(len%2==0){
+                res.pb({i+1,j});
+                res.pb({j+1,j+1});
+            }
+            else {
+                res.pb({i+1,i+1});
+                res.pb({i+2,j+1});
+            }
         }
-    }
-    else {
-        per(i,0,n-1){
-            if(s[i]=='1') z++;
-            else break;
-        }
-    }
+        else res.pb({i+1,j+1});
+        i = j+1;
 
-    put(min({1+z,max(l,r),2LL}) );
+    }
+    put(res.size());
+    trav(x,res){
+        put2(x.ff,x.ss);
+    }
 }
+
 // driver code
 int32_t main()
 {
