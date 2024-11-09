@@ -113,32 +113,40 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-void testcase(){
-    int n,m,r1,r2;
-    cin >> n >> m >> r1 >> r2;
-    if(m>n) swap(n,m);
-    if(r1>r2) swap(r1,r2);
-    
-    if(2*r2+1>m) {
-        put(-1);
-        return;
+const int MX = 26;
+const char first = 'a';
+string add(string a,string b){
+    int carry = 0;
+    string res;
+    per(i,0,a.size()){
+        int sm = ((b[i]-first) + (a[i]-first) + carry);
+        res.push_back(first + sm%MX);
+        carry = sm/MX;
     }
-    int x= 2*(r1+1)+r2+1;
-    int y = r2+1;
-    if(y+r2>m){
-        put(-1);
-        return;
+    if(carry){
+        res.push_back(first+carry);
     }
-    int d = min(x - r2 - 1, m - 2 * r2 - 1);
-    x -= min(2 * (r1 + 1), (r2 - r1));
-    y +=d;
-    x -=d;  
-    if(x+r2>n){
-        put(-1);
-        return;
-    }
-    put(x+y+2*r1+2);
+    reverse(all(res));
+    return res;
 }
+void testcase(){
+    int n;
+    string s,t;
+    cin >> n;
+    cin >> s >> t;
+    string st = add(s,t);
+    string ans;
+    int carry = st.size()>n;
+    rep(i,st.size()>n,st.size()){
+        int sm = (st[i]-first)+carry*MX;
+        ans.push_back(first + (sm/2));
+        carry = sm%2;
+    }
+    debug(st,ans);;
+    
+    put(ans);
+}
+
 // driver code
 int32_t main()
 {
@@ -147,7 +155,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

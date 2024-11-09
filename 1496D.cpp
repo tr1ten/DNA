@@ -114,30 +114,32 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m,r1,r2;
-    cin >> n >> m >> r1 >> r2;
-    if(m>n) swap(n,m);
-    if(r1>r2) swap(r1,r2);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    vi pref(n,0);
+    rep(i,1,n){
+        if(a[i]>a[i-1]) pref[i] = pref[i-1] + 1;
+    }
+    vi suff(n,0);
+    per(i,0,n-1){
+        if(a[i]>a[i+1]) suff[i] = suff[i+1] + 1;
+    }
+    int mx= -1;
+    int mxf = max(*max_element(all(pref)),*max_element(all(suff)));
+    int mxfs = 0;
+    rep(i,0,n){
+        if( suff[i]==pref[i] && suff[i]>0 && suff[i]%2==0){
+            mx = max(suff[i],mx);
+        }
+        if(suff[i]==mxf) mxfs++;
+        if(pref[i]==mxf) mxfs++;
+
+    }
+    if(mx<mxf || mxfs>2) put(0)
+    else put(1);
     
-    if(2*r2+1>m) {
-        put(-1);
-        return;
-    }
-    int x= 2*(r1+1)+r2+1;
-    int y = r2+1;
-    if(y+r2>m){
-        put(-1);
-        return;
-    }
-    int d = min(x - r2 - 1, m - 2 * r2 - 1);
-    x -= min(2 * (r1 + 1), (r2 - r1));
-    y +=d;
-    x -=d;  
-    if(x+r2>n){
-        put(-1);
-        return;
-    }
-    put(x+y+2*r1+2);
 }
 // driver code
 int32_t main()
@@ -147,7 +149,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

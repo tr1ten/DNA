@@ -113,31 +113,79 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int cnt;
+    DSU(int n)
+    {
+        this->par = new int[n];
+        this->sz = new int[n];
+        cnt = n;
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
+        }
+    }
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    void connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+        }
+        cnt--;
+    }
+};
+
+
 void testcase(){
-    int n,m,r1,r2;
-    cin >> n >> m >> r1 >> r2;
-    if(m>n) swap(n,m);
-    if(r1>r2) swap(r1,r2);
-    
-    if(2*r2+1>m) {
-        put(-1);
-        return;
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    DSU ds(26);
+    vector<int> used(26,0);
+    vector<int> prev(26,-1);
+    string ans;
+    rep(i,0,n){
+        int c= s[i]-'a';
+        if(prev[c]!=-1){
+            ans.push_back('a' + (prev[c]));
+            continue;
+        }
+        rep(j,0,26){
+            if(!used[j] && ((ds.cnt==1 )||  (ds.find(j)!=ds.find(c)))){
+                used[j] = 1;
+                prev[c] = j;
+                ds.connect(c,j);
+                break;
+            }
+        }
+        ans.push_back('a' + (prev[c]));
     }
-    int x= 2*(r1+1)+r2+1;
-    int y = r2+1;
-    if(y+r2>m){
-        put(-1);
-        return;
-    }
-    int d = min(x - r2 - 1, m - 2 * r2 - 1);
-    x -= min(2 * (r1 + 1), (r2 - r1));
-    y +=d;
-    x -=d;  
-    if(x+r2>n){
-        put(-1);
-        return;
-    }
-    put(x+y+2*r1+2);
+    put(ans);
 }
 // driver code
 int32_t main()

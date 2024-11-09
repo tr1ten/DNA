@@ -114,30 +114,49 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,m,r1,r2;
-    cin >> n >> m >> r1 >> r2;
-    if(m>n) swap(n,m);
-    if(r1>r2) swap(r1,r2);
+    int X,k;
+    cin >> X >> k;
+    vii a(k);
+    vii b(k);
+    rep(i,0,k){
+        int n;
+        cin >> n;
+        vi d(n);
+        tkv(d,n);
+        int sm = 0;
+        int mnf = 0;
+        int j = 0;
+        while (j<n)
+        {
+            sm += d[j];
+            mnf = min(sm,mnf);
+            if(sm>0){
+                a[i].push_back(sm);
+                b[i].push_back(abs(mnf));
+                sm = 0;
+                mnf = 0;
+            }
+            j++;
+        }
+        debug(a[i],b[i]);
+    }
+    priority_queue<vi> pq;
+    rep(i,0,k){
+        if(b[i].size()) pq.push({-b[i][0],i,0});
+    }
+    while (pq.size())
+    {
+        vi z = pq.top();
+        pq.pop();
+        debug(z,X);
+        if(X+z[0]>=0 ){
+            X +=a[z[1]][z[2]];
+            if(b[z[1]].size() > z[2]+1) pq.push({-b[z[1]][z[2]+1], z[1],z[2]+1});
+        }
+        else break;
+    }
+    put(X);
     
-    if(2*r2+1>m) {
-        put(-1);
-        return;
-    }
-    int x= 2*(r1+1)+r2+1;
-    int y = r2+1;
-    if(y+r2>m){
-        put(-1);
-        return;
-    }
-    int d = min(x - r2 - 1, m - 2 * r2 - 1);
-    x -= min(2 * (r1 + 1), (r2 - r1));
-    y +=d;
-    x -=d;  
-    if(x+r2>n){
-        put(-1);
-        return;
-    }
-    put(x+y+2*r1+2);
 }
 // driver code
 int32_t main()
@@ -147,7 +166,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;
