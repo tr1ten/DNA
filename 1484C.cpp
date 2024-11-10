@@ -114,34 +114,41 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi a;
-    int ans = 0;
-    rep(i,0,n){
+    int n,m;
+    cin >> n >> m;
+    vii a;
+    rep(i,0,m) {
         int x;
         cin >> x;
-        if(x<=k){
-            ans+=x;
+        vi b(x) ;
+        tkv(b,x);
+        debug(x,b);
+        a.push_back(b);
+    }
+    vi inds(m);
+    iota(all(inds),0LL);
+    sort(all(inds),[&](int aa,int bb){
+        return a[aa].size() < a[bb].size();
+    });
+    vi ans(m);
+    mll cnt;
+    int m2 = (m+1)/2;
+    trav(i,inds){
+        if(cnt[a[i][0]]+1>m2) {
+            if(a[i].size()==1){
+                pyn(0);
+                return;
+            }
+            cnt[a[i].back()]++;
+            ans[i]=(a[i].back());
         }
-        else{
-            ans +=k;
-            a.push_back(x-k);
+        else {
+            ans[i] = (a[i][0]);
+            cnt[a[i][0]]++;
         }
     }
-    srv(a);
-    if(a.size()){
-        int M = a.back();
-        a.pop_back();
-        int z = 0;
-        if(a.size()){
-            int sm = accumulate(all(a),0LL);
-            int mx = a.back();
-            z = max({2*mx-sm,0LL,sm%2});
-        }
-        ans += M-z;
-    }
-    put(ans);
+    pyn(1);
+    pvc(ans);
 }
 // driver code
 int32_t main()

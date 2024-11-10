@@ -114,34 +114,52 @@ inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi a;
-    int ans = 0;
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        if(x<=k){
-            ans+=x;
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    int c = -1;
+    int cc = 0;
+    int c1=0,c2=0,c3=0;
+    rep(i,1,n){
+        if(a[i]>a[i-1]){
+            if(c!=-1 && c!=a[i]-a[i-1]){
+                put(-1);
+                return;
+            }
+            c = a[i]-a[i-1];
+            c1++;
         }
-        else{
-            ans +=k;
-            a.push_back(x-k);
+        else if(a[i]<a[i-1]) {
+            if(cc!=0 && cc!=a[i-1]-a[i]){
+                put(-1);
+                return;
+            }
+            cc = a[i-1]-a[i];
+            c2++;
+        }
+        else c3++;
+    }
+    if(c1==n-1 || c2==n-1 || c3==n-1){
+        put(0);
+        return;
+    }
+    if(c==-1){
+        put(-1);
+        return;
+    }
+    int m = c+cc;
+    if(a[0]>=m){
+        put(-1);
+        return;
+    }
+    rep(i,1,n){
+        if( ((a[i-1]+c)%m)!=a[i]){
+            put(-1);
+            return;
         }
     }
-    srv(a);
-    if(a.size()){
-        int M = a.back();
-        a.pop_back();
-        int z = 0;
-        if(a.size()){
-            int sm = accumulate(all(a),0LL);
-            int mx = a.back();
-            z = max({2*mx-sm,0LL,sm%2});
-        }
-        ans += M-z;
-    }
-    put(ans);
+    put2(m,c);
 }
 // driver code
 int32_t main()
