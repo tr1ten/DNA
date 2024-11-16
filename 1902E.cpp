@@ -54,7 +54,6 @@ typedef unordered_map<ll,ll,custom_hash> mll;
 #define mp make_pair
 #define ss second
 #define ff first
-#define int long long
 #define rep(i,a,b) for (int i = (a); i < (b); i++)
 #define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
 #define trav(a,arr) for (auto& a: (arr))
@@ -113,52 +112,47 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int a[3][N];
+
+#define MAX_SUM_S 1000006
+int tr[26][MAX_SUM_S] ,root ,nn; // don't forget to set me
+unsigned int val[MAX_SUM_S];
+ll ans = 0;
+void add(string&s,int&p=root ,int i=0){
+    if(!p) p = ++nn;    
+    val[p]++;
+    if(i == s.size()){
+        return;
+    }
+    add(s,tr[s[i]-'a'][p] ,i+1);
+}
+bool check(string&s ,int i,int&p=root){
+    if(!p) return false;
+    if(p!=root){
+        ans -= 2*val[p];
+    }
+    if(i == -1){
+        return true;}
+    return check(s ,i-1,tr[s[i]-'a'][p]);
+}
+
 void testcase(){
     int n;
     cin >> n;
-    tkv(a[0],n);
-    tkv(a[1],n);
-    tkv(a[2],n);
-    vpi dp(n,{-1,-1});
-    dp[n-1] = {0,n-1};
-    vi minp = {n-1,n-1,n-1};
-    per(i,0,n-1){
-        rep(j,0,3){
-            if(a[j][minp[j]] < a[j][i]) {
-                dp[i] = {j,minp[j]};
-                break;
-            }
-        }
-        if(dp[i].first!=-1){
-            rep(j,0,3){
-                if(a[j][minp[j]] > a[j][i]){
-                    minp[j] = i;
-                }
-            }
-        }
+    string st[n];
+    int  sm = 0;
+    rep(i,0,n){
+        cin >> st[i];
+        sm += st[i].size();
+        add(st[i]);
     }
-    if(dp[0].first!=-1){
-        pyn(1);
-        int cur = 0;
-        vector<pair<char,int>> res;
-        string s = "qkj";
-        while (cur<n-1)
-        {
-            res.push_back({s[dp[cur].first],dp[cur].second+1});
-            cur = dp[cur].second;
-        }
-        put(res.size());
-        trav(x,res){
-            cout << x.first << " " << x.second << endl;
-        }
+    ans = 2*((ll)n*sm);
+    rep(i,0,n){
+        check(st[i],st[i].size()-1);
+    }
+    put(ans);
 
-        
-    }
-    else {
-        pyn(0);
-    }
+    
+
 }
 // driver code
 int32_t main()
@@ -168,7 +162,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

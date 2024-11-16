@@ -113,52 +113,67 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int a[3][N];
-void testcase(){
-    int n;
-    cin >> n;
-    tkv(a[0],n);
-    tkv(a[1],n);
-    tkv(a[2],n);
-    vpi dp(n,{-1,-1});
-    dp[n-1] = {0,n-1};
-    vi minp = {n-1,n-1,n-1};
-    per(i,0,n-1){
-        rep(j,0,3){
-            if(a[j][minp[j]] < a[j][i]) {
-                dp[i] = {j,minp[j]};
-                break;
-            }
-        }
-        if(dp[i].first!=-1){
-            rep(j,0,3){
-                if(a[j][minp[j]] > a[j][i]){
-                    minp[j] = i;
-                }
-            }
-        }
-    }
-    if(dp[0].first!=-1){
-        pyn(1);
-        int cur = 0;
-        vector<pair<char,int>> res;
-        string s = "qkj";
-        while (cur<n-1)
-        {
-            res.push_back({s[dp[cur].first],dp[cur].second+1});
-            cur = dp[cur].second;
-        }
-        put(res.size());
-        trav(x,res){
-            cout << x.first << " " << x.second << endl;
-        }
+const int N = 5*(1e5) + 5;
+int n; // MAKE SURE TO INITIALIZE THIS TO SIZE OF ARRAY
+struct Segment{
+    ll sum=0;
+} segm[4*N]; // 0 index
+Segment combine(Segment left,Segment right){
+    Segment res;
+    res.sum = max(left.sum,right.sum);
+    return res;
+}
 
-        
+// child- 2*x+1,2*x+2 (0 coz index)
+// add x to [l...r]
+void update(int node,int left,int right,int i,ll value){
+    if(left==i && right==i) {
+            segm[node].sum = value;
+        }
+    else{
+        int mid = (left+right)/2;
+        if(i<=mid) update(2*node+1,left,mid,i,value);
+        else update(2*node+2,mid+1,right,i,value);
+        segm[node] = combine(segm[2*node+1] , segm[2*node+2]);
     }
-    else {
-        pyn(0);
+    
+}
+
+Segment query(int node,int left,int right,int l,int r){
+    if(left>=l && right<=r) {return segm[node];}
+    int mid = (left+right)/2;
+    Segment res;
+    if(l<=mid) res = combine(res,query(2*node+1,left,mid,l,r));
+    if(r>mid) res = combine(res,query(2*node+2,mid+1,right,l,r));
+
+    return res;
+}
+// everything is zero indexed
+void update(int i,ll x){
+    update(0,0,n-1,i,x);
+}
+Segment query(int l,int r){
+    return query(0,0,n-1,l,r);
+}
+
+void testcase(){
+    cin >>n;
+    vi a(n);
+    tkv(a,n);
+    int mx = 0;
+    vi p(n);
+    rep(i,0,n){
+        mx = max(a[i],mx);
+        p[i] = mx;
+        update(i,0);
     }
+    vi res(n);
+    per(i,0,n){
+        int mx = max(p[i],p[i]-2>=0 ? query(0,p[i]-2).sum : 0);
+        update(a[i]-1,mx);
+        res[i] = mx;
+    }
+    pvc(res);
 }
 // driver code
 int32_t main()

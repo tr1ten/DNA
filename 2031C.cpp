@@ -113,52 +113,36 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int a[3][N];
 void testcase(){
     int n;
     cin >> n;
-    tkv(a[0],n);
-    tkv(a[1],n);
-    tkv(a[2],n);
-    vpi dp(n,{-1,-1});
-    dp[n-1] = {0,n-1};
-    vi minp = {n-1,n-1,n-1};
-    per(i,0,n-1){
-        rep(j,0,3){
-            if(a[j][minp[j]] < a[j][i]) {
-                dp[i] = {j,minp[j]};
-                break;
-            }
+    if(n%2){
+        if(n<26){
+            put(-1);
+            return;
         }
-        if(dp[i].first!=-1){
-            rep(j,0,3){
-                if(a[j][minp[j]] > a[j][i]){
-                    minp[j] = i;
-                }
-            }
-        }
-    }
-    if(dp[0].first!=-1){
-        pyn(1);
-        int cur = 0;
-        vector<pair<char,int>> res;
-        string s = "qkj";
-        while (cur<n-1)
+        vi res(n);
+        res[0] = 1;
+        res[9] = 1;
+        res[25]= 1;
+        res[10] = 2;
+        res[26] = 2;
+        int j = 3;
+        int i = 1;
+        while (i<n)
         {
-            res.push_back({s[dp[cur].first],dp[cur].second+1});
-            cur = dp[cur].second;
+            if(res[i]) {i++;continue;}
+            res[i] = res[i+1] = j++;
+            i +=2;
         }
-        put(res.size());
-        trav(x,res){
-            cout << x.first << " " << x.second << endl;
-        }
-
+        pvc(res);
+        return;
         
     }
-    else {
-        pyn(0);
+    for(int i=0;i<n;i+=2){
+        cout << i+1 << " " << i + 1 << " ";
     }
+    cout << endl;
 }
 // driver code
 int32_t main()

@@ -104,7 +104,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define debug(x...)
 #endif
-const ll MOD = 1e9+7; // change me for god sake look at problem mod
+const ll MOD = 998244353; // change me for god sake look at problem mod
 const ll INF = 1e16+5;
 
 inline int ctz(ll x) { return __builtin_ctzll(x);}
@@ -113,52 +113,127 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int a[3][N];
-void testcase(){
-    int n;
-    cin >> n;
-    tkv(a[0],n);
-    tkv(a[1],n);
-    tkv(a[2],n);
-    vpi dp(n,{-1,-1});
-    dp[n-1] = {0,n-1};
-    vi minp = {n-1,n-1,n-1};
-    per(i,0,n-1){
-        rep(j,0,3){
-            if(a[j][minp[j]] < a[j][i]) {
-                dp[i] = {j,minp[j]};
-                break;
-            }
-        }
-        if(dp[i].first!=-1){
-            rep(j,0,3){
-                if(a[j][minp[j]] > a[j][i]){
-                    minp[j] = i;
-                }
-            }
+
+const int N = 2e5 + 5;
+long long fact[N];
+long long inv[N];
+long long finv[N];
+
+void pre() {
+    fact[0] = 1;
+    for (int i = 1; i <= N; i++) {
+        fact[i] = (fact[i-1]*i)%MOD;
+    }
+    inv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
+    }
+    finv[0] = finv[1] = 1;
+    for (int i = 2; i <= N; i++) {
+        finv[i] = (inv[i]*finv[i-1])%MOD;
+    }
+}
+
+long long nCk(int n,int k) {
+    return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
+}
+class BIT {
+private:
+    std::vector<int> nums;
+    int LOG;
+public:
+    BIT(int n) {
+    	LOG = (int)log2(n)+1;
+        nums.resize((1ll<<LOG) + 1);
+    }
+    void update(int i, int val) {
+        i += 1;
+        while (i < nums.size()) {
+            nums[i] += val;
+            i += (i & (-i));
         }
     }
-    if(dp[0].first!=-1){
-        pyn(1);
-        int cur = 0;
-        vector<pair<char,int>> res;
-        string s = "qkj";
-        while (cur<n-1)
-        {
-            res.push_back({s[dp[cur].first],dp[cur].second+1});
-            cur = dp[cur].second;
+    int sum(int i) {
+        int r = 0;
+        // i += 1, not needed here since we need sum of rank less than i rank[0...i-1]
+        while (i > 0) {
+            r += nums[i];
+            i -= (i & (-i));
         }
-        put(res.size());
-        trav(x,res){
-            cout << x.first << " " << x.second << endl;
+        return r;
+    }
+    // max index where sum A[0...ind] < x,return index of first number greator than or equal to x
+    int lower(int x){
+        ll pref = 0;
+        int ind = 0;
+        for(int i=LOG;i>=0;i--){
+            if(nums[ind + (1ll<<i)] + pref<x){
+                pref += nums[ind + (1ll<<i)];
+                ind += 1ll<<i;
+            }
+        }
+        return ind; // 0  based
+    }
+    
+};
+BIT ms(N);
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    vi a(n),b(m);
+    tkv(a,n);
+    tkv(b,m);
+    
+    mll cnt;
+    rep(i,0,n){
+        cnt[a[i]]++;
+        ms.update(a[i],1); 
+    }
+    int last=0;
+    int mn = min(m,n);
+    while (last<mn && cnt[b[last]])
+    {
+        cnt[b[last]]--;
+        ms.update(b[last],-1);
+        last++;
+    }
+    int num = fact[n-min(last+1,mn)];
+    int den = 1;
+    trav(x,cnt){
+        den =den*finv[x.second]%MOD;
+    }
+    int ans =0;
+    if(last<mn){
+        int less_sum = ms.sum(b[last]);
+        int pre= (den*less_sum)%MOD;
+        int suf = num*pre%MOD;
+        ans +=suf;
+        ans %=MOD;
+        num *= n-last;
+        num %=MOD;
+    }
+    else{
+        ans += m>n;
+    }
+    // leaving one case where we can decrease last index element
+    per(i,0,last){
+        cnt[b[i]] +=1;
+        ms.update(b[i],1);
+        den *= inv[cnt[b[i]]];
+        den %=MOD;
+        int less_sum = ms.sum(b[i]);
+        // debug(i,num,den,less_sum);
+        if(less_sum){
+            int pre= (den*less_sum)%MOD;
+            int suf = num*pre%MOD;
+            ans +=suf;
+            ans %=MOD;
         }
 
-        
+        num *= (n-i);
+        num %=MOD;
     }
-    else {
-        pyn(0);
-    }
+    put(ans);
 }
 // driver code
 int32_t main()
@@ -168,7 +243,8 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
+    pre();
     while(T--) testcase();
 
     return 0;

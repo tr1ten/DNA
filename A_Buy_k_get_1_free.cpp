@@ -113,52 +113,33 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int a[3][N];
 void testcase(){
-    int n;
-    cin >> n;
-    tkv(a[0],n);
-    tkv(a[1],n);
-    tkv(a[2],n);
-    vpi dp(n,{-1,-1});
-    dp[n-1] = {0,n-1};
-    vi minp = {n-1,n-1,n-1};
-    per(i,0,n-1){
-        rep(j,0,3){
-            if(a[j][minp[j]] < a[j][i]) {
-                dp[i] = {j,minp[j]};
-                break;
-            }
-        }
-        if(dp[i].first!=-1){
-            rep(j,0,3){
-                if(a[j][minp[j]] > a[j][i]){
-                    minp[j] = i;
-                }
-            }
-        }
+    int n,k;
+    cin >> n >> k;
+    k++;
+    vi a(n);
+    tkv(a,n);
+    srv(a);
+    vi pref(n+1,0);
+    rep(i,0,n){
+        pref[i+1] = pref[i]+a[i];
     }
-    if(dp[0].first!=-1){
-        pyn(1);
-        int cur = 0;
-        vector<pair<char,int>> res;
-        string s = "qkj";
-        while (cur<n-1)
-        {
-            res.push_back({s[dp[cur].first],dp[cur].second+1});
-            cur = dp[cur].second;
+    int x= 0;
+    vi rem(k);
+    rep(z,1,n+1){
+        if(x+x/k<z){
+            x++;
         }
-        put(res.size());
-        trav(x,res){
-            cout << x.first << " " << x.second << endl;
-        }
+        rem[(z-1)%k] += a[z-1];
+        int y = min((x/k),z-x);
+        int waste = z-y*k; 
+        int sub = rem[waste%k];
+        int ans = pref[z] - sub;
+        cout << ans << " ";
+    }
 
-        
-    }
-    else {
-        pyn(0);
-    }
+    cout <<endl;
+    
 }
 // driver code
 int32_t main()

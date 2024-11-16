@@ -113,51 +113,93 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int a[3][N];
-void testcase(){
-    int n;
-    cin >> n;
-    tkv(a[0],n);
-    tkv(a[1],n);
-    tkv(a[2],n);
-    vpi dp(n,{-1,-1});
-    dp[n-1] = {0,n-1};
-    vi minp = {n-1,n-1,n-1};
-    per(i,0,n-1){
-        rep(j,0,3){
-            if(a[j][minp[j]] < a[j][i]) {
-                dp[i] = {j,minp[j]};
-                break;
-            }
+class DSU
+{
+public:
+    int *par;
+    int *sz;
+    int mx= 0;
+    DSU(int n)
+    {
+        this->par = new int[n];
+        this->sz = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            this->par[i] = i;
+            this->sz[i] = 1;
         }
-        if(dp[i].first!=-1){
-            rep(j,0,3){
-                if(a[j][minp[j]] > a[j][i]){
-                    minp[j] = i;
+        mx = 1;
+    }
+    int find(int x)
+    {
+        int p = x;
+        while (p != this->par[p])
+        {
+            p = par[p];
+        }
+        return p;
+    }
+    void connect(int u, int v)
+    {
+        int rootu = find(u);
+        int rootv = find(v);
+        if (rootu == rootv)
+            return;
+        if (sz[rootu] < sz[rootv])
+        {
+            par[rootu] = rootv;
+            sz[rootv] += sz[rootu];
+            mx = max(mx,sz[rootv]);
+        }
+        else
+        {
+            par[rootv] = rootu;
+            sz[rootu] += sz[rootv];
+            mx = max(mx,sz[rootu]);
+        }
+
+    }
+};
+
+
+void testcase(){
+    int n,q;
+    cin >> n >> q;
+    vi cnt(n),val(n);
+    tkv(val,n);
+    DSU ds(n);
+    vii adj(n);
+    rep(i,0,n-1){
+        int u,v;
+        cin >> u >> v;
+        --u;--v;
+        if(val[u]==1 && val[v]==1){
+            ds.connect(u,v);
+        }
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }   
+    int imposs = 0;
+    int blacks = count(all(val),1);
+    rep(i,0,q){
+        int u;
+        cin >> u;
+        --u;
+        blacks++;
+        if(val[u]!=1) {
+            val[u] = 1;
+            trav(v,adj[u]){
+                if(val[v]==1){
+                    ds.connect(u,v);
+                    cnt[u]++;
+                    cnt[v]++;
+                    if(cnt[u]>=3 || cnt[v]>=3){
+                        imposs =1;
+                    }
                 }
             }
         }
-    }
-    if(dp[0].first!=-1){
-        pyn(1);
-        int cur = 0;
-        vector<pair<char,int>> res;
-        string s = "qkj";
-        while (cur<n-1)
-        {
-            res.push_back({s[dp[cur].first],dp[cur].second+1});
-            cur = dp[cur].second;
-        }
-        put(res.size());
-        trav(x,res){
-            cout << x.first << " " << x.second << endl;
-        }
-
-        
-    }
-    else {
-        pyn(0);
+        pyn(!(imposs || ds.mx<blacks));
     }
 }
 // driver code

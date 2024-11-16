@@ -113,52 +113,47 @@ inline int pc(ll x) {return  __builtin_popcount(x);}
 inline int hset(ll x) {return __lg(x);}
 void pyn(int x) {put(x?"YES":"NO");}
 // do not use unordered map use mll
-const int N = 2*(1e5) + 5;
-int a[3][N];
-void testcase(){
-    int n;
-    cin >> n;
-    tkv(a[0],n);
-    tkv(a[1],n);
-    tkv(a[2],n);
-    vpi dp(n,{-1,-1});
-    dp[n-1] = {0,n-1};
-    vi minp = {n-1,n-1,n-1};
-    per(i,0,n-1){
-        rep(j,0,3){
-            if(a[j][minp[j]] < a[j][i]) {
-                dp[i] = {j,minp[j]};
-                break;
-            }
-        }
-        if(dp[i].first!=-1){
-            rep(j,0,3){
-                if(a[j][minp[j]] > a[j][i]){
-                    minp[j] = i;
-                }
+vii dijsktra(int S,vector<vii> &adj){
+    int n = adj.size();
+    vector<vi> dist(n,vi(2,INF));
+    dist[S][0] = 0;
+    dist[S][1] = 0;
+    priority_queue<vi,vector<vi>,greater<vi>> pq;
+    pq.push({0,S,0});
+    pq.push({0,S,1});
+    while(!pq.empty()){
+        auto u = pq.top();
+        pq.pop();
+        if(u[0]>dist[u[1]][u[2]]) continue;
+        for(auto &v:adj[u[1]]){
+            if(v[2]==0 && u[2]==1) continue;
+            if(dist[v[0]][v[2]]>dist[u[1]][u[2]] + v[1]){
+                dist[v[0]][v[2]]=dist[u[1]][u[2]] + v[1];
+                pq.push({dist[v[0]][v[2]],v[0],v[2]});
             }
         }
     }
-    if(dp[0].first!=-1){
-        pyn(1);
-        int cur = 0;
-        vector<pair<char,int>> res;
-        string s = "qkj";
-        while (cur<n-1)
-        {
-            res.push_back({s[dp[cur].first],dp[cur].second+1});
-            cur = dp[cur].second;
-        }
-        put(res.size());
-        trav(x,res){
-            cout << x.first << " " << x.second << endl;
-        }
+    return dist;
+}
 
-        
+void testcase(){
+    int n,m;
+    cin >> n >> m;
+    vector<vii> adj(n);
+    rep(i,0,m){
+        int u,v,w;
+        cin >> u >> v >> w;
+        --u;--v;
+        adj[u].push_back({v,w,0});
+        adj[v].push_back({u,w,1});
     }
-    else {
-        pyn(0);
+    vii dp = dijsktra(0,adj);
+    rep(i,1,n){
+        int ans = min(dp[i][0],dp[i][1]);
+        if(ans<INF) cout << ans << " ";
+        else cout << -1 << " ";
     }
+    cout << endl;
 }
 // driver code
 int32_t main()
@@ -168,7 +163,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;
