@@ -45,13 +45,17 @@ void testcase(){
         int u=it->first,v=it->second;
         adj[u].erase(v);
         adj[v].erase(u);
-        edges.erase(it);
         
         int w=adj[u].size() ? *adj[u].begin() : (adj[v].size() ? *adj[v].begin() : -1);
         if(w==-1){
             other.push_back(*it);
+            edges.erase(it);
+            adj[u].insert(v);
+            adj[v].insert(u);
+
             continue;
         }
+        edges.erase(it);
         int ww=adj[u].size() ? u : v;
         int nw=adj[u].size() ? v : u;
         adj[w].erase(ww);
@@ -68,7 +72,7 @@ void testcase(){
             edges.insert({min(nw,w),max(nw,w)});
         }
         ans.push_back({u+1,v+1,w+1});
-    }
+    }   
     for(auto x:other) {
         edges.insert(x);
     }
@@ -80,6 +84,7 @@ void testcase(){
         rep(i,0,n){
             if(vis.count(i)==0){
                 ans.push_back({u+1,v+1,i+1});
+                vis.insert(i);
                 for(auto e:adj[i]){
                     vis.insert(e);
                 }
