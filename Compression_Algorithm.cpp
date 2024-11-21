@@ -38,19 +38,8 @@ long long fast_pow(long long a, long long b, long long m) {
 void testcase(){
     int n,k;
     cin >> n>> k;
-    if(k==1){
-        put(2);
-        return;
-    }
-    int r = (k-1);
-    double rn = pow(r,n);
-    double a = rn*n;
-    a = (a-(rn-1)/(r-1));
-    a = a/(r-1);
-    double X = 2*k*a;
-    double kn = pow(k,n);
-    double ans =X/kn;
-    put(ans);
+    double ans = (double)2*(k+(n-1)*(k-1))/(double)k;
+    cout << fixed << setprecision(4) << ans << endl;
 }
 int32_t main()
 {

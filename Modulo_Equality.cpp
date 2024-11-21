@@ -23,8 +23,46 @@ inline int hset(int x) {return __lg(x);}
 */
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
-const int INF = 1e16+5;
+const int INF = 1e17+5;
+/*
+Approach
+make all ai%bi same,let it be x
+
+obs: x will one of the existing remainders  in given arrays
+
+now check for each remainder as x: 
+cost(r): x*(n-cnt_x) - (sum_r (<x) + sum_r (>x)) + sum_b(>x) 
+
+take x with min cost
+
+*/
 void testcase(){
+    int n;
+    cin >> n;
+    vi a(n),b(n);
+    tkv(a,n);
+    tkv(b,n);
+    map<int,int> cnt,bsm;
+    int bs=0,rs=0;
+    int mn = INF;
+    rep(i,0,n){
+        cnt[a[i]%b[i]]++;
+        bsm[a[i]%b[i]] += b[i];
+        bs +=b[i];
+        rs += (a[i]%b[i]);
+        mn = min(b[i],mn);
+    }
+    int ans = INF;
+    cnt[0] = 0;
+    cnt[mn-1] = 0;
+    for(auto &r:cnt){
+        if(r.first>=mn) break;
+        bs-=bsm[r.first];
+        int cur = n*r.first + bs-rs;
+        ans = min(ans,cur);
+    }
+    assert(ans<INF);
+    put(ans);
 }
 int32_t main()
 {

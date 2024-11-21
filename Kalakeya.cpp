@@ -25,9 +25,35 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
+    int n,k;
+    cin >> n >> k;
+    if(k>n/2){
+        put(-1);
+        return;
+    }
+    vi res(n);
+    iota(all(res),1);
+    if(k==0){
+        pvc(res);
+        return;
+    }
+    for(int i=1;i<=n;i+=2*k){
+        auto start = res.begin() + i-1;
+        auto end = start+2*k;
+        if(end>res.end()){
+            int rem = end-res.end();
+            start = start-min(k,rem);
+            end = res.end();
+        }
+        rotate(start,start+k,end);
+    }
+    rep(i,1,n+1){
+        assert(abs(i-res[i-1])>=k);
+    }
+    pvc(res);
 }
 int32_t main()
-{
+{         
     ios_base::sync_with_stdio(false);
 	cin.tie(nullptr);
     // freopen("input.in","r",stdin);

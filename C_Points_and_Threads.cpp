@@ -8,7 +8,8 @@ using namespace std;
 #define tkv(vec,sz) rep(i,0,sz) cin>>vec[i]
 #define srv(vec) sort(vec.begin(), vec.end())
 #define all(x) x.begin(), x.end()
-#define pvc(vec) trav(x,vec) cout<<x<<" "; cout<<endl;
+#define pvc(vec) for(auto x:vec) cout<<x<<" "; cout<<endl;
+#define put(x) cout << (x)<< endl;
 typedef vector<int> vi;
 typedef vector<vi> vii;
 typedef pair<int,int> pi;

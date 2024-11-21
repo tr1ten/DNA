@@ -1,4 +1,8 @@
+
 #include <bits/stdc++.h>
+#pragma GCC target ("avx2") 
+#pragma GCC optimization ("O3") 
+#pragma GCC optimization ("unroll-loops")
 using namespace std;
 #define ss second
 #define ff first
@@ -24,7 +28,32 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
+const int N = 7.5*(1e5)+5;
+int dp[N];
+
+
 void testcase(){
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    sort(all(a));
+    int ans = 0;
+    for(auto x:a){
+        dp[x]++;
+        for(int j=2*x;j<N;j+=x){
+            dp[j] +=dp[x];
+        }
+        ans +=dp[x];
+        ans %=MOD;
+    }
+    put(ans);
+    for(auto x:a){
+        for(int j=x;j<N;j+=x){
+            dp[j] =0;
+        }
+    }
+
 }
 int32_t main()
 {

@@ -25,6 +25,17 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
+    int n;
+    cin >> n;
+    int cnt = 0;
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        if(i+1==x) cnt++;
+    }
+    if(cnt==n) put(n)
+    else if(cnt) put(n-1)
+    else put(n-2);
 }
 int32_t main()
 {
