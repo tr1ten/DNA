@@ -24,13 +24,53 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
+const int N = 5+2;
+int f[N];
 void testcase(){
     int n,k;
-    cin >> n >> k;
-    auto check = [&](int x){
+    if(k>n*(n-1)/2){
+        put(-1);
+        return;
+    }
+    f[1] = k;
+    rep(i,1,N){
+        for(int j=2*i;j<N;j+=i){
+            f[j] += f[i];
+        }
+    }
+    unordered_map<int,int> cnt;
+    per(i,2,N){
+        for(int j=2*i;j<N;j+=i){
+            f[i] -= f[j];
+        }
+        if(f[i]==0){
+            continue;
+        }
+        int lo=1,hi=n;
+        int x= -1;
+        while (lo<=hi)
+        {
+            int mid = (lo+hi)/2;
+            int va = mid*(mid-1)/2;
+            if(va>=f[i]){
+                hi = mid-1;
+                if(va==f[i]) {
+                    x = mid;
+                }
+            }
+            else {
+                lo = mid+1;
+            }
+        }
+        if(x!=-1){
+            cnt[i]= f[i];
+        }
+        else {
+            put(-1);
+            return;
+        }
         
-    };
-    int lo=0,hi=    
+    }
 }
 int32_t main()
 {
