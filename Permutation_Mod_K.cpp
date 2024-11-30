@@ -24,14 +24,31 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-
-
-// x^y = 0 mod x
-// x^y = 0 mod y
-// 1<=y<=m
-// 
 void testcase(){
-
+    int n,k;
+    cin >> n >> k;
+    if(n==1 || k==1){
+        put(-1);
+        return;
+    }
+    rep(j,1,3){
+        vi res;
+        rep(i,0,n){
+            int x = (i+j)%n + 1;
+            if(x%k==(i+1)%k){
+                break;
+            }
+            // cout << x << " " << i << endl;
+            // assert(x%k!=i%k);
+            // cout << i%n + 1 << " ";
+            res.push_back(x);
+        }
+        if(res.size()==n){
+        pvc(res);
+        return;}
+    }
+    put(-1);
+    return;
 }
 int32_t main()
 {

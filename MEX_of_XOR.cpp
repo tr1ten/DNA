@@ -24,14 +24,57 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-
-
-// x^y = 0 mod x
-// x^y = 0 mod y
-// 1<=y<=m
-// 
 void testcase(){
-
+    int l,r,x;
+    cin >> l >> r >> x;
+    int m1 = 0;
+    int m2 = 0;
+    int last = 0;
+    int op =0;
+    per(i,0,31){
+        int mask = 1<<i;
+        int a1 = x&mask,a2 = r&mask;
+        if(a1==0 && a2){
+            if(last!=0){
+                op |=mask;
+            }
+            else m1 |=mask;
+        }
+        if(a1 && a2==0) {m1^=last;m1|=op;break;}
+        if(a1==0 && a2==0){
+            m1 ^=last;
+            m1 |=op;
+            m1 |=mask;
+            last= mask;
+        }
+    }
+    last = 0;
+    op = 0;
+    per(i,0,31){
+        int mask = 1<<i;
+        int a1 = x&mask,a2 = l&mask;
+        if(a1==0 && a2){
+            m2 ^=last;
+            m2 |=op;
+            break;
+        }
+        if(a1 && a2==0) {
+            if(last!=0){
+                op |=mask;
+            }
+            else m2 |=mask;
+        }
+        if(a1 && a2){
+            m2 ^=last;
+            m2 |=op;
+            m2 |=mask;
+            last= mask;
+        }
+    }
+    int ans = x;
+    if((m1^x) >r ) ans = min(ans,m1);
+    if((m2^x)<l) ans = min(ans,m2);
+    put(ans);
 }
 int32_t main()
 {

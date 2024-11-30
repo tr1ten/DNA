@@ -24,14 +24,16 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-
-
-// x^y = 0 mod x
-// x^y = 0 mod y
-// 1<=y<=m
-// 
 void testcase(){
+    int x,m;
+    cin >> x >> m;
+    int h = hset(x);
+    int ans = 0;
+    rep(y,1,min((1LL<<(h+1)),m+1) ){
 
+        if(x!=y) {ans += (x%(x^y)==0) || (y%(x^y)==0);}
+    }
+    put(ans);
 }
 int32_t main()
 {

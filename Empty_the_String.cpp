@@ -24,14 +24,23 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-
-
-// x^y = 0 mod x
-// x^y = 0 mod y
-// 1<=y<=m
-// 
 void testcase(){
-
+    int n ;
+    cin >> n;
+    string s;
+    cin >> s;
+    int ans = 0;
+    int cur =0;
+    rep(i,0,n){
+        cur = max(0LL,cur+(s[i]=='A' ? 1 : -1));
+        ans = max(ans,cur);
+    }
+    cur =0;
+    rep(i,0,n){
+        cur = max(0LL,cur+(s[i]=='B' ? 1 : -1));
+        ans = max(ans,cur);
+    }
+    put(ans);
 }
 int32_t main()
 {
