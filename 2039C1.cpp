@@ -22,28 +22,28 @@ inline int hset(int x) {return __lg(x);}
     THINK before you code
 */
 
-const int MOD = 1e9+7; // change me for god sake look at problem mod
-const int INF = 1e16+5;
-void testcase(){
-    int x,m;
-    cin >> x >> m;
-    int h = hset(x);
-    int ans = 0;
-    rep(y,1,min((1LL<<(h+1)),m+1) ){
-
-        if(x!=y) {ans += (x%(x^y)==0) || (y%(x^y)==0);}
-    }
-    put(ans);
-}
 int32_t main()
 {
-    ios_base::sync_with_stdio(false);
-	cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
-    int T=1;
-    cin>>T;
-    while(T--) testcase();
+    int t;
+    cin >> t;
 
+    while (t--) {
+        int x, m;
+        cin >> x >> m;
+
+        int ans = 0;
+        int s_max = 1 << ((int)(log2(x) + 1)) + 1; 
+
+        for (int s = 1; s < min(s_max, 2 * 1000000LL); ++s) {
+            int y = x ^ s;
+            if (y == x || y < 1 || y > m) {
+                continue;
+            }
+            if (y % s == 0 || x%s==0) {
+                ++ans;
+            }
+        }
+        cout << ans << endl;
+    }
     return 0;
 }
