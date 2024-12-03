@@ -24,14 +24,42 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-
-
-// x^y = 0 mod x
-// x^y = 0 mod y
-// 1<=y<=m
-// 
 void testcase(){
+    int x,m;
+    cin >> x >> m;
+    int h = hset(x);
+    int ans = 0;
+    int mx=  (1LL<<(h+1))-1;
+    int r2 =((int)pow(2LL,h+1LL))%x;
+    rep(y,0,min(mx+1,m+1) ){
+        // if(y!=0 && ((x^y)%y==0 && (x^y)%x!=0)){
+        //     ans++;
+        // }
+        int have = 0;
+        rep(yy,0,m+1) {
+            if((yy&(mx))==y) have++;
+        }
+        cout << y << " have "<<have << endl;
+        int z = (x^y);
+        int r1 = (x-z%x)%x;
+        if(r1==0){
 
+        }
+        else {
+            if(r2==0 || r1%r2) continue;
+            int r3 =r1/r2;
+            
+        }
+    }
+    int real = 0;
+    rep(y,1,m+1){
+        if((x^y)%y==0 || (x^y)%x==0){
+            // cout << y << endl;
+             real++;}
+    }
+    cout<< real << " " << ans-1 << endl;
+    // assert(real==ans-1);
+    put(ans-1);
 }
 int32_t main()
 {
