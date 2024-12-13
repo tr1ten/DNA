@@ -24,60 +24,10 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-
-/*
-no pair i,j st    
-a[g(i,j)] = g(a[i],a[j])
-
-
-S = m integers <=n
-
-a = n integers from set S
-
-m<=n<=1e5
-
-when -1?
-a1 a2 a3 
-
-a[j] ?
-j = 2*i,3*i .. 
-a[i] = x
-a[j] = max  y st. y!=0modx
-
-assign greedily 
-
-
-proof ? 
-
-*/
-
-
 void testcase(){
     int n,m;
     cin >> n >> m;
-    vi a(m);
-    tkv(a,m);
-    vi b(n,-1);
-    vector<unordered_set<int>> divs(n);
-    for(int i=1;i<=n;i++){
-        per(k,0,m){
-            if(divs[i-1].count(a[k])==0){
-                b[i-1] = a[k];
-                break;
-            }
-        }   
-        if(b[i-1]==-1){
-            put(-1);
-            return;
-        }
-        for(int j=2*i;j<=n;j+=i) {
-            divs[j-1].insert(b[i-1]);
-        }
-    }
-    rep(i,0,n){
-        cout << b[i] << ' ';
-    }
-    cout << endl;
+    put(lcm(n,m));
 }
 int32_t main()
 {
