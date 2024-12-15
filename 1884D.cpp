@@ -24,22 +24,45 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int MAXN = 1e6+1;
-void testcase(){
-    int n,d,s;
-    cin >> n >> d >> s;
-    int ans = s;
-    rep(p,2,MAXN){
-        int k = d/(s*(p-1));
-        k = min(k,n/(s*p));
-        if(k==0) break;
-        int t=(k)*s*p;
-        if(t<=n){
-            ans = max(t,ans);
+vector<vector<int>> divs;
+void preprocess(int N){
+    divs.clear();
+    divs.resize(N+1);
+    for(int x=1;x<=N;x++){
+        for(int u=x;u<=N;u +=x){
+            divs[u].push_back(x);   
         }
     }
-    int ls = min(d/s+1,n/s);
-    ans = max(ls*s,ans);
+}
+void testcase(){
+    int n;
+    cin >> n;
+    preprocess(n);
+    vi a(n+1);
+    vi f(n+1);
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        a[x]++;
+        for(auto d:divs[x]){
+            f[d]++;
+        }
+        
+    }
+    int ans  = 0;
+    per(i,1,n+1){
+        f[i] = f[i]*(f[i]-1)/2;
+        for(int j=2*i;j<=n;j+=i){
+            f[i] -= f[j];
+        }
+        int ex = 0;
+        for(auto d:divs[i]) {
+            if(a[d]) {ex=1;break;}
+        }
+        if(ex==0){
+            ans+= f[i];
+        }
+    }
     put(ans);
     
 }
@@ -50,7 +73,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

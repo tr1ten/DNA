@@ -21,27 +21,52 @@ inline int hset(int x) {return __lg(x);}
     NOT use seg tree use fenwick tree
     THINK before you code
 */
-
-const int MOD = 1e9+7; // change me for god sake look at problem mod
-const int INF = 1e16+5;
-const int MAXN = 1e6+1;
-void testcase(){
-    int n,d,s;
-    cin >> n >> d >> s;
-    int ans = s;
-    rep(p,2,MAXN){
-        int k = d/(s*(p-1));
-        k = min(k,n/(s*p));
-        if(k==0) break;
-        int t=(k)*s*p;
-        if(t<=n){
-            ans = max(t,ans);
+const int N = 5*(1e5) + 5;
+int sieve[N+1];
+// find prime <sqrt(MAX)
+// O(LlogL)
+void preprocess(){
+    sieve[0] = 1;
+    sieve[1] = 1;
+    for(int x=2;x<=N;x++){
+        if(sieve[x]!=0) continue; 
+        sieve[x] = x;
+        for(int u=2*x;u<=N;u +=x){
+            if(sieve[u]==0) sieve[u] = x;
         }
     }
-    int ls = min(d/s+1,n/s);
-    ans = max(ls*s,ans);
-    put(ans);
-    
+}
+
+
+void testcase(){
+    int n;
+    cin >> n;
+    int pc = 0;
+    int pr = 2;
+    vi a(n);
+    rep(i,0,n){
+        int x;
+        cin >> x;
+        a[i] = x;
+        if(sieve[x]==x){
+            pc++;
+            pr = x;
+        }
+    }
+    if(pc>=2) put(-1)
+    else{
+        int ans = pr;
+        for(auto x:a){
+            if(x==ans) continue;
+            if(sieve[x]*ans>x) {
+                put(-1);
+                return;
+            }
+        }
+        put(ans);
+    }
+
+
 }
 int32_t main()
 {
@@ -50,7 +75,9 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    // cin>>T;
+    cin>>T; 
+    preprocess(); // must call this
+
     while(T--) testcase();
 
     return 0;
