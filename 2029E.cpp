@@ -22,7 +22,7 @@ inline int hset(int x) {return __lg(x);}
     THINK before you code
 */
 const int N = 5*(1e5) + 5;
-int sieve[N+1];
+int sieve[N+1]; 
 // find prime <sqrt(MAX)
 // O(LlogL)
 void preprocess(){
@@ -36,6 +36,15 @@ void preprocess(){
         }
     }
 }
+
+/*
+case:
+1. prime count > 1: -1 since cannot generate one prime from another2
+2. pc == 0, 2 can make any composite number
+3. pc == 1, that one prime then test whether it satisfy or not
+
+
+*/
 
 
 void testcase(){
@@ -57,8 +66,13 @@ void testcase(){
     else{
         int ans = pr;
         for(auto x:a){
+            assert(x<N && x%sieve[x]==0);
             if(x==ans) continue;
-            if(sieve[x]*ans>x) {
+            if(x%2 && (2*ans > (x-sieve[x]))) {
+                put(-1);
+                return;
+            }
+            if(x%2==0 && (2*ans > x)) {
                 put(-1);
                 return;
             }
