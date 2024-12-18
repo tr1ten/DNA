@@ -25,7 +25,6 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 const int N=105;
-int dp[N][N][2*N*N];
 
 void testcase(){
     int n;
@@ -35,37 +34,29 @@ void testcase(){
         cin >> a[i] >> b[i];
     }
     int total=accumulate(all(b),0LL);
+    int MAX = 70*n+1;
+    vector<vector<int>> dp(n+1,vector<int>(MAX,-INF));
+    dp[0][0] = 0;
     rep(i,0,n){
+        vector<vector<int>> dp2(n+1,vector<int>(MAX,-INF));
         rep(j,0,n){
-            rep(cap,0,200*n){
-                dp[i][j][cap]=-INF;
-            }
-        }
-    }
-    dp[0][0][0] = 0;
-
-    rep(i,0,n){
-        rep(j,0,n){
-            rep(cap,0,200*n){
+            rep(cap,0,MAX){
                 int diff=2*(a[i]-b[i]); 
-                int inc = min(b[i],cap); 
-                // take - cap inc, 
-                dp[i+1][j+1][cap+diff] = max(dp[i+1][j+1][cap+diff],dp[i][j][cap] + 2*b[i]);
-                // not take
-                dp[i+1][j][cap-inc] = max(dp[i+1][j][cap-inc],dp[i][j][cap]);
-                // cout << i << " " << j << " " << cap << " " << dp[i][j][cap] << endl;
+                dp2[j+1][min(cap+diff,MAX-1)] = max(dp2[j+1][min(cap+diff,MAX-1)],dp[j][cap] + 2*b[i]);
+                dp2[j][cap] = max(dp2[j][cap],dp[j][cap]);
             }
         }
+        dp = dp2;
     }
     vector<double> ans;
     rep(k,1,n+1){
-        int an =0 ;
-        rep(cap,0,200*n){
-            an = max(an,dp[n][k][cap]+min((total*2-dp[n][k][cap]),cap));
+        double an =0 ;
+        rep(cap,0,MAX){
+            an = max(an,(dp[k][cap]+min((2*total-dp[k][cap])*1.0/2,(double)cap))*1.0/2 );
         }
-        ans.push_back(an*1.0/2);
+        cout << an << " ";
     }
-    pvc(ans);
+    cout<<"\n";
 }
 int32_t main()
 {
