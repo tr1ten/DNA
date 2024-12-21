@@ -19,49 +19,28 @@ inline int hset(int x) {return __lg(x);}
 /*
     NOT use unordered map use map
     NOT use seg tree use fenwick tree
-    THINK before you code
+    THINK before you code 
 */
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
+
+const int N = 13;
+int a[N][N][N];
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    int s = accumulate(all(a),0LL);
-    if(s==0){
-        if(count(all(a),0)==n) put(0)
-        else put(-1);
-        return ;
-    }
-    int ans = 0;
-    int sign = s<0 ? -1 : 1;
+    vi ans(n*n*n);
     rep(i,0,n){
-        if(a[i]==0) continue;
-        
-
-        if(sign*a[i]<0){
-            int d = max(0LL,i+1-abs(s));
-            a[0] += d*sign;
-            ans +=d;
-            s += d*sign;
-            s -=a[i];
-            ans += abs(a[i]);
-            a[i] = 0;
+        rep(j,0,n){
+            rep(k,0,n){
+                cin >> a[i][j][k];
+                int n1 = i*n*n + j*n + k;
+                ans[n1] = a[i][j][k];
+            }
         }
     }
-    per(i,0,n){
-        if(a[i]==0) continue;
-        int d = max(0LL,abs(a[i]) - (abs(s)-i));
-        a[0] += d*sign;
-        ans += d;
-        s += d*sign;
-        ans +=abs(a[i]);
-        s -=a[i];
-    }
-    put(ans);
-    
+    int res= 0;
 }
 int32_t main()
 {
@@ -70,7 +49,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

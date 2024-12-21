@@ -29,38 +29,22 @@ void testcase(){
     cin >> n;
     vi a(n);
     tkv(a,n);
-    int s = accumulate(all(a),0LL);
-    if(s==0){
-        if(count(all(a),0)==n) put(0)
-        else put(-1);
-        return ;
-    }
-    int ans = 0;
-    int sign = s<0 ? -1 : 1;
-    rep(i,0,n){
-        if(a[i]==0) continue;
-        
+    while (a.size() && a.back()==0)
+    {
+        a.pop_back();
 
-        if(sign*a[i]<0){
-            int d = max(0LL,i+1-abs(s));
-            a[0] += d*sign;
-            ans +=d;
-            s += d*sign;
-            s -=a[i];
-            ans += abs(a[i]);
-            a[i] = 0;
-        }
     }
-    per(i,0,n){
-        if(a[i]==0) continue;
-        int d = max(0LL,abs(a[i]) - (abs(s)-i));
-        a[0] += d*sign;
-        ans += d;
-        s += d*sign;
-        ans +=abs(a[i]);
-        s -=a[i];
+    reverse(all(a));
+    while (a.size() && a.back()==0)
+    {
+        a.pop_back();
     }
-    put(ans);
+    int cnt = count(all(a),0);;
+    if(a.size()==0) put(0)
+    else if(cnt==0) put(1)
+    else put(2)
+    
+    
     
 }
 int32_t main()

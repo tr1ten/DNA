@@ -27,41 +27,30 @@ const int INF = 1e16+5;
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
-    tkv(a,n);
-    int s = accumulate(all(a),0LL);
-    if(s==0){
-        if(count(all(a),0)==n) put(0)
-        else put(-1);
-        return ;
-    }
-    int ans = 0;
-    int sign = s<0 ? -1 : 1;
+    string s;
+    cin >> s;
+    int p = 0;
+    int s1= -1;
     rep(i,0,n){
-        if(a[i]==0) continue;
-        
-
-        if(sign*a[i]<0){
-            int d = max(0LL,i+1-abs(s));
-            a[0] += d*sign;
-            ans +=d;
-            s += d*sign;
-            s -=a[i];
-            ans += abs(a[i]);
-            a[i] = 0;
+        if(s[i]=='.')continue;
+        if(s[i]=='s'){
+            if(p) {
+                put("NO");
+                return;
+            }
+            s1 = i;
+        }
+        else {
+            if(s1!=-1){
+                if(i!=n-1 && s1!=0){
+                    put("NO");
+                    return;
+                }
+            }
+            p = 1;
         }
     }
-    per(i,0,n){
-        if(a[i]==0) continue;
-        int d = max(0LL,abs(a[i]) - (abs(s)-i));
-        a[0] += d*sign;
-        ans += d;
-        s += d*sign;
-        ans +=abs(a[i]);
-        s -=a[i];
-    }
-    put(ans);
-    
+    put("YES");
 }
 int32_t main()
 {

@@ -29,39 +29,33 @@ void testcase(){
     cin >> n;
     vi a(n);
     tkv(a,n);
-    int s = accumulate(all(a),0LL);
-    if(s==0){
-        if(count(all(a),0)==n) put(0)
-        else put(-1);
-        return ;
-    }
-    int ans = 0;
-    int sign = s<0 ? -1 : 1;
+    vi sa = a;
+    srv(sa);
+    // prefix, suff
+    int j  =0 ;
+    priority_queue<int,vi,greater<int>> pq;
+    int ans=n*n;
     rep(i,0,n){
-        if(a[i]==0) continue;
-        
-
-        if(sign*a[i]<0){
-            int d = max(0LL,i+1-abs(s));
-            a[0] += d*sign;
-            ans +=d;
-            s += d*sign;
-            s -=a[i];
-            ans += abs(a[i]);
-            a[i] = 0;
+        ans = min(ans,i*i + (n-j)*(n-j));
+        pq.push(a[i]);
+        while(pq.size() && j<n && sa[j]==pq.top()){
+            j++;
+            pq.pop();
         }
     }
-    per(i,0,n){
-        if(a[i]==0) continue;
-        int d = max(0LL,abs(a[i]) - (abs(s)-i));
-        a[0] += d*sign;
-        ans += d;
-        s += d*sign;
-        ans +=abs(a[i]);
-        s -=a[i];
+
+    // suff, prefix
+    priority_queue<int> pq2;
+    j  =n-1;
+    rep(i,0,n){
+        ans = min(ans,i*i + (j+1)*(j+1));
+        pq2.push(a[n-i-1]);
+        while(pq2.size() && j>=0 && sa[j]==pq2.top()){
+            j--;
+            pq2.pop();
+        }
     }
     put(ans);
-    
 }
 int32_t main()
 {
@@ -70,7 +64,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

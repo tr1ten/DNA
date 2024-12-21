@@ -25,43 +25,14 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    int s = accumulate(all(a),0LL);
-    if(s==0){
-        if(count(all(a),0)==n) put(0)
-        else put(-1);
-        return ;
-    }
-    int ans = 0;
-    int sign = s<0 ? -1 : 1;
-    rep(i,0,n){
-        if(a[i]==0) continue;
-        
-
-        if(sign*a[i]<0){
-            int d = max(0LL,i+1-abs(s));
-            a[0] += d*sign;
-            ans +=d;
-            s += d*sign;
-            s -=a[i];
-            ans += abs(a[i]);
-            a[i] = 0;
-        }
-    }
-    per(i,0,n){
-        if(a[i]==0) continue;
-        int d = max(0LL,abs(a[i]) - (abs(s)-i));
-        a[0] += d*sign;
-        ans += d;
-        s += d*sign;
-        ans +=abs(a[i]);
-        s -=a[i];
-    }
-    put(ans);
-    
+    int a,b;
+    cin >> a >> b;
+    int y=1e5;
+    int x = 3*a - b - y;
+    assert(abs(x)<=1e6);
+    assert((x+y+b)/3==a);
+    put(3);
+    cout << x << " " << b << " " << y << endl;
 }
 int32_t main()
 {
@@ -70,7 +41,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
+    // cin>>T;
     while(T--) testcase();
 
     return 0;

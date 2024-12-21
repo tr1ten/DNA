@@ -24,44 +24,40 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-void testcase(){
-    int n;
-    cin >> n;
-    vi a(n);
-    tkv(a,n);
-    int s = accumulate(all(a),0LL);
-    if(s==0){
-        if(count(all(a),0)==n) put(0)
-        else put(-1);
-        return ;
-    }
-    int ans = 0;
-    int sign = s<0 ? -1 : 1;
-    rep(i,0,n){
-        if(a[i]==0) continue;
-        
+const int N = 205;
+int dp[N][N][N];
+int dp2[N][N];
 
-        if(sign*a[i]<0){
-            int d = max(0LL,i+1-abs(s));
-            a[0] += d*sign;
-            ans +=d;
-            s += d*sign;
-            s -=a[i];
-            ans += abs(a[i]);
-            a[i] = 0;
+int a[N][N];
+void testcase(){
+    int n,m,K;  
+    cin >> n >> m >> K;
+    rep(i,1,n+1){
+        rep(j,1,m+1){
+            cin >> a[i][j];
         }
     }
-    per(i,0,n){
-        if(a[i]==0) continue;
-        int d = max(0LL,abs(a[i]) - (abs(s)-i));
-        a[0] += d*sign;
-        ans += d;
-        s += d*sign;
-        ans +=abs(a[i]);
-        s -=a[i];
+    rep(i,0,n+1){
+        rep(j,0,m+1){
+            rep(k,0,m+1){
+                dp[i][j][k] = INF;
+            }
+            dp2[i][j] = INF;
+        }
     }
-    put(ans);
-    
+    rep(i,0,m+1){
+        dp[1][0][i] = i*K;
+    }
+    rep(i,1,n+1){
+        rep(j,1,m+1){
+            rep(k,0,m+1){
+                dp[i][j][k] = min(dp[i][j][k],a[i][(j+k-1+m)%m+1] + min(dp[i][j-1][k],k*K + dp2[i-1][j]) );
+                dp2[i][j] = min(dp2[i][j],dp[i][j][k]);
+            }
+            // cout << i << " " << j <<" " << a[i][j] << " " << dp2[i][j] << endl;
+        }
+    }
+    put(dp2[n][m]);
 }
 int32_t main()
 {
