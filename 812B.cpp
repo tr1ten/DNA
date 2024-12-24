@@ -32,13 +32,13 @@
         rep(i,0,n){
             cin >> mat[i];
         }
-        vector<int> fs(n),ls(n,m+1);
+        vector<int> fs(n,m+1),ls(n);
         vii dp(n,vi(2));
         int last = n-1;
         per(i,0,n){
             rep(j,0,m+2){
                 if(mat[i][j]=='1' ) {
-                    if(fs[i]==0) fs[i] = j;
+                    if(fs[i]==m+1) fs[i] = j;
                     ls[i] = j;    
                 }
 
@@ -48,11 +48,13 @@
                 dp[i][1] = INF;
             }
             else {
-                last = i;
+                if(ls[i]){
+                    last = i;
+                }   
                 dp[i][0] = min(dp[i+1][0] + (ls[i+1]), dp[i+1][1]+fs[i+1])+1+ls[i];
                 dp[i][1] = min(dp[i+1][0] + (m+1-ls[i+1]), dp[i+1][1]+m+1-fs[i+1])+1+m+1-fs[i];
             }
-        }   
+        }
         put(min(dp[last][0],dp[last][1]));
 
     }
