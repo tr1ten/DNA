@@ -33,28 +33,16 @@ void testcase(){
         return;
     }
     pi ans = {-1,-1};
-    
-    if(l1==r1){
-        if(__gcd(l1,r1)==1) {ans.first =l1*g,ans.second=r1*g;}
+    assert(l1<=r1);
+    per(k,0,r1-l1+1){
+        rep(i,l1,r1-k+1){
+            if(__gcd(k,i)==1){
+                cout << i*g  <<" " << (i+k)*g << endl;
+                return;
+            }
+        }
     }
-    else {
-        
-        if(__gcd(l1,r1)!=1) {
-            r1-=1;
-        }
-        if(__gcd(l1,r1)==1) {
-            ans.first = l1*g;
-            ans.second = r1*g;
-        }
-        else{
-            ans.first = (l1+1)*g;
-            ans.second = (r1+1)*g;
-        }
-        
-
-    }
-    if(ans.first!=-1){ assert(__gcd(ans.first,ans.second)==g);}
-    cout << ans.first << " " << ans.second << endl;
+    cout <<-1<< " " <<-1 << endl;
     
 }
 int32_t main()
