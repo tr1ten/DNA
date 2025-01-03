@@ -26,17 +26,20 @@ const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 
 bool detect_cycle(int u,vector<set<int>> &adj,vi &states){
-    if(states[u]!=0) return false;
+    if(states[u]!) return false;
     states[u] = 1;
-    bool res = 0;
     for(auto v:adj[u]){
-        if(states[v]==2) continue;
-        else if(states[v]==0) res |= detect_cycle(v,adj,states);
-        else res=true;
+        if(states[v]){
+            if(states[u]==1) return true;
+        }
+        else {
+            bool chk = detect_cycle(v,adj,states);
+            if(chk) return true;
+        }
     }
 
     states[u] =2;
-    return res;
+    return false;
 }
 void testcase(){
     int n,m;
@@ -68,7 +71,7 @@ void testcase(){
             }
         }
         // this will create directed graph, where some component might create cycle now we just have to see whehter we can reach those cycle by doing necc ops
-        vi states(n+m,0);
+        vi states(n+m);
         rep(i,0,n+m){
             if(asg[i] && detect_cycle(i,adj,states)) {
                 put("No");
