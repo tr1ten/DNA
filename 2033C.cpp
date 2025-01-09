@@ -24,44 +24,29 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-struct Edge {
-    int a, b, cost;
-};
-
-int n, m, v;
-vector<Edge> edges;
-
-vii solve()
-{
-    vector<vi> d(n, vi(n,INF));
-    d[v][0] = 0;
-    for (int i = 1; i < n ; ++i)
-        for (Edge e : edges)
-            d[e.b][i] = min(d[e.b][i-1],e.cost);
-    return d;
-}
 void testcase(){
-    int q;
-    cin >> n >> m >> q;
-    edges.clear();
-    rep(i,0,m){
-        int u,v,w;
-        cin >> u >> v >> w;
-        edges.push_back({--u,--v,w});
+    int n;
+    cin >>n;
+    int ans = 0;
+    vi a(n);
+    tkv(a,n);
+    // pvc(a);
+    rep(i,0,n/2+1){
+        int j= n-i-1;
+        if(i>=j) break;
+        else if(i+1==j){
+            ans += (a[i]==a[i+1]);
+            break;   
+        }
+        int a1 = (a[i]==a[i+1])+(a[j]==a[j-1]);
+        int a2 = (a[i]==a[j-1])+(a[j]==a[i+1]);
+        if(a2<a1){
+            swap(a[i],a[j]);
+        }
+        ans +=min(a1,a2);
     }
-    vector<vii> dist(n);
-    rep(i,0,n){
-        v=i;
-        dist[i] = solve();
-    }
-    rep(i,0,q){
-        int a,b,k;
-        cin >> a >> b >> k;
-        a--;b--;
-        cout << (dist[a][b][min(k,n-1)]) << " ";
-    }
-    cout << endl;
-    
+    // pvc(a);
+    put(ans);
 }
 int32_t main()
 {

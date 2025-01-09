@@ -24,44 +24,25 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-struct Edge {
-    int a, b, cost;
-};
-
-int n, m, v;
-vector<Edge> edges;
-
-vii solve()
-{
-    vector<vi> d(n, vi(n,INF));
-    d[v][0] = 0;
-    for (int i = 1; i < n ; ++i)
-        for (Edge e : edges)
-            d[e.b][i] = min(d[e.b][i-1],e.cost);
-    return d;
-}
 void testcase(){
-    int q;
-    cin >> n >> m >> q;
-    edges.clear();
-    rep(i,0,m){
-        int u,v,w;
-        cin >> u >> v >> w;
-        edges.push_back({--u,--v,w});
-    }
-    vector<vii> dist(n);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    unordered_map<int,int> dp;
+    vector<int> p(n+1);
     rep(i,0,n){
-        v=i;
-        dist[i] = solve();
+        p[i+1] =p[i]^a[i];
+
     }
-    rep(i,0,q){
-        int a,b,k;
-        cin >> a >> b >> k;
-        a--;b--;
-        cout << (dist[a][b][min(k,n-1)]) << " ";
+    int ans = 0;
+    per(i,0,n){
+        dp[a[i]^p[i]] =a[i] + dp[p[i]];
+        ans = max(ans,dp[a[i]^p[i]])    ;
     }
-    cout << endl;
-    
+    // assert(ans2>=ans);
+    put(ans);
+
 }
 int32_t main()
 {

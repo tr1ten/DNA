@@ -24,43 +24,32 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-struct Edge {
-    int a, b, cost;
-};
-
-int n, m, v;
-vector<Edge> edges;
-
-vii solve()
-{
-    vector<vi> d(n, vi(n,INF));
-    d[v][0] = 0;
-    for (int i = 1; i < n ; ++i)
-        for (Edge e : edges)
-            d[e.b][i] = min(d[e.b][i-1],e.cost);
-    return d;
-}
 void testcase(){
-    int q;
-    cin >> n >> m >> q;
-    edges.clear();
-    rep(i,0,m){
-        int u,v,w;
-        cin >> u >> v >> w;
-        edges.push_back({--u,--v,w});
-    }
-    vector<vii> dist(n);
+    int n;
+    cin >> n;
+    vi a(n);
+    tkv(a,n);
+    unordered_map<int,int> last;
     rep(i,0,n){
-        v=i;
-        dist[i] = solve();
+        last[a[i]] = i;
     }
-    rep(i,0,q){
-        int a,b,k;
-        cin >> a >> b >> k;
-        a--;b--;
-        cout << (dist[a][b][min(k,n-1)]) << " ";
+    int i =0 ;
+    int ans = 0;
+    while (i<n)
+    {
+        int end = last[a[i]];
+        unordered_set<int> st;
+        int cnt=0;
+        while (i<n && i<=end)
+        {
+            end = max(end,last[a[i]]);
+            st.insert(a[i]);
+            i++;
+            cnt++;
+        }
+        if(cnt>1) ans += st.size();
     }
-    cout << endl;
+    put(ans);
     
 }
 int32_t main()

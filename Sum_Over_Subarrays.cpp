@@ -85,7 +85,7 @@ void testcase(){
             int sm = fsm.sum(index+neq,j-1);
             ans += cnt*pref[i] - sm;
             fsm.update(index,pref[i]);
-            fcnt.update(index,1);
+            fcnt.update(index,1);   
 
         }
         return ans;

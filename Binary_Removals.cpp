@@ -24,44 +24,26 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-struct Edge {
-    int a, b, cost;
-};
-
-int n, m, v;
-vector<Edge> edges;
-
-vii solve()
-{
-    vector<vi> d(n, vi(n,INF));
-    d[v][0] = 0;
-    for (int i = 1; i < n ; ++i)
-        for (Edge e : edges)
-            d[e.b][i] = min(d[e.b][i-1],e.cost);
-    return d;
-}
 void testcase(){
-    int q;
-    cin >> n >> m >> q;
-    edges.clear();
-    rep(i,0,m){
-        int u,v,w;
-        cin >> u >> v >> w;
-        edges.push_back({--u,--v,w});
-    }
-    vector<vii> dist(n);
+    int n,k,x;
+    cin >> n >> x >> k;
+    int inv = 0;
+    int ac = 0,bc=0;
+    string s;
+    cin >> s;
     rep(i,0,n){
-        v=i;
-        dist[i] = solve();
+        if(s[i]=='0'){
+            ac++;
+            inv += bc;
+        }
+        else {
+            bc++;
+        }
     }
-    rep(i,0,q){
-        int a,b,k;
-        cin >> a >> b >> k;
-        a--;b--;
-        cout << (dist[a][b][min(k,n-1)]) << " ";
+    if(inv<=x && inv%k==0){
+        put("1");
     }
-    cout << endl;
-    
+    else put(2);
 }
 int32_t main()
 {
