@@ -24,45 +24,10 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-string to_s(int x){
-    if(x<0) return "0"+to_string(x);
-    return to_string(x);
-}
-string f(int x){
-    if(x%10==0){
-        string res = f(1)+"+"+f(x-1);
-        return res;
-    }
-    return to_s(x) + ("+")+ to_s(x) +"-" "0";
-} 
-string fr(int x){
-    string s = f(x);
-    reverse(all(s));
-    return s;
-} 
-int half(int x) {
-    return x<0 ? (x-1)/2 : x/2;
-}
 void testcase(){
-    int a,b;
-    cin >> a >> b;
-    string ans;
-    if(abs(a%2)==abs(b%2)){
-        if(a%2) ans = "1+";
-        // cout << a << " " << half(a) << endl;
-        ans += f(half(a))+"+"+fr(half(b));
-    }
-    else {
-        // cout << a << " " << b << "  " << a%2 << " " << b%2 << endl;
-        if(a%2){
-            ans = f( half(a-1) ) +"+" + fr(half(b+10)) + "+99-98"; 
-        }
-        else {
-            ans = f(half(a+10)) +"+" + fr(half(b-1)) + "+89-99";
-        }
-    }
-    deque<int> dq;
-    put(ans);
+    int n,a,b;
+    cin >> n>> a >> b;
+    put(abs(a-b)%2==0 ? "YES" : "NO");
 }
 int32_t main()
 {
@@ -71,6 +36,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;

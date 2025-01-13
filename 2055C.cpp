@@ -24,45 +24,55 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-string to_s(int x){
-    if(x<0) return "0"+to_string(x);
-    return to_string(x);
-}
-string f(int x){
-    if(x%10==0){
-        string res = f(1)+"+"+f(x-1);
-        return res;
-    }
-    return to_s(x) + ("+")+ to_s(x) +"-" "0";
-} 
-string fr(int x){
-    string s = f(x);
-    reverse(all(s));
-    return s;
-} 
-int half(int x) {
-    return x<0 ? (x-1)/2 : x/2;
-}
+const int N = 1005;
+int mat[N][N];
 void testcase(){
-    int a,b;
-    cin >> a >> b;
-    string ans;
-    if(abs(a%2)==abs(b%2)){
-        if(a%2) ans = "1+";
-        // cout << a << " " << half(a) << endl;
-        ans += f(half(a))+"+"+fr(half(b));
+    int n,m;
+    cin >> n >> m;
+    int x = 11;
+    if(n!=m) x=0;
+    string s;
+    cin >> s;
+    vi rs(n),cs(m);
+    rep(i,0,n){
+        rep(j,0,m){
+            cin >> mat[i][j];
+            cs[j]+=mat[i][j];
+            rs[i] += mat[i][j];
+        }
     }
-    else {
-        // cout << a << " " << b << "  " << a%2 << " " << b%2 << endl;
-        if(a%2){
-            ans = f( half(a-1) ) +"+" + fr(half(b+10)) + "+99-98"; 
+    int cx=0,cy=0;
+    rep(i,0,n+m-2){
+        if(s[i]=='D'){
+            mat[cx][cy] = x-rs[cx];
+            rs[cx] += mat[cx][cy];
+            cs[cy] += mat[cx][cy];
+            cx +=1;
         }
         else {
-            ans = f(half(a+10)) +"+" + fr(half(b-1)) + "+89-99";
+            mat[cx][cy] = x-cs[cy];
+            rs[cx] += mat[cx][cy];
+            cs[cy] += mat[cx][cy];
+            cy +=1;
         }
+        
+
     }
-    deque<int> dq;
-    put(ans);
+    mat[cx][cy] = x-rs[cx];
+    rs[cx] += mat[cx][cy];
+    cs[cy] += mat[cx][cy];
+    rep(i,0,n){
+        assert(rs[i]==x);
+    }
+    rep(i,0,m){
+        assert(cs[i]==x);
+    }
+    rep(i,0,n){
+        rep(j,0,m){
+            cout << mat[i][j] << ' ';
+        }
+        cout << "\n";
+    }
 }
 int32_t main()
 {
@@ -71,6 +81,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    cin>>T;
     while(T--) testcase();
 
     return 0;
