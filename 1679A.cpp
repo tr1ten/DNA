@@ -24,49 +24,52 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 5*1e5 + 5;
-vi g[N];
-int a[N];
-int dp[N];
-int ans;
-void dfs(int u,int par){
-    vi cc;
-    vi sum(4,-INF);
-    sum[0] = 0;
-    for(auto v:g[u]){
-        if(v!=par){
-            dfs(v,u);
-            for (int i = 3; i >= 0; --i) {
-                sum[min(i + 1, 3LL)] = max(sum[min(i + 1,  3LL)], sum[i] + dp[v]);
-            }
+int gcd(int a, int b, int& x, int& y) {
+    if (b == 0) {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    int x1, y1;
+    int d = gcd(b, a % b, x1, y1);
+    x = y1;
+    y = x1 - y1 * (a / b);
+    return d;
+}
 
-        }
+bool find_any_solution(int a, int b, int c, int &x0, int &y0, int &g) {
+    g = gcd(abs(a), abs(b), x0, y0);
+    if (c % g) {
+        return false;
     }
-    dp[u]=-INF;
-    rep(j,0,4){
-        dp[u] = max(dp[u], sum[j] + (j == 1 ? 0 : a[u]));
-        ans = max(ans, sum[j] + (j == 2 ? 0 : a[u]));
-    }
+
+    x0 *= c / g;
+    y0 *= c / g;
+    if (a < 0) x0 = -x0;
+    if (b < 0) y0 = -y0;
+    return true;
+}
+void shift_solution(int & x, int & y, int a, int b, int cnt) {
+    x += cnt * b;
+    y -= cnt * a;
 }
 void testcase(){
     int n;
     cin >> n;
-    tkv(a,n);
-    rep(i,0,n){
-        g[i].clear();
-        dp[i] = 0;
+    if
+    int g,x0,y0;
+    int a = 2,b=3;
+    if(!find_any_solution(4,6,n,x0,y0,g)) {
+        put(-1);
+        return;
     }
-    ans = 0;
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        g[u].push_back(v);
-        g[v].push_back(u);
+    shift_solution(x0,y0,a,b,(-x0)/b);
+    if(x0<0){
+        shift_solution(x0,y0,a,b,1);
     }
-    dfs(0,-1);
-    put(ans);
-
+    int mn = x0+y0;
+    int mx = mn + y0/a;
+    cout << mn << " " << mx << endl;
 }
 int32_t main()
 {

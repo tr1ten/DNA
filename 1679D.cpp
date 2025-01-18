@@ -24,49 +24,70 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 5*1e5 + 5;
-vi g[N];
-int a[N];
-int dp[N];
-int ans;
-void dfs(int u,int par){
-    vi cc;
-    vi sum(4,-INF);
-    sum[0] = 0;
-    for(auto v:g[u]){
-        if(v!=par){
-            dfs(v,u);
-            for (int i = 3; i >= 0; --i) {
-                sum[min(i + 1, 3LL)] = max(sum[min(i + 1,  3LL)], sum[i] + dp[v]);
-            }
+vii adj;
+vi a;
+int n,m,k;
+vi dp,states;
 
+bool dfs(int u,int x){
+    states[u] = 1;
+    for(auto v:adj[u]){
+        if(a[v]>x) continue;
+        if(states[v]==0){
+            if(dfs(v,x)) return true;
+            dp[u] = max(dp[u],dp[v]+1);
+        }  
+        else if(states[v]==1){
+            return true;
+        }
+        else {
+            dp[u] = max(dp[u],dp[v]+1);
         }
     }
-    dp[u]=-INF;
-    rep(j,0,4){
-        dp[u] = max(dp[u], sum[j] + (j == 1 ? 0 : a[u]));
-        ans = max(ans, sum[j] + (j == 2 ? 0 : a[u]));
-    }
+    states[u] =2;
+    return false;
+}
+int check(int x){
+    dp.clear();
+    dp.resize(n);
+    states.clear();
+    states.resize(n);
+    int cyl = 0;
+    rep(i,0,n){
+        if(states[i]==0){
+            cyl |=dfs(i,x);
+
+        }
+    }    
+    int mx = *max_element(all(dp));
+    // cout << x << " " << cyl << endl;
+    return cyl || (mx>=(k-1));
+
 }
 void testcase(){
-    int n;
-    cin >> n;
+    cin >> n >> m >> k;
+    adj.resize(n);
+    a.resize(n);
     tkv(a,n);
-    rep(i,0,n){
-        g[i].clear();
-        dp[i] = 0;
-    }
-    ans = 0;
-    rep(i,0,n-1){
+    rep(i,0,m){
         int u,v;
         cin >> u >> v;
         --u;--v;
-        g[u].push_back(v);
-        g[v].push_back(u);
+        adj[u].push_back(v);
     }
-    dfs(0,-1);
+    int lo=*min_element(all(a)),hi=1e9+1;
+    int ans = -1;
+    while (lo<=hi)
+    {
+        int mid= (lo+hi)/2;
+        if(check(mid)){
+            ans =mid;
+            hi = mid-1;
+        }
+        else lo = mid+1;
+    }
     put(ans);
-
+    
 }
 int32_t main()
 {
@@ -75,7 +96,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;

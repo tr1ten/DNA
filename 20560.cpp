@@ -24,49 +24,18 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 5*1e5 + 5;
-vi g[N];
-int a[N];
-int dp[N];
-int ans;
-void dfs(int u,int par){
-    vi cc;
-    vi sum(4,-INF);
-    sum[0] = 0;
-    for(auto v:g[u]){
-        if(v!=par){
-            dfs(v,u);
-            for (int i = 3; i >= 0; --i) {
-                sum[min(i + 1, 3LL)] = max(sum[min(i + 1,  3LL)], sum[i] + dp[v]);
-            }
-
-        }
-    }
-    dp[u]=-INF;
-    rep(j,0,4){
-        dp[u] = max(dp[u], sum[j] + (j == 1 ? 0 : a[u]));
-        ans = max(ans, sum[j] + (j == 2 ? 0 : a[u]));
-    }
-}
 void testcase(){
-    int n;
-    cin >> n;
-    tkv(a,n);
+    int n,m;
+    cin >> n >> m;
+    vi x(n),y(n);
+    int xs=0,ys =0 ;
     rep(i,0,n){
-        g[i].clear();
-        dp[i] = 0;
+        cin >> x[i] >> y[i];
+        xs += x[i];
+        ys += y[i];
     }
-    ans = 0;
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        g[u].push_back(v);
-        g[v].push_back(u);
-    }
-    dfs(0,-1);
+    int ans = (xs-x[0]+m)*2 + (ys-y[0]+m)*2;
     put(ans);
-
 }
 int32_t main()
 {

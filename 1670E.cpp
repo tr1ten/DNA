@@ -24,48 +24,51 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 5*1e5 + 5;
-vi g[N];
-int a[N];
-int dp[N];
-int ans;
-void dfs(int u,int par){
-    vi cc;
-    vi sum(4,-INF);
-    sum[0] = 0;
-    for(auto v:g[u]){
+vector<pi> edges;
+vii adj;
+vi ae,av;
+int n,cur;
+void dfs(int u,int par,int z){
+    for(auto e:adj[u]){
+        int v = edges[e].first == u ? edges[e].second: edges[e].first;
         if(v!=par){
-            dfs(v,u);
-            for (int i = 3; i >= 0; --i) {
-                sum[min(i + 1, 3LL)] = max(sum[min(i + 1,  3LL)], sum[i] + dp[v]);
+            if(z) {
+                ae[e]=cur^n;
+                av[v] = cur;
             }
-
+            else {
+                ae[e] = cur;
+                av[v] = cur^n;
+            }
+            cur++;
+            dfs(v,u,z^1);
         }
-    }
-    dp[u]=-INF;
-    rep(j,0,4){
-        dp[u] = max(dp[u], sum[j] + (j == 1 ? 0 : a[u]));
-        ans = max(ans, sum[j] + (j == 2 ? 0 : a[u]));
     }
 }
 void testcase(){
-    int n;
-    cin >> n;
-    tkv(a,n);
-    rep(i,0,n){
-        g[i].clear();
-        dp[i] = 0;
-    }
-    ans = 0;
+    int p;
+    cin >> p;
+    n = 1<<p;
+    edges.clear();
+    adj.clear();
+    adj.resize(n);
+    av.clear();ae.clear();
+    ae.resize(n-1);
+    av.resize(n);
     rep(i,0,n-1){
         int u,v;
         cin >> u >> v;
         --u;--v;
-        g[u].push_back(v);
-        g[v].push_back(u);
+        edges.push_back({u,v});
+        adj[u].push_back(i);
+        adj[v].push_back(i);
     }
-    dfs(0,-1);
-    put(ans);
+    cur = 1;
+    av[0] = n;
+    dfs(0,-1,1);
+    put(1);
+    pvc(av);
+    pvc(ae);
 
 }
 int32_t main()

@@ -24,49 +24,36 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 5*1e5 + 5;
-vi g[N];
-int a[N];
-int dp[N];
-int ans;
-void dfs(int u,int par){
-    vi cc;
-    vi sum(4,-INF);
-    sum[0] = 0;
-    for(auto v:g[u]){
-        if(v!=par){
-            dfs(v,u);
-            for (int i = 3; i >= 0; --i) {
-                sum[min(i + 1, 3LL)] = max(sum[min(i + 1,  3LL)], sum[i] + dp[v]);
-            }
-
-        }
-    }
-    dp[u]=-INF;
-    rep(j,0,4){
-        dp[u] = max(dp[u], sum[j] + (j == 1 ? 0 : a[u]));
-        ans = max(ans, sum[j] + (j == 2 ? 0 : a[u]));
-    }
-}
 void testcase(){
-    int n;
-    cin >> n;
+    int n,q;
+    cin >> n >> q;
+    vi a(n);
     tkv(a,n);
-    rep(i,0,n){
-        g[i].clear();
-        dp[i] = 0;
+    vi lst(n,-1);
+    pi aa = {0,-1};
+    int sm =accumulate(all(a),0LL);
+    rep(i,0,q){
+        int t;
+        cin >> t;
+        if(t==1){
+            int idx,x;
+            cin >> idx >> x;
+            idx--;
+            if(aa.second>lst[idx]){
+                a[idx] = aa.first;
+                lst[idx] = aa.second;
+            }
+            sm += x-a[idx];
+            a[idx]=x;
+        }
+        else {
+            int x;
+            cin >> x;
+            aa = {x,i};
+            sm = x*n;
+        }
+        put(sm);
     }
-    ans = 0;
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        g[u].push_back(v);
-        g[v].push_back(u);
-    }
-    dfs(0,-1);
-    put(ans);
-
 }
 int32_t main()
 {
@@ -75,7 +62,6 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    cin>>T;
     while(T--) testcase();
 
     return 0;
