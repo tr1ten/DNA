@@ -24,40 +24,47 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-
 const int N = 2*(1e5) + 4;
-
-vector<int> g[N];
-map<pi,int> cost;
 int n,m;
+tuple<int,int,int> edges[N];
+
 bool vis[N];
-int dfs(int u,int x){
-    int cnt = 1;
+int root;
+int cnt=0;
+void dfs(int u, vii &g){
+    vis[u] =1;
     for(auto v:g[u]){
         if(!vis[v]){
-            int c =cost[{u,v}];
-            if(c<=x){
-                
-            }
+            dfs(v,g);
         }
     }
+    root = u;
 }
-int check(int x){
-    rep(i,0,n){
-        vis[i] =0;
+bool check(int x){
+    vii adj(n);
+    rep(i,0,m){
+        auto [u,v,w] = edges[i];
+        adj[u].push_back(v);
+        if(w<=x){
+           adj[v].push_back(u);
+        }
     }
+    memset(vis,0,sizeof(int)*(n));
+    rep(i,0,n){
+        if(!vis[i]) dfs(i,adj);
+    }
+    memset(vis,0,sizeof(int)*(n));
+    dfs(root,adj);
+    rep(i,0,n) {if(!vis[i]) return 0;}
+    return 1;
 }   
 void testcase(){
     cin >> n >> m;
-    rep(i,0,n) g[i].clear();
     rep(i,0,m){
         int u,v,w;
         cin >> u >> v >> w;
         --u;--v;
-        cost[{u,v}] = 0;
-        cost[{v,u}] = min(cost[{v,u}],w);
-        g[u].push_back(v);
-        g[v].push_back(u);
+        edges[i] = {u,v,w};
     }
     int lo=0,hi=1e9+1;
     int ans = -1;
