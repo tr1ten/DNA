@@ -22,24 +22,48 @@ inline int hset(int x) {return __lg(x);}
     THINK before you code
 */
 
-const int MOD = 1e9+7; // change me for god sake look at problem mod
+const int MOD = 998244353; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 const int N = 1e5 + 5;
-long long fact[N];
-long long inv[N];
-long long finv[N];
+
+int sieve[N+1];
+// find prime <sqrt(MAX)
+// O(LlogL)
+std::vector <int> prime;
+bool is_composite[N+1];
+
+void preprocess (int n) {
+	std::fill (is_composite, is_composite + n, false);
+	for (int i = 2; i < n; ++i) {
+		if (!is_composite[i]) {
+			prime.push_back (i);
+			sieve[i] = i;
+		}
+		for (int j = 0; j < prime.size () && i * prime[j] < n; ++j) {
+			is_composite[i * prime[j]] = true;
+			sieve[i*prime[j]] = min(sieve[i],prime[j]);
+		}
+	}
+}
+
+const int M = 21;
+const int N2=2*M+5;
+int f[M+1];
+long long fact[N2+1];
+long long inv[N2+1];
+long long finv[N2+1];
 
 void pre() {
     fact[0] = 1;
-    for (int i = 1; i <= N; i++) {
+    for (int i = 1; i <= N2; i++) {
         fact[i] = (fact[i-1]*i)%MOD;
     }
     inv[1] = 1;
-    for (int i = 2; i <= N; i++) {
+    for (int i = 2; i <= N2; i++) {
         inv[i] = 1LL * (MOD - MOD / i) * inv[MOD % i] % MOD;
     }
     finv[0] = finv[1] = 1;
-    for (int i = 2; i <= N; i++) {
+    for (int i = 2; i <= N2; i++) {
         finv[i] = (inv[i]*finv[i-1])%MOD;
     }
 }
@@ -49,28 +73,17 @@ long long nCk(int n,int k) {
     return (((fact[n]*finv[k])%MOD)*finv[n-k])%MOD;
 }
 
-int sieve[N+1];
-// find prime <sqrt(MAX)
-// O(LlogL)
-void preprocess(){
-    sieve[0] = 1;
-    sieve[1] = 1;
-    for(int x=2;x<=N;x++){
-        if(sieve[x]!=0) continue; 
-        sieve[x] = x;
-        for(int u=2*x;u<=N;u +=x){
-            sieve[u] = x;
-        }
-    }
-}
-
-
 void testcase(){
     int k,n;
     cin >> k >> n;
     rep(i,1,k+1){
+        if(i==1){
+            cout << n << " ";
+            continue;
+        }
         int ans = 0;
-        rep(m,1,n+1){
+        int num = (n+1);
+        rep(t,1,min(n+1,M+1)){
             int cur = 1;
             int x= i;
             while(x>1){
@@ -80,9 +93,16 @@ void testcase(){
                     cnt++;
                     x /=f;
                 }
-                cur = cur*nCk(m+cnt-1,cnt)%MOD;
+                cur = cur*nCk(t+cnt-1,cnt)%MOD;
             }
-            ans += cur;
+            f[t] = cur;
+            rep(tt,1,t){
+                f[t]= (f[t]-f[tt]*nCk(t,tt)%MOD + MOD)%MOD;
+            }
+            num = num*(n+1-t)%MOD;
+            int nval = num*finv[t+1]%MOD;
+            ans += f[t]*nval%MOD;
+            ans %= MOD;
         }
         cout << ans << " ";
     }
@@ -96,7 +116,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
-    preprocess();
+    preprocess(N+1);
     pre();
     cin>>T;
     while(T--) testcase();
