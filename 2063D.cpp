@@ -55,34 +55,37 @@ void testcase(){
             a2++;
         }
         else{
-            if(n-2*a1-a2>m-2*a2-a1){
+            if(m-2*a2-a1>=3){
+                // assert(n-2*a1-a2==0);
                 a1--;
                 up = (2*a1 + a2 <= n-2 && 2*a2 + a1 <= m-1) ? -(a[a1]-a[n-a1-1]) : 0;
-                assert(up!=0);
+                // assert(up!=0);
                 down = (2*a1 + a2 <= n-1 && 2*a2 + a1 <= m-2) ? -(b[a2]-b[m-a2-1]) : 0;
-                assert(down!=0);
+                // assert(down!=0);
                 ans -=up;
                 a2++;
                 ans +=down;
                 down = (2*a1 + a2 <= n-1 && 2*a2 + a1 <= m-2) ? -(b[a2]-b[m-a2-1]) : 0;
-                assert(down!=0);
+                // assert(down!=0);
                 ans +=down;
                 a2++;
             }
-            else {
+            else if(n-2*a1-a2>=3) {
+                // assert(m-2*a2-a1==0);
                 a2--;
                 down = (2*a1 + a2 <= n-1 && 2*a2 + a1 <= m-2) ? -(b[a2]-b[m-a2-1]) : 0;
-                assert(down!=0);
+                // assert(down!=0);
                 up = (2*a1 + a2 <= n-2 && 2*a2 + a1 <= m-1) ? -(a[a1]-a[n-a1-1]) : 0;
-                assert(up!=0);
+                // assert(up!=0);
                 ans -=down;
                 a1++;
                 ans += up;
                 up = (2*a1 + a2 <= n-2 && 2*a2 + a1 <= m-1) ? -(a[a1]-a[n-a1-1]) : 0;
                 ans +=up;
-                assert(up!=0);
+                // assert(up!=0);
                 a1++;
             }
+            else assert(0);
         }
         res.push_back(ans);
     }
