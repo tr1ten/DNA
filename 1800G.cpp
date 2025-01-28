@@ -27,8 +27,15 @@ const int INF = 1e16+5;
 const int N = 2*(1e5) + 5;
 vi g[N];
 int ans = 1;
-const int M = 1LL<<64;
+const int M = 1LL<<63;
 const int p = 31;
+ int h(int x) { 
+    return x * x * x * 1237123 + 19260817; 
+} 
+int f(int x) { 
+    int cur = h(x & ((1 << 31)-1)) + h(x >> 31); 
+    return cur; 
+} 
 pi dfs(int u,int par){
     pi hs = {0,1};
     unordered_map<int,int> cnt;
@@ -45,7 +52,7 @@ pi dfs(int u,int par){
     srv(ch);
     int pw=p;
     rep(i,0,ch.size()){
-        hs.first = (hs.first + (ch[i]*ch[i]%MOD + ch[i]*pw%MOD + 42)%MOD)%MOD;
+        hs.first = (hs.first + f(ch[i]));
     }   
     int odc = 0;
     for(auto [h,c]:cnt){
