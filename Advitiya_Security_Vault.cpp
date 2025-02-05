@@ -41,11 +41,15 @@ void testcase(){
     vi a(n);
     tkv(a,n);
     int f=0,d=0;
+    int imp=0;
     rep(i,0,(n+1)/2){
         int j = n-i-1;
         if(a[i]!=0){
             f++;
             if(a[j]==0) d++;
+            else if(a[j]!=a[i]){
+                imp = 1;
+            }
         }
         if(i==j){
             continue;
@@ -53,22 +57,21 @@ void testcase(){
         if(a[j]!=0){
             f++;
             if(a[i]==0) d++;
+            else if(a[j]!=a[i]){
+                imp = 1;
+            }
         }
     }
     int ans = 0;
-    if(f!=0 && d==0){
-        ans = (fast_pow(k,n-d-f,MOD))%MOD;
+    ans = (fast_pow(k,n-f,MOD));
+    int left=n-d-f;
+    // cout << ans << " " << f << " " << d << endl;
+    if(!imp && left>0){
+        ans -= ((fast_pow(k,left,MOD)-fast_pow(k,(left+1)/2,MOD)+MOD)%MOD)*fast_pow(2,MOD-2,MOD)%MOD;
+        ans += MOD;
+        ans %=MOD;
     }
-    else {
-        ans = ((fast_pow(k,d,MOD)-1+MOD)%MOD)*(fast_pow(k,n-d-f,MOD))%MOD;
-        int left=n-d-f;
-        // cout << ans << " " << f << " " << d << endl;
-        if(left>0){
-            ans += ((fast_pow(k,left,MOD)+k)%MOD)*fast_pow(2,MOD-2,MOD)%MOD;
-            ans %=MOD;
-        }
-        
-    }
+    
     put(ans);
     
 }
