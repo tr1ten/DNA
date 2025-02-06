@@ -24,7 +24,7 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 2e5 + 4;
+const int N = 2*(1e5) + 4;
 int g[N];
 long long fast_pow(long long a, long long b, long long m) {
     a %= m;
@@ -37,24 +37,47 @@ long long fast_pow(long long a, long long b, long long m) {
     }
     return res;
 }
+class BIT {
+private:
+    std::vector<int> nums;
+    int LOG;
+public:
+    BIT(int n) {
+    	LOG = (int)log2(n)+1;
+        nums.resize((1ll<<LOG) + 1);
+    }
+    void update(int i, int val) {
+        i += 1;
+        while (i < nums.size()) {
+            nums[i] += val;
+            i += (i & (-i));
+        }
+    }
+    int sum(int i) {
+        int r = 0;
+        while (i > 0) {
+            r += nums[i];
+            i -= (i & (-i));
+        }
+        return r;
+    }
+};
+
+int A = 7;
 void testcase(){
     int n;
     cin >> n;
-    vi a(n);
+    vi arr(n);
     rep(i,0,n){
         int x;
         cin >> x;
-        a[i] = g[x];
+        arr[i] = g[x];
+        assert(arr[i]<A);
     }
-    int A = 6;
-    vii cnt(n+1,vi(A));
+    vector<BIT>  cnt(A,BIT(n));
     rep(i,0,n){
-        cnt[i+1][a[i]] +=1;
-        rep(j,0,A){
-            cnt[i+1][j] += cnt[i][j];
-        }
+        cnt[arr[i]].update(i,1);
     }
-    pvc(a);
     int q;
     cin >> q;
     rep(i,0,q){
@@ -64,29 +87,37 @@ void testcase(){
             vi cc(A);
             a--;b--;
             rep(j,0,A){
-                cc[j] = cnt[b+1][j] - cnt[a][j];
+                cc[j] = cnt[j].sum(b+1) - cnt[j].sum(a);
             }
             int ccc=1;
+            vi pok;
             rep(j,0,A){
-                ccc = ccc*fast_pow(2,cc[j]-1,MOD);
+                if(cc[j]==0) continue;
+                pok.push_back(j);
+                ccc = ccc*fast_pow(2,cc[j]-1,MOD)%MOD;
             }
             int ans=0;
-            rep(mask,0,1<<A){
+            rep(mask,0,1<<pok.size()){
                 int cur = 0;
-                rep(j,0,A){
+                rep(j,0,pok.size()){
                     if(mask&(1<<j)){
-                        cur = cur^j;
+                        cur = cur^pok[j];
                     }
                 }
-                if(cur==0){
+                if(cur!=0){
                     ans +=ccc;
+                    ans %=MOD;
                 }
             }
             cout << ans << endl;
 
         }
         else {  
-            
+            int v=a,x=b;
+            v--;
+            cnt[arr[v]].update(v,-1);
+            arr[v] = g[x];
+            cnt[arr[v]].update(v,1);
         }
     }
 }
