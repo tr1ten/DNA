@@ -22,32 +22,56 @@ inline int hset(int x) {return __lg(x);}
     THINK before you code
 */
 
-const int MOD = 998244353; // change me for god sake look at problem mod
+const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 2e5+5;
-unordered_map<int,int> dp[N][2];
-int n;
-int a[N];
-int f(int i,int last,int j){
-    if(i==n) return 1;
-    if(dp[i][last].count(j)) return dp[i][last][j];
-    int ways = 0;
-    if(a[i]==j){
-        ways = f(i+1,0,j);
-    }
-    if(!last){
-        ways += f(i+1,1,j+1);
-        ways %=MOD;
-    }
-    return dp[i][last][j] = ways;
-}
 void testcase(){
-    cin >> n;
-    tkv(a,n);
+    int n,m;
+    cin >> n >> m;
+    map<int,int> a,b;
     rep(i,0,n){
-        dp[i][0].clear();dp[i][1].clear();
+        int x;
+        cin >> x;
+        a[x]++;
     }
-    put(f(0,0,0));
+    rep(i,0,m){
+        int x;
+        cin >> x;
+        b[x]++;
+    }
+    while (!b.empty()) {
+    auto it = b.begin();
+    auto req = *it;  // Store value before erasing
+    b.erase(it);
+
+    int d = min(req.second, a[req.first]);
+    a[req.first] -= d;
+    req.second -= d;
+
+    if (req.second) {
+        if (req.first == 1) {
+            put("No");
+            return;
+        }
+        if (req.first % 2) {
+            b[req.first / 2] += req.second;
+            b[req.first / 2 + 1] += req.second;
+        } else {
+            b[req.first / 2] += 2 * req.second;
+        }
+    }
+}
+
+    int rem = 0;
+    for(auto x:a){
+        if(x.second!=0){
+            put("No");
+            return;
+        }
+    }
+    put("Yes");
+    
+    
+
 }
 int32_t main()
 {

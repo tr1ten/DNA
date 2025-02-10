@@ -22,32 +22,27 @@ inline int hset(int x) {return __lg(x);}
     THINK before you code
 */
 
-const int MOD = 998244353; // change me for god sake look at problem mod
+const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 2e5+5;
-unordered_map<int,int> dp[N][2];
-int n;
-int a[N];
-int f(int i,int last,int j){
-    if(i==n) return 1;
-    if(dp[i][last].count(j)) return dp[i][last][j];
-    int ways = 0;
-    if(a[i]==j){
-        ways = f(i+1,0,j);
-    }
-    if(!last){
-        ways += f(i+1,1,j+1);
-        ways %=MOD;
-    }
-    return dp[i][last][j] = ways;
-}
 void testcase(){
+    int n;
     cin >> n;
-    tkv(a,n);
+    set<int> a,b;
     rep(i,0,n){
-        dp[i][0].clear();dp[i][1].clear();
+        int x;
+        cin >> x;;
+        a.insert(x);
     }
-    put(f(0,0,0));
+    rep(i,0,n){
+        int x;
+        cin >> x;;
+        b.insert(x);
+    }
+    if((a.size()==1 && b.size()<=2) || (a.size()<=2 && b.size()<=1)){
+        put("NO")
+    }
+    else put("YES");
+    
 }
 int32_t main()
 {

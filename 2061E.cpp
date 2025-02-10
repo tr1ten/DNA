@@ -22,32 +22,39 @@ inline int hset(int x) {return __lg(x);}
     THINK before you code
 */
 
-const int MOD = 998244353; // change me for god sake look at problem mod
+const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 2e5+5;
-unordered_map<int,int> dp[N][2];
-int n;
-int a[N];
-int f(int i,int last,int j){
-    if(i==n) return 1;
-    if(dp[i][last].count(j)) return dp[i][last][j];
-    int ways = 0;
-    if(a[i]==j){
-        ways = f(i+1,0,j);
-    }
-    if(!last){
-        ways += f(i+1,1,j+1);
-        ways %=MOD;
-    }
-    return dp[i][last][j] = ways;
-}
 void testcase(){
-    cin >> n;
-    tkv(a,n);
-    rep(i,0,n){
-        dp[i][0].clear();dp[i][1].clear();
+    int n,m,k;
+    cin >> n >> m >> k;
+    vi a(n),b(m);
+    tkv(a,n);tkv(b,m);
+    vii dp(n,vi(m+1,INF));
+    vi val(1<<m,(1LL<<30)-1);
+    rep(mask,0,1<<m){
+        rep(j,0,m){
+            if(mask&(1<<j)){
+                val[mask] &=b[j];
+            }
+        }
     }
-    put(f(0,0,0));
+    vi vv;
+    rep(i,0,n) {
+        dp[i][0] = a[i];
+        rep(mask,0,1<<m){      
+            dp[i][pc(mask)] = min(dp[i][pc(mask)],a[i]&val[mask]);
+        }
+        rep(j,1,m+1){
+            vv.push_back(dp[i][j]-dp[i][j-1]);
+        }
+    }
+    srv(vv);
+    int ans = accumulate(all(a),0LL);
+    rep(i,0,k){
+        ans += vv[i];
+    }
+    put(ans);
+
 }
 int32_t main()
 {
