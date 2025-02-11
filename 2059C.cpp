@@ -25,34 +25,28 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
-    int n,k;
-    cin >> n >> k;
-    vi a(n);
-    tkv(a,n);
-    if(k==n){
-        int t = 1;
-        for(int j=1;j<n;j+=2){
-            if(a[j]==t){
-                t++;
-            }
-            else {
-                put(t);
-                return;
-            }
+    int n;
+    cin >> n;
+    vi a;
+    rep(i,0,n){
+        vi b(n);
+        int cnt = 0;
+        rep(i,0,n){
+            int x;
+            cin >> x;
+            if(x==1) cnt++;
+            else cnt=0;
         }
-        put(t);
-        return;
+        a.push_back(cnt);
     }
-    else{
-        rep(i,1,n-k+2){
-            if(a[i]!=1){
-                put(1);
-                return;
-            }
-        }   
-        put(2);
-
+    srv(a);
+    int ans = 0;
+    rep(i,0,n){
+        if(ans<=a[i]) {
+            ans++;
+        }
     }
+    put(ans);
 }
 int32_t main()
 {
