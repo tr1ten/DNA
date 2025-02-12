@@ -188,10 +188,8 @@ void testcase(){
                 int newcc = *ms[c.first].begin();
                 int ppc = fast_pow(c.first,newcc,MOD);
                 g = g*ppc%MOD;
-                // debug(newcc,ppc);
             }
             a[i][c.first]+=c.second;
-            // debug(a[i][c.first],c,g,ms[c.first],gold,oldc,(gold)==oldc , ms[c.first].count(oldc)==0);
         }
         put(g);
     }
