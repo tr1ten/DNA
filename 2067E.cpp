@@ -25,31 +25,46 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
-    int n  ;
+    int n;
     cin >> n;
-    vi cnt(n+2);
+    vi a(n);
+    tkv(a,n);
+    set<int> st;
+    rep(i,0,n+1) st.insert(i);
+    int zc = 0;
+    map<int,int> cnt;
+    vi b;
     rep(i,0,n){
-        int x;
-        cin >> x;
-        cnt[x]++;
+        if(st.count(a[i])) {
+            st.erase(a[i]);
+        }
     }
-    int i=1;
-    while (i<=n)
-    {
-        if(cnt[i]==0) {i++;continue;}
-        int j =i;
-        while (j<=n && cnt[j])
-        {
-            if(cnt[j]==1) {
-                put("No");
+    int mex = *st.begin();
+    if(mex==0){
+        put(n);
+        return;
+    }
+    rep(i,0,n){
+        if(a[i]<mex){
+          b.push_back(a[i]);cnt[a[i]]++;
+        }
+        if(a[i]==0) zc++;
+    }
+    int ans = n-zc;
+    int mn=INF;
+    rep(i,0,b.size()){
+        if(cnt[b[i]]==1 || b[i]==0){
+            mn = min(mn,b[i]);
+        }
+        else {
+            if(mn>=b[i]){
+                put(ans);
                 return;
             }
-            cnt[j+1] += cnt[j]-2;
-            j++;
         }
-        i = j;
     }
-    put(cnt[n+1]%2 ? "No" : "Yes")
+    put(ans+1);
+
     
 }
 int32_t main()

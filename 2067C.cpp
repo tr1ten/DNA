@@ -25,31 +25,28 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
-    int n  ;
+    int n;
     cin >> n;
-    vi cnt(n+2);
-    rep(i,0,n){
-        int x;
-        cin >> x;
-        cnt[x]++;
-    }
-    int i=1;
-    while (i<=n)
+    int cur = 9;
+    auto check = [&](int x) {
+        string s = to_string(x);
+        return find(all(s),'7')!=s.end();
+    };
+    int ans = INF;
+    while (cur<1e16)
     {
-        if(cnt[i]==0) {i++;continue;}
-        int j =i;
-        while (j<=n && cnt[j])
+        int total = n;
+        int res = 0;
+        while (!check(total) && res<20)
         {
-            if(cnt[j]==1) {
-                put("No");
-                return;
-            }
-            cnt[j+1] += cnt[j]-2;
-            j++;
+            res++;
+            total += cur;
         }
-        i = j;
+        cur = cur*10 + 9;
+        ans = min(ans,res);
     }
-    put(cnt[n+1]%2 ? "No" : "Yes")
+    assert(ans!=INF);
+    put(ans);
     
 }
 int32_t main()
