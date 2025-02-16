@@ -61,7 +61,7 @@ int check(int x){
     }    
     int mx = *max_element(all(dp));
     // cout << x << " " << cyl << endl;
-    return cyl || (mx>=(k-1));
+    return cyl || (mx>=(k-1));z
 
 }
 void testcase(){
