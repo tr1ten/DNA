@@ -21,53 +21,51 @@ inline int hset(int x) {return __lg(x);}
     NOT use seg tree use fenwick tree
     THINK before you code
 */
-const int MOD = 998244353; // change me for god sake look at problem mod
+
+const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 3*(1e5) + 5;
-vi g[N];
-int dt[N];
-void dfs(int u,int d) { 
-    dt[u] = d;
-    for(auto v:g[u]){
-        dfs(v,d+1);
-    }
+int computeXOR(int n)
+{
+  
+  // If n is a multiple of 4
+  if (n % 4 == 0)
+    return n;
+
+  // If n%4 gives remainder 1
+  if (n % 4 == 1)
+    return 1;
+
+  // If n%4 gives remainder 2
+  if (n % 4 == 2)
+    return n + 1;
+
+  // If n%4 gives remainder 3
+  return 0;
 }
-int dpall[N],dp[N];
 void testcase(){
-    int n;
-    cin >> n;
-    rep(i,0,n+1){
-        dp[i]=0,dpall[i] = 0;
-        g[i].clear();
+    int x,y;
+    cin >> x >> y;
+    if(x==0 && y==0) {
+      put(0);
+      return;
     }
-    rep(i,1,n){
-        int u;
-        cin >> u;
-        u--;
-        g[u].push_back(i);
+    if(x<y){
+        put(-1);
+        return;
     }
-    dfs(0,0);
-    vi inds(n);
-    iota(all(inds),0);
-    sort(all(inds),[&](int u,int v){
-        return dt[u] > dt[v];
-    });
-    for(auto v:inds){
-        int d = dt[v];
-        dp[v] += (dpall[d+1]+1)%MOD;
-        if(v!=0){
-            for(int u:g[v]){
-                dp[v] -= dp[u];
-                dp[v] += MOD;
-                dp[v] %=MOD;
-            }
+    int v=y;
+    rep(i,0,63){
+        if((v|(1LL<<i))<=x ){
+            v |=(1LL<<i);
         }
-        dpall[d] += dp[v];
-        dpall[d] %=MOD;
-        // cout << v <<"  " << dp[v] << endl;
     }
-    put(dp[0]);
-    
+    // put(v);
+    int m = __popcount(v);
+    if(y==0){
+      if(m==1) 
+      else
+    }
+    put((1LL<<m) - (y>0 && m>1));
 }
 int32_t main()
 {

@@ -21,53 +21,44 @@ inline int hset(int x) {return __lg(x);}
     NOT use seg tree use fenwick tree
     THINK before you code
 */
-const int MOD = 998244353; // change me for god sake look at problem mod
+
+const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 3*(1e5) + 5;
-vi g[N];
-int dt[N];
-void dfs(int u,int d) { 
-    dt[u] = d;
-    for(auto v:g[u]){
-        dfs(v,d+1);
-    }
+int ask(int a,int b,int c){
+    
+    cout << "? " << a << " " << b << " " << c << endl;
+    cout.flush();
+    int x;
+    cin >> x;
+    // int x  = gcd(ansx+a,ansx+b);
+    // cout << x << endl;
+    return x;
 }
-int dpall[N],dp[N];
+void tell(vi x){
+    cout << "! ";
+    rep(i,0,x.size()){
+        cout << x[i] << " ";
+    }
+    cout << endl;
+    cout.flush();
+}
 void testcase(){
     int n;
     cin >> n;
-    rep(i,0,n+1){
-        dp[i]=0,dpall[i] = 0;
-        g[i].clear();
+    int S = 0;
+    vi st;
+    rep(i,2,n){
+        st.push_back(ask(1,2,i+1));
+        S += st.back();
     }
-    rep(i,1,n){
-        int u;
-        cin >> u;
-        u--;
-        g[u].push_back(i);
+    int  X = (S-n*(n+1)/2)/(n-3);
+    vi res(n);
+    rep(i,0,n-2){
+        res[i+2] = st[i] - X;
     }
-    dfs(0,0);
-    vi inds(n);
-    iota(all(inds),0);
-    sort(all(inds),[&](int u,int v){
-        return dt[u] > dt[v];
-    });
-    for(auto v:inds){
-        int d = dt[v];
-        dp[v] += (dpall[d+1]+1)%MOD;
-        if(v!=0){
-            for(int u:g[v]){
-                dp[v] -= dp[u];
-                dp[v] += MOD;
-                dp[v] %=MOD;
-            }
-        }
-        dpall[d] += dp[v];
-        dpall[d] %=MOD;
-        // cout << v <<"  " << dp[v] << endl;
-    }
-    put(dp[0]);
-    
+    res[0] = ask(1,3,4) - (res[2] + res[3]);
+    res[1] = ask(2,3,4) - (res[2] + res[3]);
+    tell(res);
 }
 int32_t main()
 {
