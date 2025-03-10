@@ -30,20 +30,18 @@ int a[N];
 int X= 0;
 int smr,sml;
 int f(int i,int od,int ev,int y,int end){
-    assert(i>0);
     if(i>end) return 0;
     if(end-i<2){
         return (end-i+1)*(y^X);
     }
     int total = 2*(od+ev);
-    assert(total>0);
     int req = min(total,end-i+1);
     int res = 2*(y^X);
     req -=2;
     res += ((2*(req/4))*X) + min(2LL,req%4)*X;
     // res += (2*(od+ev-1))*(X);
     res +=f(2*i,od+ev,ev+od,y^X,end);
-    cout << i << " " << total << " " << end << " " << y << " " << res << endl;
+    // cout << i << " " << total << " " << end << " " << y << " " << res << endl;
     return res;
 }
 void testcase(){
@@ -82,13 +80,12 @@ void testcase(){
     rep(i,1,min(l,2*n+2)){
         sml += a[i];
     }
+    // cout << X << " "<< smr << " " << sml << endl;
     rep(i,n+1,2*n+2){
         smr +=f(2*i,i%2,i%2==0,i%2==0 ? a[i] : 0,r);
         sml +=f(2*i,i%2,i%2==0,i%2==0 ? a[i] : 0,l-1); 
         // cout << i << " smr " << smr << " " << a[i] << endl;
-        break;
     }
-    cout << X << " "<< smr << " " << sml << endl;
     put(smr-sml);
     
     
