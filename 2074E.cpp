@@ -24,52 +24,43 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 1e5 + 5;
-int masks[N];
-vector<pi> g[N];
-int dp[1<<20 + 1];
-bool dfs(int u,int p,int end,int b){
-    if(end==u) return true;
-    for(auto v:g[u]){
-        if(v.first!=p){
-            if(dfs(v.first,u,end,b)){masks[v.second] |= b;return true;}
-        }
-    }
-    return false;
-}   
+int ask(int a,int b,int c){
+    
+    cout << "? " << a << " " << b <<" " << c << endl;
+    cout.flush();
+    int x;
+    cin >> x;
+    // int x  = gcd(ansx+a,ansx+b);
+    // cout << x << endl;
+    return x;
+}
+void tell(int a,int b,int c){
+    cout << "! " << a << " " << b <<" " << c << endl;
+    cout.flush();
+}
 void testcase(){
     int n;
     cin >> n;
-    rep(i,0,n) {g[i].clear();masks[i]=0;}
-    rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        g[u].push_back({v,i});
-        g[v].push_back({u,i});
-    }
-    int k;
-    cin >> k;
-    rep(i,0,k){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        dfs(u,-1,v,1<<i);
-    }
-    unordered_set<int> st;
-    rep(i,0,n-1){
-        st.insert(masks[i]);
-    }
-    rep(i,0,1<<k) dp[i] = INF;
-    dp[0] = 0;
-    for(int ai:st){
-        rep(j,0,1<<k){
-            dp[j|ai] = min(dp[j|ai], dp[j] + 1);
+    queue<tuple<int,int,int>> q;
+    q.push({1,2,3});
+    while(q.size()){
+        auto [a,b,c] = q.front();
+        q.pop();
+        int x = ask(a,b,c);
+        if(x==0){
+            tell(a,b,c);
+            return;
         }
+        if(x==-1){
+            assert(false);
+            return;
+        }
+        q.push({a,b,x});
+        q.push({a,c,x});
+        q.push({b,c,x});
     }
-    put(dp[(1<<k)-1]);
-}   
-
+    
+}
 int32_t main()
 {
     ios_base::sync_with_stdio(false);

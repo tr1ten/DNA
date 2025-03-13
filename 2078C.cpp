@@ -24,52 +24,26 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-const int N = 1e5 + 5;
-int masks[N];
-vector<pi> g[N];
-int dp[1<<20 + 1];
-bool dfs(int u,int p,int end,int b){
-    if(end==u) return true;
-    for(auto v:g[u]){
-        if(v.first!=p){
-            if(dfs(v.first,u,end,b)){masks[v.second] |= b;return true;}
-        }
-    }
-    return false;
-}   
 void testcase(){
     int n;
     cin >> n;
-    rep(i,0,n) {g[i].clear();masks[i]=0;}
+    vi a(2*n);
+    tkv(a,2*n);
+    srv(a);
+    reverse(all(a));
+    vi res(2*n+1);
+    int cur = 0;
+    for(int i=0;i<=n;i++){
+        res[2*i] = a[i];
+        cur += a[i];
+    }
     rep(i,0,n-1){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        g[u].push_back({v,i});
-        g[v].push_back({u,i});
+        res[2*i+1] = a[i+n+1];
+        cur -= a[i+n+1];
     }
-    int k;
-    cin >> k;
-    rep(i,0,k){
-        int u,v;
-        cin >> u >> v;
-        --u;--v;
-        dfs(u,-1,v,1<<i);
-    }
-    unordered_set<int> st;
-    rep(i,0,n-1){
-        st.insert(masks[i]);
-    }
-    rep(i,0,1<<k) dp[i] = INF;
-    dp[0] = 0;
-    for(int ai:st){
-        rep(j,0,1<<k){
-            dp[j|ai] = min(dp[j|ai], dp[j] + 1);
-        }
-    }
-    put(dp[(1<<k)-1]);
-}   
-
+    res[2*n-1] =  cur;
+    pvc(res);
+}
 int32_t main()
 {
     ios_base::sync_with_stdio(false);
