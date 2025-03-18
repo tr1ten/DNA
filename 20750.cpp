@@ -25,44 +25,20 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
-    int n;
-    cin >> n;
-    unordered_map<int,int> cnt;
-    int res= 0; 
-    rep(i,0,n){
-        vi b;
-        int x;
-        cin >> x;
-        rep(i,0,30){
-            if(x>>i&1) {
-                b.push_back(i);
-            }
-        }
-        int m = b.size();
-        int cur = 0;
-        rep(j,1,1<<m){
-            int mask = 0;
-            int sz=0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                    sz++;
-                }
-            }
-            cur += (sz%2 ? 1 : -1)*cnt[mask];
-        }
-        res += cur + i;
-        rep(j,1,1<<m){
-            int mask = 0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                }
-            }
-            cnt[mask]++;
-        }
-    }   
-    put(res);
+    int n,k;
+    cin >> n >> k;
+    if(n<=k){
+        put(1);
+        return;
+    }
+    int ans = 0;
+    if(n%2){
+        n -=k;
+        ans +=1;
+    }
+    assert(n%2==(k-1)%2);
+    ans += n/(k-1) + ((n%(k-1)) >0);
+    put(ans);
 }
 int32_t main()
 {

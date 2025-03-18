@@ -25,44 +25,26 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
-    int n;
-    cin >> n;
-    unordered_map<int,int> cnt;
-    int res= 0; 
-    rep(i,0,n){
-        vi b;
-        int x;
-        cin >> x;
-        rep(i,0,30){
-            if(x>>i&1) {
-                b.push_back(i);
-            }
+    int n,k;
+    cin >> n >> k;
+    vi a(n);
+    tkv(a,n);
+    if(k==1){
+        int mx=0;
+        rep(i,1,n-1){
+            mx = max(mx,a[i]);
         }
-        int m = b.size();
-        int cur = 0;
-        rep(j,1,1<<m){
-            int mask = 0;
-            int sz=0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                    sz++;
-                }
-            }
-            cur += (sz%2 ? 1 : -1)*cnt[mask];
-        }
-        res += cur + i;
-        rep(j,1,1<<m){
-            int mask = 0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                }
-            }
-            cnt[mask]++;
-        }
+        put(max(max(mx,a[0]) + a[n-1],max(mx,a[n-1]) + a[0]));
     }   
-    put(res);
+    else {
+        srv(a);
+        reverse(all(a));
+        int ans = 0;
+        for(int i=0;i<k+1;i++){
+            ans += a[i];
+        }
+        put(ans);
+    }
 }
 int32_t main()
 {

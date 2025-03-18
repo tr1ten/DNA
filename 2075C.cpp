@@ -24,45 +24,54 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
+typedef long long ll;
+class BIT {
+private:
+    std::vector<int> nums;
+    int LOG;
+public:
+    BIT(int n) {
+    	LOG = (int)log2(n)+1;
+        nums.resize((1ll<<LOG) + 1);
+    }
+    void update(int i, int val) {
+        i += 1;
+        while (i < nums.size()) {
+            nums[i] += val;
+            i += (i & (-i));
+        }
+    }
+    int sum(int i) {
+        int r = 0;
+        // i += 1, not needed here since we need sum of rank less than i rank[0...i-1]
+        while (i > 0) {
+            r += nums[i];
+            i -= (i & (-i));
+        }
+        return r;
+    }
+};
+
+
 void testcase(){
-    int n;
-    cin >> n;
-    unordered_map<int,int> cnt;
-    int res= 0; 
-    rep(i,0,n){
-        vi b;
-        int x;
-        cin >> x;
-        rep(i,0,30){
-            if(x>>i&1) {
-                b.push_back(i);
-            }
-        }
-        int m = b.size();
-        int cur = 0;
-        rep(j,1,1<<m){
-            int mask = 0;
-            int sz=0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                    sz++;
-                }
-            }
-            cur += (sz%2 ? 1 : -1)*cnt[mask];
-        }
-        res += cur + i;
-        rep(j,1,1<<m){
-            int mask = 0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                }
-            }
-            cnt[mask]++;
-        }
-    }   
-    put(res);
+    int n,m;
+    cin >> n >> m;
+    vi a(m);
+    tkv(a,m);
+    int ans = 0;
+    int ex = 0;
+    BIT fw(n+1);
+    BIT ct(n+1);
+    rep(i,0,m){
+        int b = min(a[i]-1,n-2);
+        int tt = ct.sum(n+1) - ct.sum(max(n-a[i],0LL));
+        int sm = fw.sum(n+1) - fw.sum(max(n-a[i],0LL));
+        ans += tt*b - sm + tt;
+        fw.update(min(n,a[i]),max(0LL,n-1-a[i]));
+        ct.update(min(n,a[i]),1);
+        
+    }
+    put(ans*2 );
 }
 int32_t main()
 {

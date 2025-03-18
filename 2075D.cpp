@@ -23,46 +23,55 @@ inline int hset(int x) {return __lg(x);}
 */
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
-const int INF = 1e16+5;
+const int INF = 1e18+5;
+const int N = 64;
+int dp[N][N][N];
+int dfs(int b1,int b2,int i){
+    if(max(b1,b2)==0) return 0;
+    if(i>max(b1,b2)) {
+        return INF;
+    }
+    if(dp[b1][b2][i]!=-1) return dp[b1][b2][i];
+    int res=dfs(b1,b2,i+1);
+    if(i<=b1){
+        res = min(res,dfs(b1-i,b2,i+1) + (1LL<<i)); 
+    }
+    if(i<=b2){
+        res = min(res,dfs(b1,b2-i,i+1) + (1LL<<i)); 
+    }
+    return dp[b1][b2][i] =res;
+    
+}
 void testcase(){
-    int n;
-    cin >> n;
-    unordered_map<int,int> cnt;
-    int res= 0; 
-    rep(i,0,n){
-        vi b;
-        int x;
-        cin >> x;
-        rep(i,0,30){
-            if(x>>i&1) {
-                b.push_back(i);
-            }
-        }
-        int m = b.size();
-        int cur = 0;
-        rep(j,1,1<<m){
-            int mask = 0;
-            int sz=0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                    sz++;
-                }
-            }
-            cur += (sz%2 ? 1 : -1)*cnt[mask];
-        }
-        res += cur + i;
-        rep(j,1,1<<m){
-            int mask = 0;
-            rep(k,0,m){
-                if(j>>k&1) {
-                    mask |= 1<<b[k];
-                }
-            }
-            cnt[mask]++;
-        }
-    }   
+    int x,y;
+    cin >> x >> y;
+    if(x==y){
+        put(0);
+        return;
+    }
+    int b1=62;   
+    while (b1>=0 && ((x>>b1)&1)==0)
+    {
+        b1--;
+    }
+    int b2=62;   
+    while (b2>=0 && ((y>>b2)&1)==0)
+    {
+        b2--;
+    }
+    int res = dfs(b1+1,b2+1+(b1==b2),1);
+    while (b1>=0 && b2>=0 &&  (x>>b1)==(y>>b2))
+    {
+        b1--;
+        b2--;
+    }
+    rep(i,0,N){
+        if(max(b1+1,b2+1)+i>62) break;
+        res = min(res,dfs(b1+1+i,b2+1+i,1));
+    }
     put(res);
+    
+    
 }
 int32_t main()
 {
@@ -71,6 +80,7 @@ int32_t main()
     // freopen("input.in","r",stdin);
     // freopen("output.out","w",stdout);      
     int T=1;
+    memset(dp,-1,sizeof dp);
     cin>>T;
     while(T--) testcase();
 
