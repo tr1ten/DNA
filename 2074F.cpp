@@ -24,28 +24,36 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
+int f(int x,int y,int p,int l1,int r1,int l2,int r2){
+    if(x==l1 && y==l2 && (x+(1LL<<p))==r1 && (y+(1LL<<p))==r2 ) return 1;
+    if(p==0){
+        return 1;
+    }
+    int p2 = 1<<(p-1);
+    int res  = 0;
+    if(x<=l1 &&  l1<x+p2){
+        if(y<=l2 && l2<y+p2){
+            res += f(x,y,p-1,l1,min(r1,x+p2),l2,min(r2,y+p2));
+        }
+        if(y+p2<r2){
+            res += f(x,y+p2,p-1,l1,min(r1,x+p2),max(y+p2,l2),r2);
+        }
+    }
+    if(x+p2<r1){
+        if(y<=l2 && l2<y+p2){
+            res += f(x+p2,y,p-1,max(l1,x+p2),r1,l2,min(r2,y+p2));
+        }
+        if(y+p2<r2){
+            res += f(x+p2,y+p2,p-1,max(l1,x+p2),r1,max(y+p2,l2),r2);
+        }
+    }
+    cout << x << " " << y << " " << p << " " << l1 << " " <<r1 <<" " << l2 << " " << r2 <<" " << res << endl;
+    return res;
+}
 void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    int ans = 0;
-    rep(i,1,n+1){
-        ans += (n-i+1)*(i-1+(i%2));
-    }   
-    map<int,int> cnt; 
-    cnt[0] +=1;
-    int one =0;
-    rep(i,0,n){
-        int cur = (s[i]-'0')^(i%2);
-        one+=cur;
-        int zero = i+1-one;
-        ans += cnt[one-zero];
-        cnt[one-zero]+=1;
-    }   
-    put(ans);
-
-
+    int l1,r1,l2,r2;
+    cin >> l1 >> r1 >> l2 >> r2;
+    put(f(0,0,5,l1,r1,l2,r2));   
 }
 int32_t main()
 {
