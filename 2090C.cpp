@@ -45,38 +45,36 @@ void testcase(){
     int ci = 0,cj = 0;
     map<tuple<int,int>,int> cnt;
     priority_queue<vi,vector<vi>,greater<vi>> pq;
+    set<pi> used;
     rep(i,0,n) {
         int x;
         cin >> x;   
-        while (pq.size() && cnt[{pq.top()[3],pq.top()[4]}]==0 && pq.top()[3]+pq.top()[4]<(ci + cj))
+        if(pq.size()==0) x=0;
+        pi ans;
+        while (pq.size() && used.count({pq.top()[1],pq.top()[2]}))
         {
             pq.pop();
         }
-        if(pq.size()==0) x=0;
-        pi ans;
-        
+        while (used.count(getc(ci,cj,0)))
+        {
+            auto pa = get(ci,cj);
+            ci = pa.first,cj =pa.second;
+        }
+        auto nxt = getc(ci,cj,0);
+        pq.push({getd(ci,cj,0),nxt.first,nxt.second,ci,cj});
         if(x==0){
+        
             ans = getc(ci,cj,0);
             cnt[{ci,cj}]+=1;
             auto nxt = getc(ci,cj,1);
             pq.push({getd(ci,cj,1),nxt.first,nxt.second,ci,cj});
-            auto pa = get(ci,cj);
-            ci = pa.first,cj =pa.second;
-            nxt = getc(ci,cj,0);
-            pq.push({getd(ci,cj,0),nxt.first,nxt.second,ci,cj});
-
         }
         else {
+            
             
             auto cs =pq.top();
             pq.pop();
             ans.first = cs[1],ans.second = cs[2];
-            if(cs[3]==ci && cs[4]==cj){
-                auto pa = get(ci,cj);
-                ci = pa.first,cj =pa.second; 
-                auto nxt = getc(ci,cj,0);
-                pq.push({getd(ci,cj,0),nxt.first,nxt.second,ci,cj});
-            }
             int val = ++cnt[{cs[3],cs[4]}];
             if(val<4){
                 auto nxt = getc(cs[3],cs[4],val);
@@ -84,6 +82,7 @@ void testcase(){
             }
             
         }
+        used.insert(ans);
         cout << ans.first << " " << ans.second << endl;
 
     }
