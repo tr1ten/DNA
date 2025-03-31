@@ -1,107 +1,127 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 using namespace std;
-#define ss second
-#define ff first
+using namespace __gnu_pbds;
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+// order_of_key(k) : no. of elements < k
+// *find_by_order(i) : value at index i (0-based)
 #define int long long
-#define rep(i,a,b) for (int i = (a); i < (b); i++)
-#define per(i,a,b) for (int i = (b)-1; i >= (a); i--)
-#define tkv(vec,sz) rep(i,0,sz) cin>>vec[i]
-#define srv(vec) sort(vec.begin(), vec.end())
-#define all(x) x.begin(), x.end()
-#define pvc(vec) for(auto x:vec) cout<<x<<" "; cout<<endl;
-#define put(x) cout << (x)<< endl;
-typedef vector<int> vi;
-typedef vector<vi> vii;
-typedef pair<int,int> pi;
-inline int ctz(int x) { return __builtin_ctzll(x);}
-inline int pc(int x) {return  __builtin_popcount(x);} 
-inline int hset(int x) {return __lg(x);}
-/*
-    NOT use unordered map use map
-    NOT use seg tree use fenwick tree
-    THINK before you code
-*/
 
-const int MOD = 1e9+7; // change me for god sake look at problem mod
-const int INF = 1e16+5;
-char a='L',b='I',c='T';
-void testcase(){
-    string s;
-    int n;
-    cin >> n;
-    cin >> s;
-    map<char,int> cnt;
-    rep(i,0,n){
-        cnt[s[i]]++;
-    }
-    if(!cnt[a] + !cnt[b] + !cnt[c]>=2){
-        put(-1);
-        return;
-    }
-    if(cnt[a]==cnt[b] && cnt[b]==cnt[c]){
-        put(0);
-        return;
-    }
-    vector<char> cc={a,b,c};
-    sort(all(cc),[&](char i,char j){
-        return cnt[i] < cnt[j];
-    });
-    vi ops;
-    rep(x,0,1){
-        char rp = cc[x];
+const int INF = 2e18;
+const int M = 1000000007;
+//const int M = 998244353;
 
-        char o1,o2;
-        if(x==0) {o1 = cc[1],o2=cc[2];}
-        else {o1=cc[0],o2=cc[2];}
+#define fastIO ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);cout.precision(numeric_limits<double>::max_digits10);
+#define ll long long
+#define ld long double
+#define memset(arr,val) memset(arr,val,sizeof(arr))
+#define pb push_back
+#define all(x) (x).begin(),(x).end()
+#define rall(x) (x).rbegin(),(x).rend()
+#define umap unordered_map
+#define mii map<int, int>
+#define pii pair<int, int>
+#define vi vector<int>
+#define vb vector<bool>
+#define vvi vector<vi>
+#define vpii vector<pii>
+#define ff first
+#define ss second
+#define rep(i,x,y) for(int i=x; i<y; i++)
+#define rrep(i,x,y) for(int i=x; i>=y; i--)
+#define setbits(n)  __builtin_popcountll(n)
+#define bitsize(n) (63 - __builtin_clzll(n))
+#define lcm(a,b) (a/__gcd(a, b)*b)
+#define yn(f) f?cout<<"YES\n":cout<<"NO\n"
+#define syn(f) f?cout<<"Yes\n":cout<<"No\n"
+mt19937_64 rnd(chrono::steady_clock::now().time_since_epoch().count());
+// rnd() -> generates a random number
 
-        int req = max(cnt[o1],cnt[o2])-cnt[rp];
-        if(req==0) continue;
-        int dx = -1;
-        rep(i,0,s.size()-1){
-            if(s[i]!=s[i+1]){
-                dx=  i;
-                if(s[i]!=rp){
-                    s = s.substr(0,i+1) + rp + s.substr(i+1);
-                    dx = i+1;
-                    cnt[rp]++;
-                    ops.push_back(i+1);
-                }
-                break;
-            }
-        }
-        string cur;
-        vector<char> places = {o1,o2};
-        int st =0;
-        if(s[dx+1]==o1) st=1; 
-        while (cnt[rp] < max(cnt[o1],cnt[o2]))
-        {
-            cur.push_back(rp);
-            ops.push_back(dx+2);
-            ops.push_back(dx+3);
-            cnt[rp]++;
-                cur.push_back(places[st]);
-                cnt[places[st]]++;
-                st^=1;
-        }
-        reverse(all(cur));
-        s = s.substr(0,dx+1) + cur + s.substr(dx+1);
-        cout << dx << " " << rp << " " << req <<" "<< s << " " << cur << endl;
-    }
-    put(s.size());
-    put(s);
-    put(ops.size());
-    pvc(ops);
+template <class T1, class T2>
+ostream& operator<<(ostream &dout, pair<T1,T2> &p){ return dout<<p.ff<<' '<<p.ss<<' ';}
+template <class T>
+ostream& operator<<(ostream &dout, vector<T> &vec){for(auto i:vec) dout<<i<<' '; return dout;}
+template <class T>
+void print(T it1, T it2, char sep=' '){for(auto it=it1; it!=it2; it++) cout<<*it<<sep; cout<<'\n';}
 
+int powm(int x,int n) {
+    x%=M;
+    if(n==0) return 1; else if(n==1) return x;
+    int p = powm(x*x, n/2);
+    if(n%2) return p*x%M; else return p;
 }
-int32_t main()
-{
-    ios_base::sync_with_stdio(false);
-	cin.tie(nullptr);
-    // freopen("input.in","r",stdin);
-    // freopen("output.out","w",stdout);      
-    int T=1;
-    cin>>T;
-    while(T--) testcase();
 
+int mod_div(int p, int q) { return p%M * powm(q,M-2) % M;}
+
+vi fact, ifact;
+void factCompute(int N=1e6) {
+    fact.assign(N+1, 1);
+    ifact.assign(N+1, 1);
+    rep(i,1,N+1) fact[i] = fact[i-1] * i % M;
+    ifact[N] = mod_div(1, fact[N]);
+    rrep(i,N-1,0) ifact[i] = ifact[i+1] * (i+1) % M;
+}
+
+int ncr(int n, int r) {
+    if(r > n) return 0;
+    return fact[n] * ifact[n-r] % M * ifact[r] % M;
+}
+
+vi spf, primes;
+void sieve(int N=1e7){
+    spf.assign(N+1,0); rep(i,0,N+1) spf[i]=i;
+    for(int i=2; i*i<=N; i++) if(spf[i]==i) for(int j=i*i; j<=N; j+=i) spf[j]=min(spf[j],i);
+    rep(i,2,N+1) if(spf[i]==i) primes.pb(i);
+}
+
+/*-------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+
+void CoderAbhi27(){
+    int n;
+    cin>>n;
+    string s; cin>>s;
+    vi ans;
+    int j=-1;
+    rep(i,0,n-1) {
+        if(s[i+1] == s[i]) continue;
+        int x = i-j;
+        int c = ans.size();
+        rep(ii,0,2*x) {
+            ans.pb(i+c+1);
+        }
+        j = i;
+    }
+    if(j==-1) {
+        cout<<"-1\n";
+        return;
+    }
+    int x = n-j-1;
+    rep(ii,0,2*x) {
+        ans.pb(n + ans.size() - x);
+    }
+    cout<<ans.size()<<'\n';
+    for(auto i:ans) cout<<i<<'\n';
+}
+
+int32_t main() {
+    fastIO;
+    #ifndef ONLINE_JUDGE
+    //freopen("input.txt", "r" , stdin);
+    //freopen("output.txt", "w", stdout);
+    #endif
+
+    // factCompute(1e6);
+    // sieve(1e7);
+
+
+    int t=1;
+    cin>>t;
+    rep(i,1,t+1){
+        //cout<<"Case #"<<i<<": ";
+        CoderAbhi27();
+    }
     return 0;
 }
