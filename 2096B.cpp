@@ -25,22 +25,29 @@ inline int hset(int x) {return __lg(x);}
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
 void testcase(){
-    int n;
-    cin >> n;
-    string s;
-    cin >> s;
-    int i =0 ;
-    int l=1,r=n;
-    vector<int> a;
-    per(i,0,n-1){
-        if(s[i]=='<') {
-            a.push_back(l++);
-        }
-        else a.push_back(r--);
+    int n,k;
+    cin >> n >> k;
+    vector<pair<int,int>> pq;
+    set<int> vis;
+    rep(i,0,2*n){
+        int x;
+        cin>>x;
+        pq.push_back({x,i%n});
     }
-    a.push_back(l);
-    reverse(all(a));
-    pvc(a);
+    srv(pq);
+    reverse(all(pq));
+    int ans = 0;
+    rep(i,0,2*n){
+        if(k-vis.count(pq.at(i).second) >0){
+            ans += pq.at(i).first;
+            k-=vis.count(pq.at(i).second);
+            vis.insert(pq.at(i).second);
+
+        }
+    }
+    put(ans+1);
+ 
+
 }
 int32_t main()
 {
@@ -54,7 +61,3 @@ int32_t main()
 
     return 0;
 }
-
-// 1 2 3 4 5
-// >><>
-// 3>2>1<4>5
