@@ -23,7 +23,7 @@ inline int hset(int x) {return __lg(x);}
 */
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
-const int INF = 1e16+5;
+const int INF = 1e14+5;
 void testcase(){
     int n;
     cin >> n;
@@ -48,28 +48,38 @@ void testcase(){
             int f1 = 1,f0=1,f=0;
             rep(j,0,n){
                 if(mat[ii-1][j]==mat[ii][j]) f=1;
-                if(mat[ii-1][j]==mat[ii][j]+1 || (ii+1<n && mat[ii+1][j]==mat[ii][j]+1)) f1=0;
+                if(mat[ii-1][j]==mat[ii][j]+1 ) f1=0;
                 if(mat[ii-1][j]==mat[ii][j]-1) f0=0;
             }
-            if(!f) {
-                // cout << dp0 << " " << dp1 << " " << ii << endl;
-                ans += min(dp0,dp1);
-                if(!f1) dp1 = INF;
-                else dp1 = a[ii];
-                dp0 = 0;
-                
+            int tp1 = dp1;
+            // cout << ii << " " << f0 <<" " << f1 << endl;
+
+            if(!f) {    
+                int mint = min(dp0,dp1);
+                dp0 =  !f0 ? dp0 : mint;
+                dp1 =  (!f1 ? dp1 : mint) + a[ii];  
+                // if(!f1){
+                //     dp1 += a[ii];
+                // }
+                // else {
+                //     dp0 = !f0 ? dp0 : min(dp1,dp0);
+                //     dp1 = dp0 + a[ii];
+                // }
                 break;
             }
-            int tp1 = dp1;
             if(f1) dp1 = dp0 + a[ii];
             else dp1 = INF;
             if(f0) dp0 = tp1;
             else dp0 = INF;
+            // cout << ii << " " << dp0 <<" " << dp1 << endl;
             ii++;
         }
         i = ii;
-        if(ii==n) ans += min(dp0,dp1);
+        // cout << ii << " " << dp0 <<" " << dp1 << endl;
+
+
     }
+    ans += min(dp0,dp1);
     i = 0;
     dp0=0,dp1=b[0];
     while (i<n)
@@ -80,18 +90,24 @@ void testcase(){
             int f1 = 1,f0=1,f=0;
             rep(j,0,n){
                 if(mat[j][ii-1]==mat[j][ii]) f=1;
-                if(mat[j][ii-1]==mat[j][ii]+1 || (ii+1<n && mat[j][ii+1]==mat[j][ii]+1)) f1=0;
+                if(mat[j][ii-1]==mat[j][ii]+1) f1=0;
                 if(mat[j][ii-1]==mat[j][ii]-1) f0=0;
             }
+            int tp1 = dp1;
             if(!f) {
-                ans += min(dp0,dp1);
-                if(!f1) dp1 = INF;
-                else dp1 = b[ii];
-                dp0 = 0;
+                int mint = min(dp0,dp1);
+                dp0 =  !f0 ? dp0 : mint;
+                dp1 =  (!f1 ? dp1 : mint) + b[ii];  
                 
+                // if(!f1){
+                //     dp1 += b[ii];
+                // }
+                // else {
+                //     dp0 = !f0 ? dp0 : min(dp1,dp0);
+                //     dp1 = dp0 + b[ii];
+                // }
                 break;
             }
-            int tp1 = dp1;
             if(f1) dp1 = dp0 + b[ii];
             else dp1 = INF;
             if(f0) dp0 = tp1;
@@ -99,8 +115,8 @@ void testcase(){
             ii++;
         }
         i =ii;
-        if(ii==n) ans += min(dp0,dp1);
     }
+    ans += min(dp0,dp1);
     put(ans<INF ? ans : -1);
     
 }
