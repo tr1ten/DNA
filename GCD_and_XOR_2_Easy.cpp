@@ -91,11 +91,6 @@ static long long countSolutions(long long r1, long long r2, long long g, long lo
         if (cnt < 0) cnt = 0;
         return cnt;
     }
-    K0 %=MOD;
-    long long ginv = modInv(gprime,MOD);
-    long long T= (binpow(2,e,MOD)-1)%MOD;
-    long long kmax=  ((T-K0) - (T-K0)%gprime)*ginv%MOD;
-    return (kmax - start+1+MOD)%MOD;
     
 
 }
