@@ -27,61 +27,17 @@ const int INF = 1e16+5;
 void testcase(){
     int n;
     cin >> n;
-    string s;
-    cin >> s;
-    vi pref(n);
-    vi suff(n);
-    int cnt =0;
-    rep(i,0,n){
-        if(s[i]=='1') cnt++;
-        else {
-            cnt = 0;
+    vi a(n);
+    tkv(a,n);
+    int amin = *min_element(all(a));
+    a.erase(min_element(all(a)));
+    int g = 0;
+    rep(i,0,n-1){
+        if( a[i]%amin==0){
+            g = __gcd(a[i],g);           
         }
-        pref[i] = cnt;
     }
-    cnt = 0;
-    per(i,0,n){
-        if(s[i]=='1') cnt++;
-        else {
-            cnt = 0;
-        }
-        suff[i] = cnt;
-    }
-    if(cnt==n){
-        put(1);
-        return;
-    }
-    int i = 0;
-    int lastb = 0;
-    int ans = 0;
-    while(i<n){
-        if(s[i]=='1') {
-            i++;
-            continue;
-        }
-        int z = 0;
-        int p1 = i ? pref[i-1] : 0;
-        int ii = i;
-        while (i<n && s[i]=='0')
-        {
-            i++;
-            z++;
-        }
-        int s1  = i<n ? suff[i] : 0;
-        int up = z*(z-1)/2 + (ii>0) + z*(ii) + lastb;
-        int down = z*(z-1)/2 + (n-i>0) + z*(n-i);
-        if(s1==1){
-            lastb = down-1;
-        }
-        else lastb = 0;
-        // cout << up << " " << down << " " << z <<" " << p1 <<" " << s1<< endl;
-        ans = max(ans,up);
-        ans = max(ans,down);
-        
-    }
-    put(ans);
-    
-
+    put(g==amin ? "Yes" : "No");
 }
 int32_t main()
 {
