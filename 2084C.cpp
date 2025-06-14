@@ -34,20 +34,86 @@ void testcase(){
     int same = -1;
     rep(i,0,n){
         if(a[i]==b[i]){
-            if(n%2==0){
+            if(n%2==0 || same!=-1){
                 put(-1);
                 return;
             }
-            same = a[i];
+            same = i;
         }
         else {
-            if(op.count(a[i]) || op.count(b[i])){
+            if(op.count(a[i]) && op[a[i]] != b[i]){
                 put(-1);
                 return;
             }
             op[a[i]] = b[i];
             op[b[i]] = a[i];
         }
+    }
+    vi des(n);
+    vector<pi> ops;
+    if(n%2 && same==-1){
+        put(-1);
+        return;
+    }
+    if(same!=-1 && same!=n/2)  {
+        swap(a[n/2],a[same]);
+        swap(b[n/2],b[same]);
+        ops.push_back({n/2,same});
+    }
+    int j = 0;
+    map<int,int> mi;
+    int k = 0;
+    per(i,(n+1)/2,n){
+        if(mi.count(a[i])){
+            while (mi.count(a[k]))
+            {
+                k++;
+            }
+            swap(a[k],a[i]);
+            swap(b[k],b[i]);
+            ops.push_back({k,i});
+        }
+        mi[a[i]] =mi[b[i]]= j++;
+    }
+    // pvc(a);pvc(b);
+    int i = 0;
+    int start = ops.size();
+    vi done(n,0);
+    while(i<n/2){
+        if(done[i]){
+            i++;
+            continue;;
+        }
+        int ni = mi[b[i]];
+        int cur = i;
+        vi pp;
+        done[i] = 1;
+        pp.push_back(i);
+        while (!done[ni])
+        {
+            done[cur] =1;
+            cur = ni;
+            pp.push_back(cur);
+            ni = mi[b[cur]];
+            assert(pp.size()<=n);
+        }
+        per(j,0,pp.size()-1){
+            ops.push_back({pp[j],pp[j+1]});
+        }
+        i++;
+    }
+    rep(k,start,ops.size()){
+        swap(a[ops[k].first],a[ops[k].second]);
+        swap(b[ops[k].first],b[ops[k].second]);
+    }
+    reverse(all(b));
+    assert(a==b);
+    assert(ops.size()<=n);
+    put(ops.size());
+    // pvc(a);pvc(b);
+    
+    rep(i,0,ops.size()){
+        cout << min(ops[i].first,ops[i].second)+1 <<" " <<  max(ops[i].first,ops[i].second)+1 << endl;
     }
 
 }
@@ -64,3 +130,7 @@ int32_t main()
 
     return 0;
 }
+
+
+// 1 2 3
+// 2 3 1
