@@ -33,16 +33,17 @@ void testcase(){
     a[0] = 1;
     for(int i=2;i<=n;i++) {
         if(a[i-1]) continue;
-        int last = i;
+        a[i-1] = i;
         for(int j=2*i;j<=n;j +=i){
-            if(a[j-1]) continue;
-            a[j-1] = last;
-            last = j;
+            a[j-1] = i;
         }
-        // pvc(a);
-        a[i-1] = last;
     }
-    pvc(a);
+    vi b(n);
+    iota(all(b),1);
+    per(i,2,n+1){
+        swap(b[i-1],b[(a[i-1]) -1 ]);
+    }
+    pvc(b);
 }
 int32_t main()
 {
