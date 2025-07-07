@@ -24,97 +24,52 @@ inline int hset(int x) {return __lg(x);}
 
 const int MOD = 1e9+7; // change me for god sake look at problem mod
 const int INF = 1e16+5;
-// O(LlogL)
-vector<long long> divisors(long long x){
-    vector<long long> cur;
-      for(int j=2;j*j<=x;j++)
-		{		
-			if(x%j==0)
-			{
-				cur.push_back(j);
-				if(j != x/j)
-					cur.push_back(x/j);
-            }
-        }
-    return cur;
+int mod(int a, int m){
+    return (a % m + m) % m;
 }
-class BIT {
-private:
-    std::vector<int> nums;
-    int LOG;
-public:
-    BIT(int n) {
-    	LOG = (int)log2(n)+1;
-        nums.resize((1ll<<LOG) + 1);
-    }
-    void update(int i, int val) {
-        i += 1;
-        while (i < nums.size()) {
-            nums[i] += val;
-            i += (i & (-i));
-        }
-    }
-    int sum(int i) {
-        int r = 0;
-        // i += 1, not needed here since we need sum of rank less than i rank[0...i-1]
-        while (i > 0) {
-            r += nums[i];
-            i -= (i & (-i));
-        }
-        return r;
-    }
-    int sum(int l,int r){
-        return sum(r+1) - sum(l);
-    }
-};
 void testcase(){
     int n,m,q;
     cin >> n >> m >> q;
     vi a(n);
     tkv(a,n);
-    auto div = divisors(m);
-    unordered_map<int,BIT> diffs;
-    for(auto d:div){
-        vi c(n);
-        int last = 0;
-        rep(i,0,n){
-            int st = (a[i]-(a[i]/d)*d);
-            int cur = st + ((max(0LL,last-st)+d-1)/d)*d;
-            c[i] = cur;
-            last = cur;
+    map<int,int> diffs;
+    for(int i=1; i*i<=m; i++)
+        if(!(m % i)){
+            diffs[i] = 0;
+            diffs[m/i] = 0;
         }
-        diffs[d] = BIT(n);
-        diffs[d].update(0,c[0]);
+    for(auto d:diffs){
+        diffs[d.first] += a[0]%d.first;
         rep(i,1,n){
-            diffs[d].update(i,c[i]-c[i-1]);
+            diffs[d.first] += mod(a[i]-a[i-1],d.first);
         }
-
-        
     }
-    rep(i,0,q){
+    rep(z,0,q){
         int x;
         cin >> x;
         if(x==1){
             int idx,val;
             cin >> idx >> val;
             idx--;
-            for(auto d:div){
-                int cur = diffs[d].sum(0,idx);
-                if(val>cur){
-                    
-                }
-                else {
-
+            for(auto d:diffs){
+                int prev = idx ? a[idx-1] : 0;
+                diffs[d.first] -= mod(a[idx]-prev,d.first);
+                diffs[d.first] += mod(val-prev,d.first);
+                if(idx+1<n){
+                    diffs[d.first] -= mod(a[idx+1]-a[idx],d.first);
+                    diffs[d.first] +=mod(a[idx+1]-val,d.first);
                 }
             }
+            a[idx] = val;
         }
         else {
             int k;
             cin >> k;
             int g = __gcd(k,m);
-            if(diffs[g].sum(0,n-1)<m){
+            assert(diffs.count(g));
+            if(diffs[g]<m){
                 put("YES");
-            }
+            }   
             else put("NO");
         }
     }
